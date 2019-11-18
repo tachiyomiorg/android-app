@@ -10,14 +10,11 @@ package tachiyomi.core
 
 import tachiyomi.core.os.AndroidAppState
 import tachiyomi.core.os.AppState
-import tachiyomi.core.util.AndroidCoroutineDispatchers
-import tachiyomi.core.util.CoroutineDispatchers
 import toothpick.ktp.binding.bind
 import toothpick.ktp.binding.module
 
 val CoreModule = module {
 
   bind<AppState>().toClass<AndroidAppState>().singleton()
-  bind<CoroutineDispatchers>().toClass<AndroidCoroutineDispatchers>().singleton()
 
 }

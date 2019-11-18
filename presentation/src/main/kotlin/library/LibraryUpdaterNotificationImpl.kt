@@ -18,6 +18,7 @@ import android.content.Intent
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.flow.asFlow
@@ -26,7 +27,6 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import tachiyomi.core.di.AppScope
-import tachiyomi.core.util.CoroutineDispatchers
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.domain.library.updater.LibraryUpdater
 import tachiyomi.domain.library.updater.LibraryUpdaterNotification
@@ -35,8 +35,7 @@ import javax.inject.Inject
 
 class LibraryUpdaterNotificationImpl @Inject constructor(
   private val context: Application,
-  private val notificationManager: NotificationManager,
-  dispatchers: CoroutineDispatchers
+  private val notificationManager: NotificationManager
 ) : LibraryUpdaterNotification {
 
   private val channel = "library" // TODO inject value or retrieve from constants
@@ -61,7 +60,7 @@ class LibraryUpdaterNotificationImpl @Inject constructor(
   private val serviceChannel = BroadcastChannel<Boolean>(1)
 
   init {
-    GlobalScope.launch(dispatchers.main) {
+    GlobalScope.launch(Dispatchers.Main) {
       serviceChannel.asFlow()
         .debounce(250)
         .distinctUntilChanged()

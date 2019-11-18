@@ -8,20 +8,18 @@
 
 package tachiyomi.domain.library.interactor
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import tachiyomi.core.util.CoroutineDispatchers
 import tachiyomi.domain.library.model.Category
 import tachiyomi.domain.library.repository.CategoryRepository
 import tachiyomi.domain.manga.model.Manga
 import javax.inject.Inject
 
 class GetCommonCategories @Inject constructor(
-  private val categoryRepository: CategoryRepository,
-  private val dispatchers: CoroutineDispatchers
-) {
+  private val categoryRepository: CategoryRepository) {
 
   suspend fun await(mangas: List<Manga>): List<Category> {
-    return withContext(dispatchers.io) {
+    return withContext(Dispatchers.IO) {
       val commonCategories = sortedSetOf<Category>(compareBy { it.id })
       mangas.forEachIndexed { index, manga ->
         val categories = categoryRepository.findForManga(manga.id)

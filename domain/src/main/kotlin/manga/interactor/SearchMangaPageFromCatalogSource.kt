@@ -8,20 +8,19 @@
 
 package tachiyomi.domain.manga.interactor
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import tachiyomi.core.util.CoroutineDispatchers
 import tachiyomi.domain.manga.model.MangasPage
 import tachiyomi.source.CatalogSource
 import tachiyomi.source.model.FilterList
 import javax.inject.Inject
 
 class SearchMangaPageFromCatalogSource @Inject internal constructor(
-  private val getOrAddMangaFromSource: GetOrAddMangaFromSource,
-  private val dispatchers: CoroutineDispatchers
+  private val getOrAddMangaFromSource: GetOrAddMangaFromSource
 ) {
 
   suspend fun await(source: CatalogSource, filters: FilterList, page: Int): MangasPage {
-    return withContext(dispatchers.io) {
+    return withContext(Dispatchers.IO) {
       val sourcePage = source.fetchMangaList(filters, page)
       val localPage = sourcePage.mangas.map { getOrAddMangaFromSource.await(it, source.id) }
 

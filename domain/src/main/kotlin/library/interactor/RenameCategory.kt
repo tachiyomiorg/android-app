@@ -8,26 +8,24 @@
 
 package tachiyomi.domain.library.interactor
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
 import tachiyomi.core.util.Optional
-import tachiyomi.core.util.CoroutineDispatchers
 import tachiyomi.domain.library.model.Category
 import tachiyomi.domain.library.model.CategoryUpdate
 import tachiyomi.domain.library.repository.CategoryRepository
 import javax.inject.Inject
 
 class RenameCategory @Inject constructor(
-  private val categoryRepository: CategoryRepository,
-  private val dispatchers: CoroutineDispatchers
-) {
+  private val categoryRepository: CategoryRepository) {
 
   suspend fun await(categoryId: Long, newName: String) = withContext(NonCancellable) f@{
     if (newName.isBlank()) {
       return@f Result.EmptyNameError
     }
 
-    val categories = withContext(dispatchers.io) { categoryRepository.findAll() }
+    val categories = withContext(Dispatchers.IO) { categoryRepository.findAll() }
 
     val category = categories.find { it.id == categoryId }
       ?: return@f Result.NotFoundError
@@ -48,7 +46,7 @@ class RenameCategory @Inject constructor(
     )
 
     try {
-      withContext(dispatchers.io) { categoryRepository.savePartial(update) }
+      withContext(Dispatchers.IO) { categoryRepository.savePartial(update) }
     } catch (e: Exception) {
       return@f Result.InternalError(e)
     }

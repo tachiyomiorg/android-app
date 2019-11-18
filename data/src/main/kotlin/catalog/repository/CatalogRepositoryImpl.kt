@@ -13,6 +13,7 @@ import android.os.SystemClock
 import com.pushtorefresh.storio3.sqlite.StorIOSQLite
 import com.pushtorefresh.storio3.sqlite.queries.DeleteQuery
 import com.pushtorefresh.storio3.sqlite.queries.Query
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
@@ -21,7 +22,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import tachiyomi.core.db.inTransaction
-import tachiyomi.core.util.CoroutineDispatchers
 import tachiyomi.data.BuildConfig
 import tachiyomi.data.catalog.api.CatalogGithubApi
 import tachiyomi.data.catalog.installer.CatalogInstallReceiver
@@ -43,8 +43,7 @@ internal class CatalogRepositoryImpl @Inject constructor(
   private val storio: StorIOSQLite,
   private val loader: CatalogLoader,
   private val installer: CatalogInstaller,
-  private val api: CatalogGithubApi,
-  private val dispatchers: CoroutineDispatchers
+  private val api: CatalogGithubApi
 ) : CatalogRepository {
 
   var internalCatalogs = emptyList<CatalogInternal>()
@@ -90,7 +89,7 @@ internal class CatalogRepositoryImpl @Inject constructor(
       .map { it.catalog }
       .onEach { catalogsBySource[it.source.id] = it }
 
-    CatalogInstallReceiver(InstallationListener(), loader, dispatchers).register(context)
+    CatalogInstallReceiver(InstallationListener(), loader).register(context)
   }
 
   override fun get(sourceId: Long): CatalogLocal? {
@@ -118,7 +117,7 @@ internal class CatalogRepositoryImpl @Inject constructor(
   }
 
   private fun initRemoteCatalogs() {
-    GlobalScope.launch(dispatchers.io) {
+    GlobalScope.launch(Dispatchers.IO) {
       val catalogs = storio.get()
         .listOfObjects(CatalogRemote::class.java)
         .withQuery(Query.builder()
@@ -142,7 +141,7 @@ internal class CatalogRepositoryImpl @Inject constructor(
     }
     lastTimeApiChecked = SystemClock.elapsedRealtime()
 
-    withContext(dispatchers.io) {
+    withContext(Dispatchers.IO) {
       val newCatalogs = api.findCatalogs()
       storio.inTransaction {
         storio.delete()

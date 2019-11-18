@@ -8,22 +8,20 @@
 
 package tachiyomi.domain.library.interactor
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
 import tachiyomi.core.util.Optional
-import tachiyomi.core.util.CoroutineDispatchers
 import tachiyomi.domain.library.model.Category
 import tachiyomi.domain.library.model.CategoryUpdate
 import tachiyomi.domain.library.repository.CategoryRepository
 import javax.inject.Inject
 
 class ReorderCategory @Inject constructor(
-  private val categoryRepository: CategoryRepository,
-  private val dispatchers: CoroutineDispatchers
-) {
+  private val categoryRepository: CategoryRepository) {
 
   suspend fun await(categoryId: Long, newPosition: Int) = withContext(NonCancellable) f@{
-    val categories = withContext(dispatchers.io) { categoryRepository.findAll() }
+    val categories = withContext(Dispatchers.IO) { categoryRepository.findAll() }
 
     // If nothing changed, return
     val currPosition = categories.indexOfFirst { it.id == categoryId }
@@ -43,7 +41,7 @@ class ReorderCategory @Inject constructor(
     }
 
     try {
-      withContext(dispatchers.io) { categoryRepository.savePartial(updates) }
+      withContext(Dispatchers.IO) { categoryRepository.savePartial(updates) }
     } catch (e: Exception) {
       return@f Result.InternalError(e)
     }

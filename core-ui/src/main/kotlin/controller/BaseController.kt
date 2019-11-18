@@ -48,7 +48,7 @@ abstract class BaseController(
   private var viewLifecycleRegistry: LifecycleRegistry? = null
   private var viewLifecycleOwner: LifecycleOwner? = null
 
-  private var viewContext = Dispatchers.Main // TODO inject main?
+  private var viewContext = Dispatchers.Main
   private var viewScope = CoroutineScope(viewContext + SupervisorJob())
 
   init {

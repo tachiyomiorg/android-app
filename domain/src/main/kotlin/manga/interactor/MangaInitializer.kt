@@ -8,8 +8,8 @@
 
 package tachiyomi.domain.manga.interactor
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import tachiyomi.core.util.CoroutineDispatchers
 import tachiyomi.core.util.Optional
 import tachiyomi.domain.catalog.repository.CatalogRepository
 import tachiyomi.domain.library.repository.LibraryCovers
@@ -24,8 +24,7 @@ import javax.inject.Inject
 class MangaInitializer @Inject internal constructor(
   private val mangaRepository: MangaRepository,
   private val catalogRepository: CatalogRepository,
-  private val libraryCovers: LibraryCovers,
-  private val dispatchers: CoroutineDispatchers
+  private val libraryCovers: LibraryCovers
 ) {
 
   // TODO error handling
@@ -44,7 +43,7 @@ class MangaInitializer @Inject internal constructor(
       status = manga.status,
       cover = manga.cover
     )
-    val newInfo = withContext(dispatchers.io) { source.fetchMangaDetails(infoQuery) }
+    val newInfo = withContext(Dispatchers.IO) { source.fetchMangaDetails(infoQuery) }
 
     val update = MangaUpdate(
       id = manga.id,
@@ -79,7 +78,7 @@ class MangaInitializer @Inject internal constructor(
       lastInit = now
     )
 
-    withContext(dispatchers.io) {
+    withContext(Dispatchers.IO) {
       mangaRepository.savePartial(update)
       libraryCovers.find(manga.id).setLastModified(now)
     }

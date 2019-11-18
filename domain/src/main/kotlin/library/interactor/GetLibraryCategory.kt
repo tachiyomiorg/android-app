@@ -8,9 +8,9 @@
 
 package tachiyomi.domain.library.interactor
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
-import tachiyomi.core.util.CoroutineDispatchers
 import tachiyomi.domain.library.model.Category
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.domain.library.model.LibrarySort
@@ -19,9 +19,7 @@ import tachiyomi.domain.library.repository.LibraryRepository
 import javax.inject.Inject
 
 class GetLibraryCategory @Inject constructor(
-  private val libraryRepository: LibraryRepository,
-  private val dispatchers: CoroutineDispatchers
-) {
+  private val libraryRepository: LibraryRepository) {
 
   fun execute(
     categoryId: Long,
@@ -38,7 +36,7 @@ class GetLibraryCategory @Inject constructor(
     categoryId: Long,
     sort: LibrarySorting = LibrarySorting(LibrarySort.Title, true)
   ): List<LibraryManga> {
-    return withContext(dispatchers.io) {
+    return withContext(Dispatchers.IO) {
       when (categoryId) {
         Category.ALL_ID -> libraryRepository.findAll(sort)
         Category.UNCATEGORIZED_ID -> libraryRepository.findUncategorized(sort)

@@ -8,9 +8,9 @@
 
 package tachiyomi.domain.manga.interactor
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import tachiyomi.core.db.Transaction
-import tachiyomi.core.util.CoroutineDispatchers
 import tachiyomi.core.util.Optional
 import tachiyomi.domain.catalog.repository.CatalogRepository
 import tachiyomi.domain.manga.model.Chapter
@@ -27,8 +27,7 @@ class SyncChaptersFromSource @Inject constructor(
   private val chapterRepository: ChapterRepository,
   private val mangaRepository: MangaRepository,
   private val catalogRepository: CatalogRepository,
-  private val transactions: Provider<Transaction>,
-  private val dispatchers: CoroutineDispatchers
+  private val transactions: Provider<Transaction>
 ) {
 
   data class Diff(
@@ -43,13 +42,13 @@ class SyncChaptersFromSource @Inject constructor(
     val source = catalog?.source ?: return Result.SourceNotFound(manga.sourceId)
 
     // Chapters from source.
-    val rawSourceChapters = withContext(dispatchers.io) { source.fetchChapterList(mangaInfo) }
+    val rawSourceChapters = withContext(Dispatchers.IO) { source.fetchChapterList(mangaInfo) }
     if (rawSourceChapters.isEmpty()) {
       return Result.NoChaptersFound
     }
 
     // Chapters from db.
-    val dbChapters = withContext(dispatchers.io) { chapterRepository.findForManga(manga.id) }
+    val dbChapters = withContext(Dispatchers.IO) { chapterRepository.findForManga(manga.id) }
 
     // Set the date fetch for new items in reverse order to allow another sorting method.
     // Sources MUST return the chapters from most to less recent, which is common.
@@ -128,7 +127,7 @@ class SyncChaptersFromSource @Inject constructor(
 
     val chaptersToSave = diff.added + diff.updated
 
-    withContext(dispatchers.io) {
+    withContext(Dispatchers.IO) {
       transactions.get().withAction {
         if (chaptersToSave.isNotEmpty()) {
           chapterRepository.save(chaptersToSave)

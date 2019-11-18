@@ -13,12 +13,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import tachiyomi.core.di.AppScope
-import tachiyomi.core.util.CoroutineDispatchers
 import java.util.Collections
 
 /**
@@ -64,7 +63,7 @@ abstract class BaseListAdapter<T, VH : RecyclerView.ViewHolder> :
   /**
    * The coroutine context for this adapter.
    */
-  override val coroutineContext = dispatchers.main + job
+  override val coroutineContext = Dispatchers.Main + job
 
   /**
    * Returns the item at the given [position] or null if it's out of bounds.
@@ -136,7 +135,7 @@ abstract class BaseListAdapter<T, VH : RecyclerView.ViewHolder> :
     val oldList = list!!
 
     launch(start = CoroutineStart.UNDISPATCHED) {
-      val result = withContext(dispatchers.computation) {
+      val result = withContext(Dispatchers.Default) {
         DiffUtil.calculateDiff(getDiffCallback(oldList, newList))
       }
 
@@ -160,13 +159,6 @@ abstract class BaseListAdapter<T, VH : RecyclerView.ViewHolder> :
     // notify last, after list is updated
     currentList = Collections.unmodifiableList(newList)
     diffResult.dispatchUpdatesTo(updateCallback)
-  }
-
-  private companion object {
-    /**
-     * Coroutine dispatchers used to calculate diffs on a background thread.
-     */
-    val dispatchers: CoroutineDispatchers = AppScope.getInstance()
   }
 
 }

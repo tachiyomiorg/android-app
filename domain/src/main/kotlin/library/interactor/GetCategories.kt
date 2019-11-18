@@ -8,24 +8,22 @@
 
 package tachiyomi.domain.library.interactor
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
-import tachiyomi.core.util.CoroutineDispatchers
 import tachiyomi.domain.library.model.Category
 import tachiyomi.domain.library.repository.CategoryRepository
 import javax.inject.Inject
 
 class GetCategories @Inject constructor(
-  private val categoryRepository: CategoryRepository,
-  private val dispatchers: CoroutineDispatchers
-) {
+  private val categoryRepository: CategoryRepository) {
 
   fun subscribe(): Flow<List<Category>> {
     return categoryRepository.subscribeAll()
   }
 
   suspend fun await(): List<Category> {
-    return withContext(dispatchers.io) { categoryRepository.findAll() }
+    return withContext(Dispatchers.IO) { categoryRepository.findAll() }
   }
 
 }

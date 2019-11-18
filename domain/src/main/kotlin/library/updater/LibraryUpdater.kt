@@ -12,6 +12,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -22,7 +23,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.selects.select
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import tachiyomi.core.util.CoroutineDispatchers
 import timber.log.Timber
 import timber.log.warn
 import toothpick.ProvidesSingletonInScope
@@ -32,19 +32,17 @@ import kotlin.coroutines.CoroutineContext
 
 @Singleton
 @ProvidesSingletonInScope
-class LibraryUpdater @Inject constructor(
-  private val dispatchers: CoroutineDispatchers
-) {
+class LibraryUpdater @Inject constructor() {
 
   private val queueChannel = Channel<Operation>(Channel.UNLIMITED)
   private val queuedOperations = mutableSetOf<Operation>()
   private val mutex = Mutex()
 
   init {
-    GlobalScope.launch(dispatchers.computation) {
+    GlobalScope.launch(Dispatchers.Default) {
       for (operation in queueChannel) {
         Timber.warn { "Received job ${operation.categoryId}" }
-        operation.start(this, dispatchers.io)
+        operation.start(this, Dispatchers.IO)
         queuedOperations.remove(operation)
         Timber.warn { "End job" }
       }
@@ -73,7 +71,7 @@ class LibraryUpdater @Inject constructor(
   }
 
   fun cancel(categoryId: Long, target: Target) {
-    GlobalScope.launch(dispatchers.computation) {
+    GlobalScope.launch(Dispatchers.Default) {
       mutex.withLock {
         val operation = queuedOperations.find { it.categoryId == categoryId && it.target == target }
         if (operation != null) {
@@ -85,7 +83,7 @@ class LibraryUpdater @Inject constructor(
   }
 
   fun cancelFirst() {
-    GlobalScope.launch(dispatchers.computation) {
+    GlobalScope.launch(Dispatchers.Default) {
       mutex.withLock {
         val operation = queuedOperations.firstOrNull()
         if (operation != null) {
@@ -172,9 +170,7 @@ class LibraryUpdater @Inject constructor(
 // TODO: Structured concurrency test. Consider using this approach instead of context switch or
 //  mutex
 @Singleton
-class LibUpdater @Inject constructor(
-  private val dispatchers: CoroutineDispatchers
-) {
+class LibUpdater @Inject constructor() {
 
   private val queueChannel = Channel<Operation>()
   private val cancelChannel = Channel<Pair<Long, LibraryUpdater.Target>>()

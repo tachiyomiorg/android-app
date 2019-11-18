@@ -11,9 +11,9 @@ package tachiyomi.data.library.updater
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import tachiyomi.core.di.AppScope
-import tachiyomi.core.util.CoroutineDispatchers
 import tachiyomi.domain.library.interactor.UpdateLibraryCategory
 import timber.log.Timber
 import timber.log.debug
@@ -23,9 +23,6 @@ class LibraryUpdaterWorker(
   context: Context,
   params: WorkerParameters
 ) : CoroutineWorker(context, params) {
-
-  @Inject
-  lateinit var dispatchers: CoroutineDispatchers
 
   @Inject
   lateinit var updater: UpdateLibraryCategory
@@ -42,7 +39,7 @@ class LibraryUpdaterWorker(
       return Result.failure()
     }
 
-    withContext(dispatchers.io) {
+    withContext(Dispatchers.IO) {
       updater.execute(categoryId).awaitWork()
     }
 

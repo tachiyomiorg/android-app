@@ -13,12 +13,12 @@ import android.content.Context
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import dalvik.system.PathClassLoader
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import tachiyomi.core.http.Http
 import tachiyomi.core.prefs.AndroidPreferenceStore
 import tachiyomi.core.prefs.LazyPreferenceStore
-import tachiyomi.core.util.CoroutineDispatchers
 import tachiyomi.domain.catalog.model.CatalogInstalled
 import tachiyomi.source.Dependencies
 import tachiyomi.source.Source
@@ -31,7 +31,6 @@ import javax.inject.Inject
  */
 internal class CatalogLoader @Inject constructor(
   private val context: Application,
-  private val dispatchers: CoroutineDispatchers,
   private val http: Http
 ) {
 
@@ -48,7 +47,7 @@ internal class CatalogLoader @Inject constructor(
     // Load each extension concurrently and wait for completion
     return runBlocking {
       val deferred = extPkgs.map { pkgInfo ->
-        async(dispatchers.computation) {
+        async(Dispatchers.Default) {
           loadExtension(pkgInfo.packageName, pkgInfo)
         }
       }

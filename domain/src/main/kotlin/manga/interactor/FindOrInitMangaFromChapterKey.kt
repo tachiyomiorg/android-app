@@ -8,8 +8,8 @@
 
 package tachiyomi.domain.manga.interactor
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import tachiyomi.core.util.CoroutineDispatchers
 import tachiyomi.domain.manga.model.Manga
 import tachiyomi.source.DeepLinkSource
 import tachiyomi.source.model.MangaInfo
@@ -17,12 +17,11 @@ import javax.inject.Inject
 
 class FindOrInitMangaFromChapterKey @Inject constructor(
   private val getOrAddMangaFromSource: GetOrAddMangaFromSource,
-  private val mangaInitializer: MangaInitializer,
-  private val dispatchers: CoroutineDispatchers
+  private val mangaInitializer: MangaInitializer
 ) {
 
   suspend fun await(chapterKey: String, source: DeepLinkSource): Manga {
-    return withContext(dispatchers.io) {
+    return withContext(Dispatchers.IO) {
       val mangaKey = source.findMangaKey(chapterKey)
       if (mangaKey != null) {
         val mangaInfo = MangaInfo(key = mangaKey, title = "")

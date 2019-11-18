@@ -8,11 +8,11 @@
 
 package tachiyomi.domain.library.interactor
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
 import tachiyomi.core.db.Transaction
 import tachiyomi.core.util.Optional
-import tachiyomi.core.util.CoroutineDispatchers
 import tachiyomi.domain.library.prefs.LibraryPreferences
 import tachiyomi.domain.library.repository.LibraryCovers
 import tachiyomi.domain.library.repository.MangaCategoryRepository
@@ -28,8 +28,7 @@ class ChangeMangaFavorite @Inject constructor(
   private val libraryPreferences: LibraryPreferences,
   private val libraryCovers: LibraryCovers,
   private val transactions: Provider<Transaction>,
-  private val setCategoriesForMangas: SetCategoriesForMangas,
-  private val dispatchers: CoroutineDispatchers
+  private val setCategoriesForMangas: SetCategoriesForMangas
 ) {
 
   suspend fun await(manga: Manga): Result = withContext(NonCancellable) f@{
@@ -48,7 +47,7 @@ class ChangeMangaFavorite @Inject constructor(
     val mangaIds = listOf(manga.id)
 
     try {
-      withContext(dispatchers.io) {
+      withContext(Dispatchers.IO) {
         transactions.get().withAction {
           mangaRepository.savePartial(update)
 

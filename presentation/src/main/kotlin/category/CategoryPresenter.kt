@@ -10,6 +10,7 @@ package tachiyomi.ui.category
 
 import com.freeletics.coredux.SideEffect
 import com.freeletics.coredux.createStore
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -100,7 +101,7 @@ class CategoryPresenter @Inject constructor(
   }
 
   private fun loadCategories() {
-    scope.launch(dispatchers.computation) {
+    scope.launch(Dispatchers.Default) {
       getCategories.subscribe().collect {
         store.dispatch(Action.CategoriesUpdate(it))
       }

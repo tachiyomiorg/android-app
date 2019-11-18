@@ -8,9 +8,9 @@
 
 package tachiyomi.domain.library.interactor
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import tachiyomi.core.util.Optional
-import tachiyomi.core.util.CoroutineDispatchers
 import tachiyomi.domain.library.model.CategoryUpdate
 import tachiyomi.domain.library.repository.CategoryRepository
 import tachiyomi.domain.library.updater.LibraryUpdateScheduler
@@ -19,9 +19,7 @@ import javax.inject.Inject
 
 class SetCategoryUpdateInterval @Inject constructor(
   private val categoryRepository: CategoryRepository,
-  private val libraryScheduler: LibraryUpdateScheduler,
-  private val dispatchers: CoroutineDispatchers
-) {
+  private val libraryScheduler: LibraryUpdateScheduler) {
 
   suspend fun await(categoryId: Long, intervalInHours: Int): Result {
     val update = CategoryUpdate(
@@ -29,7 +27,7 @@ class SetCategoryUpdateInterval @Inject constructor(
       updateInterval = Optional.of(intervalInHours)
     )
     return try {
-      withContext(dispatchers.io) { categoryRepository.savePartial(update) }
+      withContext(Dispatchers.IO) { categoryRepository.savePartial(update) }
 
       if (intervalInHours > 0) {
         libraryScheduler.schedule(categoryId, LibraryUpdater.Target.Chapters, intervalInHours)

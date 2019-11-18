@@ -8,11 +8,11 @@
 
 package tachiyomi.domain.library.interactor
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import tachiyomi.core.util.CoroutineDispatchers
 import tachiyomi.domain.library.repository.CategoryRepository
 import tachiyomi.domain.library.updater.LibraryUpdateScheduler
 import tachiyomi.domain.library.updater.LibraryUpdater
@@ -28,7 +28,6 @@ class UpdateLibraryCategory @Inject constructor(
   private val notifier: LibraryUpdaterNotification,
   private val libraryUpdater: LibraryUpdater,
   private val categoryRepository: CategoryRepository,
-  private val dispatchers: CoroutineDispatchers,
   private val libraryScheduler: LibraryUpdateScheduler
 ) {
 
@@ -64,10 +63,10 @@ class UpdateLibraryCategory @Inject constructor(
       return
     }
 
-    GlobalScope.launch(dispatchers.computation) {
+    GlobalScope.launch(Dispatchers.Default) {
       result.awaitWork()
 
-      val category = withContext(dispatchers.io) {
+      val category = withContext(Dispatchers.IO) {
         categoryRepository.find(categoryId)
       }
       if (category != null && category.updateInterval > 0) {

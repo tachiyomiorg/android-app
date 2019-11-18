@@ -11,15 +11,12 @@ package tachiyomi.app.initializers
 import android.app.Application
 import androidx.emoji.bundled.BundledEmojiCompatConfig
 import androidx.emoji.text.EmojiCompat
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import tachiyomi.core.util.CoroutineDispatchers
 import javax.inject.Inject
 
-class EmojiCompatInitializer @Inject constructor(
-  app: Application,
-  dispatchers: CoroutineDispatchers
-) {
+class EmojiCompatInitializer @Inject constructor(app: Application) {
 
   init {
     val config = BundledEmojiCompatConfig(app)
@@ -28,7 +25,7 @@ class EmojiCompatInitializer @Inject constructor(
 
     EmojiCompat.init(config)
 
-    GlobalScope.launch(dispatchers.computation) {
+    GlobalScope.launch(Dispatchers.Default) {
       EmojiCompat.get().load()
     }
   }

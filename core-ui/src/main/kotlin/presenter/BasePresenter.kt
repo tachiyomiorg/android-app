@@ -15,12 +15,11 @@ import com.freeletics.coredux.Store
 import com.freeletics.coredux.log.common.LoggerLogSink
 import com.freeletics.coredux.subscribeToChangedStateUpdates
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import tachiyomi.core.di.AppScope
 import tachiyomi.core.ui.BuildConfig
-import tachiyomi.core.util.CoroutineDispatchers
 import timber.log.Timber
 import timber.log.debug
 import timber.log.info
@@ -28,11 +27,9 @@ import timber.log.warn
 
 abstract class BasePresenter {
 
-  protected val dispatchers = AppScope.getInstance<CoroutineDispatchers>()
-
   protected val job = SupervisorJob()
 
-  protected val scope = CoroutineScope(job + dispatchers.computation)
+  protected val scope = CoroutineScope(job + Dispatchers.Default)
 
   @CallSuper
   open fun destroy() {
@@ -43,7 +40,7 @@ abstract class BasePresenter {
     stateReceiver: StateReceiver<S>
   ) {
     subscribeToChangedStateUpdates {
-      scope.launch(dispatchers.main) { stateReceiver(it) }
+      scope.launch(Dispatchers.Main) { stateReceiver(it) }
     }
   }
 

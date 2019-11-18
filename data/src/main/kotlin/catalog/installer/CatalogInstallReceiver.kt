@@ -12,10 +12,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import tachiyomi.core.util.CoroutineDispatchers
 import tachiyomi.data.catalog.installer.CatalogLoader.Result
 import tachiyomi.domain.catalog.model.CatalogInstalled
 
@@ -27,8 +27,7 @@ import tachiyomi.domain.catalog.model.CatalogInstalled
  */
 internal class CatalogInstallReceiver(
   private val listener: Listener,
-  private val loader: CatalogLoader,
-  private val dispatchers: CoroutineDispatchers
+  private val loader: CatalogLoader
 ) : BroadcastReceiver() {
 
   /**
@@ -58,7 +57,7 @@ internal class CatalogInstallReceiver(
 
     when (intent.action) {
       Intent.ACTION_PACKAGE_ADDED -> {
-        GlobalScope.launch(dispatchers.io) {
+        GlobalScope.launch(Dispatchers.IO) {
           if (isReplacing(intent)) return@launch
 
           val result = getExtensionFromIntent(intent)
@@ -68,7 +67,7 @@ internal class CatalogInstallReceiver(
         }
       }
       Intent.ACTION_PACKAGE_REPLACED -> {
-        GlobalScope.launch(dispatchers.io) {
+        GlobalScope.launch(Dispatchers.IO) {
           val result = getExtensionFromIntent(intent)
           when (result) {
             is Result.Success -> listener.onCatalogUpdated(result.catalog)
@@ -76,7 +75,7 @@ internal class CatalogInstallReceiver(
         }
       }
       Intent.ACTION_PACKAGE_REMOVED -> {
-        GlobalScope.launch(dispatchers.io) {
+        GlobalScope.launch(Dispatchers.IO) {
           if (isReplacing(intent)) return@launch
 
           val pkgName = getPackageNameFromIntent(intent)
@@ -106,7 +105,7 @@ internal class CatalogInstallReceiver(
     val pkgName = getPackageNameFromIntent(intent)
       ?: return Result.Error("Package name not found")
 
-    return withContext(dispatchers.computation) {
+    return withContext(Dispatchers.Default) {
       loader.loadExtensionFromPkgName(pkgName)
     }
   }

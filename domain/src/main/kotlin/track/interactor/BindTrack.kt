@@ -8,8 +8,8 @@
 
 package tachiyomi.domain.track.interactor
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import tachiyomi.core.util.CoroutineDispatchers
 import tachiyomi.domain.manga.model.Manga
 import tachiyomi.domain.track.model.Track
 import tachiyomi.domain.track.model.TrackSearchResult
@@ -18,8 +18,7 @@ import tachiyomi.domain.track.services.TrackSite
 import javax.inject.Inject
 
 class BindTrack @Inject constructor(
-  private val trackRepository: TrackRepository,
-  private val dispatchers: CoroutineDispatchers
+  private val trackRepository: TrackRepository
 ) {
 
   suspend fun await(site: TrackSite, info: TrackSearchResult, manga: Manga): Result {
@@ -43,7 +42,7 @@ class BindTrack @Inject constructor(
       status = state.status
     )
 
-    withContext(dispatchers.io) {
+    withContext(Dispatchers.IO) {
       trackRepository.save(track)
     }
 
