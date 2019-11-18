@@ -14,7 +14,6 @@ import tachiyomi.ui.glide.TachiyomiGlideInitCallback
 import tachiyomi.ui.library.LibraryUpdaterNotificationImpl
 import toothpick.ktp.binding.bind
 import toothpick.ktp.binding.module
-import toothpick.ktp.binding.toClass
 
 val UiModule = module {
 

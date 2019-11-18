@@ -50,7 +50,7 @@ class CatalogDetailsController(
   /**
    * Returns the package name of the catalog stored in the [Bundle] of this controller.
    */
-  fun getCatalogPkgName() = args.getString(PKGNAME_KEY)
+  fun getCatalogPkgName() = args.getString(PKGNAME_KEY, "")
 
   //===========================================================================
   // ~ Lifecycle

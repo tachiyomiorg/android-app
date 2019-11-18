@@ -38,8 +38,6 @@ import tachiyomi.domain.sync.api.SyncDevice
 import tachiyomi.domain.sync.prefs.SyncPreferences
 import toothpick.ktp.binding.bind
 import toothpick.ktp.binding.module
-import toothpick.ktp.binding.toClass
-import toothpick.ktp.binding.toProvider
 
 val DataModule = module {
 

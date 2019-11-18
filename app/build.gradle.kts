@@ -28,7 +28,6 @@ android {
   }
   sourceSets["main"].java.srcDirs("src/main/kotlin")
   packagingOptions {
-    pickFirst("META-INF/atomicfu.kotlin_module")
     pickFirst("META-INF/common.kotlin_module")
   }
 }

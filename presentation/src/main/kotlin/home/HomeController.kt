@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.ControllerChangeHandler
 import com.bluelinelabs.conductor.Router
@@ -96,6 +97,19 @@ class HomeController : BaseController() {
     if (to is HomeChildController.FAB) {
       view?.findViewById<ViewGroup>(R.id.home_fab_container)?.let { it.addView(to.createFAB(it)) }
     }
+    if (from is HomeChildController.Drawer) {
+      view?.findViewById<DrawerLayout>(R.id.home_drawer)?.let { drawer ->
+        while (drawer.childCount > 1) {
+          drawer.removeViewAt(1)
+        }
+      }
+    }
+    if (to is HomeChildController.Drawer) {
+      view?.findViewById<ViewGroup>(R.id.home_drawer)?.let { drawer ->
+        drawer.addView(to.createNavView(drawer))
+      }
+    }
+
     // If going back, restore bottom nav visibility, in case the new view can't scroll
     if (!isPush) {
       val nav = home_bottomnav

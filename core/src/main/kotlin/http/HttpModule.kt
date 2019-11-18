@@ -10,8 +10,6 @@ package tachiyomi.core.http
 
 import toothpick.ktp.binding.bind
 import toothpick.ktp.binding.module
-import toothpick.ktp.binding.toClass
-import toothpick.ktp.binding.toProvider
 
 /**
  * A [toothpick.Toothpick] module to register the HTTP dependencies available to the application.

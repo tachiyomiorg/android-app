@@ -60,7 +60,7 @@ class FiltersBottomSheetDialog(context: Context) : BottomSheetDialog(context) {
   override fun setContentView(view: View) {
     super.setContentView(view)
     frame = view as FiltersBottomSheet
-    val bottomSheet = window.decorView.findViewById<View>(
+    val bottomSheet = window!!.decorView.findViewById<View>(
       com.google.android.material.R.id.design_bottom_sheet) as FrameLayout
     behavior = BottomSheetBehavior.from(bottomSheet)
     behavior.setBottomSheetCallback(callback)

@@ -11,7 +11,6 @@ package tachiyomi.ui.widget
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
-import android.view.ViewGroup
 import android.view.WindowInsets
 import com.bluelinelabs.conductor.ChangeHandlerFrameLayout
 
@@ -25,7 +24,7 @@ class InsetsChangeHandlerFrameLayout @JvmOverloads constructor(
     fitsSystemWindows = true
 
     // Look for replaced views and apply the insets again.
-    setOnHierarchyChangeListener(object : ViewGroup.OnHierarchyChangeListener {
+    setOnHierarchyChangeListener(object : OnHierarchyChangeListener {
       override fun onChildViewAdded(parent: View, child: View) {
         child.fitsSystemWindows = true
         requestApplyInsets()

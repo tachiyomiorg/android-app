@@ -52,7 +52,7 @@ abstract class DialogController : RestoreViewOnCreateController {
   ): View {
     dialog = onCreateDialog(savedViewState)
 
-    dialog!!.ownerActivity = activity!!
+    dialog!!.setOwnerActivity(activity!!)
     dialog!!.setOnDismissListener { dismissDialog() }
     if (savedViewState != null) {
       val dialogState = savedViewState.getBundle(SAVED_DIALOG_STATE_TAG)

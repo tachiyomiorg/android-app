@@ -85,7 +85,7 @@ class LibraryUpdater @Inject constructor(
   }
 
   fun cancelFirst() {
-    GlobalScope.launch(dispatchers.single) {
+    GlobalScope.launch(dispatchers.computation) {
       mutex.withLock {
         val operation = queuedOperations.firstOrNull()
         if (operation != null) {

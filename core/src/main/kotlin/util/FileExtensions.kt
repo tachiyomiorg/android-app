@@ -23,7 +23,7 @@ import java.io.File
 fun File.getUriCompat(context: Context): Uri {
   // TODO check the application id matches the provider
   return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-    FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", this)
+    FileProvider.getUriForFile(context, BuildConfig.LIBRARY_PACKAGE_NAME + ".provider", this)
   else Uri.fromFile(this)
 }
 

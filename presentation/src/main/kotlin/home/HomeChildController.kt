@@ -8,6 +8,7 @@
 
 package tachiyomi.ui.home
 
+import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -19,6 +20,10 @@ interface HomeChildController {
 
   interface FAB : HomeChildController {
     fun createFAB(container: ViewGroup): FloatingActionButton
+  }
+
+  interface Drawer : HomeChildController {
+    fun createNavView(container: ViewGroup): View
   }
 
   fun BaseController.setupToolbarNavWithHomeController(toolbar: Toolbar) {

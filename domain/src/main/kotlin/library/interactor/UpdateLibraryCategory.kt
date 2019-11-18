@@ -64,7 +64,7 @@ class UpdateLibraryCategory @Inject constructor(
       return
     }
 
-    GlobalScope.launch(dispatchers.single) {
+    GlobalScope.launch(dispatchers.computation) {
       result.awaitWork()
 
       val category = withContext(dispatchers.io) {

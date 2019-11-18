@@ -38,10 +38,11 @@ import tachiyomi.ui.util.visibleIf
 import tachiyomi.ui.widget.CustomViewTabLayout
 
 class LibraryController : MvpController<LibraryPresenter>(),
-  HomeChildController,
   HomeChildController.FAB,
+  HomeChildController.Drawer,
   GlideController,
   LibraryAdapter.Listener,
+  LibraryNavigationView.Listener,
   LibrarySheetAdapter.Listener,
   LibraryChangeCategoriesDialog.Listener {
 
@@ -49,6 +50,7 @@ class LibraryController : MvpController<LibraryPresenter>(),
   private var sheetAdapter: LibrarySheetAdapter? = null
 
   private var sheet: BottomSheetDialog? = null
+  private var navView: LibraryNavigationView? = null
 
   override val glideProvider = GlideProvider.from(this)
 
@@ -79,7 +81,6 @@ class LibraryController : MvpController<LibraryPresenter>(),
     adapter = LibraryCategoryAdapter(glideProvider.get(), this)
     library_recycler.layoutManager = GridLayoutManager(view.context, 2)
     library_recycler.adapter = adapter
-//    library_tabs.setupWithViewPager(library_pager)
     library_tabs.setOnSettingsClickListener(::onCategorySettingsClick)
     library_tabs.addOnTabSelectedListener(object : CustomViewTabLayout.OnTabSelectedListener {
       override fun onTabSelected(tab: CustomViewTabLayout.Tab) {
@@ -91,7 +92,6 @@ class LibraryController : MvpController<LibraryPresenter>(),
       override fun onTabReselected(tab: CustomViewTabLayout.Tab) {}
 
     })
-    //library_tabs.setOnChipClickListener(::onChipClick)
 
     library_toolbar.inflateMenu(R.menu.library_menu)
     library_toolbar.itemClicks().collectWithView { item ->
@@ -121,6 +121,13 @@ class LibraryController : MvpController<LibraryPresenter>(),
     val fab = inflater.inflate(R.layout.library_fab, container, false)
     fab.setOnClickListener { onFabClick() }
     return fab as FloatingActionButton
+  }
+
+  override fun createNavView(container: ViewGroup): View {
+    val inflater = LayoutInflater.from(container.context)
+    val view = inflater.inflate(R.layout.library_nav_view, container, false)
+    navView = view as LibraryNavigationView
+    return view
   }
 
   //===========================================================================
@@ -166,6 +173,7 @@ class LibraryController : MvpController<LibraryPresenter>(),
     if (state.showQuickCategories) {
       library_tabs.setCategories(state.categories, state.selectedCategory?.id)
     }
+    navView?.render(state.categories)
   }
 
   private fun renderLibrary(library: List<LibraryManga>, selectedManga: Set<Long>) {

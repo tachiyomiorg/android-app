@@ -19,6 +19,9 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.Response
+import okio.buffer
+import okio.sink
+import java.io.File
 import java.io.IOException
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -112,6 +115,15 @@ suspend fun Response.awaitBody(): String {
     use {
       val body = body ?: throw IllegalStateException("Response received null body")
       body.string()
+    }
+  }
+}
+
+suspend fun Response.saveTo(file: File) {
+  withContext(Dispatchers.IO) {
+    use {
+      val source = body?.source() ?: throw IllegalStateException("Response received null body")
+      file.sink().buffer().use { it.writeAll(source) }
     }
   }
 }

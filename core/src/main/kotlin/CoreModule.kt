@@ -14,7 +14,6 @@ import tachiyomi.core.util.AndroidCoroutineDispatchers
 import tachiyomi.core.util.CoroutineDispatchers
 import toothpick.ktp.binding.bind
 import toothpick.ktp.binding.module
-import toothpick.ktp.binding.toClass
 
 val CoreModule = module {
 
