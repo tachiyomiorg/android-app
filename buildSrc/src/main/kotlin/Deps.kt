@@ -1,7 +1,7 @@
 object Deps {
 
   object kotlin {
-    const val version = "1.3.50"
+    const val version = "1.3.60"
     const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$version"
     const val serialization = "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.10.0"
   }
