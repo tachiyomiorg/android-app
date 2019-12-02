@@ -11,12 +11,12 @@ package tachiyomi.app
 import android.app.Application
 import tachiyomi.app.initializers.AppInitializers
 import tachiyomi.core.CoreModule
-import tachiyomi.core.di.AppScope
 import tachiyomi.core.http.HttpModule
 import tachiyomi.data.di.DataModule
 import tachiyomi.ui.di.UiModule
 import toothpick.Toothpick
 import toothpick.configuration.Configuration
+import toothpick.ktp.delegate.inject
 import toothpick.smoothie.module.SmoothieApplicationModule
 
 /**
@@ -26,6 +26,8 @@ import toothpick.smoothie.module.SmoothieApplicationModule
  */
 @Suppress("unused")
 class App : Application() {
+
+  private val initializers: AppInitializers by inject()
 
   override fun onCreate() {
     super.onCreate()
@@ -39,16 +41,15 @@ class App : Application() {
       Configuration.forProduction()
     })
 
-    val scope = Toothpick.openScope(AppScope)
-    scope.installModules(
-      SmoothieApplicationModule(this),
-      HttpModule,
-      CoreModule,
-      DataModule,
-      UiModule
-    )
-
-    scope.getInstance(AppInitializers::class.java)
+    Toothpick.openRootScope()
+      .installModules(
+        SmoothieApplicationModule(this),
+        HttpModule,
+        CoreModule,
+        DataModule,
+        UiModule
+      )
+      .inject(this)
   }
 
 }

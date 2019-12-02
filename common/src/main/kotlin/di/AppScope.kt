@@ -20,14 +20,14 @@ object AppScope {
    * Returns the root scope.
    */
   fun root(): Scope {
-    return Toothpick.openScope(this)
+    return Toothpick.openRootScope()
   }
 
   /**
    * Returns a new subscope inheriting the root scope.
    */
   fun subscope(any: Any): Scope {
-    return Toothpick.openScopes(this, any)
+    return root().openSubScope(any)
   }
 
   /**

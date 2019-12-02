@@ -41,6 +41,7 @@ dependencies {
 
   implementation(Deps.toothpick.runtime)
   implementation(Deps.toothpick.smoothie)
+  implementation(Deps.toothpick.ktp)
   kapt(Deps.toothpick.compiler)
 
   implementation(Deps.timber.android)
