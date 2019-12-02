@@ -9,6 +9,8 @@
 package tachiyomi.core.http
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import okhttp3.Call
@@ -42,7 +44,7 @@ fun OkHttpClient.post(url: String, body: RequestBody, headers: Headers? = null):
     .build())
 }
 
-suspend fun Call.await(): Response {
+suspend fun Call.awaitSuccess(): Response {
   return suspendCancellableCoroutine { continuation ->
     continuation.invokeOnCancellation {
       cancel()
@@ -92,10 +94,13 @@ suspend fun Call.awaitBody(): String {
           if (body == null) {
             continuation.resumeWithException(IllegalStateException("Response received null body"))
           } else {
-            try {
-              continuation.resume(body.string())
-            } catch (e: Exception) {
-              continuation.resumeWithException(e)
+            // TODO check if OkHttp's [cancel] propagates properly to this job
+            GlobalScope.launch(Dispatchers.IO) {
+              try {
+                continuation.resume(body.string())
+              } catch (e: Exception) {
+                continuation.resumeWithException(e)
+              }
             }
           }
         } else {

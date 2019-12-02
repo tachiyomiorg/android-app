@@ -15,8 +15,8 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody
 import org.jsoup.Jsoup
 import tachiyomi.core.http.Http
-import tachiyomi.core.http.await
 import tachiyomi.core.http.awaitBody
+import tachiyomi.core.http.awaitSuccess
 import tachiyomi.core.http.get
 import tachiyomi.core.http.post
 import tachiyomi.domain.track.model.TrackSearchResult
@@ -53,7 +53,7 @@ class MyAnimeList @Inject constructor(
     }
     val form = RequestBody.create(jsonType, payload.toString())
 
-    val response = client.post(url, form).await()
+    val response = client.post(url, form).awaitSuccess()
     response.close()
     return mediaId
   }
@@ -69,7 +69,7 @@ class MyAnimeList @Inject constructor(
     }
     val form = RequestBody.create(jsonType, payload.toString())
 
-    val response = client.post(url, form).await()
+    val response = client.post(url, form).awaitSuccess()
     response.close()
   }
 
@@ -80,7 +80,7 @@ class MyAnimeList @Inject constructor(
     }
     val form = RequestBody.create(jsonType, payload.toString())
 
-    val response = client.post(url, form).await()
+    val response = client.post(url, form).awaitSuccess()
     response.close()
   }
 
@@ -131,7 +131,7 @@ class MyAnimeList @Inject constructor(
 
   override suspend fun getState(entryId: Long): TrackState? {
     val url = "$baseUrl/ownlist/manga/$entryId/edit"
-    val response = client.get(url).await()
+    val response = client.get(url).awaitSuccess()
     val body = Jsoup.parse(response.awaitBody(), url)
 
     val lastChapterRead = body.getElementById("add_manga_num_read_chapters").`val`()
@@ -149,7 +149,7 @@ class MyAnimeList @Inject constructor(
 
   override suspend fun getEntryId(mediaId: Long): Long? {
     val url = "$baseUrl/ownlist/manga/$mediaId/edit"
-    val response = client.get(url).await()
+    val response = client.get(url).awaitSuccess()
     response.close()
 
     // If the prior request is a redirect, the manga isn't in the list
@@ -180,7 +180,7 @@ class MyAnimeList @Inject constructor(
       .add("csrf_token", csrf)
       .build()
 
-    val loginResponse = client.post(url, loginForm).await()
+    val loginResponse = client.post(url, loginForm).awaitSuccess()
 
     return loginResponse.use {
       it.priorResponse?.code == 302
