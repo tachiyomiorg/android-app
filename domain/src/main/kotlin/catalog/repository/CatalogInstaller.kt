@@ -6,20 +6,16 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package tachiyomi.domain.catalog.interactor
+package tachiyomi.domain.catalog.repository
 
 import kotlinx.coroutines.flow.Flow
 import tachiyomi.domain.catalog.model.CatalogRemote
 import tachiyomi.domain.catalog.model.InstallStep
-import tachiyomi.domain.catalog.repository.CatalogInstaller
-import javax.inject.Inject
 
-class InstallCatalog @Inject constructor(
-  private val catalogInstaller: CatalogInstaller
-) {
+interface CatalogInstaller {
 
-  fun await(catalog: CatalogRemote): Flow<InstallStep> {
-    return catalogInstaller.install(catalog)
-  }
+  fun install(catalog: CatalogRemote): Flow<InstallStep>
+
+  suspend fun uninstall(pkgName: String): Boolean
 
 }

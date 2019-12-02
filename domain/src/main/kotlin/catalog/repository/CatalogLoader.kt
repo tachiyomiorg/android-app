@@ -6,18 +6,14 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package tachiyomi.domain.catalog.interactor
+package tachiyomi.domain.catalog.repository
 
 import tachiyomi.domain.catalog.model.CatalogLocal
-import tachiyomi.domain.catalog.repository.CatalogStore
-import javax.inject.Inject
 
-class GetLocalCatalog @Inject constructor(
-  private val store: CatalogStore
-) {
+interface CatalogLoader {
 
-  fun get(sourceId: Long): CatalogLocal? {
-    return store.get(sourceId)
-  }
+  fun loadAll(): List<CatalogLocal>
+
+  fun load(pkgName: String): CatalogLocal?
 
 }

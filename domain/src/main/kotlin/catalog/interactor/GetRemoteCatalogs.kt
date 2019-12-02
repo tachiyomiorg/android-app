@@ -11,17 +11,17 @@ package tachiyomi.domain.catalog.interactor
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import tachiyomi.domain.catalog.model.CatalogRemote
-import tachiyomi.domain.catalog.repository.CatalogRepository
+import tachiyomi.domain.catalog.repository.CatalogRemoteRepository
 import javax.inject.Inject
 
 class GetRemoteCatalogs @Inject constructor(
-  private val catalogRepository: CatalogRepository
+  private val catalogRemoteRepository: CatalogRemoteRepository
 ) {
 
   fun subscribe(
     withNsfw: Boolean = true
   ): Flow<List<CatalogRemote>> {
-    return catalogRepository.getRemoteCatalogsFlow()
+    return catalogRemoteRepository.getRemoteCatalogsFlow()
       .map { catalogs ->
         if (withNsfw) {
           catalogs

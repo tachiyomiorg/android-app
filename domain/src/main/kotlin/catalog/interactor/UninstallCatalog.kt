@@ -9,15 +9,15 @@
 package tachiyomi.domain.catalog.interactor
 
 import tachiyomi.domain.catalog.model.CatalogInstalled
-import tachiyomi.domain.catalog.repository.CatalogRepository
+import tachiyomi.domain.catalog.repository.CatalogInstaller
 import javax.inject.Inject
 
 class UninstallCatalog @Inject constructor(
-  private val catalogRepository: CatalogRepository
+  private val catalogInstaller: CatalogInstaller
 ) {
 
-  suspend fun await(catalog: CatalogInstalled) {
-    return catalogRepository.uninstallCatalog(catalog)
+  suspend fun await(catalog: CatalogInstalled): Boolean {
+    return catalogInstaller.uninstall(catalog.pkgName)
   }
 
 }

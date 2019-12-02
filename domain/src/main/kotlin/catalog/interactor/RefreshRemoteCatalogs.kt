@@ -8,15 +8,15 @@
 
 package tachiyomi.domain.catalog.interactor
 
-import tachiyomi.domain.catalog.repository.CatalogRepository
+import tachiyomi.domain.catalog.repository.CatalogRemoteRepository
 import javax.inject.Inject
 
 class RefreshRemoteCatalogs @Inject constructor(
-  private val catalogRepository: CatalogRepository
+  private val catalogRemoteRepository: CatalogRemoteRepository
 ) {
 
   suspend fun await(forceRefresh: Boolean) {
-    return catalogRepository.refreshRemoteCatalogs(forceRefresh)
+    return catalogRemoteRepository.refreshRemoteCatalogs(forceRefresh)
   }
 
 }

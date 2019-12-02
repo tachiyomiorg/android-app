@@ -11,18 +11,18 @@ package tachiyomi.app.initializers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import tachiyomi.core.di.AppScope
-import tachiyomi.domain.catalog.repository.CatalogRepository
+import tachiyomi.domain.catalog.repository.CatalogStore
+import toothpick.Lazy
 import javax.inject.Inject
 
-class CatalogRepositoryInitializer @Inject constructor() {
+class CatalogStoreInitializer @Inject constructor(catalogStoreLazy: Lazy<CatalogStore>) {
 
   init {
-    // Create the catalog repository in an IO thread, because the expensive initializations are
+    // Create the catalog store in an IO thread, because the expensive initializations are
     // the extensions which are already created in computation threads and we don't want to waste
     // one of them waiting for the extensions.
     GlobalScope.launch(Dispatchers.IO) {
-      AppScope.getInstance<CatalogRepository>()
+      catalogStoreLazy.get()
     }
   }
 

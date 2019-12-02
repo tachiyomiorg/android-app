@@ -22,7 +22,7 @@ import javax.inject.Inject
 @Suppress("UNUSED_PARAMETER")
 class AppInitializers @Inject constructor(
   timberInitializer: TimberInitializer,
-  catalogRepositoryInitializer: CatalogRepositoryInitializer,
+  catalogStoreInitializer: CatalogStoreInitializer,
   cyaneaInitializer: CyaneaInitializer,
   channelsInitializer: NotificationChannelsInitializer,
   emojiCompatInitializer: EmojiCompatInitializer

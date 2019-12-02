@@ -9,30 +9,24 @@
 package tachiyomi.domain.catalog.interactor
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import tachiyomi.domain.catalog.model.CatalogLocal
 import tachiyomi.domain.catalog.model.CatalogSort
-import tachiyomi.domain.catalog.repository.CatalogRepository
+import tachiyomi.domain.catalog.repository.CatalogStore
 import tachiyomi.domain.library.repository.LibraryRepository
 import javax.inject.Inject
 
 class GetLocalCatalogs @Inject constructor(
-  private val catalogRepository: CatalogRepository,
+  private val catalogStore: CatalogStore,
   private val libraryRepository: LibraryRepository
 ) {
 
   fun subscribe(sort: CatalogSort = CatalogSort.Favorites): Flow<List<CatalogLocal>> {
-    val internalFlow = catalogRepository.getInternalCatalogsFlow()
-    val installedFlow = catalogRepository.getInstalledCatalogsFlow()
-
-    val combinedFlow = internalFlow.combine(installedFlow) { internal, installed ->
-      internal + installed
-    }
+    val flow = catalogStore.getCatalogsFlow()
 
     return when (sort) {
-      CatalogSort.Name -> sortByName(combinedFlow)
-      CatalogSort.Favorites -> sortByFavorites(combinedFlow)
+      CatalogSort.Name -> sortByName(flow)
+      CatalogSort.Favorites -> sortByFavorites(flow)
     }
   }
 

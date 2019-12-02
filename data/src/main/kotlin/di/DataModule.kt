@@ -11,10 +11,12 @@ package tachiyomi.data.di
 import com.pushtorefresh.storio3.sqlite.StorIOSQLite
 import tachiyomi.core.db.StorIOTransaction
 import tachiyomi.core.db.Transaction
-import tachiyomi.data.catalog.installer.CatalogInstaller
+import tachiyomi.data.catalog.installer.AndroidCatalogInstallationReceiver
+import tachiyomi.data.catalog.installer.AndroidCatalogInstaller
+import tachiyomi.data.catalog.installer.AndroidCatalogLoader
 import tachiyomi.data.catalog.prefs.CatalogPreferences
 import tachiyomi.data.catalog.prefs.CatalogPreferencesProvider
-import tachiyomi.data.catalog.repository.CatalogRepositoryImpl
+import tachiyomi.data.catalog.repository.CatalogRemoteRepositoryImpl
 import tachiyomi.data.library.prefs.LibraryPreferencesProvider
 import tachiyomi.data.library.repository.CategoryRepositoryImpl
 import tachiyomi.data.library.repository.LibraryCoversImpl
@@ -25,7 +27,11 @@ import tachiyomi.data.manga.repository.ChapterRepositoryImpl
 import tachiyomi.data.manga.repository.MangaRepositoryImpl
 import tachiyomi.data.sync.api.SyncDeviceAndroid
 import tachiyomi.data.sync.prefs.SyncPreferencesProvider
-import tachiyomi.domain.catalog.repository.CatalogRepository
+import tachiyomi.domain.catalog.repository.CatalogInstallationReceiver
+import tachiyomi.domain.catalog.repository.CatalogInstaller
+import tachiyomi.domain.catalog.repository.CatalogLoader
+import tachiyomi.domain.catalog.repository.CatalogRemoteRepository
+import tachiyomi.domain.catalog.repository.CatalogStore
 import tachiyomi.domain.library.prefs.LibraryPreferences
 import tachiyomi.domain.library.repository.CategoryRepository
 import tachiyomi.domain.library.repository.LibraryCovers
@@ -59,8 +65,11 @@ val DataModule = module {
   bind<SyncPreferences>().toProvider(SyncPreferencesProvider::class).providesSingleton()
   bind<SyncDevice>().toClass<SyncDeviceAndroid>().singleton()
 
-  bind<CatalogInstaller>().singleton()
-  bind<CatalogRepository>().toClass<CatalogRepositoryImpl>().singleton()
+  bind<CatalogRemoteRepository>().toClass<CatalogRemoteRepositoryImpl>().singleton()
   bind<CatalogPreferences>().toProvider(CatalogPreferencesProvider::class).providesSingleton()
+  bind<CatalogInstaller>().toClass<AndroidCatalogInstaller>().singleton()
+  bind<CatalogStore>().singleton()
+  bind<CatalogInstallationReceiver>().toClass<AndroidCatalogInstallationReceiver>()
+  bind<CatalogLoader>().toClass<AndroidCatalogLoader>()
 
 }

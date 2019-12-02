@@ -13,16 +13,16 @@ import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.single
 import tachiyomi.domain.catalog.model.CatalogInstalled
 import tachiyomi.domain.catalog.model.InstallStep
-import tachiyomi.domain.catalog.repository.CatalogRepository
+import tachiyomi.domain.catalog.repository.CatalogRemoteRepository
 import javax.inject.Inject
 
 class UpdateCatalog @Inject constructor(
-  private val catalogRepository: CatalogRepository,
+  private val catalogRemoteRepository: CatalogRemoteRepository,
   private val installCatalog: InstallCatalog
 ) {
 
   suspend fun await(catalog: CatalogInstalled): Flow<InstallStep> {
-    val catalogs = catalogRepository.getRemoteCatalogsFlow().single()
+    val catalogs = catalogRemoteRepository.getRemoteCatalogsFlow().single()
 
     val catalogToUpdate = catalogs.find { it.pkgName == catalog.pkgName }
     return if (catalogToUpdate == null) {

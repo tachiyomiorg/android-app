@@ -12,21 +12,22 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import tachiyomi.domain.catalog.model.CatalogInstalled
-import tachiyomi.domain.catalog.repository.CatalogRepository
+import tachiyomi.domain.catalog.repository.CatalogStore
 import javax.inject.Inject
 
 class GetInstalledCatalog @Inject constructor(
-  private val catalogRepository: CatalogRepository
+  private val catalogStore: CatalogStore
 ) {
 
   fun get(pkgName: String): CatalogInstalled? {
-    return catalogRepository.installedCatalogs.find { it.pkgName == pkgName }
+    return catalogStore.catalogs.find { (it as? CatalogInstalled)?.pkgName == pkgName }
+      as? CatalogInstalled
   }
 
   fun subscribe(pkgName: String): Flow<CatalogInstalled?> {
-    return catalogRepository.getInstalledCatalogsFlow()
+    return catalogStore.getCatalogsFlow()
       .map { catalogs ->
-        catalogs.find { it.pkgName == pkgName }
+        catalogs.find { (it as? CatalogInstalled)?.pkgName == pkgName } as? CatalogInstalled
       }
       .distinctUntilChanged()
   }

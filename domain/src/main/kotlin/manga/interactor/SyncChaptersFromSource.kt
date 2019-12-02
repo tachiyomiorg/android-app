@@ -12,7 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import tachiyomi.core.db.Transaction
 import tachiyomi.core.util.Optional
-import tachiyomi.domain.catalog.repository.CatalogRepository
+import tachiyomi.domain.catalog.repository.CatalogStore
 import tachiyomi.domain.manga.model.Chapter
 import tachiyomi.domain.manga.model.MangaBase
 import tachiyomi.domain.manga.model.MangaUpdate
@@ -26,7 +26,7 @@ import javax.inject.Provider
 class SyncChaptersFromSource @Inject constructor(
   private val chapterRepository: ChapterRepository,
   private val mangaRepository: MangaRepository,
-  private val catalogRepository: CatalogRepository,
+  private val catalogStore: CatalogStore,
   private val transactions: Provider<Transaction>
 ) {
 
@@ -38,7 +38,7 @@ class SyncChaptersFromSource @Inject constructor(
 
   suspend fun await(manga: MangaBase): Result {
     val mangaInfo = MangaInfo(manga.key, manga.title)
-    val catalog = catalogRepository.get(manga.sourceId)
+    val catalog = catalogStore.get(manga.sourceId)
     val source = catalog?.source ?: return Result.SourceNotFound(manga.sourceId)
 
     // Chapters from source.

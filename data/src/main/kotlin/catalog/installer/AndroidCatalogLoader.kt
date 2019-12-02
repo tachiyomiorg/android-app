@@ -15,59 +15,75 @@ import android.content.pm.PackageManager
 import dalvik.system.PathClassLoader
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import tachiyomi.core.http.Http
 import tachiyomi.core.prefs.AndroidPreferenceStore
 import tachiyomi.core.prefs.LazyPreferenceStore
+import tachiyomi.data.BuildConfig
 import tachiyomi.domain.catalog.model.CatalogInstalled
+import tachiyomi.domain.catalog.model.CatalogInternal
+import tachiyomi.domain.catalog.model.CatalogLocal
+import tachiyomi.domain.catalog.repository.CatalogLoader
 import tachiyomi.source.Dependencies
 import tachiyomi.source.Source
+import tachiyomi.source.TestSource
 import timber.log.Timber
-import timber.log.error
+import timber.log.warn
 import javax.inject.Inject
 
 /**
  * Class that handles the loading of the extensions installed in the system.
  */
-internal class CatalogLoader @Inject constructor(
+internal class AndroidCatalogLoader @Inject constructor(
   private val context: Application,
   private val http: Http
-) {
+) : CatalogLoader {
 
   /**
    * Return a list of all the installed extensions initialized concurrently.
    */
-  fun loadExtensions(): List<Result> {
+  override fun loadAll(): List<CatalogLocal> {
+    val internalCatalogs = mutableListOf<CatalogLocal>()
+    if (BuildConfig.DEBUG) {
+      val testCatalog = CatalogInternal(TestSource(), "Source used for testing")
+      internalCatalogs.add(testCatalog)
+    }
+
     val pkgManager = context.packageManager
     val installedPkgs = pkgManager.getInstalledPackages(PACKAGE_FLAGS)
     val extPkgs = installedPkgs.filter { isPackageAnExtension(it) }
 
-    if (extPkgs.isEmpty()) return emptyList()
+    if (extPkgs.isEmpty()) return internalCatalogs
 
     // Load each extension concurrently and wait for completion
-    return runBlocking {
+    val installedCatalogs = runBlocking {
       val deferred = extPkgs.map { pkgInfo ->
         async(Dispatchers.Default) {
           loadExtension(pkgInfo.packageName, pkgInfo)
         }
       }
-      deferred.map { it.await() }
-    }
+      deferred.awaitAll()
+    }.filterNotNull()
+
+    return internalCatalogs + installedCatalogs
   }
 
   /**
    * Attempts to load an extension from the given package name. It checks if the extension
    * contains the required feature flag before trying to load it.
    */
-  fun loadExtensionFromPkgName(pkgName: String): Result {
+  override fun load(pkgName: String): CatalogLocal? {
     val pkgInfo = try {
       context.packageManager.getPackageInfo(pkgName, PACKAGE_FLAGS)
     } catch (error: PackageManager.NameNotFoundException) {
       // Unlikely, but the package may have been uninstalled at this point
-      return Result.Error(error)
+      Timber.warn { "Failed to load extension: the package $pkgName isn't installed, ignoring..." }
+      return null
     }
     if (!isPackageAnExtension(pkgInfo)) {
-      return Result.Error("Tried to load a package that wasn't a extension")
+      Timber.warn { "The package $pkgName isn't an extension, ignoring..." }
+      return null
     }
     return loadExtension(pkgName, pkgInfo)
   }
@@ -78,17 +94,18 @@ internal class CatalogLoader @Inject constructor(
    * @param pkgName The package name of the extension to load.
    * @param pkgInfo The package info of the extension.
    */
-  private fun loadExtension(pkgName: String, pkgInfo: PackageInfo): Result {
+  private fun loadExtension(pkgName: String, pkgInfo: PackageInfo): CatalogLocal? {
     val pkgManager = context.packageManager
 
     val appInfo = try {
       pkgManager.getApplicationInfo(pkgName, PackageManager.GET_META_DATA)
     } catch (error: PackageManager.NameNotFoundException) {
       // Unlikely, but the package may have been uninstalled at this point
-      return Result.Error(error)
+      Timber.warn { "Failed to load extension: the package $pkgName isn't installed, ignoring..." }
+      return null
     }
 
-    val extName = pkgManager.getApplicationLabel(appInfo)?.toString().orEmpty()
+    val extName = pkgManager.getApplicationLabel(appInfo).toString()
     @Suppress("DEPRECATION")
     val versionCode = pkgInfo.versionCode
     val versionName = pkgInfo.versionName
@@ -96,17 +113,21 @@ internal class CatalogLoader @Inject constructor(
     // Validate lib version
     val majorLibVersion = versionName.substringBefore('.').toInt()
     if (majorLibVersion < LIB_VERSION_MIN || majorLibVersion > LIB_VERSION_MAX) {
-      val exception = Exception("Lib version is $majorLibVersion, while only versions " +
-        "$LIB_VERSION_MIN to $LIB_VERSION_MAX are allowed")
-      //Timber.w(exception) // TODO
-      return Result.Error(exception)
+      val exception = "Failed to load extension: the package $pkgName lib version is " +
+        "$majorLibVersion, while only versions " +
+        "$LIB_VERSION_MIN to $LIB_VERSION_MAX are allowed"
+      Timber.warn { exception }
+      return null
     }
 
     val classLoader = PathClassLoader(appInfo.sourceDir, null, context.classLoader)
 
     val metadata = appInfo.metaData
     val sourceClassName = metadata.getString(METADATA_SOURCE_CLASS)?.trim()
-      ?: return Result.Error("Source class not found in manifest")
+    if (sourceClassName == null) {
+      Timber.warn { "Failed to load extension: the package $pkgName didn't define source class" }
+      return null
+    }
 
     val fullSourceClassName = if (sourceClassName.startsWith(".")) {
       pkgInfo.packageName + sourceClassName
@@ -128,16 +149,13 @@ internal class CatalogLoader @Inject constructor(
 
       obj as? Source ?: throw Exception("Unknown source class type! ${obj.javaClass}")
     } catch (e: Throwable) {
-      Timber.error(e) { "Extension load error: $extName." }
-      return Result.Error(e)
+      Timber.warn(e) { "Failed to load extension: the package $pkgName threw an exception" }
+      return null
     }
 
-    val description = metadata.getString(METADATA_DESCRIPTION)?.takeIf { it.isNotEmpty() }
-      ?: "Installed catalog description"
+    val description = metadata.getString(METADATA_DESCRIPTION).orEmpty()
 
-    val catalog = CatalogInstalled(
-      source.name, description, source, pkgName, versionName, versionCode)
-    return Result.Success(catalog)
+    return CatalogInstalled(source.name, description, source, pkgName, versionName, versionCode)
   }
 
   /**
@@ -159,13 +177,6 @@ internal class CatalogLoader @Inject constructor(
 
     @Suppress("DEPRECATION")
     const val PACKAGE_FLAGS = PackageManager.GET_CONFIGURATIONS
-  }
-
-  sealed class Result {
-    class Success(val catalog: CatalogInstalled) : Result()
-    class Error(val message: String? = null) : Result() {
-      constructor(exception: Throwable) : this(exception.message)
-    }
   }
 
 }
