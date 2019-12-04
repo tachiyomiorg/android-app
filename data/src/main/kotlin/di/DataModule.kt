@@ -8,9 +8,8 @@
 
 package tachiyomi.data.di
 
-import com.pushtorefresh.storio3.sqlite.StorIOSQLite
-import tachiyomi.core.db.StorIOTransaction
 import tachiyomi.core.db.Transaction
+import tachiyomi.data.AppDatabase
 import tachiyomi.data.catalog.installer.AndroidCatalogInstallationReceiver
 import tachiyomi.data.catalog.installer.AndroidCatalogInstaller
 import tachiyomi.data.catalog.installer.AndroidCatalogLoader
@@ -47,8 +46,8 @@ import toothpick.ktp.binding.module
 
 val DataModule = module {
 
-  bind<StorIOSQLite>().toProvider(StorIOProvider::class).providesSingleton()
-  bind<Transaction>().toClass<StorIOTransaction>()
+  bind<AppDatabase>().toProvider(RoomDatabaseProvider::class).providesSingleton()
+  bind<Transaction>().toClass<RoomTransaction>()
 
   bind<MangaRepository>().toClass<MangaRepositoryImpl>().singleton()
 

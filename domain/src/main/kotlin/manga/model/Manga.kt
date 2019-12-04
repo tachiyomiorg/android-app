@@ -11,14 +11,14 @@ package tachiyomi.domain.manga.model
 import tachiyomi.source.model.MangaInfo
 
 data class Manga(
-  override val id: Long = -1,
+  override val id: Long = 0,
   override val sourceId: Long,
   override val key: String,
   override val title: String,
   val artist: String = "",
   val author: String = "",
   val description: String = "",
-  val genres: List<String> = emptyList(),
+  val genres: Genres = Genres(),
   val status: Int = MangaInfo.UNKNOWN,
   val cover: String = "",
   val favorite: Boolean = false,

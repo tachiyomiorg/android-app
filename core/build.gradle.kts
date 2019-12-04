@@ -17,7 +17,6 @@ dependencies {
   apiProject(Projects.common)
 
   implementation(Deps.duktape)
-  implementation(Deps.storio)
   implementation(Deps.androidX.core)
   implementation(Deps.androidX.sqlite)
   implementation(Deps.coroutines.core)

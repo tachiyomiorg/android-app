@@ -12,12 +12,10 @@ import tachiyomi.domain.library.model.MangaCategory
 
 interface MangaCategoryRepository {
 
-  fun save(mangaCategory: MangaCategory)
+  suspend fun replaceAll(mangaCategories: List<MangaCategory>)
 
-  fun save(mangaCategories: Collection<MangaCategory>)
+  suspend fun deleteForManga(mangaId: Long)
 
-  fun deleteForManga(mangaId: Long)
-
-  fun deleteForMangas(mangaIds: Collection<Long>)
+  suspend fun deleteForMangas(mangaIds: List<Long>)
 
 }

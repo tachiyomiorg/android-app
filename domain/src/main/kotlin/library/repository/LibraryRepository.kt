@@ -20,12 +20,12 @@ interface LibraryRepository {
 
   fun subscribeToCategory(categoryId: Long, sort: LibrarySorting): Flow<List<LibraryManga>>
 
-  fun findAll(sort: LibrarySorting): List<LibraryManga>
+  suspend fun findAll(sort: LibrarySorting): List<LibraryManga>
 
-  fun findUncategorized(sort: LibrarySorting): List<LibraryManga>
+  suspend fun findUncategorized(sort: LibrarySorting): List<LibraryManga>
 
-  fun findForCategory(categoryId: Long, sort: LibrarySorting): List<LibraryManga>
+  suspend fun findForCategory(categoryId: Long, sort: LibrarySorting): List<LibraryManga>
 
-  fun findFavoriteSourceIds(): List<Long>
+  suspend fun findFavoriteSourceIds(): List<Long>
 
 }

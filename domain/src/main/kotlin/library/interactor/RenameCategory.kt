@@ -11,7 +11,6 @@ package tachiyomi.domain.library.interactor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
-import tachiyomi.core.util.Optional
 import tachiyomi.domain.library.model.Category
 import tachiyomi.domain.library.model.CategoryUpdate
 import tachiyomi.domain.library.repository.CategoryRepository
@@ -42,11 +41,11 @@ class RenameCategory @Inject constructor(
 
     val update = CategoryUpdate(
       id = categoryId,
-      name = Optional.of(newName)
+      name = newName
     )
 
     try {
-      withContext(Dispatchers.IO) { categoryRepository.savePartial(update) }
+      withContext(Dispatchers.IO) { categoryRepository.updatePartial(update) }
     } catch (e: Exception) {
       return@f Result.InternalError(e)
     }

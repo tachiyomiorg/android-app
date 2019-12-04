@@ -18,20 +18,20 @@ interface ChapterRepository {
 
   fun subscribe(chapterId: Long): Flow<Chapter?>
 
-  fun findForManga(mangaId: Long): List<Chapter>
+  suspend fun findForManga(mangaId: Long): List<Chapter>
 
-  fun find(chapterId: Long): Chapter?
+  suspend fun find(chapterId: Long): Chapter?
 
-  fun find(chapterKey: String, mangaId: Long): Chapter?
+  suspend fun find(chapterKey: String, mangaId: Long): Chapter?
 
-  fun save(chapters: List<Chapter>)
+  suspend fun insert(chapters: List<Chapter>)
 
-  fun savePartial(update: List<ChapterUpdate>)
+  suspend fun update(chapters: List<Chapter>)
 
-  fun saveNewOrder(chapters: List<Chapter>)
+  suspend fun updatePartial(updates: List<ChapterUpdate>)
 
-  fun delete(chapterId: Long)
+  suspend fun updateOrder(chapters: List<Chapter>)
 
-  fun delete(chapterIds: List<Long>)
+  suspend fun delete(chapters: List<Chapter>)
 
 }

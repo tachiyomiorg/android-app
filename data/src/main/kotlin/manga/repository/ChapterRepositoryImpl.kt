@@ -8,116 +8,58 @@
 
 package tachiyomi.data.manga.repository
 
-import com.pushtorefresh.storio3.sqlite.StorIOSQLite
-import com.pushtorefresh.storio3.sqlite.operations.get.PreparedGetListOfObjects
-import com.pushtorefresh.storio3.sqlite.operations.get.PreparedGetObject
-import com.pushtorefresh.storio3.sqlite.queries.Query
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import tachiyomi.core.db.asBlocking
-import tachiyomi.core.db.withId
-import tachiyomi.core.db.withIds
-import tachiyomi.data.manga.sql.ChapterSourceOrderPutResolver
-import tachiyomi.data.manga.sql.ChapterTable
-import tachiyomi.data.manga.sql.ChapterUpdatePutResolver
+import tachiyomi.data.AppDatabase
 import tachiyomi.domain.manga.model.Chapter
 import tachiyomi.domain.manga.model.ChapterUpdate
 import tachiyomi.domain.manga.repository.ChapterRepository
 import javax.inject.Inject
 
 class ChapterRepositoryImpl @Inject constructor(
-  private val storio: StorIOSQLite
+  db: AppDatabase
 ) : ChapterRepository {
 
-  private fun preparedChapter(chapterId: Long): PreparedGetObject<Chapter> {
-    return storio.get()
-      .`object`(Chapter::class.java)
-      .withQuery(Query.builder()
-        .table(ChapterTable.TABLE)
-        .where("${ChapterTable.COL_ID} = ?")
-        .whereArgs(chapterId)
-        .build())
-      .prepare()
-  }
-
-  private fun preparedChapters(mangaId: Long): PreparedGetListOfObjects<Chapter> {
-    return storio.get()
-      .listOfObjects(Chapter::class.java)
-      .withQuery(Query.builder()
-        .table(ChapterTable.TABLE)
-        .where("${ChapterTable.COL_MANGA_ID} = ?")
-        .whereArgs(mangaId)
-        .build())
-      .prepare()
-  }
+  private val dao = db.chapter
 
   override fun subscribeForManga(mangaId: Long): Flow<List<Chapter>> {
-    return preparedChapters(mangaId)
-      .asFlow()
-      .distinctUntilChanged() // TODO do we want to run a distinct?
+    return dao.subscribeForManga(mangaId).distinctUntilChanged()
   }
 
   override fun subscribe(chapterId: Long): Flow<Chapter?> {
-    return preparedChapter(chapterId)
-      .asFlow()
-      .distinctUntilChanged()
+    return dao.subscribe(chapterId).distinctUntilChanged()
   }
 
-  override fun findForManga(mangaId: Long): List<Chapter> {
-    return preparedChapters(mangaId).asBlocking()
+  override suspend fun findForManga(mangaId: Long): List<Chapter> {
+    return dao.findForManga(mangaId)
   }
 
-  override fun find(chapterId: Long): Chapter? {
-    return preparedChapter(chapterId).asBlocking()
+  override suspend fun find(chapterId: Long): Chapter? {
+    return dao.find(chapterId)
   }
 
-  override fun find(chapterKey: String, mangaId: Long): Chapter? {
-    return storio.get()
-      .`object`(Chapter::class.java)
-      .withQuery(Query.builder()
-        .table(ChapterTable.TABLE)
-        .where("${ChapterTable.COL_KEY} = ? AND ${ChapterTable.COL_MANGA_ID} = ?")
-        .whereArgs(chapterKey, mangaId)
-        .build())
-      .prepare()
-      .asBlocking()
+  override suspend fun find(chapterKey: String, mangaId: Long): Chapter? {
+    return dao.find(chapterKey, mangaId)
   }
 
-  override fun save(chapters: List<Chapter>) {
-    storio.put()
-      .objects(chapters)
-      .prepare()
-      .asBlocking()
+  override suspend fun insert(chapters: List<Chapter>) {
+    dao.insert(chapters)
   }
 
-  override fun savePartial(update: List<ChapterUpdate>) {
-    storio.put()
-      .objects(update)
-      .withPutResolver(ChapterUpdatePutResolver)
-      .prepare()
-      .asBlocking()
+  override suspend fun update(chapters: List<Chapter>) {
+    dao.update(chapters)
   }
 
-  override fun saveNewOrder(chapters: List<Chapter>) {
-    storio.put()
-      .objects(chapters)
-      .withPutResolver(ChapterSourceOrderPutResolver)
-      .prepare()
-      .asBlocking()
+  override suspend fun updatePartial(updates: List<ChapterUpdate>) {
+    dao.updatePartial(updates)
   }
 
-  override fun delete(chapterId: Long) {
-    storio.delete()
-      .withId(ChapterTable.TABLE, ChapterTable.COL_ID, chapterId)
-      .prepare()
-      .asBlocking()
+  override suspend fun updateOrder(chapters: List<Chapter>) {
+    dao.updateOrder(chapters)
   }
 
-  override fun delete(chapterIds: List<Long>) {
-    storio.delete()
-      .withIds(ChapterTable.TABLE, ChapterTable.COL_ID, chapterIds)
-      .prepare()
-      .asBlocking()
+  override suspend fun delete(chapters: List<Chapter>) {
+    dao.delete(chapters)
   }
 
 }

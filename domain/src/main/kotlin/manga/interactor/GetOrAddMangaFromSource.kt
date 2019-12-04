@@ -10,6 +10,7 @@ package tachiyomi.domain.manga.interactor
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import tachiyomi.domain.manga.model.Genres
 import tachiyomi.domain.manga.model.Manga
 import tachiyomi.domain.manga.repository.MangaRepository
 import tachiyomi.source.model.MangaInfo
@@ -25,18 +26,18 @@ class GetOrAddMangaFromSource @Inject internal constructor(
       dbManga
     } else {
       val newManga = Manga(
-        id = -1,
+        id = 0,
         sourceId = sourceId,
         key = manga.key,
         title = manga.title,
         artist = manga.artist,
         author = manga.author,
         description = manga.description,
-        genres = manga.genres,
+        genres = Genres(manga.genres),
         status = manga.status,
         cover = manga.cover
       )
-      val id = mangaRepository.save(newManga)!!
+      val id = mangaRepository.insert(newManga)
       newManga.copy(id = id)
     }
   }

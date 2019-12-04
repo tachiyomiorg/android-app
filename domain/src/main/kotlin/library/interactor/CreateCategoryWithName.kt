@@ -31,13 +31,13 @@ class CreateCategoryWithName @Inject constructor(
 
     val nextOrder = categories.maxBy { it.order }?.order?.plus(1) ?: 0
     val newCategory = Category(
-      id = -1,
+      id = 0,
       name = name,
       order = nextOrder
     )
 
     try {
-      withContext(Dispatchers.IO) { categoryRepository.save(newCategory) }
+      withContext(Dispatchers.IO) { categoryRepository.insert(newCategory) }
     } catch (e: Exception) {
       return@f Result.InternalError(e)
     }

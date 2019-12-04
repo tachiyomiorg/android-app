@@ -8,35 +8,26 @@
 
 package tachiyomi.data.catalog.repository
 
-import android.app.Application
 import android.os.SystemClock
-import com.pushtorefresh.storio3.sqlite.StorIOSQLite
-import com.pushtorefresh.storio3.sqlite.queries.DeleteQuery
-import com.pushtorefresh.storio3.sqlite.queries.Query
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import tachiyomi.core.db.inTransaction
+import tachiyomi.data.AppDatabase
 import tachiyomi.data.catalog.api.CatalogGithubApi
-import tachiyomi.data.catalog.installer.AndroidCatalogInstaller
-import tachiyomi.data.catalog.installer.AndroidCatalogLoader
-import tachiyomi.data.catalog.sql.CatalogTable
 import tachiyomi.domain.catalog.model.CatalogRemote
 import tachiyomi.domain.catalog.repository.CatalogRemoteRepository
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 internal class CatalogRemoteRepositoryImpl @Inject constructor(
-  private val context: Application,
-  private val storio: StorIOSQLite,
-  private val loader: AndroidCatalogLoader,
-  private val installer: AndroidCatalogInstaller,
+  db: AppDatabase,
   private val api: CatalogGithubApi
 ) : CatalogRemoteRepository {
+
+  private val dao = db.catalogRemote
 
   var remoteCatalogs = emptyList<CatalogRemote>()
     private set(value) {
@@ -60,16 +51,7 @@ internal class CatalogRemoteRepositoryImpl @Inject constructor(
 
   private fun initRemoteCatalogs() {
     GlobalScope.launch(Dispatchers.IO) {
-      val catalogs = storio.get()
-        .listOfObjects(CatalogRemote::class.java)
-        .withQuery(Query.builder()
-          .table(CatalogTable.TABLE)
-          .orderBy("${CatalogTable.COL_LANG}, ${CatalogTable.COL_NAME}")
-          .build())
-        .prepare()
-        .executeAsBlocking()
-
-      remoteCatalogs = catalogs
+      remoteCatalogs = dao.findAll()
       refreshRemoteCatalogs(false)
     }
   }
@@ -83,21 +65,9 @@ internal class CatalogRemoteRepositoryImpl @Inject constructor(
     }
     lastTimeApiChecked = SystemClock.elapsedRealtime()
 
-    withContext(Dispatchers.IO) {
-      val newCatalogs = api.findCatalogs()
-      storio.inTransaction {
-        storio.delete()
-          .byQuery(DeleteQuery.builder().table(CatalogTable.TABLE).build())
-          .prepare()
-          .executeAsBlocking()
-
-        storio.put()
-          .objects(newCatalogs)
-          .prepare()
-          .executeAsBlocking()
-      }
-      remoteCatalogs = newCatalogs
-    }
+    val newCatalogs = api.findCatalogs()
+    dao.replaceAll(newCatalogs)
+    remoteCatalogs = newCatalogs
   }
 
 }

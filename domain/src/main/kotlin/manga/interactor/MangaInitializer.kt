@@ -10,9 +10,9 @@ package tachiyomi.domain.manga.interactor
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import tachiyomi.core.util.Optional
-import tachiyomi.domain.catalog.repository.CatalogRepository
+import tachiyomi.domain.catalog.repository.CatalogStore
 import tachiyomi.domain.library.repository.LibraryCovers
+import tachiyomi.domain.manga.model.Genres
 import tachiyomi.domain.manga.model.Manga
 import tachiyomi.domain.manga.model.MangaUpdate
 import tachiyomi.domain.manga.repository.MangaRepository
@@ -23,7 +23,7 @@ import javax.inject.Inject
 
 class MangaInitializer @Inject internal constructor(
   private val mangaRepository: MangaRepository,
-  private val catalogRepository: CatalogRepository,
+  private val catalogStore: CatalogStore,
   private val libraryCovers: LibraryCovers
 ) {
 
@@ -39,7 +39,7 @@ class MangaInitializer @Inject internal constructor(
       artist = manga.artist,
       author = manga.author,
       description = manga.description,
-      genres = manga.genres,
+      genres = manga.genres.values.toList(),
       status = manga.status,
       cover = manga.cover
     )
@@ -48,22 +48,22 @@ class MangaInitializer @Inject internal constructor(
     val update = MangaUpdate(
       id = manga.id,
       key = if (newInfo.key.isEmpty() || newInfo.key == manga.key) {
-        Optional.None
+        null
       } else {
-        Optional.of(newInfo.key)
+        newInfo.key
       },
       title = if (newInfo.title.isEmpty() || newInfo.title == manga.title) {
-        Optional.None
+        null
       } else {
-        Optional.of(newInfo.title)
+        newInfo.title
       },
-      artist = Optional.of(newInfo.artist),
-      author = Optional.of(newInfo.author),
-      description = Optional.of(newInfo.description),
-      genres = Optional.of(newInfo.genres),
-      status = Optional.of(newInfo.status),
-      cover = Optional.of(newInfo.cover),
-      lastInit = Optional.of(now)
+      artist = newInfo.artist,
+      author = newInfo.author,
+      description = newInfo.description,
+      genres = Genres(newInfo.genres),
+      status = newInfo.status,
+      cover = newInfo.cover,
+      lastInit = now
     )
 
     val updatedManga = manga.copy(
@@ -72,14 +72,14 @@ class MangaInitializer @Inject internal constructor(
       artist = newInfo.artist,
       author = newInfo.author,
       description = newInfo.description,
-      genres = newInfo.genres,
+      genres = Genres(newInfo.genres),
       status = newInfo.status,
       cover = newInfo.cover,
       lastInit = now
     )
 
     withContext(Dispatchers.IO) {
-      mangaRepository.savePartial(update)
+      mangaRepository.updatePartial(update)
       libraryCovers.find(manga.id).setLastModified(now)
     }
 
@@ -87,7 +87,7 @@ class MangaInitializer @Inject internal constructor(
   }
 
   suspend fun await(manga: Manga, force: Boolean = false): Manga? {
-    val source = catalogRepository.get(manga.sourceId)?.source ?: return null
+    val source = catalogStore.get(manga.sourceId)?.source ?: return null
     return await(source, manga, force)
   }
 

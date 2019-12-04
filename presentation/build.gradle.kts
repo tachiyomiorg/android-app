@@ -19,7 +19,7 @@ dependencies {
   implementationProject(Projects.coreUi)
   implementationProject(Projects.sourceApi)
   implementationProject(Projects.domain)
-  implementationProject(Projects.data)
+  implementationProject(Projects.data) // TODO remove data dependency
 
   implementation(Deps.androidX.design)
   implementation(Deps.androidX.appCompat)

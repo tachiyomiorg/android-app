@@ -18,7 +18,9 @@ dependencies {
   implementationProject(Projects.domain)
   implementationProject(Projects.sourceApi)
 
-  implementation(Deps.storio)
+  implementation(Deps.room.runtime)
+  implementation(Deps.room.ktx)
+  kapt(Deps.room.compiler)
   implementation(Deps.sqlite)
   implementation(Deps.coroutines.core)
   implementation(Deps.coroutines.android)
@@ -30,5 +32,4 @@ dependencies {
   implementation(Deps.toothpick.ktp)
   kapt(Deps.toothpick.compiler)
 
-  implementation(Deps.androidX.appCompat)
 }

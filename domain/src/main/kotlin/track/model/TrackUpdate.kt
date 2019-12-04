@@ -8,16 +8,14 @@
 
 package tachiyomi.domain.track.model
 
-import tachiyomi.core.util.Optional
-
 data class TrackUpdate(
   val id: Long,
-  val entryId: Optional<Long> = Optional.None,
-  val mediaId: Optional<Long> = Optional.None,
-  val mediaUrl: Optional<String> = Optional.None,
-  val title: Optional<String> = Optional.None,
-  val lastChapterRead: Optional<Float> = Optional.None,
-  val totalChapters: Optional<Int> = Optional.None,
-  val score: Optional<Float> = Optional.None,
-  val status: Optional<TrackStatus> = Optional.None
+  val entryId: Long? = null,
+  val mediaId: Long? = null,
+  val mediaUrl: String? = null,
+  val title: String? = null,
+  val lastChapterRead: Float? = null,
+  val totalChapters: Int? = null,
+  val score: Float? = null,
+  val status: TrackStatus? = null
 )

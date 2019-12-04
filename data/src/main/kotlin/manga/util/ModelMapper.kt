@@ -8,6 +8,7 @@
 
 package tachiyomi.data.manga.util
 
+import tachiyomi.domain.manga.model.Genres
 import tachiyomi.domain.manga.model.Manga
 import tachiyomi.source.model.MangaInfo
 
@@ -20,7 +21,7 @@ internal fun MangaInfo.asDbManga(sourceId: Long): Manga {
     artist = artist,
     author = author,
     description = description,
-    genres = genres,
+    genres = Genres(),
     status = status,
     cover = cover,
     favorite = false,

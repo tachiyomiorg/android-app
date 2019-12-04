@@ -8,10 +8,8 @@
 
 package tachiyomi.domain.track.model
 
-import tachiyomi.core.util.Optional
-
 data class TrackStateUpdate(
-  val lastChapterRead: Optional<Float> = Optional.None,
-  val score: Optional<Float> = Optional.None,
-  val status: Optional<TrackStatus> = Optional.None
+  val lastChapterRead: Float? = null,
+  val score: Float? = null,
+  val status: TrackStatus? = null
 )

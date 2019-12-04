@@ -22,7 +22,7 @@ class GetCommonCategories @Inject constructor(
     return withContext(Dispatchers.IO) {
       val commonCategories = sortedSetOf<Category>(compareBy { it.id })
       mangas.forEachIndexed { index, manga ->
-        val categories = categoryRepository.findForManga(manga.id)
+        val categories = categoryRepository.findCategoriesOfManga(manga.id)
         if (index == 0) {
           commonCategories.addAll(categories)
         } else {

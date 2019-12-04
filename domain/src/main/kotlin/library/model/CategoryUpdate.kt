@@ -8,14 +8,9 @@
 
 package tachiyomi.domain.library.model
 
-import tachiyomi.core.util.Optional
-
 data class CategoryUpdate(
   val id: Long,
-  val name: Optional<String> = Optional.None,
-  val order: Optional<Int> = Optional.None,
-  val updateInterval: Optional<Int> = Optional.None,
-  val useOwnFilters: Optional<Boolean> = Optional.None,
-  val filters: Optional<List<LibraryFilter>> = Optional.None,
-  val sort: Optional<LibrarySorting> = Optional.None
+  val name: String? = null,
+  val order: Int? = null,
+  val updateInterval: Int? = null
 )

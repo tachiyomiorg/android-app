@@ -18,14 +18,14 @@ interface MangaRepository {
 
   fun subscribe(key: String, sourceId: Long): Flow<Manga?>
 
-  fun find(mangaId: Long): Manga?
+  suspend fun find(mangaId: Long): Manga?
 
-  fun find(key: String, sourceId: Long): Manga?
+  suspend fun find(key: String, sourceId: Long): Manga?
 
-  fun save(manga: Manga): Long?
+  suspend fun insert(manga: Manga): Long
 
-  fun savePartial(update: MangaUpdate)
+  suspend fun updatePartial(update: MangaUpdate)
 
-  fun deleteNonFavorite()
+  suspend fun deleteNonFavorite()
 
 }

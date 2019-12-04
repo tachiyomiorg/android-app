@@ -8,45 +8,27 @@
 
 package tachiyomi.data.library.repository
 
-import com.pushtorefresh.storio3.sqlite.StorIOSQLite
-import tachiyomi.core.db.asBlocking
-import tachiyomi.core.db.withId
-import tachiyomi.core.db.withIds
-import tachiyomi.data.library.sql.MangaCategoryTable
+import tachiyomi.data.AppDatabase
 import tachiyomi.domain.library.model.MangaCategory
 import tachiyomi.domain.library.repository.MangaCategoryRepository
 import javax.inject.Inject
 
 internal class MangaCategoryRepositoryImpl @Inject constructor(
-  private val storio: StorIOSQLite
+  private val db: AppDatabase
 ) : MangaCategoryRepository {
 
-  override fun save(mangaCategory: MangaCategory) {
-    storio.put()
-      .`object`(mangaCategory)
-      .prepare()
-      .asBlocking()
+  private val dao = db.mangaCategory
+
+  override suspend fun replaceAll(mangaCategories: List<MangaCategory>) {
+    dao.replaceAll(mangaCategories)
   }
 
-  override fun save(mangaCategories: Collection<MangaCategory>) {
-    storio.put()
-      .objects(mangaCategories)
-      .prepare()
-      .asBlocking()
+  override suspend fun deleteForManga(mangaId: Long) {
+    dao.deleteForManga(mangaId)
   }
 
-  override fun deleteForManga(mangaId: Long) {
-    storio.delete()
-      .withId(MangaCategoryTable.TABLE, MangaCategoryTable.COL_MANGA_ID, mangaId)
-      .prepare()
-      .asBlocking()
-  }
-
-  override fun deleteForMangas(mangaIds: Collection<Long>) {
-    storio.delete()
-      .withIds(MangaCategoryTable.TABLE, MangaCategoryTable.COL_MANGA_ID, mangaIds)
-      .prepare()
-      .asBlocking()
+  override suspend fun deleteForMangas(mangaIds: List<Long>) {
+    dao.deleteForMangas(mangaIds)
   }
 
 }

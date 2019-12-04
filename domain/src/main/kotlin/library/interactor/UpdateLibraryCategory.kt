@@ -41,7 +41,7 @@ class UpdateLibraryCategory @Inject constructor(
         notifier.end()
       }
 
-      val mangas = getLibraryCategory.execute(categoryId)
+      val mangas = getLibraryCategory.await(categoryId)
       val total = mangas.size
 
       for ((progress, manga) in mangas.withIndex()) {

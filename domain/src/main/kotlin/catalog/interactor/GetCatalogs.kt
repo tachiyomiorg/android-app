@@ -21,7 +21,7 @@ class GetCatalogs @Inject constructor(
   private val remoteCatalogs: GetRemoteCatalogs
 ) {
 
-  fun subscribe(
+  suspend fun subscribe(
     sort: CatalogSort = CatalogSort.Favorites,
     excludeRemoteInstalled: Boolean = false,
     withNsfw: Boolean = true

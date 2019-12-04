@@ -62,9 +62,9 @@ class MyAnimeList @Inject constructor(
     val url = "$baseUrl/ownlist/manga/edit.json"
     val payload = json {
       "manga_id" to entryId
-      track.status.ifPresent { "status" to it.toSiteState }
-      track.score.ifPresent { "score" to Math.round(it) }
-      track.lastChapterRead.ifPresent { "num_read_chapters" to Math.round(it) }
+      if (track.status != null) "status" to track.status.toSiteState
+      if (track.score != null) "score" to Math.round(track.score)
+      if (track.lastChapterRead != null) "num_read_chapters" to Math.round(track.lastChapterRead)
       "csrf_token" to csrf
     }
     val form = RequestBody.create(jsonType, payload.toString())

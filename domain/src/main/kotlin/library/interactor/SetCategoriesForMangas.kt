@@ -8,44 +8,19 @@
 
 package tachiyomi.domain.library.interactor
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import tachiyomi.core.db.Transaction
 import tachiyomi.domain.library.model.MangaCategory
 import tachiyomi.domain.library.repository.MangaCategoryRepository
 import javax.inject.Inject
-import javax.inject.Provider
 
 class SetCategoriesForMangas @Inject constructor(
-  private val mangaCategoryRepository: MangaCategoryRepository,
-  private val transactions: Provider<Transaction>
+  private val mangaCategoryRepository: MangaCategoryRepository
 ) {
 
   suspend fun await(categoryIds: Collection<Long>, mangaIds: Collection<Long>): Result {
     val newMangaCategories = getNewMangaCategories(categoryIds, mangaIds)
 
     return try {
-      withContext(Dispatchers.IO) {
-        transactions.get().withAction {
-          mangaCategoryRepository.deleteForMangas(mangaIds)
-          mangaCategoryRepository.save(newMangaCategories)
-        }
-      }
-
-      Result.Success
-    } catch (e: Exception) {
-      Result.InternalError(e)
-    }
-  }
-
-  internal fun execute(categoryIds: Collection<Long>, mangaIds: Collection<Long>): Result {
-    val newMangaCategories = getNewMangaCategories(categoryIds, mangaIds)
-
-    return try {
-      transactions.get().withAction {
-        mangaCategoryRepository.deleteForMangas(mangaIds)
-        mangaCategoryRepository.save(newMangaCategories)
-      }
+      mangaCategoryRepository.replaceAll(newMangaCategories)
       Result.Success
     } catch (e: Exception) {
       Result.InternalError(e)

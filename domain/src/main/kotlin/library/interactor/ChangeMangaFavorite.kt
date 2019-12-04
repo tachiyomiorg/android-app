@@ -12,7 +12,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
 import tachiyomi.core.db.Transaction
-import tachiyomi.core.util.Optional
 import tachiyomi.domain.library.prefs.LibraryPreferences
 import tachiyomi.domain.library.repository.LibraryCovers
 import tachiyomi.domain.library.repository.MangaCategoryRepository
@@ -37,28 +36,26 @@ class ChangeMangaFavorite @Inject constructor(
     val update = if (nowFavorite) {
       MangaUpdate(
         id = manga.id,
-        favorite = Optional.of(true),
-        dateAdded = Optional.of(now)
+        favorite = true,
+        dateAdded = now
       )
     } else {
-      MangaUpdate(id = manga.id, favorite = Optional.of(false))
+      MangaUpdate(id = manga.id, favorite = false)
     }
-
-    val mangaIds = listOf(manga.id)
 
     try {
       withContext(Dispatchers.IO) {
         transactions.get().withAction {
-          mangaRepository.savePartial(update)
+          mangaRepository.updatePartial(update)
 
           if (nowFavorite) {
             val defaultCategory = libraryPreferences.defaultCategory().get()
-            val result = setCategoriesForMangas.execute(listOf(defaultCategory), mangaIds)
+            val result = setCategoriesForMangas.await(listOf(defaultCategory), listOf(manga.id))
             if (result is SetCategoriesForMangas.Result.InternalError) {
               throw result.error
             }
           } else {
-            mangaCategoryRepository.deleteForMangas(mangaIds)
+            mangaCategoryRepository.deleteForManga(manga.id)
           }
         }
       }

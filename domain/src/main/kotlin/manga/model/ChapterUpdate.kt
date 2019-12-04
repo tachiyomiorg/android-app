@@ -8,19 +8,17 @@
 
 package tachiyomi.domain.manga.model
 
-import tachiyomi.core.util.Optional
-
 data class ChapterUpdate(
   val id: Long,
-  val mangaId: Optional<Long> = Optional.None,
-  val key: Optional<String> = Optional.None,
-  val name: Optional<String> = Optional.None,
-  val read: Optional<Boolean> = Optional.None,
-  val bookmark: Optional<Boolean> = Optional.None,
-  val progress: Optional<Int> = Optional.None,
-  val dateUpload: Optional<Long> = Optional.None,
-  val dateFetch: Optional<Long> = Optional.None,
-  val sourceOrder: Optional<Int> = Optional.None,
-  val number: Optional<Float> = Optional.None,
-  val scanlator: Optional<String> = Optional.None
+  val mangaId: Long? = null,
+  val key: String? = null,
+  val name: String? = null,
+  val read: Boolean? = null,
+  val bookmark: Boolean? = null,
+  val progress: Int? = null,
+  val dateUpload: Long? = null,
+  val dateFetch: Long? = null,
+  val sourceOrder: Int? = null,
+  val number: Float? = null,
+  val scanlator: String? = null
 )

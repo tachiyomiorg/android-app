@@ -19,24 +19,22 @@ interface CategoryRepository {
 
   fun subscribeWithCount(): Flow<List<CategoryWithCount>>
 
-  fun subscribeForManga(mangaId: Long): Flow<List<Category>>
+  fun subscribeCategoriesOfManga(mangaId: Long): Flow<List<Category>>
 
-  fun findAll(): List<Category>
+  suspend fun findAll(): List<Category>
 
-  fun find(categoryId: Long): Category?
+  suspend fun find(categoryId: Long): Category?
 
-  fun findForManga(mangaId: Long): List<Category>
+  suspend fun findCategoriesOfManga(mangaId: Long): List<Category>
 
-  fun save(category: Category)
+  suspend fun insert(category: Category)
 
-  fun save(categories: Collection<Category>)
+  suspend fun updatePartial(update: CategoryUpdate)
 
-  fun savePartial(update: CategoryUpdate)
+  suspend fun updatePartial(updates: Collection<CategoryUpdate>)
 
-  fun savePartial(updates: Collection<CategoryUpdate>)
+  suspend fun delete(categoryId: Long)
 
-  fun delete(categoryId: Long)
-
-  fun delete(categoryIds: Collection<Long>)
+  suspend fun delete(categoryIds: Collection<Long>)
 
 }

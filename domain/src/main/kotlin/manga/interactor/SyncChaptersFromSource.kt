@@ -11,7 +11,6 @@ package tachiyomi.domain.manga.interactor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import tachiyomi.core.db.Transaction
-import tachiyomi.core.util.Optional
 import tachiyomi.domain.catalog.repository.CatalogStore
 import tachiyomi.domain.manga.model.Chapter
 import tachiyomi.domain.manga.model.MangaBase
@@ -125,22 +124,22 @@ class SyncChaptersFromSource @Inject constructor(
     val chaptersToNotify = toAdd.toList() - toAdd.filter { it.number in toDeleteNumbers }
     val notifyDiff = Diff(chaptersToNotify, toDelete, toUpdate)
 
-    val chaptersToSave = diff.added + diff.updated
-
     withContext(Dispatchers.IO) {
       transactions.get().withAction {
-        if (chaptersToSave.isNotEmpty()) {
-          chapterRepository.save(chaptersToSave)
-        }
         if (diff.deleted.isNotEmpty()) {
-          chapterRepository.delete(diff.deleted.map { it.id })
+          chapterRepository.delete(diff.deleted)
         }
-        chapterRepository.saveNewOrder(sourceChapters)
+        if (diff.added.isNotEmpty()) {
+          chapterRepository.insert(diff.added)
+        }
+        if (diff.updated.isNotEmpty()) {
+          chapterRepository.update(diff.updated)
+        }
+        chapterRepository.updateOrder(sourceChapters)
 
         // Set this manga as updated since chapters were changed
-        val mangaUpdate =
-          MangaUpdate(manga.id, lastUpdate = Optional.of(System.currentTimeMillis()))
-        mangaRepository.savePartial(mangaUpdate)
+        val mangaUpdate = MangaUpdate(manga.id, lastUpdate = System.currentTimeMillis())
+        mangaRepository.updatePartial(mangaUpdate)
       }
     }
 

@@ -21,7 +21,7 @@ class GetLocalCatalogs @Inject constructor(
   private val libraryRepository: LibraryRepository
 ) {
 
-  fun subscribe(sort: CatalogSort = CatalogSort.Favorites): Flow<List<CatalogLocal>> {
+  suspend fun subscribe(sort: CatalogSort = CatalogSort.Favorites): Flow<List<CatalogLocal>> {
     val flow = catalogStore.getCatalogsFlow()
 
     return when (sort) {
@@ -36,7 +36,9 @@ class GetLocalCatalogs @Inject constructor(
     }
   }
 
-  private fun sortByFavorites(catalogsFlow: Flow<List<CatalogLocal>>): Flow<List<CatalogLocal>> {
+  private suspend fun sortByFavorites(
+    catalogsFlow: Flow<List<CatalogLocal>>
+  ): Flow<List<CatalogLocal>> {
     var position = 0
     val favoriteIds = libraryRepository.findFavoriteSourceIds().associateWith { position++ }
 

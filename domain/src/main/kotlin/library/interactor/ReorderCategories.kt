@@ -11,7 +11,6 @@ package tachiyomi.domain.library.interactor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
-import tachiyomi.core.util.Optional
 import tachiyomi.domain.library.model.Category
 import tachiyomi.domain.library.model.CategoryUpdate
 import tachiyomi.domain.library.repository.CategoryRepository
@@ -36,12 +35,12 @@ class ReorderCategory @Inject constructor(
     val updates = reorderedCategories.mapIndexed { index, category ->
       CategoryUpdate(
         id = category.id,
-        order = Optional.of(index)
+        order = index
       )
     }
 
     try {
-      withContext(Dispatchers.IO) { categoryRepository.savePartial(updates) }
+      withContext(Dispatchers.IO) { categoryRepository.updatePartial(updates) }
     } catch (e: Exception) {
       return@f Result.InternalError(e)
     }

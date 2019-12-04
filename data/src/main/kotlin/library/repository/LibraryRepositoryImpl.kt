@@ -8,96 +8,48 @@
 
 package tachiyomi.data.library.repository
 
-import com.pushtorefresh.storio3.sqlite.StorIOSQLite
-import com.pushtorefresh.storio3.sqlite.operations.get.PreparedGetListOfObjects
-import com.pushtorefresh.storio3.sqlite.queries.RawQuery
 import kotlinx.coroutines.flow.Flow
-import tachiyomi.core.db.asBlocking
-import tachiyomi.data.library.sql.FavoriteSourceIdsGetResolver
-import tachiyomi.data.library.sql.LibraryMangaGetResolver
-import tachiyomi.data.library.sql.MangaCategoryTable
-import tachiyomi.data.manga.sql.ChapterTable
-import tachiyomi.data.manga.sql.MangaTable
+import tachiyomi.data.AppDatabase
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.domain.library.model.LibrarySorting
 import tachiyomi.domain.library.repository.LibraryRepository
 import javax.inject.Inject
 
 internal class LibraryRepositoryImpl @Inject constructor(
-  private val storio: StorIOSQLite
+  db: AppDatabase
 ) : LibraryRepository {
 
-  private fun preparedAll(sort: LibrarySorting): PreparedGetListOfObjects<LibraryManga> {
-    return storio.get()
-      .listOfObjects(LibraryManga::class.java)
-      .withQuery(RawQuery.builder()
-        .query(LibraryMangaGetResolver.getAllQuery(sort))
-        .observesTables(MangaTable.TABLE, ChapterTable.TABLE)
-        .build())
-      .withGetResolver(LibraryMangaGetResolver)
-      .prepare()
-  }
-
-  private fun preparedUncategorized(sort: LibrarySorting): PreparedGetListOfObjects<LibraryManga> {
-    return storio.get()
-      .listOfObjects(LibraryManga::class.java)
-      .withQuery(RawQuery.builder()
-        .query(LibraryMangaGetResolver.getUncategorizedQuery(sort))
-        .observesTables(MangaTable.TABLE, ChapterTable.TABLE, MangaCategoryTable.TABLE)
-        .build())
-      .withGetResolver(LibraryMangaGetResolver)
-      .prepare()
-  }
-
-  private fun preparedToCategory(
-    categoryId: Long,
-    sort: LibrarySorting
-  ): PreparedGetListOfObjects<LibraryManga> {
-    return storio.get()
-      .listOfObjects(LibraryManga::class.java)
-      .withQuery(RawQuery.builder()
-        .query(LibraryMangaGetResolver.getCategoryQuery(sort))
-        .args(categoryId)
-        .observesTables(MangaTable.TABLE, ChapterTable.TABLE, MangaCategoryTable.TABLE)
-        .build())
-      .withGetResolver(LibraryMangaGetResolver)
-      .prepare()
-  }
+  private val dao = db.library
 
   override fun subscribeAll(sort: LibrarySorting): Flow<List<LibraryManga>> {
-    return preparedAll(sort).asFlow()
+    return dao.subscribeAll(sort)
   }
 
   override fun subscribeUncategorized(sort: LibrarySorting): Flow<List<LibraryManga>> {
-    return preparedUncategorized(sort).asFlow()
+    return dao.subscribeUncategorized(sort)
   }
 
   override fun subscribeToCategory(
     categoryId: Long,
     sort: LibrarySorting
   ): Flow<List<LibraryManga>> {
-    return preparedToCategory(categoryId, sort).asFlow()
+    return dao.subscribeCategory(categoryId, sort)
   }
 
-  override fun findAll(sort: LibrarySorting): List<LibraryManga> {
-    return preparedAll(sort).asBlocking()
+  override suspend fun findAll(sort: LibrarySorting): List<LibraryManga> {
+    return dao.findAll(sort)
   }
 
-  override fun findUncategorized(sort: LibrarySorting): List<LibraryManga> {
-    return preparedUncategorized(sort).asBlocking()
+  override suspend fun findUncategorized(sort: LibrarySorting): List<LibraryManga> {
+    return dao.findUncategorized(sort)
   }
 
-  override fun findForCategory(categoryId: Long, sort: LibrarySorting): List<LibraryManga> {
-    return preparedToCategory(categoryId, sort).asBlocking()
+  override suspend fun findForCategory(categoryId: Long, sort: LibrarySorting): List<LibraryManga> {
+    return dao.findCategory(categoryId, sort)
   }
 
-  override fun findFavoriteSourceIds(): List<Long> {
-    return storio.get()
-      .listOfObjects(Long::class.java)
-      .withQuery(RawQuery.builder().query(FavoriteSourceIdsGetResolver.query).build())
-      .withGetResolver(FavoriteSourceIdsGetResolver)
-      .prepare()
-      .asBlocking()
+  override suspend fun findFavoriteSourceIds(): List<Long> {
+    return dao.findFavoriteSourceIds()
   }
 
 }

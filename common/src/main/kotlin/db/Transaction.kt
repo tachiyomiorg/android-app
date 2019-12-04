@@ -10,20 +10,6 @@ package tachiyomi.core.db
 
 interface Transaction {
 
-  fun begin()
-
-  fun commit()
-
-  fun end()
-
-  fun withAction(action: () -> Any?) {
-    begin()
-    try {
-      action()
-      commit()
-    } finally {
-      end()
-    }
-  }
+  suspend fun <T> withAction(action: suspend () -> T?)
 
 }

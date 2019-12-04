@@ -8,98 +8,46 @@
 
 package tachiyomi.data.manga.repository
 
-import com.pushtorefresh.storio3.sqlite.StorIOSQLite
-import com.pushtorefresh.storio3.sqlite.queries.DeleteQuery
-import com.pushtorefresh.storio3.sqlite.queries.Query
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import tachiyomi.core.db.asBlocking
-import tachiyomi.data.manga.sql.MangaTable
-import tachiyomi.data.manga.sql.MangaUpdatePutResolver
+import tachiyomi.data.AppDatabase
 import tachiyomi.domain.manga.model.Manga
 import tachiyomi.domain.manga.model.MangaUpdate
 import tachiyomi.domain.manga.repository.MangaRepository
 import javax.inject.Inject
 
 internal class MangaRepositoryImpl @Inject constructor(
-  private val storio: StorIOSQLite
+  db: AppDatabase
 ) : MangaRepository {
 
+  private val dao = db.manga
+
   override fun subscribe(mangaId: Long): Flow<Manga?> {
-    return storio.get()
-      .`object`(Manga::class.java)
-      .withQuery(Query.builder()
-        .table(MangaTable.TABLE)
-        .where("${MangaTable.COL_ID} = ?")
-        .whereArgs(mangaId)
-        .build())
-      .prepare()
-      .asFlow()
-      .distinctUntilChanged()
+    return dao.subscribe(mangaId).distinctUntilChanged()
   }
 
   override fun subscribe(key: String, sourceId: Long): Flow<Manga?> {
-    return storio.get()
-      .`object`(Manga::class.java)
-      .withQuery(Query.builder()
-        .table(MangaTable.TABLE)
-        .where("${MangaTable.COL_KEY} = ? AND ${MangaTable.COL_SOURCE} = ?")
-        .whereArgs(key, sourceId)
-        .build())
-      .prepare()
-      .asFlow()
-      .distinctUntilChanged()
+    return dao.subscribe(key, sourceId).distinctUntilChanged()
   }
 
-  override fun find(mangaId: Long): Manga? {
-    return storio.get()
-      .`object`(Manga::class.java)
-      .withQuery(Query.builder()
-        .table(MangaTable.TABLE)
-        .where("${MangaTable.COL_ID} = ?")
-        .whereArgs(mangaId)
-        .build())
-      .prepare()
-      .asBlocking()
+  override suspend fun find(mangaId: Long): Manga? {
+    return dao.find(mangaId)
   }
 
-  override fun find(key: String, sourceId: Long): Manga? {
-    return storio.get()
-      .`object`(Manga::class.java)
-      .withQuery(Query.builder()
-        .table(MangaTable.TABLE)
-        .where("${MangaTable.COL_KEY} = ? AND ${MangaTable.COL_SOURCE} = ?")
-        .whereArgs(key, sourceId)
-        .build())
-      .prepare()
-      .asBlocking()
+  override suspend fun find(key: String, sourceId: Long): Manga? {
+    return dao.find(key, sourceId)
   }
 
-  override fun save(manga: Manga): Long? {
-    return storio.put()
-      .`object`(manga)
-      .prepare()
-      .asBlocking()
-      ?.insertedId()
+  override suspend fun insert(manga: Manga): Long {
+    return dao.insert(manga)
   }
 
-  override fun savePartial(update: MangaUpdate) {
-    storio.put()
-      .`object`(update)
-      .withPutResolver(MangaUpdatePutResolver)
-      .prepare()
-      .asBlocking()
+  override suspend fun updatePartial(update: MangaUpdate) {
+    dao.update(update)
   }
 
-  override fun deleteNonFavorite() {
-    storio.delete()
-      .byQuery(DeleteQuery.builder()
-        .table(MangaTable.TABLE)
-        .where("${MangaTable.COL_FAVORITE} = ?")
-        .whereArgs(0)
-        .build())
-      .prepare()
-      .asBlocking()
+  override suspend fun deleteNonFavorite() {
+    dao.deleteNonFavorite()
   }
 
 }

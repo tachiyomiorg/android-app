@@ -9,8 +9,8 @@
 package tachiyomi.domain.manga.model
 
 data class Chapter(
-  val id: Long = -1,
-  val mangaId: Long = -1,
+  val id: Long = 0,
+  val mangaId: Long = 0,
   val key: String,
   val name: String,
   val read: Boolean = false,

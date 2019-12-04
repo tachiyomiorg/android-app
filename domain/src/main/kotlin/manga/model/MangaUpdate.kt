@@ -8,23 +8,21 @@
 
 package tachiyomi.domain.manga.model
 
-import tachiyomi.core.util.Optional
-
 data class MangaUpdate(
   val id: Long,
-  val source: Optional<Long> = Optional.None,
-  val key: Optional<String> = Optional.None,
-  val title: Optional<String> = Optional.None,
-  val artist: Optional<String> = Optional.None,
-  val author: Optional<String> = Optional.None,
-  val description: Optional<String> = Optional.None,
-  val genres: Optional<List<String>> = Optional.None,
-  val status: Optional<Int> = Optional.None,
-  val cover: Optional<String> = Optional.None,
-  val favorite: Optional<Boolean> = Optional.None,
-  val lastUpdate: Optional<Long> = Optional.None,
-  val lastInit: Optional<Long> = Optional.None,
-  val dateAdded: Optional<Long> = Optional.None,
-  val viewer: Optional<Int> = Optional.None,
-  val flags: Optional<Int> = Optional.None
+  val sourceId: Long? = null,
+  val key: String? = null,
+  val title: String? = null,
+  val artist: String? = null,
+  val author: String? = null,
+  val description: String? = null,
+  val genres: Genres? = null,
+  val status: Int? = null,
+  val cover: String? = null,
+  val favorite: Boolean? = null,
+  val lastUpdate: Long? = null,
+  val lastInit: Long? = null,
+  val dateAdded: Long? = null,
+  val viewer: Int? = null,
+  val flags: Int? = null
 )

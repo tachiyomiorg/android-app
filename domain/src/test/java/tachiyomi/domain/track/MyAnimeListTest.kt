@@ -18,7 +18,6 @@ import okhttp3.OkHttpClient
 import tachiyomi.core.http.CookieManager
 import tachiyomi.core.http.CookieStore
 import tachiyomi.core.http.Http
-import tachiyomi.core.util.Optional
 import tachiyomi.domain.track.model.TrackStateUpdate
 import tachiyomi.domain.track.model.TrackStatus
 import tachiyomi.domain.track.prefs.TrackPreferences
@@ -76,9 +75,9 @@ class MyAnimeListTest : StringSpec() {
     }
     "Test manga should be updated from the list" {
       val track = TrackStateUpdate(
-        status = Optional.of(TrackStatus.OnHold),
-        score = Optional.of(9f),
-        lastChapterRead = Optional.of(6f)
+        status = TrackStatus.OnHold,
+        score = 9f,
+        lastChapterRead = 6f
       )
       mal.update(testMediaId, track)
     }
