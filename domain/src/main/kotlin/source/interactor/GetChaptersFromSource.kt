@@ -23,7 +23,7 @@ class GetChaptersFromSource @Inject constructor() {
       manga.artist,
       manga.author,
       manga.description,
-      manga.genres.values.toList(),
+      manga.genres,
       manga.status,
       manga.cover
     )

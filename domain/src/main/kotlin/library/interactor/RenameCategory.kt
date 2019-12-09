@@ -8,7 +8,6 @@
 
 package tachiyomi.domain.library.interactor
 
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
 import tachiyomi.domain.library.model.Category
@@ -17,14 +16,15 @@ import tachiyomi.domain.library.repository.CategoryRepository
 import javax.inject.Inject
 
 class RenameCategory @Inject constructor(
-  private val categoryRepository: CategoryRepository) {
+  private val categoryRepository: CategoryRepository
+) {
 
   suspend fun await(categoryId: Long, newName: String) = withContext(NonCancellable) f@{
     if (newName.isBlank()) {
       return@f Result.EmptyNameError
     }
 
-    val categories = withContext(Dispatchers.IO) { categoryRepository.findAll() }
+    val categories = categoryRepository.findAll()
 
     val category = categories.find { it.id == categoryId }
       ?: return@f Result.NotFoundError
@@ -45,7 +45,7 @@ class RenameCategory @Inject constructor(
     )
 
     try {
-      withContext(Dispatchers.IO) { categoryRepository.updatePartial(update) }
+      categoryRepository.updatePartial(update)
     } catch (e: Exception) {
       return@f Result.InternalError(e)
     }

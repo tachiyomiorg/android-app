@@ -40,7 +40,7 @@ class LibraryUpdaterWorker(
     }
 
     withContext(Dispatchers.IO) {
-      updater.execute(categoryId).awaitWork()
+      updater.enqueue(categoryId).awaitWork()
     }
 
     return Result.success()

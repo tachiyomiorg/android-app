@@ -8,8 +8,6 @@
 
 package tachiyomi.domain.manga.interactor
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import tachiyomi.domain.manga.model.MangasPage
 import tachiyomi.source.CatalogSource
 import tachiyomi.source.model.Listing
@@ -20,12 +18,10 @@ class ListMangaPageFromCatalogSource @Inject internal constructor(
 ) {
 
   suspend fun await(source: CatalogSource, listing: Listing?, page: Int): MangasPage {
-    return withContext(Dispatchers.IO) {
-      val sourcePage = source.fetchMangaList(listing, page)
-      val localPage = sourcePage.mangas.map { getOrAddMangaFromSource.await(it, source.id) }
+    val sourcePage = source.fetchMangaList(listing, page)
+    val localPage = sourcePage.mangas.map { getOrAddMangaFromSource.await(it, source.id) }
 
-      MangasPage(page, localPage, sourcePage.hasNextPage)
-    }
+    return MangasPage(page, localPage, sourcePage.hasNextPage)
   }
 
 }

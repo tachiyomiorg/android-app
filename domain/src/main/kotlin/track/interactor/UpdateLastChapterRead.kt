@@ -8,8 +8,6 @@
 
 package tachiyomi.domain.track.interactor
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import tachiyomi.domain.track.model.TrackStateUpdate
 import tachiyomi.domain.track.model.TrackUpdate
 import tachiyomi.domain.track.repository.TrackRepository
@@ -23,9 +21,7 @@ class UpdateLastChapterRead @Inject constructor(
 
   suspend fun await(mangaId: Long, lastChapterRead: Float): Result {
     return try {
-      val tracks = withContext(Dispatchers.IO) {
-        trackRepository.findAll(mangaId)
-      }
+      val tracks = trackRepository.findAll(mangaId)
 
       for (track in tracks) {
         if (track.lastChapterRead >= lastChapterRead) continue

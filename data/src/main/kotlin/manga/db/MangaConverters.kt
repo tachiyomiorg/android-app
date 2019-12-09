@@ -9,17 +9,19 @@
 package tachiyomi.data.manga.db
 
 import androidx.room.TypeConverter
-import tachiyomi.domain.manga.model.Genres
 
-class MangaConverters {
+object MangaConverters {
+
+  @JvmStatic
   @TypeConverter
-  fun toDb(genres: Genres?): String {
-    return genres?.values?.joinToString(separator = ";") ?: ""
+  fun toDb(genres: List<String>?): String? {
+    return genres?.joinToString(";")
   }
 
+  @JvmStatic
   @TypeConverter
-  fun fromDb(string: String): Genres {
-    return Genres(*string.split(";").toTypedArray())
+  fun fromDb(genres: String): List<String> {
+    return genres.split(";")
   }
 
 }

@@ -8,8 +8,6 @@
 
 package tachiyomi.domain.manga.interactor
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import tachiyomi.domain.manga.model.Chapter
 import tachiyomi.domain.manga.model.Manga
 import javax.inject.Inject
@@ -20,14 +18,12 @@ class FindOrInitChapterFromSource @Inject constructor(
 ) {
 
   suspend fun await(chapterKey: String, manga: Manga): Chapter? {
-    return withContext(Dispatchers.IO) {
-      val chapter = getChapter.await(chapterKey, manga.id)
-      if (chapter != null) {
-        chapter
-      } else {
-        syncChaptersFromSource.await(manga)
-        getChapter.await(chapterKey, manga.id)
-      }
+    val chapter = getChapter.await(chapterKey, manga.id)
+    return if (chapter != null) {
+      chapter
+    } else {
+      syncChaptersFromSource.await(manga)
+      getChapter.await(chapterKey, manga.id)
     }
   }
 

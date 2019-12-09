@@ -8,8 +8,6 @@
 
 package tachiyomi.domain.manga.interactor
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import tachiyomi.core.db.Transaction
 import tachiyomi.domain.catalog.repository.CatalogStore
 import tachiyomi.domain.manga.model.Chapter
@@ -20,13 +18,12 @@ import tachiyomi.domain.manga.repository.MangaRepository
 import tachiyomi.domain.manga.util.ChapterRecognition
 import tachiyomi.source.model.MangaInfo
 import javax.inject.Inject
-import javax.inject.Provider
 
 class SyncChaptersFromSource @Inject constructor(
   private val chapterRepository: ChapterRepository,
   private val mangaRepository: MangaRepository,
   private val catalogStore: CatalogStore,
-  private val transactions: Provider<Transaction>
+  private val transaction: Transaction
 ) {
 
   data class Diff(
@@ -41,13 +38,13 @@ class SyncChaptersFromSource @Inject constructor(
     val source = catalog?.source ?: return Result.SourceNotFound(manga.sourceId)
 
     // Chapters from source.
-    val rawSourceChapters = withContext(Dispatchers.IO) { source.fetchChapterList(mangaInfo) }
+    val rawSourceChapters = source.fetchChapterList(mangaInfo)
     if (rawSourceChapters.isEmpty()) {
       return Result.NoChaptersFound
     }
 
     // Chapters from db.
-    val dbChapters = withContext(Dispatchers.IO) { chapterRepository.findForManga(manga.id) }
+    val dbChapters = chapterRepository.findForManga(manga.id)
 
     // Set the date fetch for new items in reverse order to allow another sorting method.
     // Sources MUST return the chapters from most to less recent, which is common.
@@ -124,23 +121,21 @@ class SyncChaptersFromSource @Inject constructor(
     val chaptersToNotify = toAdd.toList() - toAdd.filter { it.number in toDeleteNumbers }
     val notifyDiff = Diff(chaptersToNotify, toDelete, toUpdate)
 
-    withContext(Dispatchers.IO) {
-      transactions.get().withAction {
-        if (diff.deleted.isNotEmpty()) {
-          chapterRepository.delete(diff.deleted)
-        }
-        if (diff.added.isNotEmpty()) {
-          chapterRepository.insert(diff.added)
-        }
-        if (diff.updated.isNotEmpty()) {
-          chapterRepository.update(diff.updated)
-        }
-        chapterRepository.updateOrder(sourceChapters)
-
-        // Set this manga as updated since chapters were changed
-        val mangaUpdate = MangaUpdate(manga.id, lastUpdate = System.currentTimeMillis())
-        mangaRepository.updatePartial(mangaUpdate)
+    transaction.withAction {
+      if (diff.deleted.isNotEmpty()) {
+        chapterRepository.delete(diff.deleted)
       }
+      if (diff.added.isNotEmpty()) {
+        chapterRepository.insert(diff.added)
+      }
+      if (diff.updated.isNotEmpty()) {
+        chapterRepository.update(diff.updated)
+      }
+      chapterRepository.updateOrder(sourceChapters)
+
+      // Set this manga as updated since chapters were changed
+      val mangaUpdate = MangaUpdate(manga.id, lastUpdate = System.currentTimeMillis())
+      mangaRepository.updatePartial(mangaUpdate)
     }
 
     return Result.Success(notifyDiff)

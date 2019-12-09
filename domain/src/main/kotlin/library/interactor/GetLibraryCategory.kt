@@ -17,7 +17,8 @@ import tachiyomi.domain.library.repository.LibraryRepository
 import javax.inject.Inject
 
 class GetLibraryCategory @Inject constructor(
-  private val libraryRepository: LibraryRepository) {
+  private val libraryRepository: LibraryRepository
+) {
 
   suspend fun await(
     categoryId: Long,

@@ -31,7 +31,7 @@ class UpdateLibraryCategory @Inject constructor(
   private val libraryScheduler: LibraryUpdateScheduler
 ) {
 
-  suspend fun execute(categoryId: Long): LibraryUpdater.QueueResult {
+  suspend fun enqueue(categoryId: Long): LibraryUpdater.QueueResult {
     val operation: suspend (Job) -> Any = { job ->
       Timber.debug { "Updating category $categoryId ${Thread.currentThread()}" }
       notifier.start()

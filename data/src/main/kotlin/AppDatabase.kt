@@ -9,6 +9,7 @@
 package tachiyomi.data
 
 import android.content.Context
+import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
@@ -27,9 +28,8 @@ import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.domain.library.model.MangaCategory
 import tachiyomi.domain.manga.model.Chapter
 import tachiyomi.domain.manga.model.Manga
-import androidx.room.Database as DB
 
-@DB(
+@Database(
   entities = [Manga::class, Chapter::class, Category::class, MangaCategory::class,
     CatalogRemote::class],
   views = [LibraryManga::class],

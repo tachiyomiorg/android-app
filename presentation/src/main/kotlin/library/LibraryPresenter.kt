@@ -125,7 +125,7 @@ class LibraryPresenter @Inject constructor(
 
       suspend {
         GlobalScope.launch {
-          updateLibraryCategory.execute(categoryId).awaitWork()
+          updateLibraryCategory.enqueue(categoryId).awaitWork()
         }
 
         flow {

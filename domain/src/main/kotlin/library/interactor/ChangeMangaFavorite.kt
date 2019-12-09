@@ -8,7 +8,6 @@
 
 package tachiyomi.domain.library.interactor
 
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
 import tachiyomi.core.db.Transaction
@@ -19,14 +18,13 @@ import tachiyomi.domain.manga.model.Manga
 import tachiyomi.domain.manga.model.MangaUpdate
 import tachiyomi.domain.manga.repository.MangaRepository
 import javax.inject.Inject
-import javax.inject.Provider
 
 class ChangeMangaFavorite @Inject constructor(
   private val mangaRepository: MangaRepository,
   private val mangaCategoryRepository: MangaCategoryRepository,
   private val libraryPreferences: LibraryPreferences,
   private val libraryCovers: LibraryCovers,
-  private val transactions: Provider<Transaction>,
+  private val transactions: Transaction,
   private val setCategoriesForMangas: SetCategoriesForMangas
 ) {
 
@@ -34,29 +32,23 @@ class ChangeMangaFavorite @Inject constructor(
     val now = System.currentTimeMillis()
     val nowFavorite = !manga.favorite
     val update = if (nowFavorite) {
-      MangaUpdate(
-        id = manga.id,
-        favorite = true,
-        dateAdded = now
-      )
+      MangaUpdate(id = manga.id, favorite = true, dateAdded = now)
     } else {
       MangaUpdate(id = manga.id, favorite = false)
     }
 
     try {
-      withContext(Dispatchers.IO) {
-        transactions.get().withAction {
-          mangaRepository.updatePartial(update)
+      transactions.withAction {
+        mangaRepository.updatePartial(update)
 
-          if (nowFavorite) {
-            val defaultCategory = libraryPreferences.defaultCategory().get()
-            val result = setCategoriesForMangas.await(listOf(defaultCategory), listOf(manga.id))
-            if (result is SetCategoriesForMangas.Result.InternalError) {
-              throw result.error
-            }
-          } else {
-            mangaCategoryRepository.deleteForManga(manga.id)
+        if (nowFavorite) {
+          val defaultCategory = libraryPreferences.defaultCategory().get()
+          val result = setCategoriesForMangas.await(listOf(defaultCategory), listOf(manga.id))
+          if (result is SetCategoriesForMangas.Result.InternalError) {
+            throw result.error
           }
+        } else {
+          mangaCategoryRepository.deleteForManga(manga.id)
         }
       }
     } catch (e: Exception) {

@@ -8,8 +8,6 @@
 
 package tachiyomi.domain.track.interactor
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import tachiyomi.domain.manga.model.Manga
 import tachiyomi.domain.track.model.Track
 import tachiyomi.domain.track.model.TrackSearchResult
@@ -42,9 +40,7 @@ class BindTrack @Inject constructor(
       status = state.status
     )
 
-    withContext(Dispatchers.IO) {
-      trackRepository.save(track)
-    }
+    trackRepository.save(track)
 
     return Result.Success
   }

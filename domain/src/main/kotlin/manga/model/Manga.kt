@@ -18,7 +18,7 @@ data class Manga(
   val artist: String = "",
   val author: String = "",
   val description: String = "",
-  val genres: Genres = Genres(),
+  val genres: List<String> = emptyList(),
   val status: Int = MangaInfo.UNKNOWN,
   val cover: String = "",
   val favorite: Boolean = false,

@@ -12,7 +12,6 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.TypeConverters
 import kotlinx.coroutines.flow.Flow
-import tachiyomi.domain.manga.model.Genres
 import tachiyomi.domain.manga.model.Manga
 import tachiyomi.domain.manga.model.MangaUpdate
 
@@ -33,22 +32,22 @@ abstract class MangaDao : BaseDao<Manga> {
   abstract suspend fun find(key: String, sourceId: Long): Manga?
 
   @Query("""UPDATE manga SET
-    title = coalesce(:title, title),
-    sourceId = coalesce(:sourceId, sourceId),
-    `key` = coalesce(:key, `key`),
-    artist = coalesce(:artist, artist),
-    author = coalesce(:author, author),
-    description = coalesce(:description, description),
-    genres = coalesce(:genres, genres),
-    status = coalesce(:status, status),
-    cover = coalesce(:cover, cover),
-    favorite = coalesce(:favorite, favorite),
-    lastUpdate = coalesce(:lastUpdate, lastUpdate),
-    lastInit = coalesce(:lastInit, lastInit),
-    dateAdded = coalesce(:dateAdded, dateAdded),
-    viewer = coalesce(:viewer, viewer),
-    flags = coalesce(:flags, flags)
-    WHERE id = :id"""
+title = coalesce(:title, title),
+sourceId = coalesce(:sourceId, sourceId),
+`key` = coalesce(:key, `key`),
+artist = coalesce(:artist, artist),
+author = coalesce(:author, author),
+description = coalesce(:description, description),
+genres = coalesce(:genres, genres),
+status = coalesce(:status, status),
+cover = coalesce(:cover, cover),
+favorite = coalesce(:favorite, favorite),
+lastUpdate = coalesce(:lastUpdate, lastUpdate),
+lastInit = coalesce(:lastInit, lastInit),
+dateAdded = coalesce(:dateAdded, dateAdded),
+viewer = coalesce(:viewer, viewer),
+flags = coalesce(:flags, flags)
+WHERE id = :id"""
   )
   abstract suspend fun update(
     id: Long,
@@ -58,7 +57,7 @@ abstract class MangaDao : BaseDao<Manga> {
     artist: String? = null,
     author: String? = null,
     description: String? = null,
-    genres: Genres? = null,
+    genres: String? = null,
     status: Int? = null,
     cover: String? = null,
     favorite: Boolean? = null,
@@ -78,7 +77,7 @@ abstract class MangaDao : BaseDao<Manga> {
       artist = update.artist,
       author = update.author,
       description = update.description,
-      genres = update.genres,
+      genres = MangaConverters.toDb(update.genres),
       status = update.status,
       cover = update.cover,
       favorite = update.favorite,

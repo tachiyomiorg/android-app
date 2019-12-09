@@ -8,7 +8,6 @@
 
 package tachiyomi.domain.library.interactor
 
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
 import tachiyomi.domain.library.model.Category
@@ -24,7 +23,7 @@ class CreateCategoryWithName @Inject constructor(
       return@f Result.EmptyCategoryNameError
     }
 
-    val categories = withContext(Dispatchers.IO) { categoryRepository.findAll() }
+    val categories = categoryRepository.findAll()
     if (categories.any { name.equals(it.name, ignoreCase = true) }) {
       return@f Result.CategoryAlreadyExistsError(name)
     }
@@ -37,7 +36,7 @@ class CreateCategoryWithName @Inject constructor(
     )
 
     try {
-      withContext(Dispatchers.IO) { categoryRepository.insert(newCategory) }
+      categoryRepository.insert(newCategory)
     } catch (e: Exception) {
       return@f Result.InternalError(e)
     }

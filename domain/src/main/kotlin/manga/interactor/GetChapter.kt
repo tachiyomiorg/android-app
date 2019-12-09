@@ -8,8 +8,7 @@
 
 package tachiyomi.domain.manga.interactor
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import tachiyomi.domain.manga.model.Chapter
 import tachiyomi.domain.manga.repository.ChapterRepository
 import javax.inject.Inject
 
@@ -17,12 +16,12 @@ class GetChapter @Inject constructor(
   private val repository: ChapterRepository
 ) {
 
-  suspend fun await(id: Long) = withContext(Dispatchers.IO) {
-    repository.find(id)
+  suspend fun await(id: Long): Chapter? {
+    return repository.find(id)
   }
 
-  suspend fun await(key: String, mangaId: Long) = withContext(Dispatchers.IO) {
-    repository.find(key, mangaId)
+  suspend fun await(key: String, mangaId: Long): Chapter? {
+    return repository.find(key, mangaId)
   }
 
 }

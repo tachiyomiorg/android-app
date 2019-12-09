@@ -8,7 +8,6 @@
 
 package tachiyomi.domain.library.interactor
 
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
 import tachiyomi.domain.library.prefs.LibraryPreferences
@@ -19,7 +18,8 @@ import javax.inject.Inject
 class DeleteCategories @Inject constructor(
   private val categoryRepository: CategoryRepository,
   private val libraryPreferences: LibraryPreferences,
-  private val libraryScheduler: LibraryUpdateScheduler) {
+  private val libraryScheduler: LibraryUpdateScheduler
+) {
 
   suspend fun await(categoryIds: Collection<Long>) = withContext(NonCancellable) f@{
     val safeCategoryIds = categoryIds.filter { it > 0 }
@@ -28,7 +28,7 @@ class DeleteCategories @Inject constructor(
     }
 
     try {
-      withContext(Dispatchers.IO) { categoryRepository.delete(safeCategoryIds) }
+      categoryRepository.delete(safeCategoryIds)
     } catch (e: Exception) {
       return@f Result.InternalError(e)
     }

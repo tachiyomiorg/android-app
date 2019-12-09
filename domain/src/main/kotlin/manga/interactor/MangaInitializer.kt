@@ -8,11 +8,8 @@
 
 package tachiyomi.domain.manga.interactor
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import tachiyomi.domain.catalog.repository.CatalogStore
 import tachiyomi.domain.library.repository.LibraryCovers
-import tachiyomi.domain.manga.model.Genres
 import tachiyomi.domain.manga.model.Manga
 import tachiyomi.domain.manga.model.MangaUpdate
 import tachiyomi.domain.manga.repository.MangaRepository
@@ -39,11 +36,11 @@ class MangaInitializer @Inject internal constructor(
       artist = manga.artist,
       author = manga.author,
       description = manga.description,
-      genres = manga.genres.values.toList(),
+      genres = manga.genres,
       status = manga.status,
       cover = manga.cover
     )
-    val newInfo = withContext(Dispatchers.IO) { source.fetchMangaDetails(infoQuery) }
+    val newInfo = source.fetchMangaDetails(infoQuery)
 
     val update = MangaUpdate(
       id = manga.id,
@@ -60,7 +57,7 @@ class MangaInitializer @Inject internal constructor(
       artist = newInfo.artist,
       author = newInfo.author,
       description = newInfo.description,
-      genres = Genres(newInfo.genres),
+      genres = newInfo.genres,
       status = newInfo.status,
       cover = newInfo.cover,
       lastInit = now
@@ -72,16 +69,14 @@ class MangaInitializer @Inject internal constructor(
       artist = newInfo.artist,
       author = newInfo.author,
       description = newInfo.description,
-      genres = Genres(newInfo.genres),
+      genres = newInfo.genres,
       status = newInfo.status,
       cover = newInfo.cover,
       lastInit = now
     )
 
-    withContext(Dispatchers.IO) {
-      mangaRepository.updatePartial(update)
-      libraryCovers.find(manga.id).setLastModified(now)
-    }
+    mangaRepository.updatePartial(update)
+    libraryCovers.find(manga.id).setLastModified(now)
 
     return updatedManga
   }
