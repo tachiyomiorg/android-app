@@ -10,9 +10,9 @@ package tachiyomi.domain.library.interactor
 
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
-import tachiyomi.domain.library.prefs.LibraryPreferences
-import tachiyomi.domain.library.repository.CategoryRepository
-import tachiyomi.domain.library.updater.LibraryUpdateScheduler
+import tachiyomi.domain.library.service.CategoryRepository
+import tachiyomi.domain.library.service.LibraryPreferences
+import tachiyomi.domain.library.service.LibraryUpdateScheduler
 import javax.inject.Inject
 
 class DeleteCategories @Inject constructor(

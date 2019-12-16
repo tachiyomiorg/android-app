@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.single
 import tachiyomi.domain.catalog.model.CatalogInstalled
 import tachiyomi.domain.catalog.model.InstallStep
-import tachiyomi.domain.catalog.repository.CatalogRemoteRepository
+import tachiyomi.domain.catalog.service.CatalogRemoteRepository
 import javax.inject.Inject
 
 class UpdateCatalog @Inject constructor(

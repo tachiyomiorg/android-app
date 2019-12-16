@@ -9,7 +9,7 @@
 package tachiyomi.domain.catalog.interactor
 
 import tachiyomi.domain.catalog.model.CatalogInstalled
-import tachiyomi.domain.catalog.repository.CatalogInstaller
+import tachiyomi.domain.catalog.service.CatalogInstaller
 import javax.inject.Inject
 
 class UninstallCatalog @Inject constructor(

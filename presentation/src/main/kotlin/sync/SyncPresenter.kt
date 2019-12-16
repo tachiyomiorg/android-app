@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import tachiyomi.domain.sync.interactor.Login
-import tachiyomi.domain.sync.prefs.SyncPreferences
+import tachiyomi.domain.sync.service.SyncPreferences
 import tachiyomi.ui.presenter.BasePresenter
 import tachiyomi.ui.presenter.FlowSwitchSideEffect
 import javax.inject.Inject

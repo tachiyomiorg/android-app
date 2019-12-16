@@ -11,7 +11,7 @@ package tachiyomi.app.initializers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import tachiyomi.domain.catalog.repository.CatalogStore
+import tachiyomi.domain.catalog.service.CatalogStore
 import toothpick.Lazy
 import javax.inject.Inject
 

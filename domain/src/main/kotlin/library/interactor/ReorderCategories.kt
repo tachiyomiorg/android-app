@@ -12,7 +12,7 @@ import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
 import tachiyomi.domain.library.model.Category
 import tachiyomi.domain.library.model.CategoryUpdate
-import tachiyomi.domain.library.repository.CategoryRepository
+import tachiyomi.domain.library.service.CategoryRepository
 import javax.inject.Inject
 
 class ReorderCategory @Inject constructor(

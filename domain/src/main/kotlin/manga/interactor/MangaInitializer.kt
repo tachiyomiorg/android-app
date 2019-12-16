@@ -8,11 +8,11 @@
 
 package tachiyomi.domain.manga.interactor
 
-import tachiyomi.domain.catalog.repository.CatalogStore
-import tachiyomi.domain.library.repository.LibraryCovers
+import tachiyomi.domain.catalog.service.CatalogStore
+import tachiyomi.domain.library.service.LibraryCovers
 import tachiyomi.domain.manga.model.Manga
 import tachiyomi.domain.manga.model.MangaUpdate
-import tachiyomi.domain.manga.repository.MangaRepository
+import tachiyomi.domain.manga.service.MangaRepository
 import tachiyomi.source.Source
 import tachiyomi.source.model.MangaInfo
 import java.util.concurrent.TimeUnit

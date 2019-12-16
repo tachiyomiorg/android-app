@@ -9,7 +9,7 @@
 package tachiyomi.domain.catalog.interactor
 
 import tachiyomi.domain.catalog.model.CatalogLocal
-import tachiyomi.domain.catalog.repository.CatalogStore
+import tachiyomi.domain.catalog.service.CatalogStore
 import javax.inject.Inject
 
 class GetLocalCatalog @Inject constructor(

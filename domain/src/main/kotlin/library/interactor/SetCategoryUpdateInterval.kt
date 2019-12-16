@@ -9,9 +9,9 @@
 package tachiyomi.domain.library.interactor
 
 import tachiyomi.domain.library.model.CategoryUpdate
-import tachiyomi.domain.library.repository.CategoryRepository
-import tachiyomi.domain.library.updater.LibraryUpdateScheduler
-import tachiyomi.domain.library.updater.LibraryUpdater
+import tachiyomi.domain.library.service.CategoryRepository
+import tachiyomi.domain.library.service.LibraryUpdateScheduler
+import tachiyomi.domain.library.service.LibraryUpdater
 import javax.inject.Inject
 
 class SetCategoryUpdateInterval @Inject constructor(

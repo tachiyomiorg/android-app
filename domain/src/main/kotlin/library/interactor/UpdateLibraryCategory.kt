@@ -13,10 +13,10 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import tachiyomi.domain.library.repository.CategoryRepository
-import tachiyomi.domain.library.updater.LibraryUpdateScheduler
-import tachiyomi.domain.library.updater.LibraryUpdater
-import tachiyomi.domain.library.updater.LibraryUpdaterNotification
+import tachiyomi.domain.library.service.CategoryRepository
+import tachiyomi.domain.library.service.LibraryUpdateScheduler
+import tachiyomi.domain.library.service.LibraryUpdater
+import tachiyomi.domain.library.service.LibraryUpdaterNotification
 import tachiyomi.domain.manga.interactor.SyncChaptersFromSource
 import timber.log.Timber
 import timber.log.debug

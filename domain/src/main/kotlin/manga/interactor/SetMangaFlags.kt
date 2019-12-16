@@ -9,7 +9,7 @@
 package tachiyomi.domain.manga.interactor
 
 import tachiyomi.domain.manga.model.Manga
-import tachiyomi.domain.manga.repository.MangaRepository
+import tachiyomi.domain.manga.service.MangaRepository
 import javax.inject.Inject
 
 // TODO either one use case containing everything or many

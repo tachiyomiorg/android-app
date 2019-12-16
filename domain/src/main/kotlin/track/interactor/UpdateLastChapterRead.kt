@@ -10,8 +10,8 @@ package tachiyomi.domain.track.interactor
 
 import tachiyomi.domain.track.model.TrackStateUpdate
 import tachiyomi.domain.track.model.TrackUpdate
-import tachiyomi.domain.track.repository.TrackRepository
-import tachiyomi.domain.track.services.TrackServices
+import tachiyomi.domain.track.service.TrackRepository
+import tachiyomi.domain.track.sites.TrackServices
 import javax.inject.Inject
 
 class UpdateLastChapterRead @Inject constructor(

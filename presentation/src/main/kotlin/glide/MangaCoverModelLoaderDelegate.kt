@@ -15,7 +15,7 @@ import okhttp3.Call
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import tachiyomi.domain.catalog.interactor.GetLocalCatalog
-import tachiyomi.domain.library.repository.LibraryCovers
+import tachiyomi.domain.library.service.LibraryCovers
 import tachiyomi.source.HttpSource
 import java.io.File
 import java.io.InputStream

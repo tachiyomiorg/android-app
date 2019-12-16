@@ -11,7 +11,7 @@ package tachiyomi.domain.library.interactor
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
 import tachiyomi.domain.library.model.LibrarySorting
-import tachiyomi.domain.library.prefs.LibraryPreferences
+import tachiyomi.domain.library.service.LibraryPreferences
 import timber.log.Timber
 import timber.log.warn
 import javax.inject.Inject

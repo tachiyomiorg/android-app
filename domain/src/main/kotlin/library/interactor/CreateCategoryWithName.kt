@@ -11,7 +11,7 @@ package tachiyomi.domain.library.interactor
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
 import tachiyomi.domain.library.model.Category
-import tachiyomi.domain.library.repository.CategoryRepository
+import tachiyomi.domain.library.service.CategoryRepository
 import javax.inject.Inject
 
 class CreateCategoryWithName @Inject constructor(

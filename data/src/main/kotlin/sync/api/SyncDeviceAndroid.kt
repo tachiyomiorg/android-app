@@ -10,7 +10,7 @@ package tachiyomi.data.sync.api
 
 import android.os.Build
 import tachiyomi.domain.sync.api.SyncDevice
-import tachiyomi.domain.sync.prefs.SyncPreferences
+import tachiyomi.domain.sync.service.SyncPreferences
 import java.util.UUID
 import javax.inject.Inject
 

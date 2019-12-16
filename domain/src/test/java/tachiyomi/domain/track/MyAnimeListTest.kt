@@ -20,8 +20,8 @@ import tachiyomi.core.http.CookieStore
 import tachiyomi.core.http.Http
 import tachiyomi.domain.track.model.TrackStateUpdate
 import tachiyomi.domain.track.model.TrackStatus
-import tachiyomi.domain.track.prefs.TrackPreferences
-import tachiyomi.domain.track.services.myanimelist.MyAnimeList
+import tachiyomi.domain.track.service.TrackPreferences
+import tachiyomi.domain.track.sites.myanimelist.MyAnimeList
 
 class MyAnimeListTest : StringSpec() {
 

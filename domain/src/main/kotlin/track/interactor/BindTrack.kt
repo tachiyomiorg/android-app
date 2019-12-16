@@ -11,8 +11,8 @@ package tachiyomi.domain.track.interactor
 import tachiyomi.domain.manga.model.Manga
 import tachiyomi.domain.track.model.Track
 import tachiyomi.domain.track.model.TrackSearchResult
-import tachiyomi.domain.track.repository.TrackRepository
-import tachiyomi.domain.track.services.TrackSite
+import tachiyomi.domain.track.service.TrackRepository
+import tachiyomi.domain.track.sites.TrackSite
 import javax.inject.Inject
 
 class BindTrack @Inject constructor(

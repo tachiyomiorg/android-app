@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import tachiyomi.domain.catalog.model.CatalogInstalled
-import tachiyomi.domain.catalog.repository.CatalogStore
+import tachiyomi.domain.catalog.service.CatalogStore
 import javax.inject.Inject
 
 class GetInstalledCatalog @Inject constructor(

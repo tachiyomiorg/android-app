@@ -28,7 +28,7 @@ import tachiyomi.domain.library.model.Category
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.domain.library.model.LibrarySort
 import tachiyomi.domain.library.model.LibrarySorting
-import tachiyomi.domain.library.prefs.LibraryPreferences
+import tachiyomi.domain.library.service.LibraryPreferences
 import tachiyomi.ui.presenter.BasePresenter
 import tachiyomi.ui.presenter.EmptySideEffect
 import tachiyomi.ui.presenter.FlowSwitchSideEffect

@@ -9,12 +9,12 @@
 package tachiyomi.domain.manga.interactor
 
 import tachiyomi.core.db.Transaction
-import tachiyomi.domain.catalog.repository.CatalogStore
+import tachiyomi.domain.catalog.service.CatalogStore
 import tachiyomi.domain.manga.model.Chapter
 import tachiyomi.domain.manga.model.MangaBase
 import tachiyomi.domain.manga.model.MangaUpdate
-import tachiyomi.domain.manga.repository.ChapterRepository
-import tachiyomi.domain.manga.repository.MangaRepository
+import tachiyomi.domain.manga.service.ChapterRepository
+import tachiyomi.domain.manga.service.MangaRepository
 import tachiyomi.domain.manga.util.ChapterRecognition
 import tachiyomi.source.model.MangaInfo
 import javax.inject.Inject
@@ -52,7 +52,7 @@ class SyncChaptersFromSource @Inject constructor(
 
     val sourceChapters = rawSourceChapters.mapIndexed { i, meta ->
       Chapter(
-        id = -1,
+        id = 0,
         mangaId = manga.id,
         key = meta.key,
         name = meta.name,

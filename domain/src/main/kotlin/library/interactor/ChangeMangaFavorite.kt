@@ -11,12 +11,12 @@ package tachiyomi.domain.library.interactor
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
 import tachiyomi.core.db.Transaction
-import tachiyomi.domain.library.prefs.LibraryPreferences
-import tachiyomi.domain.library.repository.LibraryCovers
-import tachiyomi.domain.library.repository.MangaCategoryRepository
+import tachiyomi.domain.library.service.LibraryCovers
+import tachiyomi.domain.library.service.LibraryPreferences
+import tachiyomi.domain.library.service.MangaCategoryRepository
 import tachiyomi.domain.manga.model.Manga
 import tachiyomi.domain.manga.model.MangaUpdate
-import tachiyomi.domain.manga.repository.MangaRepository
+import tachiyomi.domain.manga.service.MangaRepository
 import javax.inject.Inject
 
 class ChangeMangaFavorite @Inject constructor(

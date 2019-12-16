@@ -8,7 +8,7 @@
 
 package tachiyomi.domain.catalog.interactor
 
-import tachiyomi.domain.catalog.repository.CatalogRemoteRepository
+import tachiyomi.domain.catalog.service.CatalogRemoteRepository
 import javax.inject.Inject
 
 class RefreshRemoteCatalogs @Inject constructor(

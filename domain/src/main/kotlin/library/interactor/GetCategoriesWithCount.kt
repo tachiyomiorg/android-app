@@ -10,7 +10,7 @@ package tachiyomi.domain.library.interactor
 
 import kotlinx.coroutines.flow.Flow
 import tachiyomi.domain.library.model.CategoryWithCount
-import tachiyomi.domain.library.repository.CategoryRepository
+import tachiyomi.domain.library.service.CategoryRepository
 import javax.inject.Inject
 
 class GetCategoriesWithCount @Inject constructor(

@@ -12,8 +12,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import tachiyomi.domain.catalog.model.CatalogLocal
 import tachiyomi.domain.catalog.model.CatalogSort
-import tachiyomi.domain.catalog.repository.CatalogStore
-import tachiyomi.domain.library.repository.LibraryRepository
+import tachiyomi.domain.catalog.service.CatalogStore
+import tachiyomi.domain.library.service.LibraryRepository
 import javax.inject.Inject
 
 class GetLocalCatalogs @Inject constructor(

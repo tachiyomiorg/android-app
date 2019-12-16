@@ -9,7 +9,7 @@
 package tachiyomi.domain.manga.interactor
 
 import tachiyomi.domain.manga.model.Chapter
-import tachiyomi.domain.manga.repository.ChapterRepository
+import tachiyomi.domain.manga.service.ChapterRepository
 import javax.inject.Inject
 
 class GetChapter @Inject constructor(

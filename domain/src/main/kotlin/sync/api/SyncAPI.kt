@@ -18,7 +18,7 @@ import okhttp3.RequestBody
 import tachiyomi.core.http.Http
 import tachiyomi.core.http.awaitBody
 import tachiyomi.core.http.awaitResponse
-import tachiyomi.domain.sync.prefs.SyncPreferences
+import tachiyomi.domain.sync.service.SyncPreferences
 import javax.inject.Inject
 
 class SyncAPI @Inject constructor(

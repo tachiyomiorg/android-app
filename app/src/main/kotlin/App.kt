@@ -12,7 +12,7 @@ import android.app.Application
 import tachiyomi.app.initializers.AppInitializers
 import tachiyomi.core.CoreModule
 import tachiyomi.core.http.HttpModule
-import tachiyomi.data.di.DataModule
+import tachiyomi.data.DataModule
 import tachiyomi.ui.di.UiModule
 import toothpick.Toothpick
 import toothpick.configuration.Configuration
@@ -46,7 +46,7 @@ class App : Application() {
         SmoothieApplicationModule(this),
         HttpModule,
         CoreModule,
-        DataModule,
+        DataModule(this),
         UiModule
       )
       .inject(this)

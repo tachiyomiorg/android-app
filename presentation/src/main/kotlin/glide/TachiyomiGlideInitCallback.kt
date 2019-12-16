@@ -23,7 +23,7 @@ import tachiyomi.domain.catalog.model.CatalogInstalled
 import tachiyomi.domain.catalog.model.CatalogInternal
 import tachiyomi.domain.catalog.model.CatalogRemote
 import tachiyomi.domain.library.model.LibraryManga
-import tachiyomi.domain.library.repository.LibraryCovers
+import tachiyomi.domain.library.service.LibraryCovers
 import tachiyomi.domain.manga.model.Manga
 import java.io.File
 import java.io.InputStream

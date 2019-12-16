@@ -12,7 +12,7 @@ import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import tachiyomi.domain.sync.api.LoginResult
 import tachiyomi.domain.sync.api.SyncAPI
-import tachiyomi.domain.sync.prefs.SyncPreferences
+import tachiyomi.domain.sync.service.SyncPreferences
 import javax.inject.Inject
 
 class Login @Inject constructor(

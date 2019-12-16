@@ -19,6 +19,7 @@ dependencies {
   implementation(Deps.duktape)
   implementation(Deps.androidX.core)
   implementation(Deps.androidX.sqlite)
+  implementation(Deps.androidX.preference)
   implementation(Deps.coroutines.core)
   implementation(Deps.coroutines.android)
   implementation(Deps.flomo)

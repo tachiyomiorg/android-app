@@ -11,7 +11,7 @@ package tachiyomi.domain.catalog.interactor
 import kotlinx.coroutines.flow.Flow
 import tachiyomi.domain.catalog.model.CatalogRemote
 import tachiyomi.domain.catalog.model.InstallStep
-import tachiyomi.domain.catalog.repository.CatalogInstaller
+import tachiyomi.domain.catalog.service.CatalogInstaller
 import javax.inject.Inject
 
 class InstallCatalog @Inject constructor(

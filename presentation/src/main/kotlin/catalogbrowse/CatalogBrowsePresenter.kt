@@ -12,8 +12,8 @@ import com.freeletics.coredux.SideEffect
 import com.freeletics.coredux.createStore
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.flow
-import tachiyomi.data.catalog.prefs.CatalogPreferences
 import tachiyomi.domain.catalog.interactor.GetLocalCatalog
+import tachiyomi.domain.catalog.service.CatalogPreferences
 import tachiyomi.domain.library.interactor.ChangeMangaFavorite
 import tachiyomi.domain.manga.interactor.GetManga
 import tachiyomi.domain.manga.interactor.ListMangaPageFromCatalogSource

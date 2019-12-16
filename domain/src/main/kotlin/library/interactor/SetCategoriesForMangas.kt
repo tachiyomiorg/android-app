@@ -9,7 +9,7 @@
 package tachiyomi.domain.library.interactor
 
 import tachiyomi.domain.library.model.MangaCategory
-import tachiyomi.domain.library.repository.MangaCategoryRepository
+import tachiyomi.domain.library.service.MangaCategoryRepository
 import javax.inject.Inject
 
 class SetCategoriesForMangas @Inject constructor(

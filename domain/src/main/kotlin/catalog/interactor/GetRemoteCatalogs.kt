@@ -11,7 +11,7 @@ package tachiyomi.domain.catalog.interactor
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import tachiyomi.domain.catalog.model.CatalogRemote
-import tachiyomi.domain.catalog.repository.CatalogRemoteRepository
+import tachiyomi.domain.catalog.service.CatalogRemoteRepository
 import javax.inject.Inject
 
 class GetRemoteCatalogs @Inject constructor(

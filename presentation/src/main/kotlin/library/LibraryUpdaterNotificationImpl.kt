@@ -28,8 +28,8 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import tachiyomi.core.di.AppScope
 import tachiyomi.domain.library.model.LibraryManga
-import tachiyomi.domain.library.updater.LibraryUpdater
-import tachiyomi.domain.library.updater.LibraryUpdaterNotification
+import tachiyomi.domain.library.service.LibraryUpdater
+import tachiyomi.domain.library.service.LibraryUpdaterNotification
 import tachiyomi.ui.R
 import javax.inject.Inject
 
