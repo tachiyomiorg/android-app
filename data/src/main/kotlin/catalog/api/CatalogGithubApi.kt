@@ -34,15 +34,15 @@ internal class CatalogGithubApi @Inject constructor(private val http: Http) {
 
     return json.map { element ->
       element as JsonObject
-      val name = element["name"].content
-      val pkgName = element["pkg"].content
-      val versionName = element["version"].content
-      val versionCode = element["code"].int
-      val lang = element["lang"].content
-      val apkName = element["apk"].content
-      val sourceId = element["id"].long
-      val description = element["description"].content
-      val nsfw = element["nsfw"].booleanOrNull ?: false
+      val name = element["name"]!!.content
+      val pkgName = element["pkg"]!!.content
+      val versionName = element["version"]!!.content
+      val versionCode = element["code"]!!.int
+      val lang = element["lang"]!!.content
+      val apkName = element["apk"]!!.content
+      val sourceId = element["id"]!!.long
+      val description = element["description"]!!.content
+      val nsfw = element["nsfw"]!!.booleanOrNull ?: false
 
       val apkUrl = "$repoUrl/apk/$apkName"
       val iconUrl = "$repoUrl/icon/${apkName.replace(".apk", ".png")}"

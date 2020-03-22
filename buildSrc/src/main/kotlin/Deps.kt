@@ -1,13 +1,13 @@
 object Deps {
 
   object kotlin {
-    const val version = "1.3.60"
+    const val version = "1.3.70"
     const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$version"
-    const val serialization = "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.10.0"
+    const val serialization = "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.20.0"
   }
 
   object coroutines {
-    private const val version = "1.3.2"
+    private const val version = "1.3.5"
     const val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
     const val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$version"
   }
@@ -43,7 +43,7 @@ object Deps {
     const val compiler = "androidx.room:room-compiler:$version"
   }
 
-  const val sqlite = "io.requery:sqlite-android:3.29.0"
+  const val sqlite = "io.requery:sqlite-android:3.30.1"
 
   object toothpick {
     private const val version = "3.1.0"

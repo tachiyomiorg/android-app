@@ -17,7 +17,6 @@ import tachiyomi.data.catalog.service.AndroidCatalogInstaller
 import tachiyomi.data.catalog.service.AndroidCatalogLoader
 import tachiyomi.data.catalog.service.CatalogRemoteRepositoryImpl
 import tachiyomi.data.library.service.CategoryRepositoryImpl
-import tachiyomi.data.library.service.LibraryCoversImpl
 import tachiyomi.data.library.service.LibraryRepositoryImpl
 import tachiyomi.data.library.service.LibraryUpdateSchedulerImpl
 import tachiyomi.data.library.service.MangaCategoryRepositoryImpl
@@ -42,6 +41,7 @@ import tachiyomi.domain.sync.api.SyncDevice
 import tachiyomi.domain.sync.service.SyncPreferences
 import toothpick.ktp.binding.bind
 import toothpick.ktp.binding.module
+import java.io.File
 import javax.inject.Inject
 
 @Suppress("FunctionName")
@@ -61,20 +61,16 @@ fun DataModule(context: Application) = module {
 
   bind<LibraryRepository>().toClass<LibraryRepositoryImpl>().singleton()
   bind<LibraryPreferences>()
-    .toProviderInstance {
-      LibraryPreferences(
-        preferenceFactory.create("library"))
-    }
+    .toProviderInstance { LibraryPreferences(preferenceFactory.create("library")) }
     .providesSingleton()
 
-  bind<LibraryCovers>().toClass<LibraryCoversImpl>().singleton()
+  bind<LibraryCovers>()
+    .toProviderInstance { LibraryCovers(File(context.filesDir, "library_covers")) }
+    .providesSingleton()
   bind<LibraryUpdateScheduler>().toClass<LibraryUpdateSchedulerImpl>().singleton()
 
   bind<SyncPreferences>()
-    .toProviderInstance {
-      SyncPreferences(
-        preferenceFactory.create("sync"))
-    }
+    .toProviderInstance { SyncPreferences(preferenceFactory.create("sync")) }
     .providesSingleton()
 
   bind<SyncDevice>().toClass<SyncDeviceAndroid>().singleton()
@@ -88,10 +84,6 @@ fun DataModule(context: Application) = module {
   bind<CatalogStore>().singleton()
   bind<CatalogInstallationReceiver>().toClass<AndroidCatalogInstallationReceiver>().singleton()
   bind<CatalogLoader>().toClass<AndroidCatalogLoader>().singleton()
-
-  bind<CatalogPreferences>()
-    .toProviderInstance { CatalogPreferences(preferenceFactory.create("catalog")) }
-    .providesSingleton()
 
 }
 

@@ -10,14 +10,26 @@ package tachiyomi.domain.library.service
 
 import java.io.File
 
-interface LibraryCovers {
+class LibraryCovers(private val dir: File) {
 
-  fun find(mangaId: Long): File
+  init {
+    dir.mkdirs()
+  }
 
-  fun findCustom(mangaId: Long): File
+  fun find(mangaId: Long): File {
+    return File(dir, "$mangaId")
+  }
 
-  fun delete(mangaId: Long): Boolean
+  fun findCustom(mangaId: Long): File {
+    return File(dir, "${mangaId}_custom")
+  }
 
-  fun deleteCustom(mangaId: Long): Boolean
+  fun delete(mangaId: Long): Boolean {
+    return find(mangaId).delete()
+  }
+
+  fun deleteCustom(mangaId: Long): Boolean {
+    return findCustom(mangaId).delete()
+  }
 
 }
