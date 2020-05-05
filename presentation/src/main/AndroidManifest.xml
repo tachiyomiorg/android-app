@@ -6,7 +6,8 @@
     <activity
       android:name="tachiyomi.ui.MainActivity"
       android:launchMode="singleTask"
-      android:windowSoftInputMode="adjustPan">
+      android:windowSoftInputMode="adjustPan"
+      android:theme="@style/Theme">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />

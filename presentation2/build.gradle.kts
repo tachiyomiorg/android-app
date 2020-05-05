@@ -34,7 +34,7 @@ dependencies {
   implementationProject(Projects.sourceApi)
   implementationProject(Projects.domain)
 
-//  implementation(Deps.androidX.design)
+  implementation(Deps.androidX.design)
 //  implementation(Deps.androidX.appCompat)
 //  implementation(Deps.androidX.recyclerView)
 //  implementation(Deps.androidX.preference)

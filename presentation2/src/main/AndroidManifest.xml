@@ -6,7 +6,8 @@
       android:name="tachiyomi.ui.MainActivity"
       android:launchMode="singleTask"
       android:windowSoftInputMode="adjustPan"
-      android:configChanges="orientation|screenLayout|screenSize">
+      android:configChanges="orientation|screenLayout|screenSize"
+      android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
