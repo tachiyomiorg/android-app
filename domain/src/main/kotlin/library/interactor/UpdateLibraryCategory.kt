@@ -25,7 +25,7 @@ import javax.inject.Inject
 class UpdateLibraryCategory @Inject constructor(
   private val getLibraryCategory: GetLibraryCategory,
   private val syncChaptersFromSource: SyncChaptersFromSource,
-  private val notifier: LibraryUpdaterNotification,
+  //private val notifier: LibraryUpdaterNotification,
   private val libraryUpdater: LibraryUpdater,
   private val categoryRepository: CategoryRepository,
   private val libraryScheduler: LibraryUpdateScheduler
@@ -34,11 +34,11 @@ class UpdateLibraryCategory @Inject constructor(
   suspend fun enqueue(categoryId: Long): LibraryUpdater.QueueResult {
     val operation: suspend (Job) -> Any = { job ->
       Timber.debug { "Updating category $categoryId ${Thread.currentThread()}" }
-      notifier.start()
+      //notifier.start()
 
       job.invokeOnCompletion {
         Timber.debug { "Finished updating category $categoryId ${Thread.currentThread()}" }
-        notifier.end()
+        //notifier.end()
       }
 
       val mangas = getLibraryCategory.await(categoryId)
@@ -47,7 +47,7 @@ class UpdateLibraryCategory @Inject constructor(
       for ((progress, manga) in mangas.withIndex()) {
         if (!job.isActive) break
 
-        notifier.showProgress(manga, progress, total)
+        //notifier.showProgress(manga, progress, total)
         syncChaptersFromSource.await(manga)
       }
     }

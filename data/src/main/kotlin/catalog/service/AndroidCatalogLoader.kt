@@ -106,6 +106,7 @@ internal class AndroidCatalogLoader @Inject constructor(
     }
 
     val extName = pkgManager.getApplicationLabel(appInfo).toString()
+
     @Suppress("DEPRECATION")
     val versionCode = pkgInfo.versionCode
     val versionName = pkgInfo.versionName

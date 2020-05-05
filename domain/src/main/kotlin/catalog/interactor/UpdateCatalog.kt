@@ -10,7 +10,6 @@ package tachiyomi.domain.catalog.interactor
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.single
 import tachiyomi.domain.catalog.model.CatalogInstalled
 import tachiyomi.domain.catalog.model.InstallStep
 import tachiyomi.domain.catalog.service.CatalogRemoteRepository
@@ -22,7 +21,7 @@ class UpdateCatalog @Inject constructor(
 ) {
 
   suspend fun await(catalog: CatalogInstalled): Flow<InstallStep> {
-    val catalogs = catalogRemoteRepository.getRemoteCatalogsFlow().single()
+    val catalogs = catalogRemoteRepository.getRemoteCatalogs()
 
     val catalogToUpdate = catalogs.find { it.pkgName == catalog.pkgName }
     return if (catalogToUpdate == null) {

@@ -72,6 +72,7 @@ class PackageInstaller @Inject constructor(
       deferred.await()
     } finally {
       context.unregisterReceiver(receiver)
+      broadcast.cancel()
     }
   }
 
@@ -91,8 +92,13 @@ class PackageInstaller @Inject constructor(
           confirmationIntent?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
           try {
             context.startActivity(confirmationIntent)
+
+            // Mark installation as completed even if it's not finished because we don't always
+            // receive the result callback
+            deferred.complete(true)
           } catch (e: Exception) {
             Timber.warn { "Error while (un)installing package: $e" }
+            deferred.complete(false)
           }
         }
         PackageInstaller.STATUS_SUCCESS -> {

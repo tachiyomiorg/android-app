@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+  <item
+    android:checked="true"
+    android:id="@+id/nav_drawer_library"
+    android:icon="@drawable/ic_book_black_24dp"
+    android:title="@string/label_library2" />
+  <item
+    android:id="@+id/nav_drawer_catalogues"
+    android:icon="@drawable/ic_explore_black_24dp"
+    android:title="@string/label_catalogues" />
+  <item
+    android:id="@+id/nav_drawer_recent_updates"
+    android:icon="@drawable/ic_update_black_24dp"
+    android:title="@string/label_history" />
+  <item
+    android:id="@+id/nav_drawer_settings"
+    android:icon="@drawable/ic_settings_black_24dp"
+    android:title="@string/label_more"
+    android:checkable="false" />
+</menu>

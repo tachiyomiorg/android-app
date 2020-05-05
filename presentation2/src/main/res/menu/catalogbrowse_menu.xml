@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  tools:context=".CatalogueListActivity">
+
+  <!--<item-->
+    <!--android:id="@+id/action_search"-->
+    <!--android:title="Search"-->
+    <!--android:icon="@drawable/ic_search_white_24dp"-->
+    <!--app:showAsAction="collapseActionView|always"-->
+    <!--app:actionViewClass="android.support.v7.widget.SearchView"/>-->
+
+  <item
+    android:id="@+id/action_sort"
+    android:title="Sort"
+    android:icon="@drawable/ic_sort_white_24dp"
+    app:showAsAction="collapseActionView|ifRoom">
+
+    <menu/>
+
+  </item>
+
+  <item
+    android:id="@+id/action_display_mode"
+    android:title="Display mode"
+    android:icon="@drawable/ic_view_list_white_24dp"
+    app:showAsAction="collapseActionView|ifRoom"/>
+</menu>

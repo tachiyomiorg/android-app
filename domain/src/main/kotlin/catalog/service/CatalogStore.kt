@@ -13,9 +13,11 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import tachiyomi.domain.catalog.model.CatalogInstalled
 import tachiyomi.domain.catalog.model.CatalogLocal
+import tachiyomi.domain.catalog.model.CatalogRemote
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -23,14 +25,17 @@ import javax.inject.Singleton
 @Singleton
 class CatalogStore @Inject constructor(
   private val loader: CatalogLoader,
+  private val catalogRemoteRepository: CatalogRemoteRepository,
   installationReceiver: CatalogInstallationReceiver
 ) : CatalogInstallationReceiver.Listener {
 
-  var catalogs = listOf<CatalogLocal>()
+  var catalogs = emptyList<CatalogLocal>()
     private set(value) {
-      field = value
-      catalogsChannel.offer(value)
+      field = value.withUpdateCheck()
+      catalogsChannel.offer(field)
     }
+
+  private var remoteCatalogs = emptyList<CatalogRemote>()
 
   private val catalogsChannel = ConflatedBroadcastChannel(catalogs)
 
@@ -41,6 +46,16 @@ class CatalogStore @Inject constructor(
       .onEach { catalogsBySource[it.source.id] = it }
 
     installationReceiver.register(this)
+
+    GlobalScope.launch {
+      catalogRemoteRepository.getRemoteCatalogsFlow()
+        .collect {
+          remoteCatalogs = it
+          synchronized(this@CatalogStore) {
+            catalogs = catalogs // Force an update check
+          }
+        }
+    }
   }
 
   fun get(sourceId: Long): CatalogLocal? {
@@ -49,6 +64,23 @@ class CatalogStore @Inject constructor(
 
   fun getCatalogsFlow(): Flow<List<CatalogLocal>> {
     return catalogsChannel.asFlow()
+  }
+
+  private fun List<CatalogLocal>.withUpdateCheck(): List<CatalogLocal> {
+    val catalogs = toMutableList()
+    val remoteCatalogs = remoteCatalogs
+    for ((index, installedCatalog) in catalogs.withIndex()) {
+      if (installedCatalog !is CatalogInstalled) continue
+
+      val pkgName = installedCatalog.pkgName
+      val remoteCatalog = remoteCatalogs.find { it.pkgName == pkgName } ?: continue
+
+      val hasUpdate = remoteCatalog.versionCode > installedCatalog.versionCode
+      if (installedCatalog.hasUpdate != hasUpdate) {
+        catalogs[index] = installedCatalog.copy(hasUpdate = hasUpdate)
+      }
+    }
+    return catalogs
   }
 
   override fun onInstalled(pkgName: String) {

@@ -13,7 +13,7 @@ enum class Projects(val path: String) {
 
   // Tachiyomi specific Android modules
   `data`(":data"),
-  presentation(":presentation"),
+  presentation(":presentation2"),
   app(":app")
 }
 

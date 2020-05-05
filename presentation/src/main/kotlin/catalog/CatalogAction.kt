@@ -33,7 +33,7 @@ sealed class Action {
 
   data class InstallStepUpdate(val pkgName: String, val step: InstallStep) : Action() {
     override fun reduce(state: ViewState) =
-      state.copy(installingCatalogs = if (step == InstallStep.Installed) {
+      state.copy(installingCatalogs = if (step == InstallStep.Completed) {
         state.installingCatalogs - pkgName
       } else {
         state.installingCatalogs + (pkgName to step)

@@ -50,9 +50,9 @@ internal class AndroidCatalogInstaller @Inject constructor(
       response.saveTo(destFile)
 
       emit(InstallStep.Installing)
-      val installed = packageInstaller.install(destFile, catalog.pkgName)
+      val success = packageInstaller.install(destFile, catalog.pkgName)
 
-      emit(if (installed) InstallStep.Installed else InstallStep.Error)
+      emit(if (success) InstallStep.Completed else InstallStep.Error)
     } catch (e: Exception) {
       Timber.warn { "Error installing package: $e" }
       emit(InstallStep.Error)

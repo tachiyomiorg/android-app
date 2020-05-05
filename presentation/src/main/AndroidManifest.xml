@@ -1,7 +1,54 @@
 <manifest package="tachiyomi.ui"
-  xmlns:android="http://schemas.android.com/apk/res/android">
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools">
 
   <application>
+    <activity
+      android:name="tachiyomi.ui.MainActivity"
+      android:launchMode="singleTask"
+      android:windowSoftInputMode="adjustPan">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW"/>
+      </intent-filter>
+    </activity>
+
     <receiver android:name=".library.LibraryUpdaterNotificationImpl$CancelReceiver" />
+
+    <activity
+      android:name="tachiyomi.ui.reader.ReaderActivity" />
+
+    <activity
+      android:name="tachiyomi.ui.deeplink.DeepLinkHandlerActivity"
+      android:label="Extension"
+      android:theme="@android:style/Theme.NoDisplay">
+      <intent-filter>
+        <action android:name="tachiyomi.action.HANDLE_LINK" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <data android:scheme="http" />
+        <data android:scheme="https" />
+      </intent-filter>
+    </activity>
+
+    <activity
+      android:name="com.jaredrummler.cyanea.prefs.CyaneaSettingsActivity"
+      tools:node="remove" />
+
+    <activity
+      android:name="com.jaredrummler.cyanea.prefs.CyaneaThemePickerActivity"
+      tools:node="remove" />
+
+    <activity
+      android:name="tachiyomi.ui.settings.AppearanceActivity"
+      android:label="@string/toolbar_appearance"
+      android:theme="@style/Theme.Cyanea.Light.DarkActionBar" />
+
+    <activity
+      android:name="tachiyomi.ui.settings.ThemePickerActivity"
+      android:label="@string/toolbar_themepicker"
+      android:theme="@style/Theme.Cyanea.Light.DarkActionBar" />
   </application>
 </manifest>

@@ -45,6 +45,10 @@ internal class CatalogRemoteRepositoryImpl @Inject constructor(
     initRemoteCatalogs()
   }
 
+  override suspend fun getRemoteCatalogs(): List<CatalogRemote> {
+    return remoteCatalogs
+  }
+
   override fun getRemoteCatalogsFlow(): Flow<List<CatalogRemote>> {
     return remoteCatalogsChannel.asFlow()
   }

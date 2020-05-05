@@ -12,13 +12,19 @@ import androidx.annotation.CallSuper
 import com.freeletics.coredux.LogSink
 import com.freeletics.coredux.StateReceiver
 import com.freeletics.coredux.Store
+import com.freeletics.coredux.distinctUntilChangedBy
 import com.freeletics.coredux.log.common.LoggerLogSink
 import com.freeletics.coredux.subscribeToChangedStateUpdates
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import tachiyomi.core.ui.BuildConfig
 import timber.log.Timber
 import timber.log.debug
@@ -34,6 +40,19 @@ abstract class BasePresenter {
   @CallSuper
   open fun destroy() {
     job.cancel()
+  }
+
+  fun <S : Any, A : Any> Store<S, A>.asFlow() = callbackFlow {
+    var previousState: S? = null
+
+    val receiver: StateReceiver<S> = { newState ->
+      if (newState !== previousState) {
+        previousState = newState
+        offer(newState)
+      }
+    }
+    subscribe(receiver)
+    awaitClose { unsubscribe(receiver) }
   }
 
   fun <S : Any, A : Any> Store<S, A>.subscribeToChangedStateUpdatesInMain(

@@ -9,9 +9,9 @@
 package tachiyomi.domain.catalog.model
 
 enum class InstallStep {
-  Pending, Downloading, Installing, Installed, Error;
+  Pending, Downloading, Installing, Completed, Error;
 
-  fun isCompleted(): Boolean {
-    return this == Installed || this == Error
+  fun isFinished(): Boolean {
+    return this == Completed || this == Error
   }
 }

@@ -13,6 +13,8 @@ import tachiyomi.domain.catalog.model.CatalogRemote
 
 interface CatalogRemoteRepository {
 
+  suspend fun getRemoteCatalogs(): List<CatalogRemote>
+
   fun getRemoteCatalogsFlow(): Flow<List<CatalogRemote>>
 
   suspend fun refreshRemoteCatalogs(forceRefresh: Boolean)

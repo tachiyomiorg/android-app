@@ -18,6 +18,10 @@ class GetRemoteCatalogs @Inject constructor(
   private val catalogRemoteRepository: CatalogRemoteRepository
 ) {
 
+  suspend fun await(): List<CatalogRemote> {
+    return catalogRemoteRepository.getRemoteCatalogs()
+  }
+
   fun subscribe(
     withNsfw: Boolean = true
   ): Flow<List<CatalogRemote>> {

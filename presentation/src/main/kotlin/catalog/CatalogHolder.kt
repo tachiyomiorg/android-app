@@ -77,14 +77,14 @@ class CatalogHolder(
 
   fun bindInstallButton(catalog: CatalogInstalled, step: InstallStep?) {
     when {
-      step != null && !step.isCompleted() -> showInstalling()
+      step != null && !step.isFinished() -> showInstalling()
       catalog.hasUpdate -> showInstall()
       else -> hideInstall()
     }
   }
 
   fun bindInstallButton(catalog: CatalogRemote, step: InstallStep?) {
-    if (step != null && !step.isCompleted()) {
+    if (step != null && !step.isFinished()) {
       showInstalling()
     } else {
       showInstall()

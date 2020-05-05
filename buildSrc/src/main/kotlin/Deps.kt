@@ -1,7 +1,7 @@
 object Deps {
 
   object kotlin {
-    const val version = "1.3.70"
+    const val version = "1.3.72"
     const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$version"
     const val serialization = "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.20.0"
   }
@@ -21,6 +21,17 @@ object Deps {
     const val card = "androidx.cardview:cardview:1.0.0"
     const val emoji = "androidx.emoji:emoji-bundled:1.0.0"
     const val sqlite = "androidx.sqlite:sqlite:2.0.1"
+  }
+
+  object compose {
+    const val version = "0.1.0-dev10"
+    const val runtime = "androidx.compose:compose-runtime:$version"
+    const val framework = "androidx.ui:ui-framework:$version"
+    const val layout = "androidx.ui:ui-layout:$version"
+    const val material = "androidx.ui:ui-material:$version"
+    const val icons = "androidx.ui:ui-material-icons-extended:$version"
+    const val tooling = "androidx.ui:ui-tooling:$version"
+    const val graphics = "androidx.ui:ui-graphics:$version"
   }
 
   object lifecycle {
