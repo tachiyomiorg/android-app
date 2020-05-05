@@ -8,15 +8,10 @@
 
 package tachiyomi.domain.catalog.service
 
-import kotlinx.coroutines.flow.Flow
 import tachiyomi.domain.catalog.model.CatalogRemote
 
-interface CatalogRemoteRepository {
+interface CatalogRemoteApi {
 
-  suspend fun getRemoteCatalogs(): List<CatalogRemote>
-
-  fun getRemoteCatalogsFlow(): Flow<List<CatalogRemote>>
-
-  suspend fun setRemoteCatalogs(catalogs: List<CatalogRemote>)
+  suspend fun findCatalogs(): List<CatalogRemote>
 
 }

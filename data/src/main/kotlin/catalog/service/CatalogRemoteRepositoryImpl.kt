@@ -8,7 +8,7 @@
 
 package tachiyomi.data.catalog.service
 
-import android.os.SystemClock
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
@@ -16,36 +16,32 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.launch
 import tachiyomi.data.AppDatabase
-import tachiyomi.data.catalog.api.CatalogGithubApi
 import tachiyomi.domain.catalog.model.CatalogRemote
 import tachiyomi.domain.catalog.service.CatalogRemoteRepository
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 internal class CatalogRemoteRepositoryImpl @Inject constructor(
-  db: AppDatabase,
-  private val api: CatalogGithubApi
+  db: AppDatabase
 ) : CatalogRemoteRepository {
 
   private val dao = db.catalogRemote
 
-  var remoteCatalogs = emptyList<CatalogRemote>()
-    private set(value) {
+  private var remoteCatalogs = emptyList<CatalogRemote>()
+    set(value) {
       field = value
       remoteCatalogsChannel.offer(value)
     }
 
   private val remoteCatalogsChannel = ConflatedBroadcastChannel(remoteCatalogs)
 
-  private var lastTimeApiChecked: Long? = null
-
-  private var minTimeApiCheck = TimeUnit.MINUTES.toMillis(5)
+  private val initDeferred = CompletableDeferred<Unit>()
 
   init {
     initRemoteCatalogs()
   }
 
   override suspend fun getRemoteCatalogs(): List<CatalogRemote> {
+    initDeferred.await()
     return remoteCatalogs
   }
 
@@ -56,22 +52,14 @@ internal class CatalogRemoteRepositoryImpl @Inject constructor(
   private fun initRemoteCatalogs() {
     GlobalScope.launch(Dispatchers.IO) {
       remoteCatalogs = dao.findAll()
-      refreshRemoteCatalogs(false)
+      initDeferred.complete(Unit)
     }
   }
 
-  override suspend fun refreshRemoteCatalogs(forceRefresh: Boolean) {
-    val lastCheck = lastTimeApiChecked
-    if (!forceRefresh && lastCheck != null &&
-      lastCheck - SystemClock.elapsedRealtime() < minTimeApiCheck
-    ) {
-      return
-    }
-    lastTimeApiChecked = SystemClock.elapsedRealtime()
-
-    val newCatalogs = api.findCatalogs()
-    dao.replaceAll(newCatalogs)
-    remoteCatalogs = newCatalogs
+  override suspend fun setRemoteCatalogs(catalogs: List<CatalogRemote>) {
+    initDeferred.await()
+    dao.replaceAll(catalogs)
+    remoteCatalogs = catalogs
   }
 
 }

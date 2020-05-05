@@ -21,4 +21,8 @@ class CatalogPreferences(private val store: PreferenceStore) {
     return store.getInt("last_listing_$sourceId", 0)
   }
 
+  fun lastRemoteCheck(): Preference<Long> {
+    return store.getLong("last_remote_check", 0)
+  }
+
 }

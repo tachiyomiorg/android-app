@@ -13,7 +13,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import tachiyomi.domain.catalog.model.CatalogInstalled
 import tachiyomi.domain.catalog.model.CatalogLocal
@@ -21,41 +22,41 @@ import tachiyomi.domain.catalog.model.CatalogRemote
 import javax.inject.Inject
 import javax.inject.Singleton
 
-// TODO the hasUpdate field needs a workaround
 @Singleton
 class CatalogStore @Inject constructor(
   private val loader: CatalogLoader,
-  private val catalogRemoteRepository: CatalogRemoteRepository,
+  catalogRemoteRepository: CatalogRemoteRepository,
   installationReceiver: CatalogInstallationReceiver
 ) : CatalogInstallationReceiver.Listener {
 
   var catalogs = emptyList<CatalogLocal>()
     private set(value) {
       field = value.withUpdateCheck()
+      updatableCatalogs = field.filterIsInstance<CatalogInstalled>().filter { it.hasUpdate }
+      catalogsBySource = field.associateBy { it.sourceId }
       catalogsChannel.offer(field)
     }
 
+  private var updatableCatalogs = emptyList<CatalogInstalled>()
+
   private var remoteCatalogs = emptyList<CatalogRemote>()
+
+  private var catalogsBySource = emptyMap<Long, CatalogLocal>()
 
   private val catalogsChannel = ConflatedBroadcastChannel(catalogs)
 
-  private val catalogsBySource = mutableMapOf<Long, CatalogLocal>()
-
   init {
     catalogs = loader.loadAll()
-      .onEach { catalogsBySource[it.source.id] = it }
-
     installationReceiver.register(this)
 
-    GlobalScope.launch {
-      catalogRemoteRepository.getRemoteCatalogsFlow()
-        .collect {
-          remoteCatalogs = it
-          synchronized(this@CatalogStore) {
-            catalogs = catalogs // Force an update check
-          }
+    catalogRemoteRepository.getRemoteCatalogsFlow()
+      .onEach {
+        remoteCatalogs = it
+        synchronized(this@CatalogStore) {
+          catalogs = catalogs // Force an update check
         }
-    }
+      }
+      .launchIn(GlobalScope)
   }
 
   fun get(sourceId: Long): CatalogLocal? {
@@ -94,11 +95,9 @@ class CatalogStore @Inject constructor(
         }
         if (oldCatalog != null) {
           mutInstalledCatalogs -= oldCatalog
-          catalogsBySource.remove(catalog.source.id)
         }
         mutInstalledCatalogs += catalog
         catalogs = mutInstalledCatalogs
-        catalogsBySource[catalog.source.id] = catalog
       }
     }
   }
@@ -109,7 +108,6 @@ class CatalogStore @Inject constructor(
         val installedCatalog = catalogs.find { (it as? CatalogInstalled)?.pkgName == pkgName }
         if (installedCatalog != null) {
           catalogs = catalogs - installedCatalog
-          catalogsBySource.remove(installedCatalog.source.id)
         }
       }
     }

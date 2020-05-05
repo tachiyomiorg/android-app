@@ -35,8 +35,6 @@ import tachiyomi.ui.collectAsState
 import tachiyomi.ui.presenter.BasePresenter
 import tachiyomi.ui.presenter.EmptySideEffect
 import tachiyomi.ui.presenter.FlowSwitchSideEffect
-import timber.log.Timber
-import timber.log.warn
 import javax.inject.Inject
 
 class LibraryPresenter @Inject constructor(
@@ -70,13 +68,7 @@ class LibraryPresenter @Inject constructor(
   )
 
   init {
-    Timber.warn { "Hi!" }
     store.dispatch(Action.Init)
-  }
-
-  override fun destroy() {
-    super.destroy()
-    Timber.warn { "Bye!" }
   }
 
   @Composable

@@ -12,6 +12,7 @@ import android.app.Application
 import androidx.room.withTransaction
 import tachiyomi.core.db.Transaction
 import tachiyomi.core.prefs.PreferenceStoreFactory
+import tachiyomi.data.catalog.api.CatalogGithubApi
 import tachiyomi.data.catalog.service.AndroidCatalogInstallationReceiver
 import tachiyomi.data.catalog.service.AndroidCatalogInstaller
 import tachiyomi.data.catalog.service.AndroidCatalogLoader
@@ -27,6 +28,7 @@ import tachiyomi.domain.catalog.service.CatalogInstallationReceiver
 import tachiyomi.domain.catalog.service.CatalogInstaller
 import tachiyomi.domain.catalog.service.CatalogLoader
 import tachiyomi.domain.catalog.service.CatalogPreferences
+import tachiyomi.domain.catalog.service.CatalogRemoteApi
 import tachiyomi.domain.catalog.service.CatalogRemoteRepository
 import tachiyomi.domain.catalog.service.CatalogStore
 import tachiyomi.domain.library.service.CategoryRepository
@@ -76,6 +78,7 @@ fun DataModule(context: Application) = module {
   bind<SyncDevice>().toClass<SyncDeviceAndroid>().singleton()
 
   bind<CatalogRemoteRepository>().toClass<CatalogRemoteRepositoryImpl>().singleton()
+  bind<CatalogRemoteApi>().toClass<CatalogGithubApi>().singleton()
   bind<CatalogPreferences>()
     .toProviderInstance { CatalogPreferences(preferenceFactory.create("catalog")) }
     .providesSingleton()

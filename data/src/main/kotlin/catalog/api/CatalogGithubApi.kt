@@ -10,6 +10,7 @@ package tachiyomi.data.catalog.api
 
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonConfiguration
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.content
@@ -20,18 +21,18 @@ import tachiyomi.core.http.Http
 import tachiyomi.core.http.awaitBody
 import tachiyomi.core.http.get
 import tachiyomi.domain.catalog.model.CatalogRemote
+import tachiyomi.domain.catalog.service.CatalogRemoteApi
 import javax.inject.Inject
 
-internal class CatalogGithubApi @Inject constructor(private val http: Http) {
+internal class CatalogGithubApi @Inject constructor(private val http: Http) : CatalogRemoteApi {
 
   // TODO create a new branch for 1.x extensions
 //  private val repoUrl = "https://raw.githubusercontent.com/inorichi/tachiyomi-extensions/repo"
   private val repoUrl = "https://tachiyomi.kanade.eu/repo"
 
-  suspend fun findCatalogs(): List<CatalogRemote> {
+  override suspend fun findCatalogs(): List<CatalogRemote> {
     val body = http.defaultClient.get("$repoUrl/index.min.json").awaitBody()
-    val json = Json.parse<JsonArray>(body)
-
+    val json = Json(JsonConfiguration.Stable).parse<JsonArray>(body)
     return json.map { element ->
       element as JsonObject
       val name = element["name"]!!.content
