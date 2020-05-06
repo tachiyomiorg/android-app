@@ -8,16 +8,8 @@
 
 package tachiyomi.ui.di
 
-import tachiyomi.domain.library.service.LibraryUpdaterNotification
-import tachiyomi.ui.glide.GlideInitCallback
-import tachiyomi.ui.glide.TachiyomiGlideInitCallback
-import tachiyomi.ui.library.LibraryUpdaterNotificationImpl
-import toothpick.ktp.binding.bind
 import toothpick.ktp.binding.module
 
 val UiModule = module {
-
-  bind<GlideInitCallback>().toClass<TachiyomiGlideInitCallback>().singleton()
-  bind<LibraryUpdaterNotification>().toClass<LibraryUpdaterNotificationImpl>().singleton()
 
 }

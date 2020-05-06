@@ -1,6 +1,7 @@
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.kotlin.dsl.project
 
+@Suppress("EnumEntryName")
 enum class Projects(val path: String) {
   // Core Java modules
   common(":common"),
@@ -9,11 +10,10 @@ enum class Projects(val path: String) {
 
   // Core Android modules
   core(":core"),
-  coreUi(":core-ui"),
 
   // Tachiyomi specific Android modules
   `data`(":data"),
-  presentation(":presentation2"),
+  presentation(":presentation"),
   app(":app")
 }
 

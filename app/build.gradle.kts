@@ -34,7 +34,6 @@ android {
 
 dependencies {
   implementationProject(Projects.core)
-  implementationProject(Projects.coreUi)
   implementationProject(Projects.domain)
   implementationProject(Projects.data)
   implementationProject(Projects.presentation)
@@ -45,6 +44,4 @@ dependencies {
   kapt(Deps.toothpick.compiler)
 
   implementation(Deps.timber.android)
-  implementation(Deps.cyanea)
-  implementation(Deps.androidX.emoji)
 }

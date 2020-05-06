@@ -17,15 +17,14 @@ import tachiyomi.core.di.AppScope
 import tachiyomi.domain.library.interactor.UpdateLibraryCategory
 import timber.log.Timber
 import timber.log.debug
-import javax.inject.Inject
+import toothpick.ktp.delegate.inject
 
 class LibraryUpdaterWorker(
   context: Context,
   params: WorkerParameters
 ) : CoroutineWorker(context, params) {
 
-  @Inject
-  lateinit var updater: UpdateLibraryCategory
+  private val updater by inject<UpdateLibraryCategory>()
 
   init {
     AppScope.inject(this)

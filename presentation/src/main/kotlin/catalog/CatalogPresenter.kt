@@ -8,21 +8,23 @@
 
 package tachiyomi.ui.catalog
 
+import androidx.compose.Composable
+import androidx.compose.State
 import com.freeletics.coredux.SideEffect
 import com.freeletics.coredux.createStore
 import kotlinx.coroutines.async
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import tachiyomi.domain.catalog.interactor.SyncRemoteCatalogs
 import tachiyomi.domain.catalog.interactor.GetCatalogs
 import tachiyomi.domain.catalog.interactor.InstallCatalog
+import tachiyomi.domain.catalog.interactor.SyncRemoteCatalogs
 import tachiyomi.domain.catalog.interactor.UpdateCatalog
 import tachiyomi.domain.catalog.model.Catalog
 import tachiyomi.domain.catalog.model.CatalogInstalled
 import tachiyomi.domain.catalog.model.CatalogLocal
 import tachiyomi.domain.catalog.model.CatalogRemote
+import tachiyomi.ui.collectAsState
 import tachiyomi.ui.presenter.BasePresenter
 import tachiyomi.ui.presenter.FlowSideEffect
 import tachiyomi.ui.presenter.FlowSwitchSideEffect
@@ -37,8 +39,6 @@ class CatalogsPresenter @Inject constructor(
 
   private val initialState = getInitialViewState()
 
-  val state = ConflatedBroadcastChannel(initialState)
-
   private val store = scope.createStore(
     name = "Catalog presenter",
     initialState = initialState,
@@ -48,8 +48,12 @@ class CatalogsPresenter @Inject constructor(
   )
 
   init {
-    store.subscribeToChangedStateUpdatesInMain { state.offer(it) }
     store.dispatch(Action.Init)
+  }
+
+  @Composable
+  fun state(): State<ViewState> {
+    return store.asFlow().collectAsState(initialState)
   }
 
   private fun getInitialViewState(): ViewState {
@@ -61,43 +65,17 @@ class CatalogsPresenter @Inject constructor(
 
     sideEffects += FlowSwitchSideEffect("Subscribe to catalogs") f@{ stateFn, action ->
       if (action !is Action.Init && action !is Action.SetLanguageChoice) return@f null
+      val choice = stateFn().languageChoice
 
       suspend {
-        val choice = stateFn().languageChoice
         getCatalogs.subscribe(excludeRemoteInstalled = true).map { (local, remote) ->
-          val items = mutableListOf<Any>()
-
-          if (local.isNotEmpty()) {
-            items.add(CatalogHeader.Installed)
-
-            val (updatable, upToDate) = local.partition { it is CatalogInstalled && it.hasUpdate }
-            when {
-              updatable.isEmpty() -> {
-                items.addAll(upToDate)
-              }
-              upToDate.isEmpty() -> {
-                items.add(CatalogSubheader.UpdateAvailable(updatable.size))
-                items.addAll(updatable)
-              }
-              else -> {
-                items.add(CatalogSubheader.UpdateAvailable(updatable.size))
-                items.addAll(updatable)
-                items.add(CatalogSubheader.UpToDate)
-                items.addAll(upToDate)
-              }
-            }
-          }
-
-          if (remote.isNotEmpty()) {
-            val choices = LanguageChoices(getLanguageChoices(remote, local), choice)
-            val availableCatalogsFiltered = getRemoteCatalogsForLanguageChoice(remote, choice)
-
-            items.add(CatalogHeader.Available)
-            items.add(choices)
-            items.addAll(availableCatalogsFiltered)
-          }
-
-          Action.ItemsUpdate(items)
+          val (updatable, upToDate) = local.partition { it is CatalogInstalled && it.hasUpdate }
+          Action.ItemsUpdate(
+            localCatalogs = upToDate,
+            updatableCatalogs = updatable,
+            remoteCatalogs = getRemoteCatalogsForLanguageChoice(remote, choice),
+            languageChoices = getLanguageChoices(remote, local)
+          )
         }
       }
     }

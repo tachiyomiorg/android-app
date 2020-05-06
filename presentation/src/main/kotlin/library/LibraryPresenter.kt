@@ -8,6 +8,8 @@
 
 package tachiyomi.ui.library
 
+import androidx.compose.Composable
+import androidx.compose.State
 import com.freeletics.coredux.SideEffect
 import com.freeletics.coredux.createStore
 import kotlinx.coroutines.GlobalScope
@@ -29,6 +31,7 @@ import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.domain.library.model.LibrarySort
 import tachiyomi.domain.library.model.LibrarySorting
 import tachiyomi.domain.library.service.LibraryPreferences
+import tachiyomi.ui.collectAsState
 import tachiyomi.ui.presenter.BasePresenter
 import tachiyomi.ui.presenter.EmptySideEffect
 import tachiyomi.ui.presenter.FlowSwitchSideEffect
@@ -65,12 +68,16 @@ class LibraryPresenter @Inject constructor(
   )
 
   init {
-    store.subscribeToChangedStateUpdatesInMain { state.offer(it) }
     store.dispatch(Action.Init)
   }
 
-  private fun getInitialViewState(): ViewState {
-    return ViewState(
+  @Composable
+  fun state(): State<LibraryState> {
+    return store.asFlow().collectAsState(initialViewState)
+  }
+
+  private fun getInitialViewState(): LibraryState {
+    return LibraryState(
       categories = emptyList(),
       library = emptyList(),
       filters = emptyList(),
@@ -79,8 +86,8 @@ class LibraryPresenter @Inject constructor(
     )
   }
 
-  private fun getSideEffects(): List<SideEffect<ViewState, Action>> {
-    val sideEffects = mutableListOf<SideEffect<ViewState, Action>>()
+  private fun getSideEffects(): List<SideEffect<LibraryState, Action>> {
+    val sideEffects = mutableListOf<SideEffect<LibraryState, Action>>()
 
     sideEffects += FlowSwitchSideEffect("Subscribe user categories") f@{ _, action ->
       if (action !is Action.Init) return@f null

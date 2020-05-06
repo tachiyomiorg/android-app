@@ -23,7 +23,5 @@ import javax.inject.Inject
 class AppInitializers @Inject constructor(
   timberInitializer: TimberInitializer,
   catalogStoreInitializer: CatalogStoreInitializer,
-  cyaneaInitializer: CyaneaInitializer,
-  channelsInitializer: NotificationChannelsInitializer,
-  emojiCompatInitializer: EmojiCompatInitializer
+  channelsInitializer: NotificationChannelsInitializer
 )

@@ -8,7 +8,7 @@
 
 package tachiyomi.ui.catalog
 
-inline class Language(val code: String) {
+/* inline */ data class Language(val code: String) {
 
   fun toEmoji(): String? {
     val country = when (code) {

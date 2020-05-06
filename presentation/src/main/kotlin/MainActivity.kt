@@ -10,41 +10,63 @@ package tachiyomi.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import com.bluelinelabs.conductor.Conductor
-import com.bluelinelabs.conductor.Router
-import com.jaredrummler.cyanea.app.CyaneaAppCompatActivity
-import com.jaredrummler.cyanea.inflator.CyaneaViewProcessor
-import kotlinx.android.synthetic.main.main_activity.*
-import tachiyomi.ui.controller.withFadeTransition
-import tachiyomi.ui.controller.withoutTransition
-import tachiyomi.ui.deeplink.ChapterDeepLinkController
-import tachiyomi.ui.deeplink.MangaDeepLinkController
-import tachiyomi.ui.home.HomeController
+import androidx.activity.ComponentActivity
+import androidx.compose.Composable
+import androidx.compose.Model
+import androidx.ui.core.Modifier
+import androidx.ui.core.setContent
+import androidx.ui.foundation.Box
+import androidx.ui.foundation.Icon
+import androidx.ui.foundation.Text
+import androidx.ui.graphics.vector.VectorAsset
+import androidx.ui.layout.Column
+import androidx.ui.material.BottomNavigation
+import androidx.ui.material.BottomNavigationItem
+import androidx.ui.material.MaterialTheme
+import androidx.ui.material.icons.Icons
+import androidx.ui.material.icons.filled.Book
+import androidx.ui.material.icons.filled.Explore
+import androidx.ui.material.icons.filled.History
+import androidx.ui.material.icons.filled.MoreHoriz
+import androidx.ui.material.icons.filled.NewReleases
+import androidx.ui.material.lightColorPalette
+import androidx.ui.res.stringResource
+import tachiyomi.ui.catalog.CatalogScreen
+import tachiyomi.ui.library.LibraryScreen
 
-class MainActivity : CyaneaAppCompatActivity(), CyaneaViewProcessor.Provider {
+sealed class Screen {
+  object Library : Screen()
+  object Catalogs : Screen()
+  object Updates : Screen()
+  object History : Screen()
+  object More : Screen()
+}
 
-  private var router: Router? = null
+@Model
+object HomeScreen {
+  var current: Screen = Screen.Library
+}
+
+class MainActivity : ComponentActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    // Do not let the launcher create a new activity http://stackoverflow.com/questions/16283079
-    if (!isTaskRoot) {
-      finish()
-      return
-    }
-
-    // Init view
-    setContentView(R.layout.main_activity)
-
-    // Init conductor
-    val router = Conductor.attachRouter(this, main_controller_container, savedInstanceState)
-    this.router = router
-
-    if (!router.hasRootController()) {
-      // Set start screen
-      rootToHomeScreen()
+    setContent {
+      MaterialTheme(colors = lightColorPalette()) {
+        Column {
+          Box(modifier = Modifier.weight(1f)) {
+            when (HomeScreen.current) {
+              Screen.Library -> LibraryScreen()
+              Screen.Catalogs -> CatalogScreen()
+              Screen.Updates -> Box()
+              Screen.History -> Box()
+              Screen.More -> Box()
+            }
+          }
+          HomeBottomNav()
+        }
+      }
     }
   }
 
@@ -57,40 +79,12 @@ class MainActivity : CyaneaAppCompatActivity(), CyaneaViewProcessor.Provider {
   private fun handleIntentAction(intent: Intent): Boolean {
     when (intent.action) {
       SHORTCUT_DEEPLINK_CHAPTER -> {
-        router?.setRoot(ChapterDeepLinkController(intent.extras).withFadeTransition())
       }
       SHORTCUT_DEEPLINK_MANGA -> {
-        router?.setRoot(MangaDeepLinkController(intent.extras).withFadeTransition())
       }
       else -> return false
     }
     return true
-  }
-
-  override fun onBackPressed() {
-    val router = router ?: return super.onBackPressed()
-
-    val backstackSize = router.backstackSize
-    if (backstackSize == 1 && router.backstack.first().controller() !is HomeController) {
-      rootToHomeScreen()
-    } else if (!router.handleBack()) {
-      super.onBackPressed()
-    }
-  }
-
-  private fun rootToHomeScreen() {
-    val router = router ?: return
-    val controller = HomeController()
-    val transaction = if (router.hasRootController()) {
-      controller.withFadeTransition()
-    } else {
-      controller.withoutTransition()
-    }
-    router.setRoot(transaction)
-  }
-
-  override fun getViewProcessors(): Array<CyaneaViewProcessor<out View>> {
-    return getCyaneaViewProcessors()
   }
 
   companion object {
@@ -98,4 +92,28 @@ class MainActivity : CyaneaAppCompatActivity(), CyaneaViewProcessor.Provider {
     const val SHORTCUT_DEEPLINK_CHAPTER = "tachiyomi.action.DEEPLINK_CHAPTER"
   }
 
+}
+
+@Composable
+private fun HomeBottomNav() {
+  data class Item(val text: Int, val icon: VectorAsset, val screen: Screen)
+
+  val items = listOf(
+    Item(R.string.label_library2, Icons.Default.Book, Screen.Library),
+    Item(R.string.label_catalogues, Icons.Default.Explore, Screen.Catalogs),
+    Item(R.string.label_updates, Icons.Default.NewReleases, Screen.Updates),
+    Item(R.string.label_history, Icons.Default.History, Screen.History),
+    Item(R.string.label_more, Icons.Default.MoreHoriz, Screen.More)
+  )
+
+  BottomNavigation {
+    for (item in items) {
+      BottomNavigationItem(
+        text = { Text(stringResource(item.text), maxLines = 1) },
+        icon = { Icon(item.icon) },
+        selected = HomeScreen.current == item.screen,
+        onSelected = { HomeScreen.current = item.screen }
+      )
+    }
+  }
 }

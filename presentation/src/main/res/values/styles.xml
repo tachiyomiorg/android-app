@@ -1,72 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <!--============-->
-  <!-- Base Theme -->
-  <!--============-->
-  <style name="Theme" parent="Theme.Cyanea.Light.NoActionBar">
-    <item name="actionBarTheme">@style/Theme.ActionBar.Light</item>
+
+  <!-- Base application theme. These colors don't affect the Composable functions,
+   just the color of the Status Bar. -->
+
+  <style name="Theme.App" parent="Theme.AppCompat.Light.NoActionBar">
+    <item name="colorPrimary">@color/colorPrimary</item>
+    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    <item name="colorAccent">@color/colorAccent</item>
   </style>
 
-  <style name="Theme.Translucent">
-    <item name="android:statusBarColor">@android:color/transparent</item>
-    <item name="android:windowBackground">@android:color/transparent</item>
-    <item name="android:colorBackgroundCacheHint">@null</item>
-    <item name="android:windowIsTranslucent">true</item>
-    <item name="android:windowAnimationStyle">@null</item>
-  </style>
-
-  <!--========-->
-  <!--Toolbars-->
-  <!--========-->
-  <style name="Theme.ActionBar" parent="@style/ThemeOverlay.AppCompat.ActionBar" />
-
-  <style name="Theme.ActionBar.Light" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-    <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
-  </style>
-
-  <!--=======-->
-  <!--Widgets-->
-  <!--=======-->
-  <style name="Theme.Widget" />
-
-  <!--===============-->
-  <!--Text Appearance-->
-  <!--===============-->
-  <style name="TextAppearance" parent="@android:style/TextAppearance">
-    <item name="android:textColor">?android:attr/textColorPrimary</item>
-  </style>
-
-  <style name="TextAppearance.Subtitle1" parent="TextAppearance.MaterialComponents.Subtitle1" />
-
-  <style name="TextAppearance.Subtitle2" parent="TextAppearance.MaterialComponents.Subtitle2" />
-
-  <style name="TextAppearance.Body1" parent="TextAppearance.MaterialComponents.Body1" />
-
-  <style name="TextAppearance.Body1.Light">
-    <item name="android:textColor">@color/textColorPrimaryInverse</item>
-  </style>
-
-  <style name="TextAppearance.Body1.Secondary">
-    <item name="android:textColor">?android:textColorSecondary</item>
-  </style>
-
-  <style name="TextAppearance.Body2" parent="TextAppearance.MaterialComponents.Body2" />
-
-  <style name="TextAppearance.Body2.Light">
-    <item name="android:textColor">@color/textColorPrimaryInverse</item>
-  </style>
-
-  <style name="TextAppearance.Body2.Secondary">
-    <item name="android:textColor">?android:textColorSecondary</item>
-  </style>
-
-  <style name="TextAppearance.Button" parent="TextAppearance.MaterialComponents.Button" />
-
-  <style name="TextAppearance.Caption" parent="TextAppearance.MaterialComponents.Caption" />
-
-  <style name="TextAppearance.Caption.Light">
-    <item name="android:textColor">@color/textColorPrimaryInverse</item>
-  </style>
-
-  <style name="TextAppearance.Overline" parent="TextAppearance.MaterialComponents.Overline" />
 </resources>

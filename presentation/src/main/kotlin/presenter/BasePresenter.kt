@@ -12,7 +12,6 @@ import androidx.annotation.CallSuper
 import com.freeletics.coredux.LogSink
 import com.freeletics.coredux.StateReceiver
 import com.freeletics.coredux.Store
-import com.freeletics.coredux.distinctUntilChangedBy
 import com.freeletics.coredux.log.common.LoggerLogSink
 import com.freeletics.coredux.subscribeToChangedStateUpdates
 import kotlinx.coroutines.CoroutineScope
@@ -20,12 +19,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import tachiyomi.core.ui.BuildConfig
+import tachiyomi.ui.BuildConfig
 import timber.log.Timber
 import timber.log.debug
 import timber.log.info
