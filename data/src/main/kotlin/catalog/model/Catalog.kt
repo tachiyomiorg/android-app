@@ -28,7 +28,7 @@ data class CatalogRemote(
   val versionName: String,
   val versionCode: Int,
   val lang: String,
-  val apkUrl: String,
+  @ColumnInfo(name = "apkUrl") val pkgUrl: String, // TODO remove explicit columninfo later
   val iconUrl: String,
   val nsfw: Boolean
 ) : Catalog()

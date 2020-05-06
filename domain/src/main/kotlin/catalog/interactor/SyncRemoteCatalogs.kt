@@ -16,7 +16,7 @@ import timber.log.warn
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class FetchRemoteCatalogs @Inject constructor(
+class SyncRemoteCatalogs @Inject constructor(
   private val catalogRemoteRepository: CatalogRemoteRepository,
   private val catalogRemoteApi: CatalogRemoteApi,
   private val catalogPreferences: CatalogPreferences
@@ -28,7 +28,7 @@ class FetchRemoteCatalogs @Inject constructor(
 
     if (forceRefresh || System.currentTimeMillis() - lastCheck > minTimeApiCheck) {
       try {
-        val newCatalogs = catalogRemoteApi.findCatalogs()
+        val newCatalogs = catalogRemoteApi.fetchCatalogs()
         catalogRemoteRepository.setRemoteCatalogs(newCatalogs)
         remoteCheckPref.set(System.currentTimeMillis())
         return true

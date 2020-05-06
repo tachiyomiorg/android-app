@@ -45,7 +45,7 @@ internal class AndroidCatalogInstaller @Inject constructor(
 
     val destFile = File(context.cacheDir, "${catalog.pkgName}.apk")
     try {
-      val response = http.defaultClient.get(catalog.apkUrl).awaitSuccess()
+      val response = http.defaultClient.get(catalog.pkgUrl).awaitSuccess()
       emit(InstallStep.Downloading)
       response.saveTo(destFile)
 

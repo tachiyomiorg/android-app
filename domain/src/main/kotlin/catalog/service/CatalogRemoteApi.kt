@@ -12,6 +12,6 @@ import tachiyomi.domain.catalog.model.CatalogRemote
 
 interface CatalogRemoteApi {
 
-  suspend fun findCatalogs(): List<CatalogRemote>
+  suspend fun fetchCatalogs(): List<CatalogRemote>
 
 }

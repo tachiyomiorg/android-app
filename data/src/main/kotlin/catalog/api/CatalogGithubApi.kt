@@ -30,7 +30,7 @@ internal class CatalogGithubApi @Inject constructor(private val http: Http) : Ca
 //  private val repoUrl = "https://raw.githubusercontent.com/inorichi/tachiyomi-extensions/repo"
   private val repoUrl = "https://tachiyomi.kanade.eu/repo"
 
-  override suspend fun findCatalogs(): List<CatalogRemote> {
+  override suspend fun fetchCatalogs(): List<CatalogRemote> {
     val body = http.defaultClient.get("$repoUrl/index.min.json").awaitBody()
     val json = Json(JsonConfiguration.Stable).parse<JsonArray>(body)
     return json.map { element ->

@@ -11,14 +11,14 @@ package tachiyomi.app.initializers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import tachiyomi.domain.catalog.interactor.FetchRemoteCatalogs
+import tachiyomi.domain.catalog.interactor.SyncRemoteCatalogs
 import tachiyomi.domain.catalog.service.CatalogStore
 import toothpick.Lazy
 import javax.inject.Inject
 
 class CatalogStoreInitializer @Inject constructor(
   catalogStoreLazy: Lazy<CatalogStore>,
-  fetchRemoteCatalogs: FetchRemoteCatalogs
+  syncRemoteCatalogs: SyncRemoteCatalogs
 ) {
 
   init {
@@ -31,7 +31,7 @@ class CatalogStoreInitializer @Inject constructor(
 
     // Also fetch available catalogs on launch
     GlobalScope.launch(Dispatchers.IO) {
-      fetchRemoteCatalogs.await(forceRefresh = false)
+      syncRemoteCatalogs.await(forceRefresh = false)
     }
   }
 

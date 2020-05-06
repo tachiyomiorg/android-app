@@ -15,7 +15,7 @@ import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import tachiyomi.domain.catalog.interactor.FetchRemoteCatalogs
+import tachiyomi.domain.catalog.interactor.SyncRemoteCatalogs
 import tachiyomi.domain.catalog.interactor.GetCatalogs
 import tachiyomi.domain.catalog.interactor.InstallCatalog
 import tachiyomi.domain.catalog.interactor.UpdateCatalog
@@ -32,7 +32,7 @@ class CatalogsPresenter @Inject constructor(
   private val getCatalogs: GetCatalogs,
   private val installCatalog: InstallCatalog,
   private val updateCatalog: UpdateCatalog,
-  private val fetchRemoteCatalogs: FetchRemoteCatalogs
+  private val syncRemoteCatalogs: SyncRemoteCatalogs
 ) : BasePresenter() {
 
   private val initialState = getInitialViewState()
@@ -123,7 +123,7 @@ class CatalogsPresenter @Inject constructor(
         val force = if (action is Action.RefreshCatalogs) action.force else false
 
         // TODO there should be a better way to do this
-        val deferred = scope.async { fetchRemoteCatalogs.await(force) }
+        val deferred = scope.async { syncRemoteCatalogs.await(force) }
         flow {
           emit(Action.RefreshingCatalogs(true))
           runCatching { deferred.await() }
