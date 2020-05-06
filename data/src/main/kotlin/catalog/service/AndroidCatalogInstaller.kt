@@ -41,12 +41,10 @@ internal class AndroidCatalogInstaller @Inject constructor(
    * @param catalog The catalog to install.
    */
   override fun install(catalog: CatalogRemote) = flow {
-    emit(InstallStep.Pending)
-
+    emit(InstallStep.Downloading)
     val destFile = File(context.cacheDir, "${catalog.pkgName}.apk")
     try {
       val response = http.defaultClient.get(catalog.pkgUrl).awaitSuccess()
-      emit(InstallStep.Downloading)
       response.saveTo(destFile)
 
       emit(InstallStep.Installing)
