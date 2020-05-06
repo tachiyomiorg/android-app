@@ -34,26 +34,25 @@ import androidx.ui.layout.Column
 import androidx.ui.layout.ConstraintLayout
 import androidx.ui.layout.ConstraintSet
 import androidx.ui.layout.Row
-import androidx.ui.layout.aspectRatio
 import androidx.ui.layout.fillMaxSize
 import androidx.ui.layout.fillMaxWidth
 import androidx.ui.layout.padding
 import androidx.ui.layout.preferredHeight
+import androidx.ui.layout.preferredSize
 import androidx.ui.layout.widthIn
 import androidx.ui.layout.wrapContentSize
 import androidx.ui.material.CircularProgressIndicator
+import androidx.ui.material.IconButton
 import androidx.ui.material.MaterialTheme
 import androidx.ui.material.Surface
 import androidx.ui.material.TopAppBar
 import androidx.ui.material.icons.Icons
 import androidx.ui.material.icons.filled.GetApp
 import androidx.ui.material.icons.filled.Settings
-import androidx.ui.material.ripple.ripple
 import androidx.ui.res.stringResource
 import androidx.ui.text.AnnotatedString
 import androidx.ui.text.SpanStyle
 import androidx.ui.text.withStyle
-import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.dp
 import androidx.ui.unit.sp
 import androidx.ui.unit.toRect
@@ -212,7 +211,7 @@ fun CatalogItem(
         right constrainTo parent.right
       }
       icons.apply {
-        height = valueFixed(40.dp)
+        height = valueFixed(48.dp)
         top constrainTo title.top
         right constrainTo parent.right
         bottom constrainTo title.bottom
@@ -246,7 +245,7 @@ fun CatalogItem(
       modifier = Modifier.tag("icons"),
       verticalGravity = Alignment.CenterVertically
     ) {
-      val rowModifier = Modifier.aspectRatio(1f)
+      val rowModifier = Modifier.preferredSize(48.dp)
 
       if (catalog is CatalogInstalled) {
         val installStep = state.value.installingCatalogs[catalog.pkgName]
@@ -255,10 +254,7 @@ fun CatalogItem(
             CircularProgressIndicator(modifier = rowModifier + Modifier.padding(4.dp))
           }
           catalog.hasUpdate -> {
-            Clickable(
-              onClick = { presenter.installCatalog(catalog) },
-              modifier = rowModifier + Modifier.ripple(bounded = false)
-            ) {
+            IconButton(onClick = { presenter.installCatalog(catalog) }) {
               Image(Icons.Filled.GetApp, colorFilter = ColorFilter.tint(mediumTextEmphasis))
             }
           }
@@ -268,19 +264,13 @@ fun CatalogItem(
         if (installStep != null && !installStep.isFinished()) {
           CircularProgressIndicator(modifier = rowModifier + Modifier.padding(4.dp))
         } else {
-          Clickable(
-            onClick = { presenter.installCatalog(catalog) },
-            modifier = rowModifier + Modifier.ripple(bounded = false)
-          ) {
+          IconButton(onClick = { presenter.installCatalog(catalog) }) {
             Image(Icons.Filled.GetApp, colorFilter = ColorFilter.tint(mediumTextEmphasis))
           }
         }
       }
       if (catalog !is CatalogInternal) {
-        Clickable(
-          onClick = { },
-          modifier = rowModifier + Modifier.ripple(bounded = false)
-        ) {
+        IconButton(onClick = { }) {
           Image(Icons.Filled.Settings, colorFilter = ColorFilter.tint(mediumTextEmphasis))
         }
       }
