@@ -43,5 +43,5 @@ dependencies {
   implementation(Deps.toothpick.ktp)
   kapt(Deps.toothpick.compiler)
 
-  implementation(Deps.timber.android)
+  implementation(Deps.tinylog.impl)
 }

@@ -21,7 +21,7 @@ import javax.inject.Inject
  */
 @Suppress("UNUSED_PARAMETER")
 class AppInitializers @Inject constructor(
-  timberInitializer: TimberInitializer,
+  logInitializer: LogInitializer,
   catalogStoreInitializer: CatalogStoreInitializer,
   channelsInitializer: NotificationChannelsInitializer
 )

@@ -10,7 +10,7 @@ dependencies {
   api(Deps.okhttp)
   api(Deps.jsoup)
   api(Deps.coroutines.core)
-  api(Deps.timber.jdk)
+  api(Deps.tinylog.api)
 
   implementation(Deps.toothpick.runtime)
 }

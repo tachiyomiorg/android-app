@@ -27,7 +27,7 @@ import toothpick.smoothie.module.SmoothieApplicationModule
 @Suppress("unused")
 class App : Application() {
 
-  private val initializers: AppInitializers by inject()
+  private val initializers by inject<AppInitializers>()
 
   override fun onCreate() {
     super.onCreate()

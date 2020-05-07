@@ -13,13 +13,11 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.tinylog.kotlin.Logger
 import tachiyomi.domain.library.service.CategoryRepository
 import tachiyomi.domain.library.service.LibraryUpdateScheduler
 import tachiyomi.domain.library.service.LibraryUpdater
-import tachiyomi.domain.library.service.LibraryUpdaterNotification
 import tachiyomi.domain.manga.interactor.SyncChaptersFromSource
-import timber.log.Timber
-import timber.log.debug
 import javax.inject.Inject
 
 class UpdateLibraryCategory @Inject constructor(
@@ -33,11 +31,11 @@ class UpdateLibraryCategory @Inject constructor(
 
   suspend fun enqueue(categoryId: Long): LibraryUpdater.QueueResult {
     val operation: suspend (Job) -> Any = { job ->
-      Timber.debug { "Updating category $categoryId ${Thread.currentThread()}" }
+      Logger.debug { "Updating category $categoryId ${Thread.currentThread()}" }
       //notifier.start()
 
       job.invokeOnCompletion {
-        Timber.debug { "Finished updating category $categoryId ${Thread.currentThread()}" }
+        Logger.debug { "Finished updating category $categoryId ${Thread.currentThread()}" }
         //notifier.end()
       }
 
@@ -70,7 +68,7 @@ class UpdateLibraryCategory @Inject constructor(
         categoryRepository.find(categoryId)
       }
       if (category != null && category.updateInterval > 0) {
-        Timber.debug { "Rescheduling category $categoryId" }
+        Logger.debug("Rescheduling category $categoryId")
         libraryScheduler.schedule(categoryId, LibraryUpdater.Target.Chapters,
           category.updateInterval)
       }

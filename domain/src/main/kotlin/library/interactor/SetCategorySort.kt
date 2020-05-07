@@ -10,10 +10,9 @@ package tachiyomi.domain.library.interactor
 
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
+import org.tinylog.kotlin.Logger
 import tachiyomi.domain.library.model.LibrarySorting
 import tachiyomi.domain.library.service.LibraryPreferences
-import timber.log.Timber
-import timber.log.warn
 import javax.inject.Inject
 
 class SetCategorySorting @Inject constructor(
@@ -25,7 +24,7 @@ class SetCategorySorting @Inject constructor(
       libraryPreferences.lastSorting().set(sorting)
       Result.Success
     } catch (e: Exception) {
-      Timber.warn(e) { e.message.orEmpty() }
+      Logger.warn(e)
       Result.InternalError(e)
     }
   }

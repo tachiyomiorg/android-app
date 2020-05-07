@@ -21,11 +21,8 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
+import org.tinylog.kotlin.Logger
 import tachiyomi.ui.BuildConfig
-import timber.log.Timber
-import timber.log.debug
-import timber.log.info
-import timber.log.warn
 
 abstract class BasePresenter {
 
@@ -61,23 +58,35 @@ abstract class BasePresenter {
 
   protected fun getLogSinks(): List<LogSink> {
     return if (BuildConfig.DEBUG) {
-      listOf(TimberLogSink())
+      listOf(AndroidLogSink())
     } else {
       emptyList()
     }
   }
 
-  private class TimberLogSink(scope: CoroutineScope = GlobalScope) : LoggerLogSink(scope) {
+  private class AndroidLogSink(scope: CoroutineScope = GlobalScope) : LoggerLogSink(scope) {
     override fun debug(tag: String, message: String, throwable: Throwable?) {
-      Timber.debug(throwable) { message }
+      if (throwable == null) {
+        Logger.debug(message)
+      } else {
+        Logger.debug(throwable, message)
+      }
     }
 
     override fun info(tag: String, message: String, throwable: Throwable?) {
-      Timber.info(throwable) { message }
+      if (throwable == null) {
+        Logger.info(message)
+      } else {
+        Logger.info(throwable, message)
+      }
     }
 
     override fun warning(tag: String, message: String, throwable: Throwable?) {
-      Timber.warn(throwable) { message }
+      if (throwable == null) {
+        Logger.warn(message)
+      } else {
+        Logger.warn(throwable, message)
+      }
     }
   }
 

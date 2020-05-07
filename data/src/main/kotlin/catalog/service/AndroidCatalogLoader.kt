@@ -17,6 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
+import org.tinylog.kotlin.Logger
 import tachiyomi.core.http.Http
 import tachiyomi.core.prefs.AndroidPreferenceStore
 import tachiyomi.core.prefs.LazyPreferenceStore
@@ -28,8 +29,6 @@ import tachiyomi.domain.catalog.service.CatalogLoader
 import tachiyomi.source.Dependencies
 import tachiyomi.source.Source
 import tachiyomi.source.TestSource
-import timber.log.Timber
-import timber.log.warn
 import javax.inject.Inject
 
 /**
@@ -78,11 +77,11 @@ internal class AndroidCatalogLoader @Inject constructor(
       context.packageManager.getPackageInfo(pkgName, PACKAGE_FLAGS)
     } catch (error: PackageManager.NameNotFoundException) {
       // Unlikely, but the package may have been uninstalled at this point
-      Timber.warn { "Failed to load extension: the package $pkgName isn't installed, ignoring..." }
+      Logger.warn("Failed to load extension: the package $pkgName isn't installed, ignoring...")
       return null
     }
     if (!isPackageAnExtension(pkgInfo)) {
-      Timber.warn { "The package $pkgName isn't an extension, ignoring..." }
+      Logger.warn("The package $pkgName isn't an extension, ignoring...")
       return null
     }
     return loadExtension(pkgName, pkgInfo)
@@ -101,7 +100,7 @@ internal class AndroidCatalogLoader @Inject constructor(
       pkgManager.getApplicationInfo(pkgName, PackageManager.GET_META_DATA)
     } catch (error: PackageManager.NameNotFoundException) {
       // Unlikely, but the package may have been uninstalled at this point
-      Timber.warn { "Failed to load extension: the package $pkgName isn't installed, ignoring..." }
+      Logger.warn("Failed to load extension: the package $pkgName isn't installed, ignoring...")
       return null
     }
 
@@ -117,7 +116,7 @@ internal class AndroidCatalogLoader @Inject constructor(
       val exception = "Failed to load extension: the package $pkgName lib version is " +
         "$majorLibVersion, while only versions " +
         "$LIB_VERSION_MIN to $LIB_VERSION_MAX are allowed"
-      Timber.warn { exception }
+      Logger.warn(exception)
       return null
     }
 
@@ -126,7 +125,7 @@ internal class AndroidCatalogLoader @Inject constructor(
     val metadata = appInfo.metaData
     val sourceClassName = metadata.getString(METADATA_SOURCE_CLASS)?.trim()
     if (sourceClassName == null) {
-      Timber.warn { "Failed to load extension: the package $pkgName didn't define source class" }
+      Logger.warn("Failed to load extension: the package $pkgName didn't define source class")
       return null
     }
 
@@ -150,7 +149,7 @@ internal class AndroidCatalogLoader @Inject constructor(
 
       obj as? Source ?: throw Exception("Unknown source class type! ${obj.javaClass}")
     } catch (e: Throwable) {
-      Timber.warn(e) { "Failed to load extension: the package $pkgName threw an exception" }
+      Logger.warn(e, "Failed to load extension: the package $pkgName threw an exception")
       return null
     }
 

@@ -13,10 +13,9 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.tinylog.kotlin.Logger
 import tachiyomi.core.di.AppScope
 import tachiyomi.domain.library.interactor.UpdateLibraryCategory
-import timber.log.Timber
-import timber.log.debug
 import toothpick.ktp.delegate.inject
 
 class LibraryUpdaterWorker(
@@ -33,7 +32,7 @@ class LibraryUpdaterWorker(
   private val categoryId = params.inputData.getLong(CATEGORY_KEY, -1)
 
   override suspend fun doWork(): Result {
-    Timber.debug { "Starting scheduled update for category $categoryId" }
+    Logger.debug("Starting scheduled update for category $categoryId")
     if (categoryId == -1L) {
       return Result.failure()
     }

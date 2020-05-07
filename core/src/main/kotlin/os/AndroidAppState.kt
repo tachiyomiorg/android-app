@@ -19,8 +19,7 @@ import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import timber.log.Timber
-import timber.log.debug
+import org.tinylog.kotlin.Logger
 import javax.inject.Inject
 
 class AndroidAppState @Inject constructor(
@@ -55,13 +54,13 @@ class AndroidAppState @Inject constructor(
 
   @OnLifecycleEvent(Lifecycle.Event.ON_START)
   private fun setForeground() {
-    Timber.debug { "Application now in foreground" }
+    Logger.debug("Application now in foreground")
     isInForeground = true
   }
 
   @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
   private fun setBackground() {
-    Timber.debug { "Application went to background" }
+    Logger.debug("Application went to background")
     isInForeground = false
   }
 

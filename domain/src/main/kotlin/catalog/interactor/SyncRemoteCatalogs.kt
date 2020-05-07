@@ -8,11 +8,10 @@
 
 package tachiyomi.domain.catalog.interactor
 
+import org.tinylog.kotlin.Logger
 import tachiyomi.domain.catalog.service.CatalogPreferences
 import tachiyomi.domain.catalog.service.CatalogRemoteApi
 import tachiyomi.domain.catalog.service.CatalogRemoteRepository
-import timber.log.Timber
-import timber.log.warn
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -33,7 +32,7 @@ class SyncRemoteCatalogs @Inject constructor(
         remoteCheckPref.set(System.currentTimeMillis())
         return true
       } catch (e: Exception) {
-        Timber.warn { "Failed to fetch remote catalogs: $e" }
+        Logger.warn(e, "Failed to fetch remote catalogs")
       }
     }
 

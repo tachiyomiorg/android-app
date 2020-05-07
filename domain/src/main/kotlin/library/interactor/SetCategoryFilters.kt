@@ -10,10 +10,9 @@ package tachiyomi.domain.library.interactor
 
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
+import org.tinylog.kotlin.Logger
 import tachiyomi.domain.library.model.LibraryFilter
 import tachiyomi.domain.library.service.LibraryPreferences
-import timber.log.Timber
-import timber.log.warn
 import javax.inject.Inject
 
 class SetCategoryFilters @Inject constructor(
@@ -26,7 +25,7 @@ class SetCategoryFilters @Inject constructor(
         libraryPreferences.filters().set(filters)
         Result.Success
       } catch (e: Exception) {
-        Timber.warn(e) { e.message.orEmpty() }
+        Logger.warn(e)
         Result.InternalError(e)
       }
     }

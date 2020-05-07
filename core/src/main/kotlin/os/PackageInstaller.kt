@@ -21,9 +21,8 @@ import android.os.SystemClock
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.tinylog.kotlin.Logger
 import tachiyomi.core.BuildConfig
-import timber.log.Timber
-import timber.log.warn
 import java.io.File
 import javax.inject.Inject
 
@@ -97,7 +96,7 @@ class PackageInstaller @Inject constructor(
             // receive the result callback
             deferred.complete(true)
           } catch (e: Exception) {
-            Timber.warn { "Error while (un)installing package: $e" }
+            Logger.warn(e, "Error while (un)installing package")
             deferred.complete(false)
           }
         }

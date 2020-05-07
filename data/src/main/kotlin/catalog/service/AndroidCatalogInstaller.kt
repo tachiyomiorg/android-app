@@ -10,6 +10,7 @@ package tachiyomi.data.catalog.service
 
 import android.app.Application
 import kotlinx.coroutines.flow.flow
+import org.tinylog.kotlin.Logger
 import tachiyomi.core.http.Http
 import tachiyomi.core.http.awaitSuccess
 import tachiyomi.core.http.get
@@ -18,8 +19,6 @@ import tachiyomi.core.os.PackageInstaller
 import tachiyomi.domain.catalog.model.CatalogRemote
 import tachiyomi.domain.catalog.model.InstallStep
 import tachiyomi.domain.catalog.service.CatalogInstaller
-import timber.log.Timber
-import timber.log.warn
 import java.io.File
 import javax.inject.Inject
 
@@ -52,7 +51,7 @@ internal class AndroidCatalogInstaller @Inject constructor(
 
       emit(if (success) InstallStep.Completed else InstallStep.Error)
     } catch (e: Exception) {
-      Timber.warn { "Error installing package: $e" }
+      Logger.warn(e, "Error installing package")
       emit(InstallStep.Error)
     } finally {
       destFile.delete()

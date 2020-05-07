@@ -67,10 +67,10 @@ object Deps {
 
   const val flomo = "io.github.erikhuizinga:flomo:0.1.0-beta"
 
-  object timber {
-    private const val version = "5.0.0-SNAPSHOT"
-    const val jdk = "com.jakewharton.timber:timber-jdk:$version"
-    const val android = "com.jakewharton.timber:timber-android:$version"
+  object tinylog {
+    private const val version = "2.1.2"
+    const val impl = "org.tinylog:tinylog-impl:$version"
+    const val api = "org.tinylog:tinylog-api-kotlin:$version"
   }
 
   const val coRedux = "com.freeletics.coredux:core:1.1.1"

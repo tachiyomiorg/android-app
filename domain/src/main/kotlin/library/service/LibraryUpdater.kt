@@ -23,8 +23,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.selects.select
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import timber.log.Timber
-import timber.log.warn
+import org.tinylog.kotlin.Logger
 import toothpick.ProvidesSingletonInScope
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -41,10 +40,10 @@ class LibraryUpdater @Inject constructor() {
   init {
     GlobalScope.launch(Dispatchers.Default) {
       for (operation in queueChannel) {
-        Timber.warn { "Received job ${operation.categoryId}" }
+        Logger.warn("Received job ${operation.categoryId}")
         operation.start(this, Dispatchers.IO)
         queuedOperations.remove(operation)
-        Timber.warn { "End job" }
+        Logger.warn("End job")
       }
     }
   }
