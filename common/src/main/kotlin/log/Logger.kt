@@ -76,19 +76,6 @@ object Logger {
   }
 
   /**
-   * Logs a lazy message at debug level. The message will be only evaluated if the log entry is
-   * really output.
-   *
-   * @param message
-   * Function that produces the message
-   */
-  fun debug(message: () -> String) {
-    if (MINIMUM_LEVEL_COVERS_DEBUG) {
-      provider.log(STACKTRACE_DEPTH, null, Level.DEBUG, null, null, message.asSupplier())
-    }
-  }
-
-  /**
    * Logs a formatted message at debug level. "{}" placeholders will be replaced by given
    * arguments.
    *
@@ -100,6 +87,19 @@ object Logger {
   fun debug(message: String, vararg arguments: Any?) {
     if (MINIMUM_LEVEL_COVERS_DEBUG) {
       provider.log(STACKTRACE_DEPTH, null, Level.DEBUG, null, formatter, message, *arguments)
+    }
+  }
+
+  /**
+   * Logs a lazy message at debug level. The message will be only evaluated if the log entry is
+   * really output.
+   *
+   * @param message
+   * Function that produces the message
+   */
+  fun debug(message: () -> String) {
+    if (MINIMUM_LEVEL_COVERS_DEBUG) {
+      provider.log(STACKTRACE_DEPTH, null, Level.DEBUG, null, null, message.asSupplier())
     }
   }
 

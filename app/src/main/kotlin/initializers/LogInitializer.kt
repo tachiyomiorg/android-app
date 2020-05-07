@@ -20,7 +20,8 @@ class LogInitializer @Inject constructor(context: Application) {
     val configuration = if (BuildConfig.DEBUG) {
       mapOf(
         "writer" to "logcat",
-        "writer.exception" to "unpack, strip: com.android.internal"
+        "writer.exception" to "unpack, strip: com.android.internal",
+        "writer.format" to "[{thread}] {message}"
       )
     } else {
       mapOf(
