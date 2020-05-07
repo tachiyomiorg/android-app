@@ -70,7 +70,7 @@ object Deps {
   object tinylog {
     private const val version = "2.1.2"
     const val impl = "org.tinylog:tinylog-impl:$version"
-    const val api = "org.tinylog:tinylog-api-kotlin:$version"
+    const val api = "org.tinylog:tinylog-api:$version"
   }
 
   const val coRedux = "com.freeletics.coredux:core:1.1.1"

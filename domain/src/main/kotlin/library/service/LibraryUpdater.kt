@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.selects.select
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import org.tinylog.kotlin.Logger
+import tachiyomi.core.log.Logger
 import toothpick.ProvidesSingletonInScope
 import javax.inject.Inject
 import javax.inject.Singleton

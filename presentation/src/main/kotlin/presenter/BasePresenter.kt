@@ -21,7 +21,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
-import org.tinylog.kotlin.Logger
+import tachiyomi.core.log.Logger
 import tachiyomi.ui.BuildConfig
 
 abstract class BasePresenter {

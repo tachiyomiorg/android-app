@@ -13,7 +13,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.tinylog.kotlin.Logger
+import tachiyomi.core.log.Logger
 import tachiyomi.domain.library.service.CategoryRepository
 import tachiyomi.domain.library.service.LibraryUpdateScheduler
 import tachiyomi.domain.library.service.LibraryUpdater

@@ -10,7 +10,7 @@ package tachiyomi.domain.library.interactor
 
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
-import org.tinylog.kotlin.Logger
+import tachiyomi.core.log.Logger
 import tachiyomi.domain.library.model.LibraryFilter
 import tachiyomi.domain.library.service.LibraryPreferences
 import javax.inject.Inject

@@ -8,7 +8,7 @@
 
 package tachiyomi.domain.catalog.interactor
 
-import org.tinylog.kotlin.Logger
+import tachiyomi.core.log.Logger
 import tachiyomi.domain.catalog.service.CatalogPreferences
 import tachiyomi.domain.catalog.service.CatalogRemoteApi
 import tachiyomi.domain.catalog.service.CatalogRemoteRepository

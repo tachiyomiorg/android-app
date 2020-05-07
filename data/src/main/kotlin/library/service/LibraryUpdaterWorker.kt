@@ -13,8 +13,8 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.tinylog.kotlin.Logger
 import tachiyomi.core.di.AppScope
+import tachiyomi.core.log.Logger
 import tachiyomi.domain.library.interactor.UpdateLibraryCategory
 import toothpick.ktp.delegate.inject
 

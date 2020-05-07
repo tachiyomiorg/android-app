@@ -19,7 +19,7 @@ import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import org.tinylog.kotlin.Logger
+import tachiyomi.core.log.Logger
 import javax.inject.Inject
 
 class AndroidAppState @Inject constructor(

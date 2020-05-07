@@ -10,11 +10,11 @@ package tachiyomi.data.catalog.service
 
 import android.app.Application
 import kotlinx.coroutines.flow.flow
-import org.tinylog.kotlin.Logger
 import tachiyomi.core.http.Http
 import tachiyomi.core.http.awaitSuccess
 import tachiyomi.core.http.get
 import tachiyomi.core.http.saveTo
+import tachiyomi.core.log.Logger
 import tachiyomi.core.os.PackageInstaller
 import tachiyomi.domain.catalog.model.CatalogRemote
 import tachiyomi.domain.catalog.model.InstallStep

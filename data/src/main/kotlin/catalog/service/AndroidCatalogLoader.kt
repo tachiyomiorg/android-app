@@ -17,8 +17,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
-import org.tinylog.kotlin.Logger
 import tachiyomi.core.http.Http
+import tachiyomi.core.log.Logger
 import tachiyomi.core.prefs.AndroidPreferenceStore
 import tachiyomi.core.prefs.LazyPreferenceStore
 import tachiyomi.data.BuildConfig
