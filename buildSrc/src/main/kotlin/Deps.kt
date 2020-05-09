@@ -76,12 +76,7 @@ object Deps {
   const val coRedux = "com.freeletics.coredux:core:1.1.1"
   const val coReduxLog = "com.freeletics.coredux:log-common:1.1.1"
 
-  object glide {
-    private const val version = "4.11.0"
-    const val core = "com.github.bumptech.glide:glide:$version"
-    const val okhttp = "com.github.bumptech.glide:okhttp3-integration:$version"
-    const val compiler = "com.github.bumptech.glide:compiler:$version"
-  }
+  const val coil = "io.coil-kt:coil:0.10.1"
 
   const val mockk = "io.mockk:mockk:1.10.0"
 

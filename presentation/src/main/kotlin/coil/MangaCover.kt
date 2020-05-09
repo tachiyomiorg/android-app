@@ -6,17 +6,13 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package tachiyomi.ui.glide
+package tachiyomi.ui.coil
 
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.domain.manga.model.Manga
 
 /**
- * Class used to load manga covers with Glide.
- *
- * Note: DO NOT implement equals on this class or turn it into a data class. Glide internally relies
- * on equals implementations to check whether an image is already loaded, but then we can't check
- * if/when our cover files have changed.
+ * Class used to load manga covers with Coil.
  */
 internal class MangaCover(
   val id: Long,
@@ -27,13 +23,14 @@ internal class MangaCover(
 
   companion object {
     fun from(manga: Manga): MangaCover {
-      return MangaCover(manga.id, manga.sourceId, manga.cover, manga.favorite)
+      return MangaCover(manga.id, manga.sourceId, manga.cover,
+        manga.favorite)
     }
 
     fun from(manga: LibraryManga): MangaCover {
-      return MangaCover(manga.id, manga.sourceId, manga.cover, true)
+      return MangaCover(manga.id, manga.sourceId, manga.cover,
+        true)
     }
   }
 
 }
-

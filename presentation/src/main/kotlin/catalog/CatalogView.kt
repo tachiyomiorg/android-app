@@ -14,12 +14,9 @@ import androidx.compose.onDispose
 import androidx.compose.remember
 import androidx.ui.core.Alignment
 import androidx.ui.core.ContentScale
-import androidx.ui.core.ContextAmbient
 import androidx.ui.core.Modifier
 import androidx.ui.core.tag
-import androidx.ui.core.toAndroidRect
 import androidx.ui.foundation.Box
-import androidx.ui.foundation.Canvas
 import androidx.ui.foundation.Clickable
 import androidx.ui.foundation.HorizontalScroller
 import androidx.ui.foundation.Image
@@ -55,7 +52,6 @@ import androidx.ui.text.SpanStyle
 import androidx.ui.text.withStyle
 import androidx.ui.unit.dp
 import androidx.ui.unit.sp
-import androidx.ui.unit.toRect
 import tachiyomi.core.di.AppScope
 import tachiyomi.domain.catalog.model.Catalog
 import tachiyomi.domain.catalog.model.CatalogInstalled
@@ -63,7 +59,7 @@ import tachiyomi.domain.catalog.model.CatalogInternal
 import tachiyomi.domain.catalog.model.CatalogRemote
 import tachiyomi.ui.R
 import tachiyomi.ui.TextEmphasisAmbient
-import tachiyomi.ui.glide.GlideImage
+import tachiyomi.ui.coil.CoilImage
 import kotlin.math.abs
 import kotlin.random.Random
 
@@ -295,16 +291,8 @@ fun CatalogPic(catalog: Catalog) {
         )
       }
     }
-    is CatalogInstalled -> {
-      val pkgManager = ContextAmbient.current.packageManager
-      val icon = pkgManager.getApplicationIcon(catalog.pkgName)
-      Canvas(modifier = Modifier.fillMaxSize()) {
-        icon.bounds = size.toRect().toAndroidRect()
-        icon.draw(nativeCanvas)
-      }
-    }
-    is CatalogRemote -> {
-      GlideImage(catalog, contentScale = ContentScale.Fit)
+    else -> {
+      CoilImage(catalog, contentScale = ContentScale.Fit)
     }
   }
 }

@@ -52,8 +52,8 @@ import androidx.ui.unit.toRect
 import tachiyomi.core.di.AppScope
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.ui.R
-import tachiyomi.ui.glide.GlideImage
-import tachiyomi.ui.glide.MangaCover
+import tachiyomi.ui.coil.CoilImage
+import tachiyomi.ui.coil.MangaCover
 
 val ptSansFont = fontFamily(font(R.font.ptsans_bold))
 
@@ -64,7 +64,6 @@ fun LibraryScreen() {
     presenter.destroy()
   }
   val state = presenter.state()
-
   Column {
     TopAppBar(title = { Text(stringResource(R.string.label_library2)) })
     Box(Modifier.padding(2.dp)) {
@@ -94,7 +93,8 @@ fun LibraryTable(state: State<LibraryState>) {
 
 @Composable
 fun LibraryTableGridItem(manga: LibraryManga, gradientPainter: GradientPainter) {
-  val cover = MangaCover(manga.id, manga.sourceId, manga.cover, true)
+  val cover =
+    MangaCover(manga.id, manga.sourceId, manga.cover, true)
   val fontStyle = currentTextStyle().merge(
     TextStyle(letterSpacing = 0.sp, fontFamily = ptSansFont, fontSize = 14.sp)
   )
@@ -105,7 +105,7 @@ fun LibraryTableGridItem(manga: LibraryManga, gradientPainter: GradientPainter) 
     shape = RoundedCornerShape(4.dp)
   ) {
     Stack(modifier = Modifier.fillMaxSize()) {
-      GlideImage(model = cover, contentScale = ContentScale.Crop)
+      CoilImage(model = cover, contentScale = ContentScale.Crop)
       Box(modifier = Modifier.fillMaxSize().paint(gradientPainter))
       Text(
         text = manga.title,

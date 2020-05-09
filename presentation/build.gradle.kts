@@ -42,10 +42,6 @@ dependencies {
   implementation(Deps.coRedux)
   implementation(Deps.coReduxLog)
 
-  implementation(Deps.glide.core)
-  implementation(Deps.glide.okhttp)
-  kapt(Deps.glide.compiler)
-
   implementation(Deps.compose.runtime)
   implementation(Deps.compose.framework)
   implementation(Deps.compose.layout)
@@ -53,4 +49,6 @@ dependencies {
   implementation(Deps.compose.icons)
   implementation(Deps.compose.tooling)
   implementation(Deps.compose.graphics)
+
+  implementation(Deps.coil)
 }
