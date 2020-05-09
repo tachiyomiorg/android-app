@@ -25,10 +25,6 @@ allprojects {
   }
 }
 
-tasks.register("clean", Delete::class) {
-  delete(rootProject.buildDir)
-}
-
 subprojects {
   tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile> {
     kotlinOptions {
@@ -39,4 +35,12 @@ subprojects {
       )
     }
   }
+}
+
+tasks.register("clean", Delete::class) {
+  delete(rootProject.buildDir)
+}
+
+tasks.withType<Test> {
+  useJUnitPlatform()
 }

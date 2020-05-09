@@ -83,8 +83,12 @@ object Deps {
     const val compiler = "com.github.bumptech.glide:compiler:$version"
   }
 
-  const val junit = "org.junit.jupiter:junit-jupiter-api:5.6.2"
   const val mockk = "io.mockk:mockk:1.10.0"
-  const val kotlintest = "io.kotlintest:kotlintest-runner-junit5:3.4.2"
+
+  object kotest {
+    private const val version = "4.0.5"
+    const val framework = "io.kotest:kotest-runner-junit5-jvm:$version"
+    const val assertions = "io.kotest:kotest-assertions-core-jvm:$version"
+  }
 
 }

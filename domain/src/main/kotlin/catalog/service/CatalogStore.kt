@@ -27,7 +27,7 @@ class CatalogStore @Inject constructor(
   private val loader: CatalogLoader,
   catalogRemoteRepository: CatalogRemoteRepository,
   installationReceiver: CatalogInstallationReceiver
-) : CatalogInstallationReceiver.Listener {
+) {
 
   var catalogs = emptyList<CatalogLocal>()
     private set(value) {
@@ -47,7 +47,7 @@ class CatalogStore @Inject constructor(
 
   init {
     catalogs = loader.loadAll()
-    installationReceiver.register(this)
+    installationReceiver.register(InstallationListener())
 
     catalogRemoteRepository.getRemoteCatalogsFlow()
       .onEach {
@@ -84,30 +84,32 @@ class CatalogStore @Inject constructor(
     return catalogs
   }
 
-  override fun onInstalled(pkgName: String) {
-    GlobalScope.launch(Dispatchers.Default) {
-      val catalog = loader.load(pkgName) as? CatalogInstalled ?: return@launch
+  inner class InstallationListener : CatalogInstallationReceiver.Listener {
+    override fun onInstalled(pkgName: String) {
+      GlobalScope.launch(Dispatchers.Default) {
+        val catalog = loader.load(pkgName) as? CatalogInstalled ?: return@launch
 
-      synchronized(this@CatalogStore) {
-        val mutInstalledCatalogs = catalogs.toMutableList()
-        val oldCatalog = mutInstalledCatalogs.find {
-          (it as? CatalogInstalled)?.pkgName == catalog.pkgName
+        synchronized(this@CatalogStore) {
+          val mutInstalledCatalogs = catalogs.toMutableList()
+          val oldCatalog = mutInstalledCatalogs.find {
+            (it as? CatalogInstalled)?.pkgName == catalog.pkgName
+          }
+          if (oldCatalog != null) {
+            mutInstalledCatalogs -= oldCatalog
+          }
+          mutInstalledCatalogs += catalog
+          catalogs = mutInstalledCatalogs
         }
-        if (oldCatalog != null) {
-          mutInstalledCatalogs -= oldCatalog
-        }
-        mutInstalledCatalogs += catalog
-        catalogs = mutInstalledCatalogs
       }
     }
-  }
 
-  override fun onUninstalled(pkgName: String) {
-    GlobalScope.launch(Dispatchers.Default) {
-      synchronized(this@CatalogStore) {
-        val installedCatalog = catalogs.find { (it as? CatalogInstalled)?.pkgName == pkgName }
-        if (installedCatalog != null) {
-          catalogs = catalogs - installedCatalog
+    override fun onUninstalled(pkgName: String) {
+      GlobalScope.launch(Dispatchers.Default) {
+        synchronized(this@CatalogStore) {
+          val installedCatalog = catalogs.find { (it as? CatalogInstalled)?.pkgName == pkgName }
+          if (installedCatalog != null) {
+            catalogs = catalogs - installedCatalog
+          }
         }
       }
     }

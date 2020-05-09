@@ -50,8 +50,8 @@ class GetLocalCatalogs @Inject constructor(
   private class FavoritesComparator(val favoriteIds: Map<Long, Int>) : Comparator<CatalogLocal> {
 
     override fun compare(c1: CatalogLocal, c2: CatalogLocal): Int {
-      val pos1 = favoriteIds[c1.source.id] ?: Int.MAX_VALUE
-      val pos2 = favoriteIds[c2.source.id] ?: Int.MAX_VALUE
+      val pos1 = favoriteIds[c1.sourceId] ?: Int.MAX_VALUE
+      val pos2 = favoriteIds[c2.sourceId] ?: Int.MAX_VALUE
 
       return pos1.compareTo(pos2)
     }
