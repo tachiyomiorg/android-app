@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
   id("com.android.library")
   id("kotlin-android")
@@ -11,6 +13,19 @@ android {
     targetSdkVersion(Config.targetSdk)
   }
   sourceSets["main"].java.srcDirs("src/main/kotlin")
+}
+
+afterEvaluate {
+  val removeDomainClasses by tasks.registering(Delete::class) {
+    doFirst {
+      delete(fileTree("$buildDir/tmp/kotlin-classes") {
+        include("*/tachiyomi/domain/**/*.class")
+      })
+    }
+  }
+  tasks.withType(KotlinCompile::class.java) {
+    finalizedBy(removeDomainClasses)
+  }
 }
 
 dependencies {

@@ -17,7 +17,7 @@ android {
   }
   buildTypes {
     getByName("release") {
-      isMinifyEnabled = true
+      isMinifyEnabled = false
       proguardFile(getDefaultProguardFile("proguard-android.txt"))
       proguardFile(file("proguard-rules.pro"))
     }
