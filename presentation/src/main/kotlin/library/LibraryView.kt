@@ -14,7 +14,6 @@ import androidx.compose.onDispose
 import androidx.compose.remember
 import androidx.ui.core.Alignment
 import androidx.ui.core.ConfigurationAmbient
-import androidx.ui.core.ContentScale
 import androidx.ui.core.Modifier
 import androidx.ui.core.paint
 import androidx.ui.foundation.Box
@@ -93,8 +92,7 @@ fun LibraryTable(state: State<LibraryState>) {
 
 @Composable
 fun LibraryTableGridItem(manga: LibraryManga, gradientPainter: GradientPainter) {
-  val cover =
-    MangaCover(manga.id, manga.sourceId, manga.cover, true)
+  val cover = MangaCover(manga.id, manga.sourceId, manga.cover, true)
   val fontStyle = currentTextStyle().merge(
     TextStyle(letterSpacing = 0.sp, fontFamily = ptSansFont, fontSize = 14.sp)
   )
@@ -105,7 +103,7 @@ fun LibraryTableGridItem(manga: LibraryManga, gradientPainter: GradientPainter) 
     shape = RoundedCornerShape(4.dp)
   ) {
     Stack(modifier = Modifier.fillMaxSize()) {
-      CoilImage(model = cover, contentScale = ContentScale.Crop)
+      CoilImage(model = cover)
       Box(modifier = Modifier.fillMaxSize().paint(gradientPainter))
       Text(
         text = manga.title,

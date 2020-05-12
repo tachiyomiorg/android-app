@@ -11,7 +11,6 @@ package tachiyomi.ui.coil
 import coil.bitmappool.BitmapPool
 import coil.decode.DataSource
 import coil.decode.Options
-import coil.fetch.FetchResult
 import coil.fetch.Fetcher
 import coil.fetch.SourceResult
 import coil.size.Size
@@ -37,21 +36,18 @@ internal class LibraryMangaFetcher(
 ) : Fetcher<MangaCover> {
 
   override fun key(data: MangaCover): String? {
-    if (data.favorite) {
-      val customCover = libraryCovers.findCustom(data.id)
-      if (customCover.exists()) {
-        return "${customCover.absolutePath}_${customCover.lastModified()}"
-      }
-    }
-
     return when (getResourceType(data.cover)) {
       Type.File -> {
         val cover = File(data.cover.substringAfter("file://"))
-        "${data.id}_${cover.lastModified()}"
+        "${data.cover}_${cover.lastModified()}"
       }
       Type.URL -> {
         val cover = libraryCovers.find(data.id)
-        "${data.id}_${cover.lastModified()}"
+        if (data.favorite && (!cover.exists() || cover.lastModified() == 0L)) {
+          null
+        } else {
+          "${data.cover}_${cover.lastModified()}"
+        }
       }
       null -> null
     }
@@ -62,24 +58,11 @@ internal class LibraryMangaFetcher(
     data: MangaCover,
     size: Size,
     options: Options
-  ): FetchResult {
-    return if (data.favorite) {
-      val customCover = libraryCovers.findCustom(data.id)
-      if (customCover.exists()) {
-        return getFileLoader(customCover)
-      }
-
-      when (getResourceType(data.cover)) {
-        Type.File -> getFileLoader(data)
-        Type.URL -> getFileLoaderAfterSave(data)
-        null -> error("Not a valid image")
-      }
-    } else {
-      when (getResourceType(data.cover)) {
-        Type.File -> getFileLoader(data)
-        Type.URL -> getUrlLoader(data)
-        null -> error("Not a valid image")
-      }
+  ): SourceResult {
+    return when (getResourceType(data.cover)) {
+      Type.File -> getFileLoader(data)
+      Type.URL -> getUrlLoader2(data)
+      null -> error("Not a valid image")
     }
   }
 
@@ -96,49 +79,51 @@ internal class LibraryMangaFetcher(
     )
   }
 
-  private suspend fun getFileLoaderAfterSave(manga: MangaCover): SourceResult {
+  private suspend fun getUrlLoader2(manga: MangaCover): SourceResult {
     val file = libraryCovers.find(manga.id)
-    if (file.exists()) {
+    if (file.exists() && file.lastModified() != 0L) {
       return getFileLoader(file)
     }
 
-    val call = getCall(manga, useCache = false)
-    val tmpFile = File(file.absolutePath + "_tmp")
+    val call = getCall(manga)
 
     // TODO this crashes if using suspending call
     val response = withContext(Dispatchers.IO) { call.execute() }
     val body = checkNotNull(response.body) { "Null response source" }
 
-    body.source().use { input ->
-      tmpFile.sink().buffer().use { output ->
-        output.writeAll(input)
+    val shouldSave = manga.favorite && (!file.exists() || file.length() != body.contentLength())
+    val coverUnchanged = manga.favorite && file.exists() && file.length() == body.contentLength()
+
+    return if (shouldSave) {
+      val tmpFile = File(file.absolutePath + "_tmp")
+      body.source().use { input ->
+        tmpFile.sink().buffer().use { output ->
+          output.writeAll(input)
+        }
       }
+      tmpFile.renameTo(file)
+
+      getFileLoader(file)
+    } else if (coverUnchanged) {
+      body.close()
+      file.setLastModified(System.currentTimeMillis())
+      getFileLoader(file)
+    } else {
+      SourceResult(
+        source = body.source(),
+        mimeType = "image/*",
+        dataSource = if (response.cacheResponse != null) DataSource.DISK else DataSource.NETWORK
+      )
     }
-
-    tmpFile.renameTo(file)
-    return getFileLoader(file)
   }
 
-  private suspend fun getUrlLoader(manga: MangaCover): SourceResult {
-    val call = getCall(manga, useCache = true)
-    // TODO this crashes if using suspending call
-    val response = withContext(Dispatchers.IO) { call.execute() }
-    val body = checkNotNull(response.body) { "Null response source" }
-
-    return SourceResult(
-      source = body.source(),
-      mimeType = "image/*",
-      dataSource = if (response.cacheResponse != null) DataSource.DISK else DataSource.NETWORK
-    )
-  }
-
-  private fun getCall(manga: MangaCover, useCache: Boolean = true): Call {
+  private fun getCall(manga: MangaCover): Call {
     val catalog = getLocalCatalog.get(manga.sourceId)
     val source = catalog?.source as? HttpSource
     val client = source?.client ?: defaultClient
 
     val newClient = client.newBuilder()
-      .cache(if (useCache) coversCache else null)
+      .cache(coversCache)
       .build()
 
     val request = Request.Builder().url(manga.cover).also {

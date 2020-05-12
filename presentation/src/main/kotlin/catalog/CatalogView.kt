@@ -292,7 +292,7 @@ fun CatalogPic(catalog: Catalog) {
       }
     }
     else -> {
-      CoilImage(catalog, contentScale = ContentScale.Fit)
+      CoilImage(catalog)
     }
   }
 }

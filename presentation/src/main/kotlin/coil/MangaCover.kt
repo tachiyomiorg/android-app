@@ -23,13 +23,11 @@ internal class MangaCover(
 
   companion object {
     fun from(manga: Manga): MangaCover {
-      return MangaCover(manga.id, manga.sourceId, manga.cover,
-        manga.favorite)
+      return MangaCover(manga.id, manga.sourceId, manga.cover, manga.favorite)
     }
 
     fun from(manga: LibraryManga): MangaCover {
-      return MangaCover(manga.id, manga.sourceId, manga.cover,
-        true)
+      return MangaCover(manga.id, manga.sourceId, manga.cover, true)
     }
   }
 

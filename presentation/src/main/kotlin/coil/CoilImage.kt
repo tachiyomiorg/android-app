@@ -14,43 +14,67 @@ import androidx.compose.getValue
 import androidx.compose.onCommit
 import androidx.compose.setValue
 import androidx.compose.state
-import androidx.ui.core.ContentScale
 import androidx.ui.core.ContextAmbient
 import androidx.ui.core.Modifier
+import androidx.ui.core.WithConstraints
 import androidx.ui.core.toAndroidRect
 import androidx.ui.foundation.Canvas
 import androidx.ui.layout.fillMaxSize
+import androidx.ui.unit.IntPx
 import androidx.ui.unit.toRect
 import coil.request.LoadRequest
+import coil.size.OriginalSize
+import coil.size.PixelSize
+import coil.size.Scale
 import tachiyomi.core.log.Logger
 
 @Composable
 fun <T> CoilImage(
   model: T,
-  contentScale: ContentScale = ContentScale.Inside,
+  scale: Scale = Scale.FILL,
   modifier: Modifier = Modifier.fillMaxSize()
 ) {
-  var drawable by state<Drawable?> { null }
-  val context = ContextAmbient.current
-  onCommit(model) {
-    val request = LoadRequest.Builder(context)
-      .data(model)
-      .listener(onError = { _, t -> Logger.warn(t) })
-      .target(onSuccess = { drawable = it })
-      .build()
+  WithConstraints { constraints, _ ->
+    var drawable by state<Drawable?> { null }
+    val context = ContextAmbient.current
+    onCommit(model) {
+      val width =
+        if (constraints.maxWidth > IntPx.Zero && constraints.maxWidth < IntPx.Infinity) {
+          constraints.maxWidth.value
+        } else {
+          0
+        }
 
-    CoilLoader.execute(request)
+      val height =
+        if (constraints.maxHeight > IntPx.Zero && constraints.maxHeight < IntPx.Infinity) {
+          constraints.maxHeight.value
+        } else {
+          0
+        }
+      val size = if (width == 0 || height == 0) OriginalSize else PixelSize(width, height)
 
-    onDispose {
-      drawable = null
+      val request = LoadRequest.Builder(context)
+        .data(model)
+        .size(size)
+        .scale(scale)
+        .listener(onError = { _, t -> Logger.warn(t) })
+        .target(onSuccess = { drawable = it })
+        .build()
+
+      val disposable = CoilLoader.execute(request)
+
+      onDispose {
+        disposable.dispose()
+        drawable = null
+      }
     }
-  }
 
-  val theDrawable = drawable
-  if (theDrawable != null) {
-    Canvas(modifier = modifier) {
-      theDrawable.bounds = size.toRect().toAndroidRect()
-      theDrawable.draw(nativeCanvas)
+    val theDrawable = drawable
+    if (theDrawable != null) {
+      Canvas(modifier = modifier) {
+        theDrawable.bounds = size.toRect().toAndroidRect()
+        theDrawable.draw(nativeCanvas)
+      }
     }
   }
 }

@@ -20,16 +20,12 @@ class LibraryCovers(private val dir: File) {
     return File(dir, "$mangaId")
   }
 
-  fun findCustom(mangaId: Long): File {
-    return File(dir, "${mangaId}_custom")
-  }
-
   fun delete(mangaId: Long): Boolean {
     return find(mangaId).delete()
   }
 
-  fun deleteCustom(mangaId: Long): Boolean {
-    return findCustom(mangaId).delete()
+  fun invalidate(mangaId: Long) {
+    find(mangaId).setLastModified(0)
   }
 
 }

@@ -76,7 +76,7 @@ class MangaInitializer @Inject internal constructor(
     )
 
     mangaRepository.updatePartial(update)
-    libraryCovers.find(manga.id).setLastModified(now)
+    libraryCovers.invalidate(manga.id)
 
     return updatedManga
   }
