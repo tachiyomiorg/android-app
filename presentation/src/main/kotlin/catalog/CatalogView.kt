@@ -13,8 +13,8 @@ import androidx.compose.State
 import androidx.compose.onDispose
 import androidx.compose.remember
 import androidx.ui.core.Alignment
-import androidx.ui.core.ContentScale
 import androidx.ui.core.Modifier
+import androidx.ui.core.gesture.longPressGestureFilter
 import androidx.ui.core.tag
 import androidx.ui.foundation.Box
 import androidx.ui.foundation.Clickable
@@ -55,7 +55,7 @@ import androidx.ui.unit.sp
 import tachiyomi.core.di.AppScope
 import tachiyomi.domain.catalog.model.Catalog
 import tachiyomi.domain.catalog.model.CatalogInstalled
-import tachiyomi.domain.catalog.model.CatalogInternal
+import tachiyomi.domain.catalog.model.CatalogBundled
 import tachiyomi.domain.catalog.model.CatalogRemote
 import tachiyomi.ui.R
 import tachiyomi.ui.TextEmphasisAmbient
@@ -96,7 +96,7 @@ fun CatalogScreen() {
           )
 
           for (catalog in currState.updatableCatalogs) {
-            CatalogItem(presenter, catalog, state)
+            CatalogItem(presenter, catalog, state, hasUpdate = true)
           }
         }
         if (currState.localCatalogs.isNotEmpty()) {
@@ -177,7 +177,8 @@ fun LanguageChip(choice: LanguageChoice, selectedChoice: LanguageChoice, onClick
 fun CatalogItem(
   presenter: CatalogsPresenter,
   catalog: Catalog,
-  state: State<ViewState>
+  state: State<ViewState>,
+  hasUpdate: Boolean = false
 ) {
   ConstraintLayout(
     constraintSet = ConstraintSet {
@@ -249,7 +250,7 @@ fun CatalogItem(
           installStep != null && !installStep.isFinished() -> {
             CircularProgressIndicator(modifier = rowModifier + Modifier.padding(4.dp))
           }
-          catalog.hasUpdate -> {
+          hasUpdate -> {
             IconButton(onClick = { presenter.installCatalog(catalog) }) {
               Image(Icons.Filled.GetApp, colorFilter = ColorFilter.tint(mediumTextEmphasis))
             }
@@ -265,8 +266,12 @@ fun CatalogItem(
           }
         }
       }
-      if (catalog !is CatalogInternal) {
-        IconButton(onClick = { }) {
+      if (catalog !is CatalogBundled) {
+        IconButton(onClick = { }, modifier = Modifier.longPressGestureFilter(onLongPress = {
+          if (catalog is CatalogInstalled) {
+            presenter.uninstallCatalog(catalog)
+          }
+        })) {
           Image(Icons.Filled.Settings, colorFilter = ColorFilter.tint(mediumTextEmphasis))
         }
       }
@@ -277,7 +282,7 @@ fun CatalogItem(
 @Composable
 fun CatalogPic(catalog: Catalog) {
   when (catalog) {
-    is CatalogInternal -> {
+    is CatalogBundled -> {
       val letter = catalog.name.take(1)
       Surface(
         modifier = Modifier.fillMaxSize(),

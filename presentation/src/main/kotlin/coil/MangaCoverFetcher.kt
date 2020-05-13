@@ -61,7 +61,7 @@ internal class LibraryMangaFetcher(
   ): SourceResult {
     return when (getResourceType(data.cover)) {
       Type.File -> getFileLoader(data)
-      Type.URL -> getUrlLoader2(data)
+      Type.URL -> getUrlLoader(data)
       null -> error("Not a valid image")
     }
   }
@@ -79,7 +79,7 @@ internal class LibraryMangaFetcher(
     )
   }
 
-  private suspend fun getUrlLoader2(manga: MangaCover): SourceResult {
+  private suspend fun getUrlLoader(manga: MangaCover): SourceResult {
     val file = libraryCovers.find(manga.id)
     if (file.exists() && file.lastModified() != 0L) {
       return getFileLoader(file)
@@ -91,30 +91,36 @@ internal class LibraryMangaFetcher(
     val response = withContext(Dispatchers.IO) { call.execute() }
     val body = checkNotNull(response.body) { "Null response source" }
 
-    val shouldSave = manga.favorite && (!file.exists() || file.length() != body.contentLength())
-    val coverUnchanged = manga.favorite && file.exists() && file.length() == body.contentLength()
-
-    return if (shouldSave) {
-      val tmpFile = File(file.absolutePath + "_tmp")
-      body.source().use { input ->
-        tmpFile.sink().buffer().use { output ->
-          output.writeAll(input)
+    if (manga.favorite) {
+      // If the cover isn't already saved or the size is different, save the cover
+      if (!file.exists() || file.length() != body.contentLength()) {
+        val tmpFile = File(file.absolutePath + ".tmp")
+        try {
+          body.source().use { input ->
+            tmpFile.sink().buffer().use { output ->
+              output.writeAll(input)
+            }
+          }
+          tmpFile.renameTo(file)
+        } finally {
+          tmpFile.delete()
         }
+        return getFileLoader(file)
       }
-      tmpFile.renameTo(file)
-
-      getFileLoader(file)
-    } else if (coverUnchanged) {
-      body.close()
-      file.setLastModified(System.currentTimeMillis())
-      getFileLoader(file)
-    } else {
-      SourceResult(
-        source = body.source(),
-        mimeType = "image/*",
-        dataSource = if (response.cacheResponse != null) DataSource.DISK else DataSource.NETWORK
-      )
+      // If the cover is already saved but both covers have the same size, use the saved one
+      if (file.exists() && file.length() == body.contentLength()) {
+        body.close()
+        file.setLastModified(System.currentTimeMillis())
+        return getFileLoader(file)
+      }
     }
+
+    // Fallback to image from source
+    return SourceResult(
+      source = body.source(),
+      mimeType = "image/*",
+      dataSource = if (response.cacheResponse != null) DataSource.DISK else DataSource.NETWORK
+    )
   }
 
   private fun getCall(manga: MangaCover): Call {

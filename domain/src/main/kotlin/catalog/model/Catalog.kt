@@ -9,6 +9,7 @@
 package tachiyomi.domain.catalog.model
 
 import tachiyomi.source.Source
+import java.io.File
 
 sealed class Catalog {
   abstract val name: String
@@ -20,21 +21,36 @@ sealed class CatalogLocal : Catalog() {
   val sourceId get() = source.id
 }
 
-data class CatalogInternal(
+data class CatalogBundled(
   override val source: Source,
   override val description: String = "",
   override val name: String = source.name
 ) : CatalogLocal()
 
-data class CatalogInstalled(
-  override val name: String,
-  override val description: String = "",
-  override val source: Source,
-  val pkgName: String,
-  val versionName: String,
-  val versionCode: Int,
-  val hasUpdate: Boolean = false
-) : CatalogLocal()
+sealed class CatalogInstalled : CatalogLocal() {
+  abstract val pkgName: String
+  abstract val versionName: String
+  abstract val versionCode: Int
+
+  data class SystemWide(
+    override val name: String,
+    override val description: String,
+    override val source: Source,
+    override val pkgName: String,
+    override val versionName: String,
+    override val versionCode: Int
+  ) : CatalogInstalled()
+
+  data class Locally(
+    override val name: String,
+    override val description: String,
+    override val source: Source,
+    override val pkgName: String,
+    override val versionName: String,
+    override val versionCode: Int,
+    val installDir: File
+  ) : CatalogInstalled()
+}
 
 data class CatalogRemote(
   override val name: String,

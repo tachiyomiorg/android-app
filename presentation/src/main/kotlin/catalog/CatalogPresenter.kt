@@ -12,13 +12,16 @@ import androidx.compose.Composable
 import androidx.compose.State
 import com.freeletics.coredux.SideEffect
 import com.freeletics.coredux.createStore
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import tachiyomi.domain.catalog.interactor.GetCatalogs
+import kotlinx.coroutines.launch
+import tachiyomi.domain.catalog.interactor.GetCatalogsByType
 import tachiyomi.domain.catalog.interactor.InstallCatalog
 import tachiyomi.domain.catalog.interactor.SyncRemoteCatalogs
+import tachiyomi.domain.catalog.interactor.UninstallCatalog
 import tachiyomi.domain.catalog.interactor.UpdateCatalog
 import tachiyomi.domain.catalog.model.Catalog
 import tachiyomi.domain.catalog.model.CatalogInstalled
@@ -31,8 +34,9 @@ import tachiyomi.ui.presenter.FlowSwitchSideEffect
 import javax.inject.Inject
 
 class CatalogsPresenter @Inject constructor(
-  private val getCatalogs: GetCatalogs,
+  private val getCatalogsByType: GetCatalogsByType,
   private val installCatalog: InstallCatalog,
+  private val uninstallCatalog: UninstallCatalog,
   private val updateCatalog: UpdateCatalog,
   private val syncRemoteCatalogs: SyncRemoteCatalogs
 ) : BasePresenter() {
@@ -68,13 +72,12 @@ class CatalogsPresenter @Inject constructor(
       val choice = stateFn().languageChoice
 
       suspend {
-        getCatalogs.subscribe(excludeRemoteInstalled = true).map { (local, remote) ->
-          val (updatable, upToDate) = local.partition { it is CatalogInstalled && it.hasUpdate }
+        getCatalogsByType.subscribe(excludeRemoteInstalled = true).map { (upToDate, updatable, remote) ->
           Action.ItemsUpdate(
             localCatalogs = upToDate,
             updatableCatalogs = updatable,
             remoteCatalogs = getRemoteCatalogsForLanguageChoice(remote, choice),
-            languageChoices = getLanguageChoices(remote, local)
+            languageChoices = getLanguageChoices(remote, upToDate + updatable)
           )
         }
       }
@@ -171,6 +174,12 @@ class CatalogsPresenter @Inject constructor(
     when (catalog) {
       is CatalogInstalled -> store.dispatch(Action.UpdateCatalog(catalog))
       is CatalogRemote -> store.dispatch(Action.InstallCatalog(catalog))
+    }
+  }
+
+  fun uninstallCatalog(catalog: CatalogInstalled) {
+    GlobalScope.launch {
+      uninstallCatalog.await(catalog)
     }
   }
 

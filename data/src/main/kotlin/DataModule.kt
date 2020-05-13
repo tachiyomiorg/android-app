@@ -11,9 +11,10 @@ package tachiyomi.data
 import android.app.Application
 import androidx.room.withTransaction
 import tachiyomi.core.db.Transaction
+import tachiyomi.core.di.GenericsProvider
 import tachiyomi.core.prefs.PreferenceStoreFactory
 import tachiyomi.data.catalog.api.CatalogGithubApi
-import tachiyomi.data.catalog.service.AndroidCatalogInstallationReceiver
+import tachiyomi.data.catalog.service.AndroidCatalogInstallationChanges
 import tachiyomi.data.catalog.service.AndroidCatalogInstaller
 import tachiyomi.data.catalog.service.AndroidCatalogLoader
 import tachiyomi.data.catalog.service.CatalogRemoteRepositoryImpl
@@ -24,7 +25,7 @@ import tachiyomi.data.library.service.MangaCategoryRepositoryImpl
 import tachiyomi.data.manga.service.ChapterRepositoryImpl
 import tachiyomi.data.manga.service.MangaRepositoryImpl
 import tachiyomi.data.sync.api.SyncDeviceAndroid
-import tachiyomi.domain.catalog.service.CatalogInstallationReceiver
+import tachiyomi.domain.catalog.service.CatalogInstallationChanges
 import tachiyomi.domain.catalog.service.CatalogInstaller
 import tachiyomi.domain.catalog.service.CatalogLoader
 import tachiyomi.domain.catalog.service.CatalogPreferences
@@ -85,8 +86,11 @@ fun DataModule(context: Application) = module {
 
   bind<CatalogInstaller>().toClass<AndroidCatalogInstaller>().singleton()
   bind<CatalogStore>().singleton()
-  bind<CatalogInstallationReceiver>().toClass<AndroidCatalogInstallationReceiver>().singleton()
   bind<CatalogLoader>().toClass<AndroidCatalogLoader>().singleton()
+
+  bind<AndroidCatalogInstallationChanges>().singleton()
+  bind<CatalogInstallationChanges>()
+    .toProviderInstance(GenericsProvider(AndroidCatalogInstallationChanges::class.java))
 
 }
 

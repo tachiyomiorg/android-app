@@ -6,20 +6,14 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package tachiyomi.domain.catalog.service
+package tachiyomi.core.di
 
-interface CatalogInstallationReceiver {
+import toothpick.Scope
+import javax.inject.Provider
 
-  fun register(listener: Listener)
+class GenericsProvider<T>(private val cls: Class<T>, val scope: Scope = AppScope) : Provider<T> {
 
-  fun unregister()
-
-  interface Listener {
-
-    fun onInstalled(pkgName: String)
-
-    fun onUninstalled(pkgName: String)
-
+  override fun get(): T {
+    return scope.getInstance(cls)
   }
-
 }

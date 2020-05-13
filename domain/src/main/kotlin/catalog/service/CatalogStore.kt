@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import tachiyomi.domain.catalog.model.CatalogInstalled
 import tachiyomi.domain.catalog.model.CatalogLocal
@@ -26,18 +27,19 @@ import javax.inject.Singleton
 class CatalogStore @Inject constructor(
   private val loader: CatalogLoader,
   catalogRemoteRepository: CatalogRemoteRepository,
-  installationReceiver: CatalogInstallationReceiver
+  installationChanges: CatalogInstallationChanges
 ) {
 
   var catalogs = emptyList<CatalogLocal>()
     private set(value) {
-      field = value.withUpdateCheck()
-      updatableCatalogs = field.filterIsInstance<CatalogInstalled>().filter { it.hasUpdate }
+      field = value
+      updatableCatalogs = field.filterUpdatable()
       catalogsBySource = field.associateBy { it.sourceId }
       catalogsChannel.offer(field)
     }
 
-  private var updatableCatalogs = emptyList<CatalogInstalled>()
+  var updatableCatalogs = emptyList<CatalogInstalled>()
+    private set
 
   private var remoteCatalogs = emptyList<CatalogRemote>()
 
@@ -47,7 +49,17 @@ class CatalogStore @Inject constructor(
 
   init {
     catalogs = loader.loadAll()
-    installationReceiver.register(InstallationListener())
+
+    installationChanges.channel.receiveAsFlow()
+      .onEach { change ->
+        when (change) {
+          is CatalogInstallationChange.SystemInstall -> onInstalled(change.pkgName, false)
+          is CatalogInstallationChange.SystemUninstall -> onUninstalled(change.pkgName, false)
+          is CatalogInstallationChange.LocalInstall -> onInstalled(change.pkgName, true)
+          is CatalogInstallationChange.LocalUninstall -> onUninstalled(change.pkgName, true)
+        }
+      }
+      .launchIn(GlobalScope)
 
     catalogRemoteRepository.getRemoteCatalogsFlow()
       .onEach {
@@ -67,49 +79,57 @@ class CatalogStore @Inject constructor(
     return catalogsChannel.asFlow()
   }
 
-  private fun List<CatalogLocal>.withUpdateCheck(): List<CatalogLocal> {
-    val catalogs = toMutableList()
+  private fun List<CatalogLocal>.filterUpdatable(): List<CatalogInstalled> {
+    val catalogs = mutableListOf<CatalogInstalled>()
     val remoteCatalogs = remoteCatalogs
-    for ((index, installedCatalog) in catalogs.withIndex()) {
+    for (installedCatalog in this) {
       if (installedCatalog !is CatalogInstalled) continue
 
       val pkgName = installedCatalog.pkgName
       val remoteCatalog = remoteCatalogs.find { it.pkgName == pkgName } ?: continue
 
       val hasUpdate = remoteCatalog.versionCode > installedCatalog.versionCode
-      if (installedCatalog.hasUpdate != hasUpdate) {
-        catalogs[index] = installedCatalog.copy(hasUpdate = hasUpdate)
+      if (hasUpdate) {
+        catalogs.add(installedCatalog)
       }
     }
     return catalogs
   }
 
-  inner class InstallationListener : CatalogInstallationReceiver.Listener {
-    override fun onInstalled(pkgName: String) {
-      GlobalScope.launch(Dispatchers.Default) {
-        val catalog = loader.load(pkgName) as? CatalogInstalled ?: return@launch
+  private fun onInstalled(pkgName: String, isLocalInstall: Boolean) {
+    GlobalScope.launch(Dispatchers.Default) {
+      synchronized(this@CatalogStore) {
+        val previousCatalog = catalogs.find { (it as? CatalogInstalled)?.pkgName == pkgName }
 
-        synchronized(this@CatalogStore) {
-          val mutInstalledCatalogs = catalogs.toMutableList()
-          val oldCatalog = mutInstalledCatalogs.find {
-            (it as? CatalogInstalled)?.pkgName == catalog.pkgName
-          }
-          if (oldCatalog != null) {
-            mutInstalledCatalogs -= oldCatalog
-          }
-          mutInstalledCatalogs += catalog
-          catalogs = mutInstalledCatalogs
+        // Don't replace system catalogs with local catalogs
+        if (!isLocalInstall && previousCatalog is CatalogInstalled.Locally) {
+          return@launch
         }
+
+        val catalog = if (isLocalInstall) {
+          loader.loadLocalCatalog(pkgName)
+        } else {
+          loader.loadSystemCatalog(pkgName)
+        } ?: return@launch
+
+        val newInstalledCatalogs = catalogs.toMutableList()
+        if (previousCatalog != null) {
+          newInstalledCatalogs -= previousCatalog
+        }
+        newInstalledCatalogs += catalog
+        catalogs = newInstalledCatalogs
       }
     }
+  }
 
-    override fun onUninstalled(pkgName: String) {
-      GlobalScope.launch(Dispatchers.Default) {
-        synchronized(this@CatalogStore) {
-          val installedCatalog = catalogs.find { (it as? CatalogInstalled)?.pkgName == pkgName }
-          if (installedCatalog != null) {
-            catalogs = catalogs - installedCatalog
-          }
+  private fun onUninstalled(pkgName: String, isLocalInstall: Boolean) {
+    GlobalScope.launch(Dispatchers.Default) {
+      synchronized(this@CatalogStore) {
+        val installedCatalog = catalogs.find { (it as? CatalogInstalled)?.pkgName == pkgName }
+        if (installedCatalog != null &&
+          installedCatalog is CatalogInstalled.Locally == isLocalInstall
+        ) {
+          catalogs = catalogs - installedCatalog
         }
       }
     }

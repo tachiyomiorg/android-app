@@ -15,7 +15,6 @@ import tachiyomi.core.http.awaitSuccess
 import tachiyomi.core.http.get
 import tachiyomi.core.http.saveTo
 import tachiyomi.core.log.Logger
-import tachiyomi.core.os.PackageInstaller
 import tachiyomi.domain.catalog.model.CatalogRemote
 import tachiyomi.domain.catalog.model.InstallStep
 import tachiyomi.domain.catalog.service.CatalogInstaller
@@ -29,8 +28,8 @@ import javax.inject.Inject
  */
 internal class AndroidCatalogInstaller @Inject constructor(
   private val context: Application,
-  private val packageInstaller: PackageInstaller,
-  private val http: Http
+  private val http: Http,
+  private val installationChanges: AndroidCatalogInstallationChanges
 ) : CatalogInstaller {
 
   /**
@@ -41,20 +40,35 @@ internal class AndroidCatalogInstaller @Inject constructor(
    */
   override fun install(catalog: CatalogRemote) = flow {
     emit(InstallStep.Downloading)
-    val destFile = File(context.cacheDir, "${catalog.pkgName}.apk")
+    val tmpApkFile = File(context.cacheDir, "${catalog.pkgName}.apk")
+    val tmpIconFile = File(context.cacheDir, "${catalog.pkgName}.png")
     try {
-      val response = http.defaultClient.get(catalog.pkgUrl).awaitSuccess()
-      response.saveTo(destFile)
+      val apkResponse = http.defaultClient.get(catalog.pkgUrl).awaitSuccess()
+      apkResponse.saveTo(tmpApkFile)
+
+      val iconResponse = http.defaultClient.get(catalog.iconUrl).awaitSuccess()
+      iconResponse.saveTo(tmpIconFile)
 
       emit(InstallStep.Installing)
-      val success = packageInstaller.install(destFile, catalog.pkgName)
+
+      val extDir = File(context.filesDir, "extensions/${catalog.pkgName}").apply { mkdirs() }
+      val apkFile = File(extDir, tmpApkFile.name)
+      val iconFile = File(extDir, tmpIconFile.name)
+
+      val apkSuccess = tmpApkFile.renameTo(apkFile)
+      val iconSuccess = tmpIconFile.renameTo(iconFile)
+      val success = apkSuccess && iconSuccess
+      if (success) {
+        installationChanges.notifyAppInstall(catalog.pkgName)
+      }
 
       emit(if (success) InstallStep.Completed else InstallStep.Error)
     } catch (e: Exception) {
       Logger.warn(e, "Error installing package")
       emit(InstallStep.Error)
     } finally {
-      destFile.delete()
+      tmpApkFile.delete()
+      tmpIconFile.delete()
     }
   }
 
@@ -64,7 +78,10 @@ internal class AndroidCatalogInstaller @Inject constructor(
    * @param pkgName The package name of the extension to uninstall
    */
   override suspend fun uninstall(pkgName: String): Boolean {
-    return packageInstaller.uninstall(pkgName)
+    val file = File(context.filesDir, "extensions/${pkgName}")
+    val deleted = file.deleteRecursively()
+    installationChanges.notifyAppUninstall(pkgName)
+    return deleted
   }
 
 }

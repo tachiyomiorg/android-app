@@ -20,11 +20,12 @@ import kotlinx.coroutines.flow.flowOf
 import tachiyomi.domain.catalog.model.CatalogInstalled
 import tachiyomi.domain.catalog.model.CatalogRemote
 
-class GetCatalogsTest : StringSpec({
+class GetCatalogsByTypeTest : StringSpec({
 
   val localCatalogs = mockk<GetLocalCatalogs>(relaxed = true)
   val remoteCatalogs = mockk<GetRemoteCatalogs>(relaxed = true)
-  val interactor = GetCatalogs(localCatalogs, remoteCatalogs)
+  val updatableCatalogs = mockk<GetUpdatableCatalogs>(relaxed = true)
+  val interactor = GetCatalogsByType(localCatalogs, remoteCatalogs, updatableCatalogs)
   afterTest { clearAllMocks() }
 
   "subscribes to catalogs" {
@@ -43,8 +44,8 @@ class GetCatalogsTest : StringSpec({
       mockCatalogRemote("c")
     ))
 
-    val (local, remote) = interactor.subscribe(excludeRemoteInstalled = false).first()
-    local shouldHaveSize 2
+    val (upToDate, _, remote) = interactor.subscribe(excludeRemoteInstalled = false).first()
+    upToDate shouldHaveSize 2
     remote shouldHaveSize 2
   }
   "filters remote installed" {
@@ -57,9 +58,24 @@ class GetCatalogsTest : StringSpec({
       mockCatalogRemote("c")
     ))
 
-    val (local, remote) = interactor.subscribe(excludeRemoteInstalled = true).first()
-    local shouldHaveSize 2
+    val (upToDate, _, remote) = interactor.subscribe(excludeRemoteInstalled = true).first()
+    upToDate shouldHaveSize 2
     remote shouldHaveSize 1
+  }
+  "filters up to date catalogs when present in updatable" {
+    val sameCatalogMock = mockCatalogInstalled("a")
+    coEvery { localCatalogs.subscribe(any()) } returns flowOf(listOf(
+      sameCatalogMock,
+      mockCatalogInstalled("b")
+    ))
+    coEvery { updatableCatalogs.get() } returns listOf(
+      sameCatalogMock
+    )
+    coEvery { remoteCatalogs.subscribe() } returns flowOf(emptyList())
+
+    val (upToDate, updatable, _) = interactor.subscribe().first()
+    upToDate shouldHaveSize 1
+    updatable shouldHaveSize 1
   }
 
 })

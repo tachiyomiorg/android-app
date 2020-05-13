@@ -14,35 +14,20 @@ import toothpick.Toothpick
 /**
  * The global scope for dependency injection that will provide all the application level components.
  */
-object AppScope {
-
-  /**
-   * Returns the root scope.
-   */
-  fun root(): Scope {
-    return Toothpick.openRootScope()
-  }
+object AppScope : Scope by Toothpick.openRootScope() {
 
   /**
    * Returns a new subscope inheriting the root scope.
    */
   fun subscope(any: Any): Scope {
-    return root().openSubScope(any)
-  }
-
-  /**
-   * Injects the application dependencies on the given object. Note the provided object must have
-   * members annotated with the @Inject annotation.
-   */
-  fun inject(obj: Any) {
-    Toothpick.inject(obj, root())
+    return openSubScope(any)
   }
 
   /**
    * Returns an instance of [T] from the root scope.
    */
   inline fun <reified T> getInstance(): T {
-    return root().getInstance(T::class.java)
+    return getInstance(T::class.java)
   }
 
 }

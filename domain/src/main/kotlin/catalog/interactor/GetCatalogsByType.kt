@@ -16,19 +16,23 @@ import tachiyomi.domain.catalog.model.CatalogRemote
 import tachiyomi.domain.catalog.model.CatalogSort
 import javax.inject.Inject
 
-class GetCatalogs @Inject constructor(
+class GetCatalogsByType @Inject constructor(
   private val localCatalogs: GetLocalCatalogs,
-  private val remoteCatalogs: GetRemoteCatalogs
+  private val remoteCatalogs: GetRemoteCatalogs,
+  private val updatableCatalogs: GetUpdatableCatalogs
 ) {
 
   suspend fun subscribe(
     sort: CatalogSort = CatalogSort.Favorites,
     excludeRemoteInstalled: Boolean = false,
     withNsfw: Boolean = true
-  ): Flow<Pair<List<CatalogLocal>, List<CatalogRemote>>> {
+  ): Flow<Catalogs> {
     val localFlow = localCatalogs.subscribe(sort)
     val remoteFlow = remoteCatalogs.subscribe(withNsfw = withNsfw)
     return localFlow.combine(remoteFlow) { local, remote ->
+      val updatable = updatableCatalogs.get()
+      val upToDate = local.filter { it !in updatable }
+
       if (excludeRemoteInstalled) {
         val installedPkgs = local
           .asSequence()
@@ -36,11 +40,18 @@ class GetCatalogs @Inject constructor(
           .map { it.pkgName }
           .toSet()
 
-        local to remote.filter { it.pkgName !in installedPkgs }
+
+        Catalogs(upToDate, updatable, remote.filter { it.pkgName !in installedPkgs })
       } else {
-        local to remote
+        Catalogs(upToDate, updatable, remote)
       }
     }
   }
+
+  data class Catalogs(
+    val upToDate: List<CatalogLocal>,
+    val updatable: List<CatalogInstalled>,
+    val remote: List<CatalogRemote>
+  )
 
 }
