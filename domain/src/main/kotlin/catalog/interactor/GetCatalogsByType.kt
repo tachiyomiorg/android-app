@@ -40,7 +40,6 @@ class GetCatalogsByType @Inject constructor(
           .map { it.pkgName }
           .toSet()
 
-
         Catalogs(upToDate, updatable, remote.filter { it.pkgName !in installedPkgs })
       } else {
         Catalogs(upToDate, updatable, remote)

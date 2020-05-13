@@ -39,7 +39,7 @@ class SyncRemoteCatalogs @Inject constructor(
     return false
   }
 
-  private companion object {
+  internal companion object {
     val minTimeApiCheck = TimeUnit.MINUTES.toMillis(5)
   }
 
