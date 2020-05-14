@@ -33,9 +33,9 @@ import androidx.ui.layout.ConstraintSet
 import androidx.ui.layout.Row
 import androidx.ui.layout.fillMaxSize
 import androidx.ui.layout.fillMaxWidth
+import androidx.ui.layout.height
 import androidx.ui.layout.padding
-import androidx.ui.layout.preferredHeight
-import androidx.ui.layout.preferredSize
+import androidx.ui.layout.size
 import androidx.ui.layout.widthIn
 import androidx.ui.layout.wrapContentSize
 import androidx.ui.material.CircularProgressIndicator
@@ -54,8 +54,8 @@ import androidx.ui.unit.dp
 import androidx.ui.unit.sp
 import tachiyomi.core.di.AppScope
 import tachiyomi.domain.catalog.model.Catalog
-import tachiyomi.domain.catalog.model.CatalogInstalled
 import tachiyomi.domain.catalog.model.CatalogBundled
+import tachiyomi.domain.catalog.model.CatalogInstalled
 import tachiyomi.domain.catalog.model.CatalogRemote
 import tachiyomi.ui.R
 import tachiyomi.ui.TextEmphasisAmbient
@@ -152,7 +152,7 @@ fun LanguageChip(choice: LanguageChoice, selectedChoice: LanguageChoice, onClick
         MaterialTheme.colors.onSurface.copy(alpha = 0.25f)
       },
       shape = RoundedCornerShape(16.dp),
-      modifier = Modifier.widthIn(minWidth = 56.dp).preferredHeight(40.dp).padding(4.dp)
+      modifier = Modifier.widthIn(minWidth = 56.dp).height(40.dp).padding(4.dp)
     ) {
       val text = when (choice) {
         LanguageChoice.All -> stringResource(R.string.lang_all)
@@ -242,7 +242,7 @@ fun CatalogItem(
       modifier = Modifier.tag("icons"),
       verticalGravity = Alignment.CenterVertically
     ) {
-      val rowModifier = Modifier.preferredSize(48.dp)
+      val rowModifier = Modifier.size(48.dp)
 
       if (catalog is CatalogInstalled) {
         val installStep = state.value.installingCatalogs[catalog.pkgName]

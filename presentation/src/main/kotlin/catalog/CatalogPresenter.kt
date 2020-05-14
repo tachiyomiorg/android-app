@@ -10,6 +10,7 @@ package tachiyomi.ui.catalog
 
 import androidx.compose.Composable
 import androidx.compose.State
+import androidx.compose.collectAsState
 import com.freeletics.coredux.SideEffect
 import com.freeletics.coredux.createStore
 import kotlinx.coroutines.GlobalScope
@@ -27,7 +28,6 @@ import tachiyomi.domain.catalog.model.Catalog
 import tachiyomi.domain.catalog.model.CatalogInstalled
 import tachiyomi.domain.catalog.model.CatalogLocal
 import tachiyomi.domain.catalog.model.CatalogRemote
-import tachiyomi.ui.collectAsState
 import tachiyomi.ui.presenter.BasePresenter
 import tachiyomi.ui.presenter.FlowSideEffect
 import tachiyomi.ui.presenter.FlowSwitchSideEffect

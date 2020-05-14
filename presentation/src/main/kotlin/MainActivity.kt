@@ -44,7 +44,7 @@ sealed class Screen {
 
 @Model
 object HomeScreen {
-  var current: Screen = Screen.Library
+  var current: Screen = Screen.Catalogs
 }
 
 class MainActivity : ComponentActivity() {

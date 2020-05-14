@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package tachiyomi.domain.source.interactor
+package tachiyomi.domain.manga.interactor
 
 import tachiyomi.domain.manga.model.Manga
 import tachiyomi.source.Source

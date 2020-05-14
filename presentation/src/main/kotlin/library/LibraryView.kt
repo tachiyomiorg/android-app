@@ -22,14 +22,14 @@ import androidx.ui.foundation.VerticalScroller
 import androidx.ui.foundation.currentTextStyle
 import androidx.ui.foundation.shape.corner.RoundedCornerShape
 import androidx.ui.geometry.Rect
-import androidx.ui.graphics.Canvas
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.LinearGradient
 import androidx.ui.graphics.Paint
+import androidx.ui.graphics.painter.CanvasScope
 import androidx.ui.graphics.painter.Painter
+import androidx.ui.graphics.painter.drawCanvas
 import androidx.ui.layout.Column
 import androidx.ui.layout.Stack
-import androidx.ui.layout.Table
 import androidx.ui.layout.aspectRatio
 import androidx.ui.layout.fillMaxSize
 import androidx.ui.layout.fillMaxWidth
@@ -130,18 +130,19 @@ fun <T> AutofitGrid(
   } else {
     columns
   }
-  Table(columns = numColumns) {
-    for (i in data.indices step numColumns) {
-      tableRow {
-        for (j in 0 until numColumns) {
-          if (i + j >= data.size) break
-
-          val item = data[i + j]
-          children(item)
-        }
-      }
-    }
-  }
+  // TODO table was deleted on dev11
+//  Table(columns = numColumns) {
+//    for (i in data.indices step numColumns) {
+//      tableRow {
+//        for (j in 0 until numColumns) {
+//          if (i + j >= data.size) break
+//
+//          val item = data[i + j]
+//          children(item)
+//        }
+//      }
+//    }
+//  }
 }
 
 data class GradientPainter(val gradient: LinearGradient) : Painter() {
@@ -149,15 +150,18 @@ data class GradientPainter(val gradient: LinearGradient) : Painter() {
   private var currentBounds: PxSize? = null
   private var rect: Rect? = null
 
-  override fun onDraw(canvas: Canvas, bounds: PxSize) {
-    if (this.currentBounds != bounds) {
-      gradient.copy(startY = Px.Zero, endY = bounds.height).applyTo(paint)
-      currentBounds = bounds
-      rect = bounds.toRect()
+  override fun CanvasScope.onDraw() {
+    drawCanvas { canvas, pxSize ->
+      if (currentBounds != pxSize) {
+        gradient.copy(startY = Px.Zero, endY = pxSize.height).applyTo(paint)
+        currentBounds = pxSize
+        rect = pxSize.toRect()
+      }
+      canvas.drawRect(rect!!, paint)
     }
-
-    canvas.drawRect(rect!!, paint)
   }
 
-  override val intrinsicSize: PxSize = UnspecifiedSize
+  override val intrinsicSize: PxSize
+    get() = UnspecifiedSize
+
 }

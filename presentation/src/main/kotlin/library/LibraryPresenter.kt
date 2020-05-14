@@ -10,6 +10,7 @@ package tachiyomi.ui.library
 
 import androidx.compose.Composable
 import androidx.compose.State
+import androidx.compose.collectAsState
 import com.freeletics.coredux.SideEffect
 import com.freeletics.coredux.createStore
 import kotlinx.coroutines.GlobalScope
@@ -31,7 +32,6 @@ import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.domain.library.model.LibrarySort
 import tachiyomi.domain.library.model.LibrarySorting
 import tachiyomi.domain.library.service.LibraryPreferences
-import tachiyomi.ui.collectAsState
 import tachiyomi.ui.presenter.BasePresenter
 import tachiyomi.ui.presenter.EmptySideEffect
 import tachiyomi.ui.presenter.FlowSwitchSideEffect

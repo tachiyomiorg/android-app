@@ -43,7 +43,6 @@ dependencies {
   implementation(Deps.coReduxLog)
 
   implementation(Deps.compose.runtime)
-  implementation(Deps.compose.framework)
   implementation(Deps.compose.layout)
   implementation(Deps.compose.material)
   implementation(Deps.compose.icons)

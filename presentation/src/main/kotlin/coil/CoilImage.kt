@@ -19,9 +19,10 @@ import androidx.ui.core.Modifier
 import androidx.ui.core.WithConstraints
 import androidx.ui.core.toAndroidRect
 import androidx.ui.foundation.Canvas
+import androidx.ui.geometry.toRect
+import androidx.ui.graphics.painter.drawCanvas
 import androidx.ui.layout.fillMaxSize
 import androidx.ui.unit.IntPx
-import androidx.ui.unit.toRect
 import coil.request.LoadRequest
 import coil.size.OriginalSize
 import coil.size.PixelSize
@@ -34,7 +35,7 @@ fun <T> CoilImage(
   scale: Scale = Scale.FILL,
   modifier: Modifier = Modifier.fillMaxSize()
 ) {
-  WithConstraints { constraints, _ ->
+  WithConstraints {
     var drawable by state<Drawable?> { null }
     val context = ContextAmbient.current
     onCommit(model) {
@@ -73,7 +74,9 @@ fun <T> CoilImage(
     if (theDrawable != null) {
       Canvas(modifier = modifier) {
         theDrawable.bounds = size.toRect().toAndroidRect()
-        theDrawable.draw(nativeCanvas)
+        drawCanvas { canvas, pxSize ->
+          theDrawable.draw(canvas.nativeCanvas)
+        }
       }
     }
   }
