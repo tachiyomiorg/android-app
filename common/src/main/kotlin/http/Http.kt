@@ -9,6 +9,7 @@
 package tachiyomi.core.http
 
 import okhttp3.Cache
+import okhttp3.CacheControl
 import okhttp3.OkHttpClient
 
 /**
@@ -32,4 +33,10 @@ class Http(cache: Cache, cookieManager: CookieManager, jsFactory: JSFactory) {
   val cloudflareClient = defaultClient.newBuilder()
     .addInterceptor(CloudflareInterceptor(jsFactory))
     .build()
+
+  /**
+   * Cache control used to not store the response in the cache.
+   */
+  val noStore = CacheControl.Builder().noStore().build()
+
 }

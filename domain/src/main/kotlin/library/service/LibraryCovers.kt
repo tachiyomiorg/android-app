@@ -17,7 +17,7 @@ class LibraryCovers(private val dir: File) {
   }
 
   fun find(mangaId: Long): File {
-    return File(dir, "$mangaId")
+    return File(dir, "$mangaId.0")
   }
 
   fun delete(mangaId: Long): Boolean {

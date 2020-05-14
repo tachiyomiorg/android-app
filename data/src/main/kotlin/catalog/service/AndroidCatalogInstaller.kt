@@ -33,6 +33,11 @@ internal class AndroidCatalogInstaller @Inject constructor(
 ) : CatalogInstaller {
 
   /**
+   * The client used for http requests.
+   */
+  private val client get() = http.defaultClient
+
+  /**
    * Adds the given extension to the downloads queue and returns an observable containing its
    * step in the installation process.
    *
@@ -43,15 +48,15 @@ internal class AndroidCatalogInstaller @Inject constructor(
     val tmpApkFile = File(context.cacheDir, "${catalog.pkgName}.apk")
     val tmpIconFile = File(context.cacheDir, "${catalog.pkgName}.png")
     try {
-      val apkResponse = http.defaultClient.get(catalog.pkgUrl).awaitSuccess()
+      val apkResponse = client.get(catalog.pkgUrl, cache = http.noStore).awaitSuccess()
       apkResponse.saveTo(tmpApkFile)
 
-      val iconResponse = http.defaultClient.get(catalog.iconUrl).awaitSuccess()
+      val iconResponse = client.get(catalog.iconUrl, cache = http.noStore).awaitSuccess()
       iconResponse.saveTo(tmpIconFile)
 
       emit(InstallStep.Installing)
 
-      val extDir = File(context.filesDir, "extensions/${catalog.pkgName}").apply { mkdirs() }
+      val extDir = File(context.filesDir, "catalogs/${catalog.pkgName}").apply { mkdirs() }
       val apkFile = File(extDir, tmpApkFile.name)
       val iconFile = File(extDir, tmpIconFile.name)
 
@@ -78,7 +83,7 @@ internal class AndroidCatalogInstaller @Inject constructor(
    * @param pkgName The package name of the extension to uninstall
    */
   override suspend fun uninstall(pkgName: String): Boolean {
-    val file = File(context.filesDir, "extensions/${pkgName}")
+    val file = File(context.filesDir, "catalogs/${pkgName}")
     val deleted = file.deleteRecursively()
     installationChanges.notifyAppUninstall(pkgName)
     return deleted

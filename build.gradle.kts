@@ -36,12 +36,11 @@ subprojects {
       )
     }
   }
+  tasks.withType<Test> {
+    useJUnitPlatform()
+  }
 }
 
 tasks.register("clean", Delete::class) {
   delete(rootProject.buildDir)
-}
-
-tasks.withType<Test> {
-  useJUnitPlatform()
 }

@@ -21,8 +21,8 @@ import okhttp3.Call
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okio.buffer
-import okio.sink
 import okio.source
+import tachiyomi.core.http.saveTo
 import tachiyomi.domain.catalog.interactor.GetLocalCatalog
 import tachiyomi.domain.library.service.LibraryCovers
 import tachiyomi.source.HttpSource
@@ -32,7 +32,7 @@ internal class LibraryMangaFetcher(
   private val defaultClient: OkHttpClient,
   private val libraryCovers: LibraryCovers,
   private val getLocalCatalog: GetLocalCatalog,
-  private val coversCache: Cache
+  private val coilCache: Cache
 ) : Fetcher<MangaCover> {
 
   override fun key(data: MangaCover): String? {
@@ -87,20 +87,16 @@ internal class LibraryMangaFetcher(
 
     val call = getCall(manga)
 
-    // TODO this crashes if using suspending call
+    // TODO this crashes if using suspending call due to a compiler bug
     val response = withContext(Dispatchers.IO) { call.execute() }
-    val body = checkNotNull(response.body) { "Null response source" }
+    val body = checkNotNull(response.body) { "Response received null body" }
 
     if (manga.favorite) {
-      // If the cover isn't already saved or the size is different, save the cover
+      // If the cover isn't already saved or the size is different, save it
       if (!file.exists() || file.length() != body.contentLength()) {
         val tmpFile = File(file.absolutePath + ".tmp")
         try {
-          body.source().use { input ->
-            tmpFile.sink().buffer().use { output ->
-              output.writeAll(input)
-            }
-          }
+          body.saveTo(tmpFile)
           tmpFile.renameTo(file)
         } finally {
           tmpFile.delete()
@@ -129,7 +125,7 @@ internal class LibraryMangaFetcher(
     val client = source?.client ?: defaultClient
 
     val newClient = client.newBuilder()
-      .cache(coversCache)
+      .cache(coilCache)
       .build()
 
     val request = Request.Builder().url(manga.cover).also {
