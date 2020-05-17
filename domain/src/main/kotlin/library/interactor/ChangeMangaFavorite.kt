@@ -10,7 +10,7 @@ package tachiyomi.domain.library.interactor
 
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
-import tachiyomi.core.db.Transaction
+import tachiyomi.core.db.Transactions
 import tachiyomi.domain.library.service.LibraryCovers
 import tachiyomi.domain.library.service.LibraryPreferences
 import tachiyomi.domain.library.service.MangaCategoryRepository
@@ -24,7 +24,7 @@ class ChangeMangaFavorite @Inject constructor(
   private val mangaCategoryRepository: MangaCategoryRepository,
   private val libraryPreferences: LibraryPreferences,
   private val libraryCovers: LibraryCovers,
-  private val transactions: Transaction,
+  private val transactions: Transactions,
   private val setCategoriesForMangas: SetCategoriesForMangas
 ) {
 

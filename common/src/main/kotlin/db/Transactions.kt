@@ -8,7 +8,7 @@
 
 package tachiyomi.core.db
 
-interface Transaction {
+interface Transactions {
 
   suspend fun <T> withAction(action: suspend () -> T?)
 

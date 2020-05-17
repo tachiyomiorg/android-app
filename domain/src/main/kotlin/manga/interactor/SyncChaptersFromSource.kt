@@ -8,7 +8,7 @@
 
 package tachiyomi.domain.manga.interactor
 
-import tachiyomi.core.db.Transaction
+import tachiyomi.core.db.Transactions
 import tachiyomi.domain.catalog.service.CatalogStore
 import tachiyomi.domain.manga.model.Chapter
 import tachiyomi.domain.manga.model.MangaBase
@@ -23,7 +23,7 @@ class SyncChaptersFromSource @Inject constructor(
   private val chapterRepository: ChapterRepository,
   private val mangaRepository: MangaRepository,
   private val catalogStore: CatalogStore,
-  private val transaction: Transaction
+  private val transactions: Transactions
 ) {
 
   data class Diff(
@@ -121,7 +121,7 @@ class SyncChaptersFromSource @Inject constructor(
     val chaptersToNotify = toAdd.toList() - toAdd.filter { it.number in toDeleteNumbers }
     val notifyDiff = Diff(chaptersToNotify, toDelete, toUpdate)
 
-    transaction.withAction {
+    transactions.withAction {
       if (diff.deleted.isNotEmpty()) {
         chapterRepository.delete(diff.deleted)
       }

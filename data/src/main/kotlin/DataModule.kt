@@ -10,7 +10,7 @@ package tachiyomi.data
 
 import android.app.Application
 import androidx.room.withTransaction
-import tachiyomi.core.db.Transaction
+import tachiyomi.core.db.Transactions
 import tachiyomi.core.di.GenericsProvider
 import tachiyomi.core.prefs.PreferenceStoreFactory
 import tachiyomi.data.catalog.api.CatalogGithubApi
@@ -53,7 +53,7 @@ fun DataModule(context: Application) = module {
   val preferenceFactory = PreferenceStoreFactory(context)
 
   bind<AppDatabase>().toProviderInstance { AppDatabase.build(context) }.providesSingleton()
-  bind<Transaction>().toClass<RoomTransaction>()
+  bind<Transactions>().toClass<RoomTransactions>()
 
   bind<MangaRepository>().toClass<MangaRepositoryImpl>().singleton()
 
@@ -94,7 +94,7 @@ fun DataModule(context: Application) = module {
 
 }
 
-private class RoomTransaction @Inject constructor(private val db: AppDatabase) : Transaction {
+private class RoomTransactions @Inject constructor(private val db: AppDatabase) : Transactions {
 
   override suspend fun <T> withAction(action: suspend () -> T?) {
     db.withTransaction(action)
