@@ -8,11 +8,21 @@
 
 package tachiyomi.domain.track.model
 
-enum class TrackStatus {
-  Reading,
-  Completed,
-  OnHold,
-  Dropped,
-  Planned,
-  Repeating
+enum class TrackStatus(val value: Int) {
+  Reading(1),
+  Completed(2),
+  OnHold(3),
+  Dropped(4),
+  Planned(5),
+  Repeating(6);
+
+  companion object {
+    fun from(value: Int): TrackStatus {
+      return checkNotNull(values.find { it.value == value }, {
+        "The provided value for TrackStatus doesn't exist"
+      })
+    }
+
+    private val values = values()
+  }
 }

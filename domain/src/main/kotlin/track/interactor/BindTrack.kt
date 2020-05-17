@@ -34,7 +34,7 @@ class BindTrack @Inject constructor(
       mediaId = info.mediaId,
       mediaUrl = info.mediaUrl,
       title = info.title,
-      lastChapterRead = state.lastChapterRead,
+      lastRead = state.lastChapterRead,
       totalChapters = state.totalChapters,
       score = state.score,
       status = state.status

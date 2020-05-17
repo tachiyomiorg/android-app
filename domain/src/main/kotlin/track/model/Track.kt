@@ -9,15 +9,17 @@
 package tachiyomi.domain.track.model
 
 data class Track(
-  val id: Long = -1,
-  val mangaId: Long,
+  val id: Long = 0,
+  val mangaId: Long = 0,
   val siteId: Int,
   val entryId: Long,
   val mediaId: Long,
   val mediaUrl: String,
   val title: String,
-  val lastChapterRead: Float,
+  val lastRead: Float,
   val totalChapters: Int,
   val score: Float,
-  val status: TrackStatus
+  val status: TrackStatus,
+  val startReadTime: Long = 0,
+  val endReadTime: Long = 0
 )

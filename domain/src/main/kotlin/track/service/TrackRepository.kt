@@ -13,12 +13,12 @@ import tachiyomi.domain.track.model.TrackUpdate
 
 interface TrackRepository {
 
-  fun find(mangaId: Long, siteId: Int): Track?
+  suspend fun findForManga(mangaId: Long, siteId: Int): Track?
 
-  fun findAll(mangaId: Long): List<Track>
+  suspend fun findAllForManga(mangaId: Long): List<Track>
 
-  fun save(track: Track)
+  suspend fun save(track: Track)
 
-  fun savePartial(update: TrackUpdate)
+  suspend fun savePartial(update: TrackUpdate)
 
 }

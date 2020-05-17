@@ -21,10 +21,10 @@ class UpdateLastChapterRead @Inject constructor(
 
   suspend fun await(mangaId: Long, lastChapterRead: Float): Result {
     return try {
-      val tracks = trackRepository.findAll(mangaId)
+      val tracks = trackRepository.findAllForManga(mangaId)
 
       for (track in tracks) {
-        if (track.lastChapterRead >= lastChapterRead) continue
+        if (track.lastRead >= lastChapterRead) continue
 
         val site = trackServices.get(track.siteId) ?: continue
         val currentState = site.getState(track.entryId) ?: continue
