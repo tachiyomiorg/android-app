@@ -30,6 +30,10 @@ internal class MangaRepositoryImpl @Inject constructor(
     return dao.subscribe(key, sourceId).distinctUntilChanged()
   }
 
+  override suspend fun findFavorites(): List<Manga> {
+    return dao.getFavorites()
+  }
+
   override suspend fun find(mangaId: Long): Manga? {
     return dao.find(mangaId)
   }

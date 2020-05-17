@@ -19,6 +19,9 @@ import tachiyomi.domain.manga.model.MangaUpdate
 @TypeConverters(MangaConverters::class)
 abstract class MangaDao : BaseDao<Manga> {
 
+  @Query("SELECT * FROM manga WHERE favorite = 1")
+  abstract fun getFavorites(): List<Manga>
+
   @Query("SELECT * FROM manga WHERE id = :id")
   abstract fun subscribe(id: Long): Flow<Manga?>
 
