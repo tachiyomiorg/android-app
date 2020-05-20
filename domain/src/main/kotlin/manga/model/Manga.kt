@@ -21,6 +21,7 @@ data class Manga(
   val genres: List<String> = emptyList(),
   val status: Int = MangaInfo.UNKNOWN,
   val cover: String = "",
+  val customCover: String = "",
   val favorite: Boolean = false,
   val lastUpdate: Long = 0,
   val lastInit: Long = 0,
