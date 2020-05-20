@@ -4,15 +4,6 @@ plugins {
   id("kotlin-kapt")
 }
 
-android {
-  compileSdkVersion(Config.compileSdk)
-  defaultConfig {
-    minSdkVersion(Config.minSdk)
-    targetSdkVersion(Config.targetSdk)
-  }
-  sourceSets["main"].java.srcDirs("src/main/kotlin")
-}
-
 dependencies {
   apiProject(Projects.common)
 

@@ -39,6 +39,24 @@ subprojects {
   tasks.withType<Test> {
     useJUnitPlatform()
   }
+
+  @Suppress("DEPRECATION")
+  plugins.withType<com.android.build.gradle.BasePlugin> {
+    configure<com.android.build.gradle.BaseExtension> {
+      compileSdkVersion(Config.compileSdk)
+      defaultConfig {
+        minSdkVersion(Config.minSdk)
+        targetSdkVersion(Config.targetSdk)
+        versionCode(Config.versionCode)
+        versionName(Config.versionName)
+      }
+      compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+      }
+      sourceSets["main"].java.srcDirs("src/main/kotlin")
+    }
+  }
 }
 
 tasks.register("clean", Delete::class) {

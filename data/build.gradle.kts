@@ -1,31 +1,18 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
   id("com.android.library")
   id("kotlin-android")
   id("kotlin-kapt")
 }
 
-android {
-  compileSdkVersion(Config.compileSdk)
-  defaultConfig {
-    minSdkVersion(Config.minSdk)
-    targetSdkVersion(Config.targetSdk)
+val removeDomainClasses by tasks.registering(Delete::class) {
+  doFirst {
+    delete(fileTree("$buildDir/tmp/kotlin-classes") {
+      include("*/tachiyomi/domain/**/*.class")
+    })
   }
-  sourceSets["main"].java.srcDirs("src/main/kotlin")
 }
-
-afterEvaluate {
-  val removeDomainClasses by tasks.registering(Delete::class) {
-    doFirst {
-      delete(fileTree("$buildDir/tmp/kotlin-classes") {
-        include("*/tachiyomi/domain/**/*.class")
-      })
-    }
-  }
-  tasks.withType(KotlinCompile::class.java) {
-    finalizedBy(removeDomainClasses)
-  }
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java) {
+  finalizedBy(removeDomainClasses)
 }
 
 dependencies {
