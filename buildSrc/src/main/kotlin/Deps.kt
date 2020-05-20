@@ -4,18 +4,23 @@ object Deps {
   object kotlin {
     const val version = "1.3.72"
     const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$version"
-    const val serialization = "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.20.0"
+
+    object serialization {
+      private const val version = "0.20.0"
+      const val runtime = "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$version"
+      const val protobuf = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf:$version"
+    }
   }
 
   object coroutines {
-    private const val version = "1.3.5"
+    private const val version = "1.3.7"
     const val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
     const val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$version"
   }
 
   object androidX {
     const val core = "androidx.core:core-ktx:1.3.0-rc01"
-    const val appCompat = "androidx.appcompat:appcompat:1.2.0-beta01"
+    const val appCompat = "androidx.appcompat:appcompat:1.2.0-rc01"
     const val preference = "androidx.preference:preference:1.1.1"
     const val sqlite = "androidx.sqlite:sqlite:2.1.0"
   }
@@ -59,7 +64,7 @@ object Deps {
     const val testing = "com.github.stephanenicolas.toothpick:toothpick-testing-junit5:$version"
   }
 
-  const val okhttp = "com.squareup.okhttp3:okhttp:4.6.0"
+  const val okhttp = "com.squareup.okhttp3:okhttp:4.7.1"
   const val duktape = "com.squareup.duktape:duktape-android:1.3.0"
   const val kotson = "com.github.salomonbrys.kotson:kotson:2.5.0"
   const val jsoup = "org.jsoup:jsoup:1.13.1"
@@ -75,7 +80,7 @@ object Deps {
   const val coRedux = "com.freeletics.coredux:core:1.1.1"
   const val coReduxLog = "com.freeletics.coredux:log-common:1.1.1"
 
-  const val coil = "io.coil-kt:coil:0.10.1"
+  const val coil = "io.coil-kt:coil:0.11.0"
 
   const val mockk = "io.mockk:mockk:1.10.0"
 
