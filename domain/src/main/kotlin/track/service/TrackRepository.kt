@@ -17,8 +17,12 @@ interface TrackRepository {
 
   suspend fun findAllForManga(mangaId: Long): List<Track>
 
-  suspend fun save(track: Track)
+  suspend fun insert(track: Track)
 
-  suspend fun savePartial(update: TrackUpdate)
+  suspend fun insert(tracks: List<Track>)
+
+  suspend fun updatePartial(update: TrackUpdate)
+
+  suspend fun updatePartial(updates: List<TrackUpdate>)
 
 }

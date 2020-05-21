@@ -64,6 +64,10 @@ internal class CategoryRepositoryImpl @Inject constructor(
     dao.insert(category)
   }
 
+  override suspend fun insert(categories: List<Category>) {
+    dao.insert(categories)
+  }
+
   override suspend fun updatePartial(update: CategoryUpdate) {
     dao.updatePartial(update)
   }

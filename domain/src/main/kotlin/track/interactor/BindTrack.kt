@@ -27,7 +27,7 @@ class BindTrack @Inject constructor(
     val state = site.getState(entryId) ?: return Result.NotFound
 
     val track = Track(
-      id = -1,
+      id = 0,
       mangaId = manga.id,
       siteId = site.id,
       entryId = entryId,
@@ -40,7 +40,7 @@ class BindTrack @Inject constructor(
       status = state.status
     )
 
-    trackRepository.save(track)
+    trackRepository.insert(track)
 
     return Result.Success
   }

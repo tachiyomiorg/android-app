@@ -34,12 +34,12 @@ class UpdateLastChapterRead @Inject constructor(
 
         val localUpdate = TrackUpdate(
           id = track.id,
-          lastChapterRead = lastChapterRead,
+          lastRead = lastChapterRead,
           totalChapters = currentState.totalChapters,
           score = currentState.score, // TODO what happens with different score systems
           status = currentState.status
         )
-        trackRepository.savePartial(localUpdate)
+        trackRepository.updatePartial(localUpdate)
       }
       Result.Success
     } catch (e: Exception) {

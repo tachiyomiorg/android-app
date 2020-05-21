@@ -14,8 +14,10 @@ data class TrackUpdate(
   val mediaId: Long? = null,
   val mediaUrl: String? = null,
   val title: String? = null,
-  val lastChapterRead: Float? = null,
+  val lastRead: Float? = null,
   val totalChapters: Int? = null,
   val score: Float? = null,
-  val status: TrackStatus? = null
+  val status: TrackStatus? = null,
+  val startReadTime: Long? = null,
+  val endReadTime: Long? = null
 )

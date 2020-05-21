@@ -29,6 +29,8 @@ interface CategoryRepository {
 
   suspend fun insert(category: Category)
 
+  suspend fun insert(categories: List<Category>)
+
   suspend fun updatePartial(update: CategoryUpdate)
 
   suspend fun updatePartial(updates: Collection<CategoryUpdate>)
