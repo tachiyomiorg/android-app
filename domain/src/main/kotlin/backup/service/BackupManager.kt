@@ -17,6 +17,7 @@ import okio.buffer
 import okio.gzip
 import okio.sink
 import okio.source
+import tachiyomi.core.db.Transactions
 import tachiyomi.domain.backup.model.Backup
 import tachiyomi.domain.backup.model.CategoryProto
 import tachiyomi.domain.backup.model.ChapterProto
@@ -41,7 +42,8 @@ internal class BackupManager @Inject constructor(
   private val categoryRepository: CategoryRepository,
   private val chapterRepository: ChapterRepository,
   private val trackRepository: TrackRepository,
-  private val mangaCategoryRepository: MangaCategoryRepository
+  private val mangaCategoryRepository: MangaCategoryRepository,
+  private val transactions: Transactions
 ) {
 
   suspend fun createBackup(file: File) {
@@ -55,13 +57,16 @@ internal class BackupManager @Inject constructor(
       val bytes = file.source().gzip().buffer().use { it.readByteArray() }
       val backup = loadDump(bytes)
 
-      restoreCategories(backup.categories)
-      val backupCategoriesWithId = getCategoryIdsByBackupId(backup.categories)
-      for (manga in backup.library) {
-        val mangaId = restoreManga(manga)
-        restoreChapters(manga)
-        restoreCategoriesOfManga(mangaId, manga.categories.mapNotNull(backupCategoriesWithId::get))
-        restoreTracks(manga, mangaId)
+      transactions.withAction {
+        restoreCategories(backup.categories)
+        val backupCategoriesWithId = getCategoryIdsByBackupId(backup.categories)
+        for (manga in backup.library) {
+          val mangaId = restoreManga(manga)
+          restoreChapters(manga)
+          restoreCategoriesOfManga(mangaId,
+            manga.categories.mapNotNull(backupCategoriesWithId::get))
+          restoreTracks(manga, mangaId)
+        }
       }
     }
   }

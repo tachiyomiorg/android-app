@@ -16,6 +16,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.coVerifyOrder
 import io.mockk.mockk
+import tachiyomi.core.db.Transactions
 import tachiyomi.domain.backup.model.CategoryProto
 import tachiyomi.domain.backup.model.ChapterProto
 import tachiyomi.domain.backup.model.MangaProto
@@ -39,8 +40,9 @@ class BackupManagerTest : StringSpec({
   val chapterRepository = mockk<ChapterRepository>(relaxed = true)
   val trackRepository = mockk<TrackRepository>(relaxed = true)
   val mangaCategoryRepository = mockk<MangaCategoryRepository>(relaxed = true)
+  val transactions = mockk<Transactions>(relaxed = true)
   val manager = BackupManager(mangaRepository, categoryRepository, chapterRepository,
-    trackRepository, mangaCategoryRepository)
+    trackRepository, mangaCategoryRepository, transactions)
   afterTest { clearAllMocks() }
 
   // Set defaults for repositories
