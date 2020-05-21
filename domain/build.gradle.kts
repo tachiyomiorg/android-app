@@ -12,6 +12,8 @@ dependencies {
   implementation(Deps.toothpick.runtime)
   kapt(Deps.toothpick.compiler)
 
+  implementation(Deps.kotlin.serialization.protobuf)
+
   testImplementation(Deps.mockk)
   testImplementation(Deps.toothpick.testing)
   testImplementation(Deps.kotest.framework)
