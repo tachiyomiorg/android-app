@@ -9,10 +9,13 @@
 package tachiyomi.data
 
 import android.content.Context
+import android.os.Build
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
+import com.github.stephanenicolas.toothpick.smoothie.BuildConfig
 import io.requery.android.database.sqlite.RequerySQLiteOpenHelperFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
@@ -52,7 +55,14 @@ abstract class AppDatabase : RoomDatabase() {
   companion object {
     fun build(context: Context): AppDatabase {
       return Room.databaseBuilder(context, AppDatabase::class.java, "tachiyomi")
-        .openHelperFactory(RequerySQLiteOpenHelperFactory())
+        .openHelperFactory(
+          // Support database inspector
+          if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= 26) {
+            FrameworkSQLiteOpenHelperFactory()
+          } else {
+            RequerySQLiteOpenHelperFactory()
+          }
+        )
         .addCallback(object : RoomDatabase.Callback() {
           override fun onCreate(db: SupportSQLiteDatabase) {
             db.execSQL("""INSERT INTO category VALUES (${Category.ALL_ID}, "", 0, 0)""")
