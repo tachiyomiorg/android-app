@@ -8,6 +8,10 @@
 
 package tachiyomi.core
 
+import tachiyomi.core.http.DuktapeJSFactory
+import tachiyomi.core.http.Http
+import tachiyomi.core.http.HttpProvider
+import tachiyomi.core.http.JSFactory
 import tachiyomi.core.os.AndroidAppState
 import tachiyomi.core.os.AppState
 import toothpick.ktp.binding.bind
@@ -16,5 +20,7 @@ import toothpick.ktp.binding.module
 val CoreModule = module {
 
   bind<AppState>().toClass<AndroidAppState>().singleton()
+  bind<Http>().toProvider(HttpProvider::class).providesSingleton()
+  bind<JSFactory>().toClass<DuktapeJSFactory>().singleton()
 
 }

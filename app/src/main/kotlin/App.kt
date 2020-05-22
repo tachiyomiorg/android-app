@@ -11,7 +11,6 @@ package tachiyomi.app
 import android.app.Application
 import tachiyomi.app.initializers.AppInitializers
 import tachiyomi.core.CoreModule
-import tachiyomi.core.http.HttpModule
 import tachiyomi.data.DataModule
 import tachiyomi.ui.di.UiModule
 import toothpick.Toothpick
@@ -44,7 +43,6 @@ class App : Application() {
     Toothpick.openRootScope()
       .installModules(
         SmoothieApplicationModule(this),
-        HttpModule,
         CoreModule,
         DataModule(this),
         UiModule
