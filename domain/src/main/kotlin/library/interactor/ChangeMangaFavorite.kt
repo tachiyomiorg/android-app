@@ -38,7 +38,7 @@ class ChangeMangaFavorite @Inject constructor(
     }
 
     try {
-      transactions.withAction {
+      transactions.run {
         mangaRepository.updatePartial(update)
 
         if (nowFavorite) {

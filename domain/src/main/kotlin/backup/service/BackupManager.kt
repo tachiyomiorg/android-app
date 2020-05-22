@@ -57,7 +57,7 @@ internal class BackupManager @Inject constructor(
       val bytes = file.source().gzip().buffer().use { it.readByteArray() }
       val backup = loadDump(bytes)
 
-      transactions.withAction {
+      transactions.run {
         restoreCategories(backup.categories)
         val backupCategoriesWithId = getCategoryIdsByBackupId(backup.categories)
         for (manga in backup.library) {
@@ -79,7 +79,7 @@ internal class BackupManager @Inject constructor(
     return ProtoBuf(encodeDefaults = false).dump(backup)
   }
 
-  suspend fun loadDump(data: ByteArray): Backup {
+  fun loadDump(data: ByteArray): Backup {
     return ProtoBuf.load(data)
   }
 

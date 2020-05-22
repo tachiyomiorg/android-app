@@ -96,8 +96,8 @@ fun DataModule(context: Application) = module {
 
 private class RoomTransactions @Inject constructor(private val db: AppDatabase) : Transactions {
 
-  override suspend fun <T> withAction(action: suspend () -> T?) {
-    db.withTransaction(action)
+  override suspend fun <R> run(action: suspend () -> R): R {
+    return db.withTransaction(action)
   }
 
 }

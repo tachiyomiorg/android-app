@@ -121,7 +121,7 @@ class SyncChaptersFromSource @Inject constructor(
     val chaptersToNotify = toAdd.toList() - toAdd.filter { it.number in toDeleteNumbers }
     val notifyDiff = Diff(chaptersToNotify, toDelete, toUpdate)
 
-    transactions.withAction {
+    transactions.run {
       if (diff.deleted.isNotEmpty()) {
         chapterRepository.delete(diff.deleted)
       }
