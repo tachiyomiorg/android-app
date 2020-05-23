@@ -6,15 +6,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package tachiyomi.domain.backup.service
+package tachiyomi.domain.backup.model
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
-import tachiyomi.domain.backup.model.CategoryProto
-import tachiyomi.domain.backup.model.ChapterProto
-import tachiyomi.domain.backup.model.MangaProto
-import tachiyomi.domain.backup.model.TrackProto
 import tachiyomi.domain.library.model.Category
 import tachiyomi.domain.manga.model.Chapter
 import tachiyomi.domain.manga.model.Manga

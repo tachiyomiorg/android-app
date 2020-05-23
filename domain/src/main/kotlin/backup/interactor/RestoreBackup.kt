@@ -6,23 +6,19 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package tachiyomi.domain.backup.service
+package tachiyomi.domain.backup.interactor
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.dump
 import kotlinx.serialization.load
 import kotlinx.serialization.protobuf.ProtoBuf
 import okio.buffer
 import okio.gzip
-import okio.sink
 import okio.source
 import tachiyomi.core.db.Transactions
 import tachiyomi.domain.backup.model.Backup
 import tachiyomi.domain.backup.model.CategoryProto
-import tachiyomi.domain.backup.model.ChapterProto
 import tachiyomi.domain.backup.model.MangaProto
-import tachiyomi.domain.backup.model.TrackProto
 import tachiyomi.domain.library.model.MangaCategory
 import tachiyomi.domain.library.service.CategoryRepository
 import tachiyomi.domain.library.service.MangaCategoryRepository
@@ -37,7 +33,7 @@ import tachiyomi.domain.track.service.TrackRepository
 import java.io.File
 import javax.inject.Inject
 
-internal class BackupManager @Inject constructor(
+class RestoreBackup @Inject internal constructor(
   private val mangaRepository: MangaRepository,
   private val categoryRepository: CategoryRepository,
   private val chapterRepository: ChapterRepository,
@@ -46,13 +42,7 @@ internal class BackupManager @Inject constructor(
   private val transactions: Transactions
 ) {
 
-  suspend fun createBackup(file: File) {
-    withContext(Dispatchers.IO) {
-      file.sink().gzip().buffer().use { it.write(createDump()) }
-    }
-  }
-
-  suspend fun restoreBackup(file: File) {
+  suspend fun restoreFrom(file: File) {
     withContext(Dispatchers.IO) {
       val bytes = file.source().gzip().buffer().use { it.readByteArray() }
       val backup = loadDump(bytes)
@@ -71,52 +61,11 @@ internal class BackupManager @Inject constructor(
     }
   }
 
-  suspend fun createDump(): ByteArray {
-    val backup = Backup(
-      library = dumpLibrary(),
-      categories = dumpCategories()
-    )
-    return ProtoBuf(encodeDefaults = false).dump(backup)
-  }
-
-  fun loadDump(data: ByteArray): Backup {
+  private fun loadDump(data: ByteArray): Backup {
     return ProtoBuf.load(data)
   }
 
-  suspend fun dumpLibrary(): List<MangaProto> {
-    return mangaRepository.findFavorites()
-      .map { manga ->
-        val chapters = dumpChapters(manga.id)
-        val mangaCategories = dumpMangaCategories(manga.id)
-        val tracks = dumpTracks(manga.id)
-
-        MangaProto.fromDomain(manga, chapters, mangaCategories, tracks)
-      }
-  }
-
-  suspend fun dumpChapters(mangaId: Long): List<ChapterProto> {
-    return chapterRepository.findForManga(mangaId).map { chapter ->
-      ChapterProto.fromDomain(chapter)
-    }
-  }
-
-  suspend fun dumpMangaCategories(mangaId: Long): List<Int> {
-    return categoryRepository.findCategoriesOfManga(mangaId)
-      .filter { !it.isSystemCategory }
-      .map { it.order }
-  }
-
-  suspend fun dumpTracks(mangaId: Long): List<TrackProto> {
-    return trackRepository.findAllForManga(mangaId).map { TrackProto.fromDomain(it) }
-  }
-
-  suspend fun dumpCategories(): List<CategoryProto> {
-    return categoryRepository.findAll()
-      .filter { !it.isSystemCategory }
-      .map { cat -> CategoryProto.fromDomain(cat) }
-  }
-
-  suspend fun restoreManga(manga: MangaProto): Long {
+  internal suspend fun restoreManga(manga: MangaProto): Long {
     val dbManga = mangaRepository.find(manga.key, manga.sourceId)
     if (dbManga == null) {
       val newManga = manga.toDomain()
@@ -145,7 +94,7 @@ internal class BackupManager @Inject constructor(
     return dbManga.id
   }
 
-  suspend fun restoreChapters(manga: MangaProto) {
+  internal suspend fun restoreChapters(manga: MangaProto) {
     if (manga.chapters.isEmpty()) return
 
     val dbManga = checkNotNull(mangaRepository.find(manga.key, manga.sourceId))
@@ -195,7 +144,7 @@ internal class BackupManager @Inject constructor(
     }
   }
 
-  suspend fun restoreCategories(categories: List<CategoryProto>) {
+  internal suspend fun restoreCategories(categories: List<CategoryProto>) {
     if (categories.isEmpty()) return
 
     val dbCategories = categoryRepository.findAll()
@@ -213,7 +162,7 @@ internal class BackupManager @Inject constructor(
     }
   }
 
-  suspend fun restoreCategoriesOfManga(mangaId: Long, categoryIds: List<Long>) {
+  internal suspend fun restoreCategoriesOfManga(mangaId: Long, categoryIds: List<Long>) {
     if (categoryIds.isEmpty()) return
 
     val mangaCategories = categoryIds.map { categoryId ->
@@ -225,7 +174,7 @@ internal class BackupManager @Inject constructor(
     }
   }
 
-  suspend fun restoreTracks(manga: MangaProto, mangaId: Long) {
+  internal suspend fun restoreTracks(manga: MangaProto, mangaId: Long) {
     if (manga.tracks.isEmpty()) return
 
     val dbTracks = trackRepository.findAllForManga(mangaId)

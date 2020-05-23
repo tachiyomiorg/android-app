@@ -6,10 +6,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package tachiyomi.domain.backup.service
+package tachiyomi.domain.backup.interactor
 
 import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.collections.shouldHaveSize
 import io.mockk.Called
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
@@ -33,7 +32,7 @@ import tachiyomi.domain.track.model.Track
 import tachiyomi.domain.track.model.TrackUpdate
 import tachiyomi.domain.track.service.TrackRepository
 
-class BackupManagerTest : StringSpec({
+class RestoreBackupTest : StringSpec({
 
   val mangaRepository = mockk<MangaRepository>(relaxed = true)
   val categoryRepository = mockk<CategoryRepository>(relaxed = true)
@@ -41,7 +40,7 @@ class BackupManagerTest : StringSpec({
   val trackRepository = mockk<TrackRepository>(relaxed = true)
   val mangaCategoryRepository = mockk<MangaCategoryRepository>(relaxed = true)
   val transactions = mockk<Transactions>(relaxed = true)
-  val manager = BackupManager(mangaRepository, categoryRepository, chapterRepository,
+  val interactor = RestoreBackup(mangaRepository, categoryRepository, chapterRepository,
     trackRepository, mangaCategoryRepository, transactions)
   afterTest { clearAllMocks() }
 
@@ -54,73 +53,6 @@ class BackupManagerTest : StringSpec({
     coEvery { trackRepository.findAllForManga(any()) } returns listOf()
   }
 
-  "dumps nothing" {
-    val backup = manager.loadDump(manager.createDump())
-
-    backup.library shouldHaveSize 0
-    backup.categories shouldHaveSize 0
-  }
-  "dumps library" {
-    coEvery { mangaRepository.findFavorites() } returns listOf(
-      Manga(id = 1, sourceId = 0, key = "key1", title = "title1"),
-      Manga(id = 2, sourceId = 1, key = "key2", title = "title2")
-    )
-
-    val result = manager.dumpLibrary()
-
-    coVerify { mangaRepository.findFavorites() }
-    result shouldHaveSize 2
-  }
-  "dumps chapters" {
-    coEvery { chapterRepository.findForManga(any()) } returns listOf(
-      Chapter(id = 1, mangaId = 4, key = "chapter1", name = "Chapter 1"),
-      Chapter(id = 2, mangaId = 4, key = "chapter2", name = "Chapter 2"),
-      Chapter(id = 3, mangaId = 4, key = "chapter3", name = "Chapter 3")
-    )
-
-    val result = manager.dumpChapters(4)
-
-    coVerify { chapterRepository.findForManga(4) }
-    result shouldHaveSize 3
-  }
-  "dumps categories of manga" {
-    coEvery { categoryRepository.findCategoriesOfManga(any()) } returns listOf(
-      Category(id = Category.ALL_ID, order = 0, updateInterval = 0),
-      Category(id = Category.UNCATEGORIZED_ID, order = 1, updateInterval = 0),
-      Category(id = 1, name = "cat1", order = 2, updateInterval = 0),
-      Category(id = 2, name = "cat2", order = 3, updateInterval = 0)
-    )
-
-    val result = manager.dumpMangaCategories(3)
-
-    coVerify { categoryRepository.findCategoriesOfManga(3) }
-    result shouldHaveSize 2
-  }
-  "dumps categories" {
-    coEvery { categoryRepository.findAll() } returns listOf(
-      Category(id = Category.ALL_ID, order = 0, updateInterval = 0),
-      Category(id = Category.UNCATEGORIZED_ID, order = 1, updateInterval = 0),
-      Category(id = 1, name = "cat1", order = 2, updateInterval = 0),
-      Category(id = 2, name = "cat2", order = 3, updateInterval = 0)
-    )
-
-    val result = manager.dumpCategories()
-
-    coVerify { categoryRepository.findAll() }
-    result shouldHaveSize 2
-  }
-  "dumps tracks" {
-    coEvery { trackRepository.findAllForManga(1) } returns listOf(
-      Track(id = 1, mangaId = 1, siteId = 1, entryId = 1),
-      Track(id = 1, mangaId = 1, siteId = 1, entryId = 1)
-    )
-
-    val result = manager.dumpTracks(1)
-
-    coVerify { trackRepository.findAllForManga(1) }
-    result shouldHaveSize 2
-  }
-
   "restores non existent manga" {
     val backupManga = MangaProto(
       sourceId = 1,
@@ -129,7 +61,7 @@ class BackupManagerTest : StringSpec({
     )
     coEvery { mangaRepository.find(any(), any()) } returns null
 
-    manager.restoreManga(backupManga)
+    interactor.restoreManga(backupManga)
 
     coVerify { mangaRepository.insert(backupManga.toDomain()) }
   }
@@ -149,7 +81,7 @@ class BackupManagerTest : StringSpec({
       favorite = true
     )
 
-    manager.restoreManga(backupManga)
+    interactor.restoreManga(backupManga)
 
     coVerify { mangaRepository.updatePartial(any()) }
   }
@@ -169,7 +101,7 @@ class BackupManagerTest : StringSpec({
       favorite = true
     )
 
-    manager.restoreManga(backupManga)
+    interactor.restoreManga(backupManga)
 
     coVerify(exactly = 0) {
       mangaRepository.updatePartial(any())
@@ -192,7 +124,7 @@ class BackupManagerTest : StringSpec({
       favorite = false
     )
 
-    manager.restoreManga(backupManga)
+    interactor.restoreManga(backupManga)
 
     coVerify { mangaRepository.updatePartial(any()) }
   }
@@ -205,7 +137,7 @@ class BackupManagerTest : StringSpec({
     )
     coEvery { mangaRepository.find(any(), any()) } returns backupManga.toDomain()
 
-    manager.restoreChapters(backupManga)
+    interactor.restoreChapters(backupManga)
 
     coVerify { chapterRepository wasNot Called }
   }
@@ -229,7 +161,7 @@ class BackupManagerTest : StringSpec({
       it.toDomain(1)
     }
 
-    manager.restoreChapters(backupManga)
+    interactor.restoreChapters(backupManga)
 
     coVerifyOrder {
       chapterRepository.delete(any())
@@ -254,7 +186,7 @@ class BackupManagerTest : StringSpec({
     )
     coEvery { chapterRepository.findForManga(any()) } returns emptyList()
 
-    manager.restoreChapters(backupManga)
+    interactor.restoreChapters(backupManga)
 
     coVerifyOrder {
       chapterRepository.delete(any())
@@ -279,7 +211,7 @@ class BackupManagerTest : StringSpec({
       it.toDomain(1)
     }
 
-    manager.restoreChapters(backupManga)
+    interactor.restoreChapters(backupManga)
 
     coVerify(exactly = 0) { chapterRepository.delete(any()) }
     coVerify { chapterRepository.updatePartial(match { it.size == 1 }) }
@@ -297,7 +229,7 @@ class BackupManagerTest : StringSpec({
       Chapter(key = "chkey1", name = "name 1")
     )
 
-    manager.restoreChapters(backupManga)
+    interactor.restoreChapters(backupManga)
 
     coVerify(exactly = 0) {
       chapterRepository.delete(any())
@@ -305,7 +237,7 @@ class BackupManagerTest : StringSpec({
     }
   }
   "keeps db categories untouched when backup is empty" {
-    manager.restoreCategories(emptyList())
+    interactor.restoreCategories(emptyList())
 
     coVerify { categoryRepository wasNot Called }
   }
@@ -321,7 +253,7 @@ class BackupManagerTest : StringSpec({
       )
     )
 
-    manager.restoreCategories(backupCategories)
+    interactor.restoreCategories(backupCategories)
 
     coVerify { categoryRepository.insert(backupCategories.map { it.toDomain() }) }
   }
@@ -335,7 +267,7 @@ class BackupManagerTest : StringSpec({
       Category(id = 3, name = "cat3", order = 1)
     )
 
-    manager.restoreCategories(backupCategories)
+    interactor.restoreCategories(backupCategories)
 
     coVerify { categoryRepository.insert(listOf(Category(name = "cat2", order = 2))) }
   }
@@ -350,17 +282,17 @@ class BackupManagerTest : StringSpec({
       Category(id = 3, name = "cat3", order = 2)
     )
 
-    manager.restoreCategories(backupCategories)
+    interactor.restoreCategories(backupCategories)
 
     coVerify(exactly = 0) { categoryRepository.insert(any<List<Category>>()) }
   }
   "keeps db categories of manga when backup is empty" {
-    manager.restoreCategoriesOfManga(1, emptyList())
+    interactor.restoreCategoriesOfManga(1, emptyList())
 
     coVerify { mangaCategoryRepository wasNot Called }
   }
   "restores backup manga categories" {
-    manager.restoreCategoriesOfManga(1, listOf(2, 4))
+    interactor.restoreCategoriesOfManga(1, listOf(2, 4))
 
     coVerify {
       val expected = listOf(MangaCategory(1, 2), MangaCategory(1, 4))
@@ -375,7 +307,7 @@ class BackupManagerTest : StringSpec({
       tracks = listOf()
     )
 
-    manager.restoreTracks(backupManga, 1)
+    interactor.restoreTracks(backupManga, 1)
 
     coVerify { trackRepository wasNot Called }
   }
@@ -391,7 +323,7 @@ class BackupManagerTest : StringSpec({
     )
     coEvery { trackRepository.findAllForManga(1) } returns listOf()
 
-    manager.restoreTracks(backupManga, 1)
+    interactor.restoreTracks(backupManga, 1)
 
     coVerify { trackRepository.insert(backupManga.tracks.map { it.toDomain(1) }) }
   }
@@ -409,7 +341,7 @@ class BackupManagerTest : StringSpec({
       Track(id = 1, mangaId = 1, siteId = 1, entryId = 1)
     )
 
-    manager.restoreTracks(backupManga, 1)
+    interactor.restoreTracks(backupManga, 1)
 
     coVerify { trackRepository.insert(match<List<Track>> { it.size == 1 }) }
     coVerify(exactly = 0) { trackRepository.updatePartial(any<List<TrackUpdate>>()) }
@@ -427,7 +359,7 @@ class BackupManagerTest : StringSpec({
       Track(id = 1, mangaId = 1, siteId = 1, entryId = 1)
     )
 
-    manager.restoreTracks(backupManga, 1)
+    interactor.restoreTracks(backupManga, 1)
 
     coVerify { trackRepository.updatePartial(match<List<TrackUpdate>> { it.size == 1 }) }
   }
