@@ -13,7 +13,7 @@ import tachiyomi.domain.library.model.CategoryWithCount
 import tachiyomi.domain.library.service.CategoryRepository
 import javax.inject.Inject
 
-class GetCategoriesWithCount @Inject constructor(
+class GetCategoriesWithCount @Inject internal constructor(
   private val categoryRepository: CategoryRepository
 ) {
 

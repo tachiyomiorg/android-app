@@ -14,7 +14,7 @@ import tachiyomi.domain.catalog.model.InstallStep
 import tachiyomi.domain.catalog.service.CatalogInstaller
 import javax.inject.Inject
 
-class InstallCatalog @Inject constructor(
+class InstallCatalog @Inject internal constructor(
   private val catalogInstaller: CatalogInstaller
 ) {
 

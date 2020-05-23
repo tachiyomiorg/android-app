@@ -20,7 +20,7 @@ import tachiyomi.domain.library.service.LibraryUpdater
 import tachiyomi.domain.manga.interactor.SyncChaptersFromSource
 import javax.inject.Inject
 
-class UpdateLibraryCategory @Inject constructor(
+class UpdateLibraryCategory @Inject internal constructor(
   private val getLibraryCategory: GetLibraryCategory,
   private val syncChaptersFromSource: SyncChaptersFromSource,
   //private val notifier: LibraryUpdaterNotification,

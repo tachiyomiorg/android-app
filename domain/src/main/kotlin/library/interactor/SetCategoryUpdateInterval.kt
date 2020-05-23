@@ -14,7 +14,7 @@ import tachiyomi.domain.library.service.LibraryUpdateScheduler
 import tachiyomi.domain.library.service.LibraryUpdater
 import javax.inject.Inject
 
-class SetCategoryUpdateInterval @Inject constructor(
+class SetCategoryUpdateInterval @Inject internal constructor(
   private val categoryRepository: CategoryRepository,
   private val libraryScheduler: LibraryUpdateScheduler
 ) {

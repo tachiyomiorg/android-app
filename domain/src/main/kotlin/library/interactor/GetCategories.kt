@@ -13,7 +13,7 @@ import tachiyomi.domain.library.model.Category
 import tachiyomi.domain.library.service.CategoryRepository
 import javax.inject.Inject
 
-class GetCategories @Inject constructor(
+class GetCategories @Inject internal constructor(
   private val categoryRepository: CategoryRepository
 ) {
 

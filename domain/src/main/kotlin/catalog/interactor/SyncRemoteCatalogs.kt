@@ -15,7 +15,7 @@ import tachiyomi.domain.catalog.service.CatalogRemoteRepository
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class SyncRemoteCatalogs @Inject constructor(
+class SyncRemoteCatalogs @Inject internal constructor(
   private val catalogRemoteRepository: CatalogRemoteRepository,
   private val catalogRemoteApi: CatalogRemoteApi,
   private val catalogPreferences: CatalogPreferences

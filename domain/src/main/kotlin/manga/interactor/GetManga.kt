@@ -13,7 +13,7 @@ import tachiyomi.domain.manga.model.Manga
 import tachiyomi.domain.manga.service.MangaRepository
 import javax.inject.Inject
 
-class GetManga @Inject constructor(
+class GetManga @Inject internal constructor(
   private val mangaRepository: MangaRepository
 ) {
 

@@ -12,7 +12,7 @@ import tachiyomi.domain.catalog.model.CatalogInstalled
 import tachiyomi.domain.catalog.service.CatalogInstaller
 import javax.inject.Inject
 
-class UninstallCatalog @Inject constructor(
+class UninstallCatalog @Inject internal constructor(
   private val catalogInstaller: CatalogInstaller
 ) {
 

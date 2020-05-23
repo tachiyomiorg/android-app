@@ -12,7 +12,7 @@ import tachiyomi.domain.manga.model.Chapter
 import tachiyomi.domain.manga.service.ChapterRepository
 import javax.inject.Inject
 
-class GetChapter @Inject constructor(
+class GetChapter @Inject internal constructor(
   private val repository: ChapterRepository
 ) {
 

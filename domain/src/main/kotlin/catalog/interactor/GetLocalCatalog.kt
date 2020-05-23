@@ -12,7 +12,7 @@ import tachiyomi.domain.catalog.model.CatalogLocal
 import tachiyomi.domain.catalog.service.CatalogStore
 import javax.inject.Inject
 
-class GetLocalCatalog @Inject constructor(
+class GetLocalCatalog @Inject internal constructor(
   private val store: CatalogStore
 ) {
 

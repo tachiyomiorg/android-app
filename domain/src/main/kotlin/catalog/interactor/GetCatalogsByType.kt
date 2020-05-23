@@ -16,7 +16,7 @@ import tachiyomi.domain.catalog.model.CatalogRemote
 import tachiyomi.domain.catalog.model.CatalogSort
 import javax.inject.Inject
 
-class GetCatalogsByType @Inject constructor(
+class GetCatalogsByType @Inject internal constructor(
   private val localCatalogs: GetLocalCatalogs,
   private val remoteCatalogs: GetRemoteCatalogs,
   private val updatableCatalogs: GetUpdatableCatalogs

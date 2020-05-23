@@ -15,7 +15,7 @@ import tachiyomi.domain.sync.api.SyncAPI
 import tachiyomi.domain.sync.service.SyncPreferences
 import javax.inject.Inject
 
-class Login @Inject constructor(
+class Login @Inject internal constructor(
   private val syncAPI: SyncAPI,
   private val syncPreferences: SyncPreferences
 ) {

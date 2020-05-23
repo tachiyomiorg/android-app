@@ -15,7 +15,7 @@ import tachiyomi.domain.track.service.TrackRepository
 import tachiyomi.domain.track.sites.TrackSite
 import javax.inject.Inject
 
-class BindTrack @Inject constructor(
+class BindTrack @Inject internal constructor(
   private val trackRepository: TrackRepository
 ) {
 

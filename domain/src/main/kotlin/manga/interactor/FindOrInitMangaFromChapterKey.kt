@@ -13,7 +13,7 @@ import tachiyomi.source.DeepLinkSource
 import tachiyomi.source.model.MangaInfo
 import javax.inject.Inject
 
-class FindOrInitMangaFromChapterKey @Inject constructor(
+class FindOrInitMangaFromChapterKey @Inject internal constructor(
   private val getOrAddMangaFromSource: GetOrAddMangaFromSource,
   private val mangaInitializer: MangaInitializer
 ) {

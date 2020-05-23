@@ -16,7 +16,7 @@ import tachiyomi.domain.library.model.LibrarySorting
 import tachiyomi.domain.library.service.LibraryRepository
 import javax.inject.Inject
 
-class GetLibraryCategory @Inject constructor(
+class GetLibraryCategory @Inject internal constructor(
   private val libraryRepository: LibraryRepository
 ) {
 

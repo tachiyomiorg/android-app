@@ -14,7 +14,7 @@ import tachiyomi.domain.catalog.model.CatalogRemote
 import tachiyomi.domain.catalog.service.CatalogRemoteRepository
 import javax.inject.Inject
 
-class GetRemoteCatalogs @Inject constructor(
+class GetRemoteCatalogs @Inject internal constructor(
   private val catalogRemoteRepository: CatalogRemoteRepository
 ) {
 

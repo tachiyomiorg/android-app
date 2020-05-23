@@ -14,7 +14,7 @@ import tachiyomi.domain.track.service.TrackRepository
 import tachiyomi.domain.track.sites.TrackServices
 import javax.inject.Inject
 
-class UpdateLastChapterRead @Inject constructor(
+class UpdateLastChapterRead @Inject internal constructor(
   private val trackRepository: TrackRepository,
   private val trackServices: TrackServices
 ) {

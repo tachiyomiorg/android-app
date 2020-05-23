@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.map
 import tachiyomi.domain.library.model.Category
 import javax.inject.Inject
 
-class GetUserCategories @Inject constructor(
+class GetUserCategories @Inject internal constructor(
   private val getCategoriesWithCount: GetCategoriesWithCount
 ) {
 

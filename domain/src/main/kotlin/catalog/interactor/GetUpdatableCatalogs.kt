@@ -12,7 +12,7 @@ import tachiyomi.domain.catalog.model.CatalogInstalled
 import tachiyomi.domain.catalog.service.CatalogStore
 import javax.inject.Inject
 
-class GetUpdatableCatalogs @Inject constructor(
+class GetUpdatableCatalogs @Inject internal constructor(
   private val store: CatalogStore
 ) {
 

@@ -19,7 +19,7 @@ import tachiyomi.domain.manga.model.MangaUpdate
 import tachiyomi.domain.manga.service.MangaRepository
 import javax.inject.Inject
 
-class ChangeMangaFavorite @Inject constructor(
+class ChangeMangaFavorite @Inject internal constructor(
   private val mangaRepository: MangaRepository,
   private val mangaCategoryRepository: MangaCategoryRepository,
   private val libraryPreferences: LibraryPreferences,

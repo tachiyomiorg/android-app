@@ -15,7 +15,7 @@ import tachiyomi.domain.library.model.LibraryFilter
 import tachiyomi.domain.library.service.LibraryPreferences
 import javax.inject.Inject
 
-class SetCategoryFilters @Inject constructor(
+class SetCategoryFilters @Inject internal constructor(
   private val libraryPreferences: LibraryPreferences
 ) {
 

@@ -12,7 +12,7 @@ import tachiyomi.domain.library.model.MangaCategory
 import tachiyomi.domain.library.service.MangaCategoryRepository
 import javax.inject.Inject
 
-class SetCategoriesForMangas @Inject constructor(
+class SetCategoriesForMangas @Inject internal constructor(
   private val mangaCategoryRepository: MangaCategoryRepository
 ) {
 

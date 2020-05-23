@@ -15,7 +15,7 @@ import tachiyomi.domain.library.service.LibraryPreferences
 import tachiyomi.domain.library.service.LibraryUpdateScheduler
 import javax.inject.Inject
 
-class DeleteCategories @Inject constructor(
+class DeleteCategories @Inject internal constructor(
   private val categoryRepository: CategoryRepository,
   private val libraryPreferences: LibraryPreferences,
   private val libraryScheduler: LibraryUpdateScheduler

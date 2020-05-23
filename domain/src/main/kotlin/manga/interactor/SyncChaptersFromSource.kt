@@ -19,7 +19,7 @@ import tachiyomi.domain.manga.util.ChapterRecognition
 import tachiyomi.source.model.MangaInfo
 import javax.inject.Inject
 
-class SyncChaptersFromSource @Inject constructor(
+class SyncChaptersFromSource @Inject internal constructor(
   private val chapterRepository: ChapterRepository,
   private val mangaRepository: MangaRepository,
   private val catalogStore: CatalogStore,

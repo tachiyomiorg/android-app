@@ -16,7 +16,7 @@ import tachiyomi.domain.catalog.service.CatalogStore
 import tachiyomi.domain.library.service.LibraryRepository
 import javax.inject.Inject
 
-class GetLocalCatalogs @Inject constructor(
+class GetLocalCatalogs @Inject internal constructor(
   private val catalogStore: CatalogStore,
   private val libraryRepository: LibraryRepository
 ) {

@@ -15,7 +15,7 @@ import tachiyomi.domain.catalog.model.InstallStep
 import tachiyomi.domain.catalog.service.CatalogRemoteRepository
 import javax.inject.Inject
 
-class UpdateCatalog @Inject constructor(
+class UpdateCatalog @Inject internal constructor(
   private val catalogRemoteRepository: CatalogRemoteRepository,
   private val installCatalog: InstallCatalog
 ) {

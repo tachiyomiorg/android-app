@@ -15,7 +15,7 @@ import tachiyomi.domain.library.model.CategoryUpdate
 import tachiyomi.domain.library.service.CategoryRepository
 import javax.inject.Inject
 
-class ReorderCategory @Inject constructor(
+class ReorderCategory @Inject internal constructor(
   private val categoryRepository: CategoryRepository
 ) {
 

@@ -12,7 +12,7 @@ import tachiyomi.domain.manga.model.Chapter
 import tachiyomi.domain.manga.model.Manga
 import javax.inject.Inject
 
-class FindOrInitChapterFromSource @Inject constructor(
+class FindOrInitChapterFromSource @Inject internal constructor(
   private val getChapter: GetChapter,
   private val syncChaptersFromSource: SyncChaptersFromSource
 ) {

@@ -15,7 +15,7 @@ import tachiyomi.domain.library.model.LibrarySorting
 import tachiyomi.domain.library.service.LibraryPreferences
 import javax.inject.Inject
 
-class SetCategorySorting @Inject constructor(
+class SetCategorySorting @Inject internal constructor(
   private val libraryPreferences: LibraryPreferences
 ) {
 

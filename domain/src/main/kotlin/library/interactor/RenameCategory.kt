@@ -15,7 +15,7 @@ import tachiyomi.domain.library.model.CategoryUpdate
 import tachiyomi.domain.library.service.CategoryRepository
 import javax.inject.Inject
 
-class RenameCategory @Inject constructor(
+class RenameCategory @Inject internal constructor(
   private val categoryRepository: CategoryRepository
 ) {
 

@@ -14,7 +14,7 @@ import tachiyomi.source.model.ChapterInfo
 import tachiyomi.source.model.MangaInfo
 import javax.inject.Inject
 
-class GetChaptersFromSource @Inject constructor() {
+class GetChaptersFromSource @Inject internal constructor() {
 
   suspend fun await(source: Source, manga: Manga): List<ChapterInfo> {
     val mangaInfo = MangaInfo(
