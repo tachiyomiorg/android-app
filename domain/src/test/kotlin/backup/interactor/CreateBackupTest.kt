@@ -12,8 +12,11 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldHaveSize
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
+import io.mockk.coInvoke
 import io.mockk.coVerify
 import io.mockk.mockk
+import tachiyomi.core.db.Transactions
+import tachiyomi.domain.backup.model.Backup
 import tachiyomi.domain.library.model.Category
 import tachiyomi.domain.library.service.CategoryRepository
 import tachiyomi.domain.manga.model.Chapter
@@ -29,8 +32,9 @@ class CreateBackupTest : StringSpec({
   val categoryRepository = mockk<CategoryRepository>(relaxed = true)
   val chapterRepository = mockk<ChapterRepository>(relaxed = true)
   val trackRepository = mockk<TrackRepository>(relaxed = true)
+  val transactions = mockk<Transactions>(relaxed = true)
   val interactor = CreateBackup(mangaRepository, categoryRepository, chapterRepository,
-    trackRepository)
+    trackRepository, transactions)
   afterTest { clearAllMocks() }
 
   // Set defaults for repositories
@@ -40,6 +44,9 @@ class CreateBackupTest : StringSpec({
     coEvery { mangaRepository.findFavorites() } returns listOf()
     coEvery { chapterRepository.findForManga(any()) } returns listOf()
     coEvery { trackRepository.findAllForManga(any()) } returns listOf()
+    coEvery { transactions.run(captureCoroutine<suspend () -> Backup>()) } coAnswers {
+      coroutine<suspend () -> Backup>().coInvoke()
+    }
   }
 
   "dumps nothing" {

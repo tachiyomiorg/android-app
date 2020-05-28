@@ -15,6 +15,7 @@ import kotlinx.serialization.protobuf.ProtoBuf
 import okio.buffer
 import okio.gzip
 import okio.sink
+import tachiyomi.core.db.Transactions
 import tachiyomi.domain.backup.model.Backup
 import tachiyomi.domain.backup.model.CategoryProto
 import tachiyomi.domain.backup.model.ChapterProto
@@ -31,7 +32,8 @@ class CreateBackup @Inject internal constructor(
   private val mangaRepository: MangaRepository,
   private val categoryRepository: CategoryRepository,
   private val chapterRepository: ChapterRepository,
-  private val trackRepository: TrackRepository
+  private val trackRepository: TrackRepository,
+  private val transactions: Transactions
 ) {
 
   suspend fun saveTo(file: File) {
@@ -41,10 +43,12 @@ class CreateBackup @Inject internal constructor(
   }
 
   internal suspend fun createDump(): ByteArray {
-    val backup = Backup(
-      library = dumpLibrary(),
-      categories = dumpCategories()
-    )
+    val backup = transactions.run {
+      Backup(
+        library = dumpLibrary(),
+        categories = dumpCategories()
+      )
+    }
     return ProtoBuf(encodeDefaults = false).dump(backup)
   }
 
