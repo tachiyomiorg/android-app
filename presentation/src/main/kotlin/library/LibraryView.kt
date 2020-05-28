@@ -22,12 +22,14 @@ import androidx.ui.foundation.VerticalScroller
 import androidx.ui.foundation.currentTextStyle
 import androidx.ui.foundation.shape.corner.RoundedCornerShape
 import androidx.ui.geometry.Rect
+import androidx.ui.geometry.Size
+import androidx.ui.geometry.toRect
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.LinearGradient
 import androidx.ui.graphics.Paint
-import androidx.ui.graphics.painter.CanvasScope
+import androidx.ui.graphics.drawscope.DrawScope
+import androidx.ui.graphics.drawscope.drawCanvas
 import androidx.ui.graphics.painter.Painter
-import androidx.ui.graphics.painter.drawCanvas
 import androidx.ui.layout.Column
 import androidx.ui.layout.Stack
 import androidx.ui.layout.aspectRatio
@@ -42,12 +44,8 @@ import androidx.ui.text.TextStyle
 import androidx.ui.text.font.font
 import androidx.ui.text.font.fontFamily
 import androidx.ui.unit.Dp
-import androidx.ui.unit.Px
-import androidx.ui.unit.PxSize
-import androidx.ui.unit.PxSize.Companion.UnspecifiedSize
 import androidx.ui.unit.dp
 import androidx.ui.unit.sp
-import androidx.ui.unit.toRect
 import tachiyomi.core.di.AppScope
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.ui.R
@@ -78,10 +76,10 @@ fun LibraryTable(state: State<LibraryState>) {
   val gradient = LinearGradient(
     0.75f to Color.Transparent,
     1.0f to Color(0xAA000000),
-    startX = Px.Zero,
-    startY = Px.Zero,
-    endX = Px.Zero,
-    endY = Px.Zero
+    startX = 0f,
+    startY = 0f,
+    endX = 0f,
+    endY = 0f
   )
   val painter = GradientPainter(gradient)
 
@@ -147,21 +145,21 @@ fun <T> AutofitGrid(
 
 data class GradientPainter(val gradient: LinearGradient) : Painter() {
   private val paint = Paint()
-  private var currentBounds: PxSize? = null
+  private var currentBounds: Size? = null
   private var rect: Rect? = null
 
-  override fun CanvasScope.onDraw() {
-    drawCanvas { canvas, pxSize ->
-      if (currentBounds != pxSize) {
-        gradient.copy(startY = Px.Zero, endY = pxSize.height).applyTo(paint)
-        currentBounds = pxSize
-        rect = pxSize.toRect()
+  override fun DrawScope.onDraw() {
+    drawCanvas { canvas, size ->
+      if (currentBounds != size) {
+        gradient.copy(startY = 0f, endY = size.height).applyTo(paint, 1f)
+        currentBounds = size
+        rect = size.toRect()
       }
       canvas.drawRect(rect!!, paint)
     }
   }
 
-  override val intrinsicSize: PxSize
-    get() = UnspecifiedSize
+  override val intrinsicSize: Size
+    get() = Size.UnspecifiedSize
 
 }

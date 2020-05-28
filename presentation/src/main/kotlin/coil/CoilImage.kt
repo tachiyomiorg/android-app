@@ -20,7 +20,7 @@ import androidx.ui.core.WithConstraints
 import androidx.ui.core.toAndroidRect
 import androidx.ui.foundation.Canvas
 import androidx.ui.geometry.toRect
-import androidx.ui.graphics.painter.drawCanvas
+import androidx.ui.graphics.drawscope.drawCanvas
 import androidx.ui.layout.fillMaxSize
 import androidx.ui.unit.IntPx
 import coil.request.LoadRequest

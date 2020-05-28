@@ -21,7 +21,7 @@ val TextEmphasisAmbient: Ambient<EmphasisLevels> = staticAmbientOf { TextEmphasi
 private object TextEmphasisLevels : EmphasisLevels {
 
   private class HighEmphasis(private val isLight: Boolean) : Emphasis {
-    override fun emphasize(color: Color) = if (isLight) {
+    override fun applyEmphasis(color: Color) = if (isLight) {
       color.copy(alpha = 0.87f)
     } else {
       color.copy(alpha = 1f)
@@ -29,7 +29,7 @@ private object TextEmphasisLevels : EmphasisLevels {
   }
 
   private class MediumEmphasis(private val isLight: Boolean) : Emphasis {
-    override fun emphasize(color: Color) = if (isLight) {
+    override fun applyEmphasis(color: Color) = if (isLight) {
       color.copy(alpha = 0.54f)
     } else {
       color.copy(alpha = 0.70f)
@@ -37,7 +37,7 @@ private object TextEmphasisLevels : EmphasisLevels {
   }
 
   private class DisabledEmphasis(private val isLight: Boolean) : Emphasis {
-    override fun emphasize(color: Color) = if (isLight) {
+    override fun applyEmphasis(color: Color) = if (isLight) {
       color.copy(alpha = 0.38f)
     } else {
       color.copy(alpha = 0.50f)

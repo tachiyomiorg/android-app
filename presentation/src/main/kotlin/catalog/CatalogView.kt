@@ -17,11 +17,11 @@ import androidx.ui.core.Modifier
 import androidx.ui.core.gesture.longPressGestureFilter
 import androidx.ui.core.tag
 import androidx.ui.foundation.Box
-import androidx.ui.foundation.Clickable
 import androidx.ui.foundation.HorizontalScroller
 import androidx.ui.foundation.Image
 import androidx.ui.foundation.Text
 import androidx.ui.foundation.VerticalScroller
+import androidx.ui.foundation.clickable
 import androidx.ui.foundation.currentTextStyle
 import androidx.ui.foundation.shape.corner.CircleShape
 import androidx.ui.foundation.shape.corner.RoundedCornerShape
@@ -78,7 +78,8 @@ fun CatalogScreen() {
       Column {
         val currState = state.value
 
-        val mediumTextEmphasis = TextEmphasisAmbient.current.medium.emphasize(currentTextStyle().color)
+        val mediumTextEmphasis = TextEmphasisAmbient.current.medium
+          .applyEmphasis(currentTextStyle().color)
 
         if (currState.updatableCatalogs.isNotEmpty() || currState.localCatalogs.isNotEmpty()) {
           Text(
@@ -142,34 +143,31 @@ fun CatalogScreen() {
 
 @Composable
 fun LanguageChip(choice: LanguageChoice, selectedChoice: LanguageChoice, onClick: () -> Unit) {
-  Clickable(
-    onClick = onClick
+  Surface(
+    color = if (selectedChoice == choice) {
+      MaterialTheme.colors.primary
+    } else {
+      MaterialTheme.colors.onSurface.copy(alpha = 0.25f)
+    },
+    shape = RoundedCornerShape(16.dp),
+    modifier = Modifier.widthIn(minWidth = 56.dp).height(40.dp).padding(4.dp)
+      .clickable(onClick = onClick)
   ) {
-    Surface(
-      color = if (selectedChoice == choice) {
-        MaterialTheme.colors.primary
-      } else {
-        MaterialTheme.colors.onSurface.copy(alpha = 0.25f)
-      },
-      shape = RoundedCornerShape(16.dp),
-      modifier = Modifier.widthIn(minWidth = 56.dp).height(40.dp).padding(4.dp)
-    ) {
-      val text = when (choice) {
-        LanguageChoice.All -> stringResource(R.string.lang_all)
-        is LanguageChoice.One -> choice.language.toEmoji() ?: ""
-        is LanguageChoice.Others -> stringResource(R.string.lang_others)
-      }
-      // TODO wait for EmojiCompat support
-      Text(
-        text,
-        modifier = Modifier.wrapContentSize(Alignment.Center),
-        color = if (selectedChoice == choice) {
-          MaterialTheme.colors.onPrimary
-        } else {
-          Color.Black
-        }
-      )
+    val text = when (choice) {
+      LanguageChoice.All -> stringResource(R.string.lang_all)
+      is LanguageChoice.One -> choice.language.toEmoji() ?: ""
+      is LanguageChoice.Others -> stringResource(R.string.lang_others)
     }
+    // TODO wait for EmojiCompat support
+    Text(
+      text,
+      modifier = Modifier.wrapContentSize(Alignment.Center),
+      color = if (selectedChoice == choice) {
+        MaterialTheme.colors.onPrimary
+      } else {
+        Color.Black
+      }
+    )
   }
 }
 
@@ -216,7 +214,8 @@ fun CatalogItem(
     },
     modifier = Modifier.fillMaxWidth().padding(12.dp, 12.dp, 8.dp, 12.dp)
   ) {
-    val mediumTextEmphasis = TextEmphasisAmbient.current.medium.emphasize(currentTextStyle().color)
+    val mediumTextEmphasis = TextEmphasisAmbient.current.medium
+      .applyEmphasis(currentTextStyle().color)
     val title = AnnotatedString {
       append("${catalog.name} ")
 
