@@ -12,7 +12,9 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.compose.Composable
-import androidx.compose.Model
+import androidx.compose.getValue
+import androidx.compose.mutableStateOf
+import androidx.compose.setValue
 import androidx.ui.core.Modifier
 import androidx.ui.core.setContent
 import androidx.ui.foundation.Box
@@ -23,13 +25,14 @@ import androidx.ui.layout.Column
 import androidx.ui.material.BottomNavigation
 import androidx.ui.material.BottomNavigationItem
 import androidx.ui.material.MaterialTheme
+import androidx.ui.material.Surface
+import androidx.ui.material.darkColorPalette
 import androidx.ui.material.icons.Icons
 import androidx.ui.material.icons.filled.Book
 import androidx.ui.material.icons.filled.Explore
 import androidx.ui.material.icons.filled.History
 import androidx.ui.material.icons.filled.MoreHoriz
 import androidx.ui.material.icons.filled.NewReleases
-import androidx.ui.material.lightColorPalette
 import androidx.ui.res.stringResource
 import tachiyomi.ui.catalog.CatalogScreen
 import tachiyomi.ui.library.LibraryScreen
@@ -42,9 +45,8 @@ sealed class Screen {
   object More : Screen()
 }
 
-@Model
 object HomeScreen {
-  var current: Screen = Screen.Catalogs
+  var current by mutableStateOf<Screen>(Screen.Catalogs)
 }
 
 class MainActivity : ComponentActivity() {
@@ -53,9 +55,9 @@ class MainActivity : ComponentActivity() {
     super.onCreate(savedInstanceState)
 
     setContent {
-      MaterialTheme(colors = lightColorPalette()) {
+      MaterialTheme(colors = darkColorPalette()) {
         Column {
-          Box(modifier = Modifier.weight(1f)) {
+          Surface(modifier = Modifier.weight(1f)) {
             when (HomeScreen.current) {
               Screen.Library -> LibraryScreen()
               Screen.Catalogs -> CatalogScreen()

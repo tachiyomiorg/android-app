@@ -22,7 +22,7 @@ import androidx.ui.foundation.Image
 import androidx.ui.foundation.Text
 import androidx.ui.foundation.VerticalScroller
 import androidx.ui.foundation.clickable
-import androidx.ui.foundation.currentTextStyle
+import androidx.ui.foundation.contentColor
 import androidx.ui.foundation.shape.corner.CircleShape
 import androidx.ui.foundation.shape.corner.RoundedCornerShape
 import androidx.ui.graphics.Color
@@ -39,6 +39,7 @@ import androidx.ui.layout.size
 import androidx.ui.layout.widthIn
 import androidx.ui.layout.wrapContentSize
 import androidx.ui.material.CircularProgressIndicator
+import androidx.ui.material.EmphasisAmbient
 import androidx.ui.material.IconButton
 import androidx.ui.material.MaterialTheme
 import androidx.ui.material.Surface
@@ -47,8 +48,8 @@ import androidx.ui.material.icons.Icons
 import androidx.ui.material.icons.filled.GetApp
 import androidx.ui.material.icons.filled.Settings
 import androidx.ui.res.stringResource
-import androidx.ui.text.AnnotatedString
 import androidx.ui.text.SpanStyle
+import androidx.ui.text.annotatedString
 import androidx.ui.text.withStyle
 import androidx.ui.unit.dp
 import androidx.ui.unit.sp
@@ -58,7 +59,6 @@ import tachiyomi.domain.catalog.model.CatalogBundled
 import tachiyomi.domain.catalog.model.CatalogInstalled
 import tachiyomi.domain.catalog.model.CatalogRemote
 import tachiyomi.ui.R
-import tachiyomi.ui.TextEmphasisAmbient
 import tachiyomi.ui.coil.CoilImage
 import kotlin.math.abs
 import kotlin.random.Random
@@ -78,8 +78,8 @@ fun CatalogScreen() {
       Column {
         val currState = state.value
 
-        val mediumTextEmphasis = TextEmphasisAmbient.current.medium
-          .applyEmphasis(currentTextStyle().color)
+        val mediumTextEmphasis = EmphasisAmbient.current.medium
+          .applyEmphasis(contentColor())
 
         if (currState.updatableCatalogs.isNotEmpty() || currState.localCatalogs.isNotEmpty()) {
           Text(
@@ -214,9 +214,9 @@ fun CatalogItem(
     },
     modifier = Modifier.fillMaxWidth().padding(12.dp, 12.dp, 8.dp, 12.dp)
   ) {
-    val mediumTextEmphasis = TextEmphasisAmbient.current.medium
-      .applyEmphasis(currentTextStyle().color)
-    val title = AnnotatedString {
+    val mediumTextEmphasis = EmphasisAmbient.current.medium
+      .applyEmphasis(contentColor())
+    val title = annotatedString {
       append("${catalog.name} ")
 
       val versionSpan = SpanStyle(fontSize = 12.sp, color = mediumTextEmphasis)
