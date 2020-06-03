@@ -86,10 +86,10 @@ internal class AndroidPreference<T>(
    * must be returned when subscribed. Callers may decide to skip this initial value with the skip
    * operator.
    */
-  override fun changes(emitOnSubscribe: Boolean): Flow<T> {
+  override fun changes(emitOnStart: Boolean): Flow<T> {
     return flow {
       val subscription = keyChanges.openSubscription()
-      if (emitOnSubscribe) {
+      if (emitOnStart) {
         emit(key)
       }
       subscription.consumeEach { value ->

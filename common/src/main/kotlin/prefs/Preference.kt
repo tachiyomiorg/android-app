@@ -48,7 +48,8 @@ interface Preference<T> {
 
   /**
    * Returns an observer of the changes made to this preference. The current value can be emitted
-   * on subscription through [emitOnSubscribe].
+   * on subscription through [emitOnStart].
    */
-  fun changes(emitOnSubscribe: Boolean = false): Flow<T>
+  fun changes(emitOnStart: Boolean = false): Flow<T>
+
 }
