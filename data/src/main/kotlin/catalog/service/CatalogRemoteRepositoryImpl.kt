@@ -28,8 +28,10 @@ internal class CatalogRemoteRepositoryImpl @Inject constructor(
 
   private var remoteCatalogs = emptyList<CatalogRemote>()
     set(value) {
-      field = value
-      remoteCatalogsChannel.offer(value)
+      if (field != value) {
+        field = value
+        remoteCatalogsChannel.offer(value)
+      }
     }
 
   private val remoteCatalogsChannel = ConflatedBroadcastChannel(remoteCatalogs)
