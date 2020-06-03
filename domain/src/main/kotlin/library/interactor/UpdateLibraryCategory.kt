@@ -13,7 +13,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import tachiyomi.core.log.Logger
+import tachiyomi.core.log.Log
 import tachiyomi.domain.library.service.CategoryRepository
 import tachiyomi.domain.library.service.LibraryUpdateScheduler
 import tachiyomi.domain.library.service.LibraryUpdater
@@ -31,11 +31,11 @@ class UpdateLibraryCategory @Inject internal constructor(
 
   suspend fun enqueue(categoryId: Long): LibraryUpdater.QueueResult {
     val operation: suspend (Job) -> Any = { job ->
-      Logger.debug { "Updating category $categoryId ${Thread.currentThread()}" }
+      Log.debug { "Updating category $categoryId ${Thread.currentThread()}" }
       //notifier.start()
 
       job.invokeOnCompletion {
-        Logger.debug { "Finished updating category $categoryId ${Thread.currentThread()}" }
+        Log.debug { "Finished updating category $categoryId ${Thread.currentThread()}" }
         //notifier.end()
       }
 
@@ -68,7 +68,7 @@ class UpdateLibraryCategory @Inject internal constructor(
         categoryRepository.find(categoryId)
       }
       if (category != null && category.updateInterval > 0) {
-        Logger.debug("Rescheduling category $categoryId")
+        Log.debug("Rescheduling category $categoryId")
         libraryScheduler.schedule(categoryId, LibraryUpdater.Target.Chapters,
           category.updateInterval)
       }

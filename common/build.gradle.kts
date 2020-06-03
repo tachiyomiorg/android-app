@@ -14,6 +14,7 @@ dependencies {
   api(Deps.coroutines.core)
 
   implementation(Deps.tinylog.api)
+  implementation(Deps.tinylog.impl)
   implementation(Deps.toothpick.runtime)
 }
 

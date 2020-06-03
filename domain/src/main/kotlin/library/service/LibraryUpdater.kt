@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.selects.select
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import tachiyomi.core.log.Logger
+import tachiyomi.core.log.Log
 import toothpick.ProvidesSingletonInScope
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -40,10 +40,10 @@ class LibraryUpdater @Inject constructor() {
   init {
     GlobalScope.launch(Dispatchers.Default) {
       for (operation in queueChannel) {
-        Logger.warn("Received job ${operation.categoryId}")
+        Log.warn("Received job ${operation.categoryId}")
         operation.start(this, Dispatchers.IO)
         queuedOperations.remove(operation)
-        Logger.warn("End job")
+        Log.warn("End job")
       }
     }
   }

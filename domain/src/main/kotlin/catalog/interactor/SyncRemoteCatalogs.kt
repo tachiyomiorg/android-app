@@ -8,7 +8,7 @@
 
 package tachiyomi.domain.catalog.interactor
 
-import tachiyomi.core.log.Logger
+import tachiyomi.core.log.Log
 import tachiyomi.domain.catalog.service.CatalogPreferences
 import tachiyomi.domain.catalog.service.CatalogRemoteApi
 import tachiyomi.domain.catalog.service.CatalogRemoteRepository
@@ -32,7 +32,7 @@ class SyncRemoteCatalogs @Inject internal constructor(
         remoteCheckPref.set(System.currentTimeMillis())
         return true
       } catch (e: Exception) {
-        Logger.warn(e, "Failed to fetch remote catalogs")
+        Log.warn(e, "Failed to fetch remote catalogs")
       }
     }
 

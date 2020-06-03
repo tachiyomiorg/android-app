@@ -10,7 +10,7 @@ package tachiyomi.domain.library.interactor
 
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
-import tachiyomi.core.log.Logger
+import tachiyomi.core.log.Log
 import tachiyomi.domain.library.model.LibraryFilter
 import tachiyomi.domain.library.service.LibraryPreferences
 import javax.inject.Inject
@@ -25,7 +25,7 @@ class SetCategoryFilters @Inject internal constructor(
         libraryPreferences.filters().set(filters)
         Result.Success
       } catch (e: Exception) {
-        Logger.warn(e)
+        Log.warn(e)
         Result.InternalError(e)
       }
     }

@@ -22,7 +22,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import tachiyomi.core.BuildConfig
-import tachiyomi.core.log.Logger
+import tachiyomi.core.log.Log
 import java.io.File
 import javax.inject.Inject
 
@@ -96,7 +96,7 @@ class PackageInstaller @Inject constructor(
             // receive the result callback
             deferred.complete(true)
           } catch (e: Exception) {
-            Logger.warn(e, "Error while (un)installing package")
+            Log.warn(e, "Error while (un)installing package")
             deferred.complete(false)
           }
         }

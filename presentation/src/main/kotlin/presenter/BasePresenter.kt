@@ -21,7 +21,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
-import tachiyomi.core.log.Logger
+import tachiyomi.core.log.Log
 import tachiyomi.ui.BuildConfig
 
 abstract class BasePresenter {
@@ -67,25 +67,25 @@ abstract class BasePresenter {
   private class AndroidLogSink(scope: CoroutineScope = GlobalScope) : LoggerLogSink(scope) {
     override fun debug(tag: String, message: String, throwable: Throwable?) {
       if (throwable == null) {
-        Logger.debug(message)
+        Log.debug(message)
       } else {
-        Logger.debug(throwable, message)
+        Log.debug(throwable, message)
       }
     }
 
     override fun info(tag: String, message: String, throwable: Throwable?) {
       if (throwable == null) {
-        Logger.info(message)
+        Log.info(message)
       } else {
-        Logger.info(throwable, message)
+        Log.info(throwable, message)
       }
     }
 
     override fun warning(tag: String, message: String, throwable: Throwable?) {
       if (throwable == null) {
-        Logger.warn(message)
+        Log.warn(message)
       } else {
-        Logger.warn(throwable, message)
+        Log.warn(throwable, message)
       }
     }
   }

@@ -14,7 +14,7 @@ import tachiyomi.core.http.Http
 import tachiyomi.core.http.awaitSuccess
 import tachiyomi.core.http.get
 import tachiyomi.core.http.saveTo
-import tachiyomi.core.log.Logger
+import tachiyomi.core.log.Log
 import tachiyomi.domain.catalog.model.CatalogRemote
 import tachiyomi.domain.catalog.model.InstallStep
 import tachiyomi.domain.catalog.service.CatalogInstaller
@@ -69,7 +69,7 @@ internal class AndroidCatalogInstaller @Inject constructor(
 
       emit(if (success) InstallStep.Completed else InstallStep.Error)
     } catch (e: Exception) {
-      Logger.warn(e, "Error installing package")
+      Log.warn(e, "Error installing package")
       emit(InstallStep.Error)
     } finally {
       tmpApkFile.delete()

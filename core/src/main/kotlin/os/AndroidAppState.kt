@@ -19,7 +19,7 @@ import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import tachiyomi.core.log.Logger
+import tachiyomi.core.log.Log
 import javax.inject.Inject
 
 class AndroidAppState @Inject constructor(
@@ -54,13 +54,13 @@ class AndroidAppState @Inject constructor(
 
   @OnLifecycleEvent(Lifecycle.Event.ON_START)
   private fun setForeground() {
-    Logger.debug("Application now in foreground")
+    Log.debug("Application now in foreground")
     isInForeground = true
   }
 
   @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
   private fun setBackground() {
-    Logger.debug("Application went to background")
+    Log.debug("Application went to background")
     isInForeground = false
   }
 

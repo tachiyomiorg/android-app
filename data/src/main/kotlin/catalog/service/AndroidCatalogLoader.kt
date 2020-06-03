@@ -19,7 +19,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import tachiyomi.core.http.Http
-import tachiyomi.core.log.Logger
+import tachiyomi.core.log.Log
 import tachiyomi.core.prefs.AndroidPreferenceStore
 import tachiyomi.core.prefs.LazyPreferenceStore
 import tachiyomi.data.BuildConfig
@@ -90,7 +90,7 @@ internal class AndroidCatalogLoader @Inject constructor(
       null
     }
     if (pkgInfo == null) {
-      Logger.warn("The requested catalog {} wasn't found", pkgName)
+      Log.warn("The requested catalog {} wasn't found", pkgName)
       return null
     }
 
@@ -106,7 +106,7 @@ internal class AndroidCatalogLoader @Inject constructor(
       pkgManager.getPackageInfo(pkgName, PACKAGE_FLAGS)
     } catch (error: PackageManager.NameNotFoundException) {
       // Unlikely, but the package may have been uninstalled at this point
-      Logger.warn("Failed to load catalog: the package {} isn't installed", pkgName)
+      Log.warn("Failed to load catalog: the package {} isn't installed", pkgName)
       return null
     }
     return loadSystemCatalog(pkgName, pkgInfo)
@@ -161,12 +161,12 @@ internal class AndroidCatalogLoader @Inject constructor(
 
   private fun validateMetadata(pkgName: String, pkgInfo: PackageInfo): ValidatedData? {
     if (!isPackageAnExtension(pkgInfo)) {
-      Logger.warn("Failed to load catalog, package {} isn't an catalog", pkgName)
+      Log.warn("Failed to load catalog, package {} isn't an catalog", pkgName)
       return null
     }
 
     if (pkgName != pkgInfo.packageName) {
-      Logger.warn("Failed to load catalog, package name mismatch: Provided {} Actual {}",
+      Log.warn("Failed to load catalog, package name mismatch: Provided {} Actual {}",
         pkgName, pkgInfo.packageName)
       return null
     }
@@ -180,7 +180,7 @@ internal class AndroidCatalogLoader @Inject constructor(
     if (majorLibVersion < LIB_VERSION_MIN || majorLibVersion > LIB_VERSION_MAX) {
       val exception = "Failed to load catalog, the package {} lib version is {}," +
         "while only versions {} to {} are allowed"
-      Logger.warn(exception, pkgName, majorLibVersion, LIB_VERSION_MIN, LIB_VERSION_MAX)
+      Log.warn(exception, pkgName, majorLibVersion, LIB_VERSION_MIN, LIB_VERSION_MAX)
       return null
     }
 
@@ -189,7 +189,7 @@ internal class AndroidCatalogLoader @Inject constructor(
     val metadata = appInfo.metaData
     val sourceClassName = metadata.getString(METADATA_SOURCE_CLASS)?.trim()
     if (sourceClassName == null) {
-      Logger.warn("Failed to load catalog, the package {} didn't define source class", pkgName)
+      Log.warn("Failed to load catalog, the package {} didn't define source class", pkgName)
       return null
     }
 
@@ -219,7 +219,7 @@ internal class AndroidCatalogLoader @Inject constructor(
 
       obj as? Source ?: throw Exception("Unknown source class type! ${obj.javaClass}")
     } catch (e: Throwable) {
-      Logger.warn(e, "Failed to load catalog {}", pkgName)
+      Log.warn(e, "Failed to load catalog {}", pkgName)
       return null
     }
   }

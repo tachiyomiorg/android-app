@@ -27,7 +27,7 @@ import coil.request.LoadRequest
 import coil.size.OriginalSize
 import coil.size.PixelSize
 import coil.size.Scale
-import tachiyomi.core.log.Logger
+import tachiyomi.core.log.Log
 
 @Composable
 fun <T> CoilImage(
@@ -58,7 +58,7 @@ fun <T> CoilImage(
         .data(model)
         .size(size)
         .scale(scale)
-        .listener(onError = { _, t -> Logger.warn(t) })
+        .listener(onError = { _, t -> Log.warn(t) })
         .target(onSuccess = { drawable = it })
         .build()
 
