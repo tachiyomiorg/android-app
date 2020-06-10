@@ -34,6 +34,7 @@ subprojects {
         "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi",
         "-Xuse-experimental=kotlinx.serialization.ImplicitReflectionSerializer"
       )
+      jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
   }
   tasks.withType<Test> {

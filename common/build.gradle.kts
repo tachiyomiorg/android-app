@@ -16,6 +16,7 @@ dependencies {
   implementation(Deps.tinylog.api)
   implementation(Deps.tinylog.impl)
   implementation(Deps.toothpick.runtime)
+  implementation(Deps.commonsCodec)
 }
 
 publishing {

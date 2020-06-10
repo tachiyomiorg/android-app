@@ -77,6 +77,8 @@ object Deps {
     const val api = "org.tinylog:tinylog-api:$version"
   }
 
+  const val commonsCodec = "commons-codec:commons-codec:1.14"
+
   const val coRedux = "com.freeletics.coredux:core:1.1.1"
   const val coReduxLog = "com.freeletics.coredux:log-common:1.1.1"
 
