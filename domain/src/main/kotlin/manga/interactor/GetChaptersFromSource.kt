@@ -27,7 +27,7 @@ class GetChaptersFromSource @Inject internal constructor() {
       manga.status,
       manga.cover
     )
-    return source.fetchChapterList(mangaInfo)
+    return source.getChapterList(mangaInfo)
   }
 
 }

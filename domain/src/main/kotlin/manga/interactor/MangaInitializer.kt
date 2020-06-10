@@ -40,7 +40,7 @@ class MangaInitializer @Inject internal constructor(
       status = manga.status,
       cover = manga.cover
     )
-    val newInfo = source.fetchMangaDetails(infoQuery)
+    val newInfo = source.getMangaDetails(infoQuery)
 
     val update = MangaUpdate(
       id = manga.id,

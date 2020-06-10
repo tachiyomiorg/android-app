@@ -4,29 +4,30 @@ import kotlinx.coroutines.delay
 import tachiyomi.source.model.ChapterInfo
 import tachiyomi.source.model.Filter
 import tachiyomi.source.model.FilterList
+import tachiyomi.source.model.ImageUrl
 import tachiyomi.source.model.Listing
 import tachiyomi.source.model.MangaInfo
 import tachiyomi.source.model.MangasPageInfo
-import tachiyomi.source.model.PageInfo
+import tachiyomi.source.model.Page
 
 class TestSource : CatalogSource {
   override val id = 1L
 
   override val name = "Test source"
   override val lang get() = "en"
-  override suspend fun fetchMangaDetails(manga: MangaInfo): MangaInfo {
+  override suspend fun getMangaDetails(manga: MangaInfo): MangaInfo {
     delay(1000)
     val noHipstersOffset = 10
     val picId = manga.title.split(" ")[1].toInt() + noHipstersOffset
     return manga.copy(cover = "https://picsum.photos/300/400/?image=$picId")
   }
 
-  override suspend fun fetchMangaList(sort: Listing?, page: Int): MangasPageInfo {
+  override suspend fun getMangaList(sort: Listing?, page: Int): MangasPageInfo {
     delay(1000)
     return MangasPageInfo(getTestManga(page), true)
   }
 
-  override suspend fun fetchMangaList(filters: FilterList, page: Int): MangasPageInfo {
+  override suspend fun getMangaList(filters: FilterList, page: Int): MangasPageInfo {
     var mangaList = getTestManga(page)
 
     filters.forEach { filter ->
@@ -38,12 +39,12 @@ class TestSource : CatalogSource {
     return MangasPageInfo(mangaList, true)
   }
 
-  override suspend fun fetchChapterList(manga: MangaInfo): List<ChapterInfo> {
+  override suspend fun getChapterList(manga: MangaInfo): List<ChapterInfo> {
     delay(1000)
     return getTestChapters()
   }
 
-  override suspend fun fetchPageList(chapter: ChapterInfo): List<PageInfo> {
+  override suspend fun getPageList(chapter: ChapterInfo): List<Page> {
     delay(1000)
     return getTestPages()
   }
@@ -149,10 +150,10 @@ class TestSource : CatalogSource {
     return listOf(chapter1, chapter2, chapter3)
   }
 
-  private fun getTestPages(): List<PageInfo> {
+  private fun getTestPages(): List<Page> {
     return listOf(
-      PageInfo("url1", "imageUrl1"),
-      PageInfo("url2", "imageUrl2")
+      ImageUrl("imageUrl1"),
+      ImageUrl("imageUrl2")
     )
   }
 

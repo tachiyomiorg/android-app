@@ -8,9 +8,9 @@ interface CatalogSource : Source {
 
   override val lang: String
 
-  suspend fun fetchMangaList(sort: Listing?, page: Int): MangasPageInfo
+  suspend fun getMangaList(sort: Listing?, page: Int): MangasPageInfo
 
-  suspend fun fetchMangaList(filters: FilterList, page: Int): MangasPageInfo
+  suspend fun getMangaList(filters: FilterList, page: Int): MangasPageInfo
 
   fun getListings(): List<Listing>
 

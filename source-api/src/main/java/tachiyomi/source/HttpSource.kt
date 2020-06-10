@@ -2,7 +2,12 @@ package tachiyomi.source
 
 import okhttp3.Headers
 import okhttp3.OkHttpClient
+import okhttp3.Request
+import tachiyomi.core.http.GET
+import tachiyomi.source.model.ImageUrl
 import tachiyomi.source.model.Listing
+import tachiyomi.source.model.PageComplete
+import tachiyomi.source.model.PageUrl
 import java.security.MessageDigest
 
 /**
@@ -56,36 +61,13 @@ abstract class HttpSource(private val dependencies: Dependencies) : CatalogSourc
    */
   override fun toString() = "$name (${lang.toUpperCase()})"
 
-//  /**
-//   * Returns an observable with the response of the source image.
-//   *
-//   * @param page the page whose source image has to be downloaded.
-//   */
-//  fun fetchImage(page: PageInfo): Response {
-//    // TODO progress listener
-//    return client.newCall(imageRequest(page))
-//      .execute()
-//  }
+  open suspend fun getPage(page: PageUrl): PageComplete {
+    throw Exception("Incomplete source implementation. Please override getPage when using PageUrl")
+  }
 
-  // TODO this is probably not needed anymore
-//  /**
-//   * Returns the url of the given string without the scheme and domain.
-//   *
-//   * @param orig the full url.
-//   */
-//  private fun getUrlWithoutDomain(orig: String): String {
-//    return try {
-//      val uri = URI(orig)
-//      var out = uri.path
-//      if (uri.query != null)
-//        out += "?" + uri.query
-//      if (uri.fragment != null)
-//        out += "#" + uri.fragment
-//      out
-//    } catch (e: URISyntaxException) {
-//      orig
-//    }
-//  }
+  open suspend fun getImageRequest(page: ImageUrl): Request {
+    return GET(page.url, headers)
+  }
 
   override fun getListings(): List<Listing> {
     return emptyList()

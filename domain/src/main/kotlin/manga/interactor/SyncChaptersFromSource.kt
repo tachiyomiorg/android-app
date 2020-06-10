@@ -38,7 +38,7 @@ class SyncChaptersFromSource @Inject internal constructor(
     val source = catalog?.source ?: return Result.SourceNotFound(manga.sourceId)
 
     // Chapters from source.
-    val rawSourceChapters = source.fetchChapterList(mangaInfo)
+    val rawSourceChapters = source.getChapterList(mangaInfo)
     if (rawSourceChapters.isEmpty()) {
       return Result.NoChaptersFound
     }

@@ -18,7 +18,7 @@ class SearchMangaPageFromCatalogSource @Inject internal constructor(
 ) {
 
   suspend fun await(source: CatalogSource, filters: FilterList, page: Int): MangasPage {
-    val sourcePage = source.fetchMangaList(filters, page)
+    val sourcePage = source.getMangaList(filters, page)
     val localPage = sourcePage.mangas.map { getOrAddMangaFromSource.await(it, source.id) }
 
     return MangasPage(page, localPage, sourcePage.hasNextPage)
