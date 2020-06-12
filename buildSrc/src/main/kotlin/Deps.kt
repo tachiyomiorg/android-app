@@ -26,7 +26,7 @@ object Deps {
   }
 
   object compose {
-    const val version = "0.1.0-dev12"
+    const val version = "0.1.0-dev13"
     const val runtime = "androidx.compose:compose-runtime:$version"
     const val layout = "androidx.ui:ui-layout:$version"
     const val material = "androidx.ui:ui-material:$version"
