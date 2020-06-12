@@ -18,6 +18,7 @@ import tachiyomi.data.catalog.service.AndroidCatalogInstallationChanges
 import tachiyomi.data.catalog.service.AndroidCatalogInstaller
 import tachiyomi.data.catalog.service.AndroidCatalogLoader
 import tachiyomi.data.catalog.service.CatalogRemoteRepositoryImpl
+import tachiyomi.data.download.service.DownloadRepositoryImpl
 import tachiyomi.data.library.service.CategoryRepositoryImpl
 import tachiyomi.data.library.service.LibraryRepositoryImpl
 import tachiyomi.data.library.service.LibraryUpdateSchedulerImpl
@@ -32,6 +33,8 @@ import tachiyomi.domain.catalog.service.CatalogPreferences
 import tachiyomi.domain.catalog.service.CatalogRemoteApi
 import tachiyomi.domain.catalog.service.CatalogRemoteRepository
 import tachiyomi.domain.catalog.service.CatalogStore
+import tachiyomi.domain.download.service.DownloadPreferences
+import tachiyomi.domain.download.service.DownloadRepository
 import tachiyomi.domain.library.service.CategoryRepository
 import tachiyomi.domain.library.service.LibraryCovers
 import tachiyomi.domain.library.service.LibraryPreferences
@@ -91,6 +94,14 @@ fun DataModule(context: Application) = module {
   bind<AndroidCatalogInstallationChanges>().singleton()
   bind<CatalogInstallationChanges>()
     .toProviderInstance(GenericsProvider(AndroidCatalogInstallationChanges::class.java))
+
+  bind<DownloadRepository>().toClass<DownloadRepositoryImpl>().singleton()
+  bind<DownloadPreferences>()
+    .toProviderInstance {
+      val defaultDownloads = context.getExternalFilesDir("downloads")!!
+      DownloadPreferences(preferenceFactory.create("download"), defaultDownloads)
+    }
+    .providesSingleton()
 
 }
 

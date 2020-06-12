@@ -15,11 +15,12 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
-import com.github.stephanenicolas.toothpick.smoothie.BuildConfig
 import io.requery.android.database.sqlite.RequerySQLiteOpenHelperFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
 import tachiyomi.data.catalog.db.CatalogRemoteDao
+import tachiyomi.data.download.db.DownloadDao
+import tachiyomi.data.download.model.Download
 import tachiyomi.data.library.db.CategoryDao
 import tachiyomi.data.library.db.LibraryDao
 import tachiyomi.data.library.db.MangaCategoryDao
@@ -34,7 +35,7 @@ import tachiyomi.domain.manga.model.Manga
 
 @Database(
   entities = [Manga::class, Chapter::class, Category::class, MangaCategory::class,
-    CatalogRemote::class],
+    CatalogRemote::class, Download::class],
   views = [LibraryManga::class],
   version = 1
 )
@@ -51,6 +52,8 @@ abstract class AppDatabase : RoomDatabase() {
   abstract val mangaCategory: MangaCategoryDao
 
   abstract val catalogRemote: CatalogRemoteDao
+
+  abstract val download: DownloadDao
 
   companion object {
     fun build(context: Context): AppDatabase {
