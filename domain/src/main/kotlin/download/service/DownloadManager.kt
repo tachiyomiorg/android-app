@@ -27,8 +27,10 @@ class DownloadManager @Inject internal constructor(
 ) {
 
   @Suppress("EXPERIMENTAL_API_USAGE")
-  private val actor = GlobalScope.actor<Message>(Dispatchers.Default,
-    capacity = Channel.UNLIMITED) {
+  private val actor = GlobalScope.actor<Message>(
+    context = Dispatchers.Default,
+    capacity = Channel.UNLIMITED
+  ) {
     with(DownloadManagerActor(channel, preferences, downloader, compressor, repository)) {
       receiveAll()
     }

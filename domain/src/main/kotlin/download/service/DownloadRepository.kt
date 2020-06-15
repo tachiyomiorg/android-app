@@ -18,4 +18,6 @@ interface DownloadRepository {
 
   suspend fun delete(downloads: List<SavedDownload>)
 
+  suspend fun delete(chapterId: Long)
+
 }

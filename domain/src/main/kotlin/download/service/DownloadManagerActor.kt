@@ -20,8 +20,9 @@ import tachiyomi.domain.download.model.QueuedDownload
 import tachiyomi.domain.download.model.SavedDownload
 import tachiyomi.domain.manga.model.Chapter
 import tachiyomi.domain.manga.model.Manga
+import java.io.File
 
-internal class DownloadManagerActor(
+internal open class DownloadManagerActor(
   private val messages: Channel<Message>,
   private val preferences: DownloadPreferences,
   private val downloader: Downloader,
@@ -31,23 +32,20 @@ internal class DownloadManagerActor(
 
   private val compressPreference = preferences.compress()
 
-  private var workerJob: Job? = null
+  protected var workerJob: Job? = null
   private var workerScope: CoroutineScope? = null
   private var workers = mutableListOf<Worker>()
-  private val downloadResults = Channel<Downloader.Result>()
-  private val compressionResults = Channel<DownloadCompressor.Result>()
+  protected val downloadResults = Channel<Downloader.Result>()
+  protected val compressionResults = Channel<DownloadCompressor.Result>()
 
-  private val downloads = mutableListOf<QueuedDownload>()
-  private val activeDownloads = mutableMapOf<Long, Int>()
-  private val failedDownloads = mutableSetOf<Long>()
+  protected val downloads = mutableListOf<QueuedDownload>()
+  protected val states = mutableMapOf<Long, State>()
   private val lockedDownloads = mutableSetOf<Long>()
-  private val compressingDownloads = mutableSetOf<Long>()
-  private val awaitingCompletionDownloads = mutableListOf<QueuedDownload>()
 
   suspend fun receiveAll() {
     val savedDownloads = repository.findAll()
     if (savedDownloads.isNotEmpty()) {
-      messages.send(Message.Restore(savedDownloads))
+      restore(savedDownloads)
     }
 
     while (true) {
@@ -58,7 +56,6 @@ internal class DownloadManagerActor(
             Message.Stop -> stop()
             is Message.Add -> add(msg.downloads)
             is Message.Remove -> remove(msg.downloads)
-            is Message.Restore -> restore(msg.downloads)
             Message.Clear -> clear()
             is Message.LockSourceFiles -> lockSourceFiles(msg.chapterId)
             is Message.UnlockSourceFiles -> unlockSourceFiles(msg.chapterId)
@@ -95,10 +92,17 @@ internal class DownloadManagerActor(
     if (workerJob != null) {
       workerJob!!.cancelAndJoin()
       workers.clear()
-      failedDownloads.clear()
-      activeDownloads.clear()
       workerJob = null
       workerScope = null
+
+      // Only keep states of completing downloads
+      val iterator = states.iterator()
+      while (iterator.hasNext()) {
+        val (_, state) = iterator.next()
+        if (state !is State.Completing) {
+          iterator.remove()
+        }
+      }
     }
   }
 
@@ -141,49 +145,49 @@ internal class DownloadManagerActor(
 
   private suspend fun scheduleDownloads() {
     for (worker in workers) {
-      if (worker.isDownloading) continue
+      val downloading = states.values.asSequence()
+        .filterIsInstance<State.Downloading>()
 
-      val activeSources = activeDownloads.asSequence()
-        .mapNotNull { (chapterId, _) ->
-          downloads.find { it.chapterId == chapterId }?.sourceId
-        }
-        .toSet()
+      // Check if this worker is already downloading
+      if (downloading.any { it.workerId == worker.id }) continue
+
+      val activeSources = downloading.map { it.download.sourceId }.toSet()
 
       val nextDownload = downloads.find {
-        it.chapterId !in failedDownloads &&
-          it.chapterId !in activeDownloads &&
+        it.chapterId !in states &&
           it.chapterId !in lockedDownloads &&
-          it.chapterId !in compressingDownloads &&
           it.sourceId !in activeSources
       } ?: continue
 
-      activeDownloads[nextDownload.chapterId] = worker.id
-      worker.channel.send(nextDownload)
+      val state = State.Downloading(worker.id, nextDownload)
+      states[nextDownload.chapterId] = state
+      worker.channel.offer(nextDownload)
     }
 
-    if (activeDownloads.isEmpty()) {
+    if (states.none { it.value.inProgress }) {
       stop()
     }
   }
 
   private suspend fun onChapterDownloadResult(result: Downloader.Result) {
     val download = result.download
-    activeDownloads.remove(download.chapterId)
+    states.remove(download.chapterId)
 
     when (result) {
       is Downloader.Result.Success -> {
-        if (!compressPreference.get()) {
-          awaitingCompletionDownloads.add(download)
+        val compressionEnabled = compressPreference.get()
+        if (!compressionEnabled) {
+          states[download.chapterId] = State.Completing(download, result.tmpDir)
           checkDownloadCompletion(download.chapterId)
         } else {
           workerScope?.let {
-            compressingDownloads.add(download.chapterId)
+            states[download.chapterId] = State.Compressing(download)
             compressor.worker(it, result.download, result.tmpDir, compressionResults)
           }
         }
       }
       is Downloader.Result.Failure -> {
-        failedDownloads.add(download.chapterId)
+        states[download.chapterId] = State.Failed(result.error)
       }
     }
 
@@ -192,13 +196,16 @@ internal class DownloadManagerActor(
 
   private suspend fun onChapterCompressionResult(result: DownloadCompressor.Result) {
     val download = result.download
-    compressingDownloads.remove(download.chapterId)
+    states.remove(download.chapterId)
 
-    if (!result.success) {
-      failedDownloads.add(download.chapterId)
-    } else {
-      awaitingCompletionDownloads.add(download)
-      checkDownloadCompletion(download.chapterId)
+    when (result) {
+      is DownloadCompressor.Result.Success -> {
+        states[download.chapterId] = State.Completing(download, result.tmpZip)
+        checkDownloadCompletion(download.chapterId)
+      }
+      is DownloadCompressor.Result.Failure -> {
+        states[download.chapterId] = State.Failed(result.error)
+      }
     }
   }
 
@@ -213,10 +220,24 @@ internal class DownloadManagerActor(
 
   private suspend fun checkDownloadCompletion(chapterId: Long) {
     if (chapterId in lockedDownloads) return
-    val download = awaitingCompletionDownloads.removeFirst { it.chapterId == chapterId } ?: return
+    val (download, tmpFile) = states[chapterId] as? State.Completing ?: return
 
-    // TODO remove from downloads and from repository, rename to final chapter
-    downloads.removeFirst { it.chapterId == chapterId }
+    repository.delete(chapterId)
+    states.remove(chapterId)
+    downloads.remove(download)
+
+    // Both compressed files and directories end with "[._]tmp" so we just drop the last 4 chars
+    val finalFile = File(tmpFile.absolutePath.dropLast(4))
+    tmpFile.renameTo(finalFile)
+  }
+
+  sealed class State {
+    data class Downloading(val workerId: Int, val download: QueuedDownload) : State()
+    data class Compressing(val download: QueuedDownload) : State()
+    data class Completing(val download: QueuedDownload, val tmpFile: File) : State()
+    data class Failed(val error: Throwable) : State()
+
+    val inProgress get() = this is Downloading || this is Compressing
   }
 
   sealed class Message {
@@ -226,7 +247,6 @@ internal class DownloadManagerActor(
     // TODO maybe provide other objects
     data class Add(val downloads: Map<Manga, List<Chapter>>) : Message()
     data class Remove(val downloads: List<Chapter>) : Message()
-    data class Restore(val downloads: List<SavedDownload>) : Message()
     object Clear : Message()
     //data class Reorder : Message() // TODO to implement later
 
@@ -235,7 +255,5 @@ internal class DownloadManagerActor(
   }
 
   private data class Worker(val id: Int, val channel: SendChannel<QueuedDownload>)
-
-  private val Worker.isDownloading get() = activeDownloads.containsValue(id)
 
 }

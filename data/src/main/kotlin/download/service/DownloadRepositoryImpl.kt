@@ -42,4 +42,8 @@ class DownloadRepositoryImpl @Inject constructor(
     TODO("not implemented")
   }
 
+  override suspend fun delete(chapterId: Long) {
+    dao.delete(chapterId)
+  }
+
 }

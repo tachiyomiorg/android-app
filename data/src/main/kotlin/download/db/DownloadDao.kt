@@ -22,4 +22,7 @@ abstract class DownloadDao : BaseDao<Download> {
   @Query("SELECT * FROM download")
   abstract suspend fun findAll(): List<DownloadProjection>
 
+  @Query("DELETE FROM download WHERE chapterId = :chapterId")
+  abstract suspend fun delete(chapterId: Long)
+
 }
