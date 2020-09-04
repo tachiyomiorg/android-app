@@ -26,13 +26,11 @@ object Deps {
   }
 
   object compose {
-    const val version = "0.1.0-dev13"
-    const val runtime = "androidx.compose:compose-runtime:$version"
-    const val layout = "androidx.ui:ui-layout:$version"
-    const val material = "androidx.ui:ui-material:$version"
-    const val icons = "androidx.ui:ui-material-icons-extended:$version"
+    const val version = "1.0.0-alpha01"
+    const val ui = "androidx.compose.ui:ui:$version"
+    const val material = "androidx.compose.material:material:$version"
+    const val icons = "androidx.compose.material:material-icons-extended:$version"
     const val tooling = "androidx.ui:ui-tooling:$version"
-    const val graphics = "androidx.ui:ui-graphics:$version"
   }
 
   object lifecycle {

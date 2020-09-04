@@ -7,12 +7,12 @@ plugins {
 android {
   kotlinOptions {
     jvmTarget = JavaVersion.VERSION_1_8.toString()
+    useIR = true
   }
   buildFeatures {
     compose = true
   }
   composeOptions {
-    kotlinCompilerVersion = "1.3.70-dev-withExperimentalGoogleExtensions-20200424"
     kotlinCompilerExtensionVersion = Deps.compose.version
   }
 }
@@ -31,12 +31,10 @@ dependencies {
   implementation(Deps.coRedux)
   implementation(Deps.coReduxLog)
 
-  implementation(Deps.compose.runtime)
-  implementation(Deps.compose.layout)
+  implementation(Deps.compose.ui)
+  implementation(Deps.compose.tooling)
   implementation(Deps.compose.material)
   implementation(Deps.compose.icons)
-  implementation(Deps.compose.tooling)
-  implementation(Deps.compose.graphics)
 
   implementation(Deps.coil)
 }

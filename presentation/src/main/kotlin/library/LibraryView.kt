@@ -8,44 +8,44 @@
 
 package tachiyomi.ui.library
 
-import androidx.compose.Composable
-import androidx.compose.State
-import androidx.compose.onDispose
-import androidx.compose.remember
-import androidx.ui.core.Alignment
-import androidx.ui.core.ConfigurationAmbient
-import androidx.ui.core.Modifier
-import androidx.ui.core.paint
-import androidx.ui.foundation.Box
-import androidx.ui.foundation.Text
-import androidx.ui.foundation.VerticalScroller
-import androidx.ui.foundation.currentTextStyle
-import androidx.ui.foundation.shape.corner.RoundedCornerShape
-import androidx.ui.geometry.Rect
-import androidx.ui.geometry.Size
-import androidx.ui.geometry.toRect
-import androidx.ui.graphics.Color
-import androidx.ui.graphics.LinearGradient
-import androidx.ui.graphics.Paint
-import androidx.ui.graphics.drawscope.DrawScope
-import androidx.ui.graphics.drawscope.drawCanvas
-import androidx.ui.graphics.painter.Painter
-import androidx.ui.layout.Column
-import androidx.ui.layout.Stack
-import androidx.ui.layout.aspectRatio
-import androidx.ui.layout.fillMaxSize
-import androidx.ui.layout.fillMaxWidth
-import androidx.ui.layout.padding
-import androidx.ui.layout.wrapContentHeight
-import androidx.ui.material.Surface
-import androidx.ui.material.TopAppBar
-import androidx.ui.res.stringResource
-import androidx.ui.text.TextStyle
-import androidx.ui.text.font.font
-import androidx.ui.text.font.fontFamily
-import androidx.ui.unit.Dp
-import androidx.ui.unit.dp
-import androidx.ui.unit.sp
+import androidx.compose.foundation.Box
+import androidx.compose.foundation.ScrollableColumn
+import androidx.compose.foundation.Text
+import androidx.compose.foundation.currentTextStyle
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Stack
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Surface
+import androidx.compose.material.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.onDispose
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.paint
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.toRect
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.LinearGradient
+import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.drawCanvas
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.ConfigurationAmbient
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.font
+import androidx.compose.ui.text.font.fontFamily
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import tachiyomi.core.di.AppScope
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.ui.R
@@ -64,7 +64,7 @@ fun LibraryScreen() {
   Column {
     TopAppBar(title = { Text(stringResource(R.string.label_library2)) })
     Box(Modifier.padding(2.dp)) {
-      VerticalScroller {
+      ScrollableColumn {
         LibraryTable(state)
       }
     }

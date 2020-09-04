@@ -8,51 +8,52 @@
 
 package tachiyomi.ui.catalog
 
-import androidx.compose.Composable
-import androidx.compose.State
-import androidx.compose.onDispose
-import androidx.compose.remember
-import androidx.ui.core.Alignment
-import androidx.ui.core.Modifier
-import androidx.ui.core.gesture.longPressGestureFilter
-import androidx.ui.core.tag
-import androidx.ui.foundation.Box
-import androidx.ui.foundation.HorizontalScroller
-import androidx.ui.foundation.Image
-import androidx.ui.foundation.Text
-import androidx.ui.foundation.VerticalScroller
-import androidx.ui.foundation.clickable
-import androidx.ui.foundation.contentColor
-import androidx.ui.foundation.shape.corner.CircleShape
-import androidx.ui.foundation.shape.corner.RoundedCornerShape
-import androidx.ui.graphics.Color
-import androidx.ui.graphics.ColorFilter
-import androidx.ui.layout.Column
-import androidx.ui.layout.ConstraintLayout
-import androidx.ui.layout.ConstraintSet
-import androidx.ui.layout.Row
-import androidx.ui.layout.fillMaxSize
-import androidx.ui.layout.fillMaxWidth
-import androidx.ui.layout.height
-import androidx.ui.layout.padding
-import androidx.ui.layout.size
-import androidx.ui.layout.widthIn
-import androidx.ui.layout.wrapContentSize
-import androidx.ui.material.CircularProgressIndicator
-import androidx.ui.material.EmphasisAmbient
-import androidx.ui.material.IconButton
-import androidx.ui.material.MaterialTheme
-import androidx.ui.material.Surface
-import androidx.ui.material.TopAppBar
-import androidx.ui.material.icons.Icons
-import androidx.ui.material.icons.filled.GetApp
-import androidx.ui.material.icons.filled.Settings
-import androidx.ui.res.stringResource
-import androidx.ui.text.SpanStyle
-import androidx.ui.text.annotatedString
-import androidx.ui.text.withStyle
-import androidx.ui.unit.dp
-import androidx.ui.unit.sp
+import androidx.compose.foundation.Box
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollableColumn
+import androidx.compose.foundation.ScrollableRow
+import androidx.compose.foundation.Text
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.contentColor
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ConstraintLayout
+import androidx.compose.foundation.layout.ConstraintSet
+import androidx.compose.foundation.layout.Dimension
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.EmphasisAmbient
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.GetApp
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.onDispose
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.gesture.longPressGestureFilter
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.annotatedString
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import tachiyomi.core.di.AppScope
 import tachiyomi.domain.catalog.model.Catalog
 import tachiyomi.domain.catalog.model.CatalogBundled
@@ -74,67 +75,63 @@ fun CatalogScreen() {
     TopAppBar(
       title = { Text(stringResource(R.string.label_catalogues)) }
     )
-    VerticalScroller {
-      Column {
-        val currState = state.value
+    ScrollableColumn {
+      val currState = state.value
 
-        val mediumTextEmphasis = EmphasisAmbient.current.medium
-          .applyEmphasis(contentColor())
+      val mediumTextEmphasis = EmphasisAmbient.current.medium
+        .applyEmphasis(contentColor())
 
-        if (currState.updatableCatalogs.isNotEmpty() || currState.localCatalogs.isNotEmpty()) {
-          Text(
-            "Installed",
-            style = MaterialTheme.typography.h6,
-            modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 4.dp)
-          )
+      if (currState.updatableCatalogs.isNotEmpty() || currState.localCatalogs.isNotEmpty()) {
+        Text(
+          "Installed",
+          style = MaterialTheme.typography.h6,
+          modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 4.dp)
+        )
+      }
+      if (currState.updatableCatalogs.isNotEmpty()) {
+        Text(
+          "Update available (${currState.updatableCatalogs.size})",
+          style = MaterialTheme.typography.subtitle1,
+          color = mediumTextEmphasis,
+          modifier = Modifier.padding(16.dp, 8.dp, 16.dp, 4.dp)
+        )
+
+        for (catalog in currState.updatableCatalogs) {
+          CatalogItem(presenter, catalog, state, hasUpdate = true)
         }
+      }
+      if (currState.localCatalogs.isNotEmpty()) {
         if (currState.updatableCatalogs.isNotEmpty()) {
           Text(
-            "Update available (${currState.updatableCatalogs.size})",
+            "Up to date",
             style = MaterialTheme.typography.subtitle1,
             color = mediumTextEmphasis,
             modifier = Modifier.padding(16.dp, 8.dp, 16.dp, 4.dp)
           )
-
-          for (catalog in currState.updatableCatalogs) {
-            CatalogItem(presenter, catalog, state, hasUpdate = true)
-          }
         }
-        if (currState.localCatalogs.isNotEmpty()) {
-          if (currState.updatableCatalogs.isNotEmpty()) {
-            Text(
-              "Up to date",
-              style = MaterialTheme.typography.subtitle1,
-              color = mediumTextEmphasis,
-              modifier = Modifier.padding(16.dp, 8.dp, 16.dp, 4.dp)
+        for (catalog in currState.localCatalogs) {
+          CatalogItem(presenter, catalog, state)
+        }
+      }
+      if (currState.remoteCatalogs.isNotEmpty()) {
+        Text(
+          "Available",
+          style = MaterialTheme.typography.h6,
+          modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 4.dp)
+        )
+
+        ScrollableRow(modifier = Modifier.padding(8.dp)) {
+          for (choice in currState.languageChoices) {
+            LanguageChip(
+              choice = choice,
+              selectedChoice = currState.languageChoice,
+              onClick = { presenter.setLanguageChoice(choice) }
             )
           }
-          for (catalog in currState.localCatalogs) {
-            CatalogItem(presenter, catalog, state)
-          }
         }
-        if (currState.remoteCatalogs.isNotEmpty()) {
-          Text(
-            "Available",
-            style = MaterialTheme.typography.h6,
-            modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 4.dp)
-          )
 
-          HorizontalScroller {
-            Row(modifier = Modifier.padding(8.dp)) {
-              for (choice in currState.languageChoices) {
-                LanguageChip(
-                  choice = choice,
-                  selectedChoice = currState.languageChoice,
-                  onClick = { presenter.setLanguageChoice(choice) }
-                )
-              }
-            }
-          }
-
-          for (catalog in currState.remoteCatalogs) {
-            CatalogItem(presenter, catalog, state)
-          }
+        for (catalog in currState.remoteCatalogs) {
+          CatalogItem(presenter, catalog, state)
         }
       }
     }
@@ -180,36 +177,36 @@ fun CatalogItem(
 ) {
   ConstraintLayout(
     constraintSet = ConstraintSet {
-      val pic = tag("pic")
-      val title = tag("title")
-      val description = tag("description")
-      val icons = tag("icons")
+      val pic = createRefFor("pic")
+      val title = createRefFor("title")
+      val description = createRefFor("description")
+      val icons = createRefFor("icons")
 
-      pic.apply {
-        width = valueFixed(48.dp)
-        height = valueFixed(48.dp)
-        left constrainTo parent.left
-        top constrainTo parent.top
-        bottom constrainTo parent.bottom
+      constrain(pic) {
+        width = Dimension.value(48.dp)
+        height = Dimension.value(48.dp)
+        start.linkTo(parent.start)
+        top.linkTo(parent.top)
+        bottom.linkTo(parent.bottom)
       }
-      title.apply {
-        width = spread
-        left constrainTo pic.right
-        top constrainTo parent.top
-        right constrainTo icons.left
-        left.margin = 12.dp
+      constrain(title) {
+        width = Dimension.fillToConstraints
+        start.linkTo(pic.end)
+        top.linkTo(parent.top)
+        end.linkTo(icons.start)
+        start.linkTo(margin = 12.dp)
       }
-      description.apply {
-        width = spread
-        left constrainTo title.left
-        top constrainTo title.bottom
-        right constrainTo parent.right
+      constrain(description) {
+        width = Dimension.fillToConstraints
+        start.linkTo(title.start)
+        top.linkTo(title.bottom)
+        end.linkTo(parent.end)
       }
-      icons.apply {
-        height = valueFixed(48.dp)
-        top constrainTo title.top
-        right constrainTo parent.right
-        bottom constrainTo title.bottom
+      constrain(icons) {
+        height = Dimension.value(48.dp)
+        top.linkTo(title.top)
+        end.linkTo(parent.end)
+        bottom.linkTo(title.bottom)
       }
     },
     modifier = Modifier.fillMaxWidth().padding(12.dp, 12.dp, 8.dp, 12.dp)
@@ -227,18 +224,18 @@ fun CatalogItem(
       }
     }
 
-    Box(modifier = Modifier.tag("pic")) {
+    Box(modifier = Modifier.layoutId("pic")) {
       CatalogPic(catalog)
     }
-    Text(title, modifier = Modifier.tag("title"), style = MaterialTheme.typography.subtitle1)
+    Text(title, modifier = Modifier.layoutId("title"), style = MaterialTheme.typography.subtitle1)
     Text(
       catalog.description,
-      modifier = Modifier.tag("description"),
+      modifier = Modifier.layoutId("description"),
       style = MaterialTheme.typography.body2,
       color = mediumTextEmphasis
     )
     Row(
-      modifier = Modifier.tag("icons"),
+      modifier = Modifier.layoutId("icons"),
       verticalGravity = Alignment.CenterVertically
     ) {
       val rowModifier = Modifier.size(48.dp)

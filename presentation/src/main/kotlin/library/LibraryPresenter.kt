@@ -8,9 +8,9 @@
 
 package tachiyomi.ui.library
 
-import androidx.compose.Composable
-import androidx.compose.State
-import androidx.compose.collectAsState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import com.freeletics.coredux.SideEffect
 import com.freeletics.coredux.createStore
 import kotlinx.coroutines.GlobalScope

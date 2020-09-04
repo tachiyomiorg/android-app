@@ -32,7 +32,11 @@ subprojects {
       freeCompilerArgs = freeCompilerArgs + listOf(
         "-Xuse-experimental=kotlinx.coroutines.FlowPreview",
         "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi",
-        "-Xuse-experimental=kotlinx.serialization.ImplicitReflectionSerializer"
+        "-Xuse-experimental=kotlinx.serialization.ImplicitReflectionSerializer",
+
+        // For Jetpack Compose
+        "-Xallow-jvm-ir-dependencies",
+        "-Xskip-prerelease-check"
       )
       jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
