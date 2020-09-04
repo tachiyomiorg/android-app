@@ -33,5 +33,4 @@ dependencies {
   implementation(Deps.toothpick.smoothie)
   implementation(Deps.toothpick.ktp)
   kapt(Deps.toothpick.compiler)
-
 }

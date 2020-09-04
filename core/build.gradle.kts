@@ -14,6 +14,8 @@ dependencies {
   implementation(Deps.coroutines.core)
   implementation(Deps.coroutines.android)
   implementation(Deps.flomo)
+  implementation(Deps.lifecycle.common)
+  implementation(Deps.lifecycle.process)
   implementation(Deps.lifecycle.extensions)
 
   implementation(Deps.toothpick.runtime)

@@ -3,7 +3,7 @@ object Deps {
 
   object kotlin {
     const val version = "1.3.72"
-    const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$version"
+    const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version"
 
     object serialization {
       private const val version = "0.20.0"
@@ -13,14 +13,14 @@ object Deps {
   }
 
   object coroutines {
-    private const val version = "1.3.7"
+    private const val version = "1.3.9"
     const val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
     const val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$version"
   }
 
   object androidX {
-    const val core = "androidx.core:core-ktx:1.3.0-rc01"
-    const val appCompat = "androidx.appcompat:appcompat:1.2.0-rc01"
+    const val core = "androidx.core:core-ktx:1.4.0-alpha01"
+    const val appCompat = "androidx.appcompat:appcompat:1.3.0-alpha02"
     const val preference = "androidx.preference:preference:1.1.1"
     const val sqlite = "androidx.sqlite:sqlite:2.1.0"
   }
@@ -36,13 +36,14 @@ object Deps {
   }
 
   object lifecycle {
-    private const val version = "2.2.0"
-    const val extensions = "androidx.lifecycle:lifecycle-extensions:$version"
-    const val runtime = "androidx.lifecycle:lifecycle-runtime:$version"
+    private const val version = "2.3.0-alpha07"
+    const val common = "androidx.lifecycle:lifecycle-common-java8:$version"
+    const val process = "androidx.lifecycle:lifecycle-process:$version"
+    const val extensions = "androidx.lifecycle:lifecycle-runtime-ktx:$version"
   }
 
   object workManager {
-    private const val version = "2.3.4"
+    private const val version = "2.5.0-alpha01"
     const val runtime = "androidx.work:work-runtime-ktx:$version"
   }
 
@@ -53,7 +54,7 @@ object Deps {
     const val compiler = "androidx.room:room-compiler:$version"
   }
 
-  const val sqlite = "io.requery:sqlite-android:3.31.0"
+  const val sqlite = "io.requery:sqlite-android:3.32.2"
 
   object toothpick {
     private const val version = "3.1.0"
@@ -64,7 +65,7 @@ object Deps {
     const val testing = "com.github.stephanenicolas.toothpick:toothpick-testing-junit5:$version"
   }
 
-  const val okhttp = "com.squareup.okhttp3:okhttp:4.7.1"
+  const val okhttp = "com.squareup.okhttp3:okhttp:4.8.1"
   const val duktape = "com.squareup.duktape:duktape-android:1.3.0"
   const val kotson = "com.github.salomonbrys.kotson:kotson:2.5.0"
   const val jsoup = "org.jsoup:jsoup:1.13.1"
