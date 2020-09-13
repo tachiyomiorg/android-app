@@ -9,20 +9,20 @@
 package tachiyomi.ui.coil
 
 import android.graphics.drawable.Drawable
-import androidx.compose.Composable
-import androidx.compose.getValue
-import androidx.compose.onCommit
-import androidx.compose.setValue
-import androidx.compose.state
-import androidx.ui.core.ContextAmbient
-import androidx.ui.core.Modifier
-import androidx.ui.core.WithConstraints
-import androidx.ui.core.toAndroidRect
-import androidx.ui.foundation.Canvas
-import androidx.ui.geometry.toRect
-import androidx.ui.graphics.drawscope.drawCanvas
-import androidx.ui.layout.fillMaxSize
-import androidx.ui.unit.IntPx
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.onCommit
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.state
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.WithConstraints
+import androidx.compose.ui.geometry.toRect
+import androidx.compose.ui.graphics.drawscope.drawCanvas
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toAndroidRect
+import androidx.compose.ui.platform.ContextAmbient
 import coil.request.LoadRequest
 import coil.size.OriginalSize
 import coil.size.PixelSize
@@ -40,15 +40,15 @@ fun <T> CoilImage(
     val context = ContextAmbient.current
     onCommit(model) {
       val width =
-        if (constraints.maxWidth > IntPx.Zero && constraints.maxWidth < IntPx.Infinity) {
-          constraints.maxWidth.value
+        if (constraints.maxWidth > 0 && constraints.maxWidth < Int.MAX_VALUE) {
+          constraints.maxWidth
         } else {
           0
         }
 
       val height =
-        if (constraints.maxHeight > IntPx.Zero && constraints.maxHeight < IntPx.Infinity) {
-          constraints.maxHeight.value
+        if (constraints.maxHeight > 0 && constraints.maxHeight < Int.MAX_VALUE) {
+          constraints.maxHeight
         } else {
           0
         }

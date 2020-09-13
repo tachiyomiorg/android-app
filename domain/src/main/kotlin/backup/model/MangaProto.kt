@@ -9,29 +9,29 @@
 package tachiyomi.domain.backup.model
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.protobuf.ProtoId
+import kotlinx.serialization.protobuf.ProtoNumber
 import tachiyomi.domain.manga.model.Manga
 
 @Serializable
 internal data class MangaProto(
-  @ProtoId(1) val sourceId: Long,
-  @ProtoId(2) val key: String,
-  @ProtoId(3) val title: String,
-  @ProtoId(4) val artist: String = "",
-  @ProtoId(5) val author: String = "",
-  @ProtoId(6) val description: String = "",
-  @ProtoId(7) val genres: List<String> = emptyList(),
-  @ProtoId(8) val status: Int = 0,
-  @ProtoId(9) val cover: String = "",
-  @ProtoId(10) val customCover: String = "",
-  @ProtoId(11) val lastUpdate: Long = 0,
-  @ProtoId(12) val lastInit: Long = 0,
-  @ProtoId(13) val dateAdded: Long = 0,
-  @ProtoId(14) val viewer: Int = 0,
-  @ProtoId(15) val flags: Int = 0,
-  @ProtoId(16) val chapters: List<ChapterProto> = emptyList(),
-  @ProtoId(17) val categories: List<Int> = emptyList(),
-  @ProtoId(18) val tracks: List<TrackProto> = emptyList()
+  @ProtoNumber(1) val sourceId: Long,
+  @ProtoNumber(2) val key: String,
+  @ProtoNumber(3) val title: String,
+  @ProtoNumber(4) val artist: String = "",
+  @ProtoNumber(5) val author: String = "",
+  @ProtoNumber(6) val description: String = "",
+  @ProtoNumber(7) val genres: List<String> = emptyList(),
+  @ProtoNumber(8) val status: Int = 0,
+  @ProtoNumber(9) val cover: String = "",
+  @ProtoNumber(10) val customCover: String = "",
+  @ProtoNumber(11) val lastUpdate: Long = 0,
+  @ProtoNumber(12) val lastInit: Long = 0,
+  @ProtoNumber(13) val dateAdded: Long = 0,
+  @ProtoNumber(14) val viewer: Int = 0,
+  @ProtoNumber(15) val flags: Int = 0,
+  @ProtoNumber(16) val chapters: List<ChapterProto> = emptyList(),
+  @ProtoNumber(17) val categories: List<Int> = emptyList(),
+  @ProtoNumber(18) val tracks: List<TrackProto> = emptyList()
 ) {
 
   fun toDomain(): Manga {

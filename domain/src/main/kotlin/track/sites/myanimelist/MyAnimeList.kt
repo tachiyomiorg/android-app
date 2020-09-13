@@ -8,7 +8,9 @@
 
 package tachiyomi.domain.track.sites.myanimelist
 
+import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.json
+import kotlinx.serialization.json.put
 import okhttp3.FormBody
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaType
@@ -46,10 +48,10 @@ class MyAnimeList @Inject constructor(
 
   override suspend fun add(mediaId: Long): Long {
     val url = "$baseUrl/ownlist/manga/add.json"
-    val payload = json {
-      "manga_id" to mediaId
-      "status" to TrackStatus.Reading.toSiteState
-      "csrf_token" to csrf
+    val payload = buildJsonObject {
+      put("manga_id", mediaId)
+      put("status", TrackStatus.Reading.toSiteState)
+      put("csrf_token", csrf)
     }
     val form = RequestBody.create(jsonType, payload.toString())
 
@@ -60,12 +62,12 @@ class MyAnimeList @Inject constructor(
 
   override suspend fun update(entryId: Long, track: TrackStateUpdate) {
     val url = "$baseUrl/ownlist/manga/edit.json"
-    val payload = json {
-      "manga_id" to entryId
-      if (track.status != null) "status" to track.status.toSiteState
-      if (track.score != null) "score" to Math.round(track.score)
-      if (track.lastChapterRead != null) "num_read_chapters" to Math.round(track.lastChapterRead)
-      "csrf_token" to csrf
+    val payload = buildJsonObject {
+      put("manga_id", entryId)
+      if (track.status != null) put("status", track.status.toSiteState)
+      if (track.score != null) put("score", Math.round(track.score))
+      if (track.lastChapterRead != null) put("num_read_chapters", Math.round(track.lastChapterRead))
+      put("csrf_token", csrf)
     }
     val form = RequestBody.create(jsonType, payload.toString())
 
@@ -75,8 +77,8 @@ class MyAnimeList @Inject constructor(
 
   internal suspend fun delete(entryId: Long) {
     val url = "$baseUrl/ownlist/manga/$entryId/delete"
-    val payload = json {
-      "csrf_token" to csrf
+    val payload = buildJsonObject {
+      put("csrf_token", csrf)
     }
     val form = RequestBody.create(jsonType, payload.toString())
 

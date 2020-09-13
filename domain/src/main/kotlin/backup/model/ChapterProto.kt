@@ -9,21 +9,21 @@
 package tachiyomi.domain.backup.model
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.protobuf.ProtoId
+import kotlinx.serialization.protobuf.ProtoNumber
 import tachiyomi.domain.manga.model.Chapter
 
 @Serializable
 internal data class ChapterProto(
-  @ProtoId(1) val key: String,
-  @ProtoId(2) val name: String,
-  @ProtoId(3) val scanlator: String = "",
-  @ProtoId(4) val read: Boolean = false,
-  @ProtoId(5) val bookmark: Boolean = false,
-  @ProtoId(6) val progress: Int = 0,
-  @ProtoId(7) val dateFetch: Long = 0,
-  @ProtoId(8) val dateUpload: Long = 0,
-  @ProtoId(9) val number: Float = 0f,
-  @ProtoId(10) val sourceOrder: Int = 0
+  @ProtoNumber(1) val key: String,
+  @ProtoNumber(2) val name: String,
+  @ProtoNumber(3) val scanlator: String = "",
+  @ProtoNumber(4) val read: Boolean = false,
+  @ProtoNumber(5) val bookmark: Boolean = false,
+  @ProtoNumber(6) val progress: Int = 0,
+  @ProtoNumber(7) val dateFetch: Long = 0,
+  @ProtoNumber(8) val dateUpload: Long = 0,
+  @ProtoNumber(9) val number: Float = 0f,
+  @ProtoNumber(10) val sourceOrder: Int = 0
 ) {
 
   fun toDomain(mangaId: Long): Chapter {

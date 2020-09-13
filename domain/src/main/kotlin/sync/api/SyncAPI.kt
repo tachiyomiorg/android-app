@@ -9,8 +9,12 @@
 package tachiyomi.domain.sync.api
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.json
+import kotlinx.serialization.json.put
+import kotlinx.serialization.parse
 import okhttp3.Credentials
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
@@ -42,10 +46,10 @@ class SyncAPI @Inject constructor(
 
     val credentials = Credentials.basic(username, password)
 
-    val reqBody = json {
-      "deviceId" to device.getId()
-      "deviceName" to device.getName()
-      "platform" to device.getPlatform()
+    val reqBody = buildJsonObject {
+      put("deviceId", device.getId())
+      put("deviceName", device.getName())
+      put("platform", device.getPlatform())
     }
 
     val request = Request.Builder()
@@ -61,7 +65,7 @@ class SyncAPI @Inject constructor(
         return LoginResult.InvalidCredentials
       }
       val body = response.awaitBody()
-      val responseBody = Json.parse(Response.serializer(), body)
+      val responseBody = Json.decodeFromString(Response.serializer(), body)
       LoginResult.Token(responseBody.secret)
     } catch (e: Exception) {
       LoginResult.Error(e)

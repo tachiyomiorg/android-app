@@ -8,15 +8,14 @@
 
 package tachiyomi.data.catalog.api
 
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonConfiguration
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.booleanOrNull
-import kotlinx.serialization.json.content
 import kotlinx.serialization.json.int
+import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.long
-import kotlinx.serialization.parse
 import tachiyomi.core.http.Http
 import tachiyomi.core.http.awaitBody
 import tachiyomi.core.http.get
@@ -32,18 +31,18 @@ internal class CatalogGithubApi @Inject constructor(private val http: Http) : Ca
 
   override suspend fun fetchCatalogs(): List<CatalogRemote> {
     val body = http.defaultClient.get("$repoUrl/index.min.json").awaitBody()
-    val json = Json(JsonConfiguration.Stable).parse<JsonArray>(body)
+    val json = Json.Default.decodeFromString<JsonArray>(body)
     return json.map { element ->
       element as JsonObject
-      val name = element["name"]!!.content
-      val pkgName = element["pkg"]!!.content
-      val versionName = element["version"]!!.content
-      val versionCode = element["code"]!!.int
-      val lang = element["lang"]!!.content
-      val apkName = element["apk"]!!.content
-      val sourceId = element["id"]!!.long
-      val description = element["description"]!!.content
-      val nsfw = element["nsfw"]!!.booleanOrNull ?: false
+      val name = element["name"]!!.jsonPrimitive.content
+      val pkgName = element["pkg"]!!.jsonPrimitive.content
+      val versionName = element["version"]!!.jsonPrimitive.content
+      val versionCode = element["code"]!!.jsonPrimitive.int
+      val lang = element["lang"]!!.jsonPrimitive.content
+      val apkName = element["apk"]!!.jsonPrimitive.content
+      val sourceId = element["id"]!!.jsonPrimitive.long
+      val description = element["description"]!!.jsonPrimitive.content
+      val nsfw = element["nsfw"]!!.jsonPrimitive.booleanOrNull ?: false
 
       val apkUrl = "$repoUrl/apk/$apkName"
       val iconUrl = "$repoUrl/icon/${apkName.replace(".apk", ".png")}"

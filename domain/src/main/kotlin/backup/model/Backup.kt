@@ -9,10 +9,10 @@
 package tachiyomi.domain.backup.model
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.protobuf.ProtoId
+import kotlinx.serialization.protobuf.ProtoNumber
 
 @Serializable
 internal data class Backup(
-  @ProtoId(1) val library: List<MangaProto> = emptyList(),
-  @ProtoId(2) val categories: List<CategoryProto> = emptyList()
+  @ProtoNumber(1) val library: List<MangaProto> = emptyList(),
+  @ProtoNumber(2) val categories: List<CategoryProto> = emptyList()
 )

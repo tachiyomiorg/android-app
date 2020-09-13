@@ -10,6 +10,7 @@ package tachiyomi.domain.backup.interactor
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.load
 import kotlinx.serialization.protobuf.ProtoBuf
 import okio.buffer
@@ -62,7 +63,7 @@ class RestoreBackup @Inject internal constructor(
   }
 
   private fun loadDump(data: ByteArray): Backup {
-    return ProtoBuf.load(data)
+    return ProtoBuf.decodeFromByteArray(data)
   }
 
   internal suspend fun restoreManga(manga: MangaProto): Long {

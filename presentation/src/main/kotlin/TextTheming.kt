@@ -8,13 +8,13 @@
 
 package tachiyomi.ui
 
-import androidx.compose.Ambient
-import androidx.compose.Composable
-import androidx.compose.staticAmbientOf
-import androidx.ui.graphics.Color
-import androidx.ui.material.Emphasis
-import androidx.ui.material.EmphasisLevels
-import androidx.ui.material.MaterialTheme
+import androidx.compose.material.Emphasis
+import androidx.compose.material.EmphasisLevels
+import androidx.compose.material.MaterialTheme
+import androidx.compose.runtime.Ambient
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.staticAmbientOf
+import androidx.compose.ui.graphics.Color
 
 val TextEmphasisAmbient: Ambient<EmphasisLevels> = staticAmbientOf { TextEmphasisLevels }
 

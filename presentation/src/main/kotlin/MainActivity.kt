@@ -11,29 +11,29 @@ package tachiyomi.ui
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.compose.Composable
-import androidx.compose.getValue
-import androidx.compose.mutableStateOf
-import androidx.compose.setValue
-import androidx.ui.core.Modifier
-import androidx.ui.core.setContent
-import androidx.ui.foundation.Box
-import androidx.ui.foundation.Icon
-import androidx.ui.foundation.Text
-import androidx.ui.graphics.vector.VectorAsset
-import androidx.ui.layout.Column
-import androidx.ui.material.BottomNavigation
-import androidx.ui.material.BottomNavigationItem
-import androidx.ui.material.MaterialTheme
-import androidx.ui.material.Surface
-import androidx.ui.material.darkColorPalette
-import androidx.ui.material.icons.Icons
-import androidx.ui.material.icons.filled.Book
-import androidx.ui.material.icons.filled.Explore
-import androidx.ui.material.icons.filled.History
-import androidx.ui.material.icons.filled.MoreHoriz
-import androidx.ui.material.icons.filled.NewReleases
-import androidx.ui.res.stringResource
+import androidx.compose.foundation.Box
+import androidx.compose.foundation.Icon
+import androidx.compose.foundation.Text
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.material.darkColors
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Book
+import androidx.compose.material.icons.filled.Explore
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material.icons.filled.NewReleases
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.VectorAsset
+import androidx.compose.ui.platform.setContent
+import androidx.compose.ui.res.stringResource
 import tachiyomi.ui.catalog.CatalogScreen
 import tachiyomi.ui.library.LibraryScreen
 
@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
     super.onCreate(savedInstanceState)
 
     setContent {
-      MaterialTheme(colors = darkColorPalette()) {
+      MaterialTheme(colors = darkColors()) {
         Column {
           Surface(modifier = Modifier.weight(1f)) {
             when (HomeScreen.current) {
@@ -111,10 +111,10 @@ private fun HomeBottomNav() {
   BottomNavigation {
     for (item in items) {
       BottomNavigationItem(
-        text = { Text(stringResource(item.text), maxLines = 1) },
+        label = { Text(stringResource(item.text), maxLines = 1) },
         icon = { Icon(item.icon) },
         selected = HomeScreen.current == item.screen,
-        onSelected = { HomeScreen.current = item.screen }
+        onSelect = { HomeScreen.current = item.screen }
       )
     }
   }

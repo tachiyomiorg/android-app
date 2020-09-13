@@ -2,12 +2,12 @@
 object Deps {
 
   object kotlin {
-    const val version = "1.3.72"
+    const val version = "1.4.10"
     const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version"
 
     object serialization {
-      private const val version = "0.20.0"
-      const val runtime = "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$version"
+      private const val version = "1.0.0-RC"
+      const val runtime = "org.jetbrains.kotlinx:kotlinx-serialization-core:$version"
       const val protobuf = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf:$version"
     }
   }
@@ -26,13 +26,11 @@ object Deps {
   }
 
   object compose {
-    const val version = "0.1.0-dev13"
-    const val runtime = "androidx.compose:compose-runtime:$version"
-    const val layout = "androidx.ui:ui-layout:$version"
-    const val material = "androidx.ui:ui-material:$version"
-    const val icons = "androidx.ui:ui-material-icons-extended:$version"
+    const val version = "1.0.0-alpha02"
+    const val ui = "androidx.compose.ui:ui:$version"
+    const val material = "androidx.compose.material:material:$version"
+    const val icons = "androidx.compose.material:material-icons-extended:$version"
     const val tooling = "androidx.ui:ui-tooling:$version"
-    const val graphics = "androidx.ui:ui-graphics:$version"
   }
 
   object lifecycle {
