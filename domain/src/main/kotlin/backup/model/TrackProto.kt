@@ -9,23 +9,23 @@
 package tachiyomi.domain.backup.model
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.protobuf.ProtoId
+import kotlinx.serialization.protobuf.ProtoNumber
 import tachiyomi.domain.track.model.Track
 import tachiyomi.domain.track.model.TrackStatus
 
 @Serializable
 internal data class TrackProto(
-  @ProtoId(1) val siteId: Int,
-  @ProtoId(2) val entryId: Long,
-  @ProtoId(3) val mediaId: Long = 0,
-  @ProtoId(4) val mediaUrl: String = "",
-  @ProtoId(5) val title: String = "",
-  @ProtoId(6) val lastRead: Float = 0f,
-  @ProtoId(7) val totalChapters: Int = 0,
-  @ProtoId(8) val score: Float = 0f,
-  @ProtoId(9) val status: Int = 0,
-  @ProtoId(10) val startReadTime: Long = 0,
-  @ProtoId(11) val endReadTime: Long = 0
+  @ProtoNumber(1) val siteId: Int,
+  @ProtoNumber(2) val entryId: Long,
+  @ProtoNumber(3) val mediaId: Long = 0,
+  @ProtoNumber(4) val mediaUrl: String = "",
+  @ProtoNumber(5) val title: String = "",
+  @ProtoNumber(6) val lastRead: Float = 0f,
+  @ProtoNumber(7) val totalChapters: Int = 0,
+  @ProtoNumber(8) val score: Float = 0f,
+  @ProtoNumber(9) val status: Int = 0,
+  @ProtoNumber(10) val startReadTime: Long = 0,
+  @ProtoNumber(11) val endReadTime: Long = 0
 ) {
 
   fun toDomain(mangaId: Long): Track {

@@ -41,14 +41,14 @@ fun <T> CoilImage(
     onCommit(model) {
       val width =
         if (constraints.maxWidth > 0 && constraints.maxWidth < Int.MAX_VALUE) {
-          constraints.maxWidth.value
+          constraints.maxWidth
         } else {
           0
         }
 
       val height =
         if (constraints.maxHeight > 0 && constraints.maxHeight < Int.MAX_VALUE) {
-          constraints.maxHeight.value
+          constraints.maxHeight
         } else {
           0
         }

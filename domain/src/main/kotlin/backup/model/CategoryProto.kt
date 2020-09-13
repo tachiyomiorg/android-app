@@ -9,14 +9,14 @@
 package tachiyomi.domain.backup.model
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.protobuf.ProtoId
+import kotlinx.serialization.protobuf.ProtoNumber
 import tachiyomi.domain.library.model.Category
 
 @Serializable
 internal data class CategoryProto(
-  @ProtoId(1) val name: String,
-  @ProtoId(2) val order: Int,
-  @ProtoId(3) val updateInterval: Int = 0
+  @ProtoNumber(1) val name: String,
+  @ProtoNumber(2) val order: Int,
+  @ProtoNumber(3) val updateInterval: Int = 0
 ) {
 
   fun toDomain(): Category {

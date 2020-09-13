@@ -191,10 +191,9 @@ fun CatalogItem(
       }
       constrain(title) {
         width = Dimension.fillToConstraints
-        start.linkTo(pic.end)
+        start.linkTo(pic.end, 12.dp)
         top.linkTo(parent.top)
         end.linkTo(icons.start)
-        start.linkTo(margin = 12.dp)
       }
       constrain(description) {
         width = Dimension.fillToConstraints

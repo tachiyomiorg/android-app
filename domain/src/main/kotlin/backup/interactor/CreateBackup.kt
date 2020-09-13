@@ -11,6 +11,7 @@ package tachiyomi.domain.backup.interactor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.dump
+import kotlinx.serialization.encodeToByteArray
 import kotlinx.serialization.protobuf.ProtoBuf
 import okio.buffer
 import okio.gzip
@@ -49,7 +50,8 @@ class CreateBackup @Inject internal constructor(
         categories = dumpCategories()
       )
     }
-    return ProtoBuf(encodeDefaults = false).dump(backup)
+
+    return ProtoBuf { encodeDefaults = false }.encodeToByteArray(backup)
   }
 
   internal suspend fun dumpLibrary(): List<MangaProto> {

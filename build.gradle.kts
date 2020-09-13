@@ -4,7 +4,7 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath("com.android.tools.build:gradle:4.2.0-alpha09")
+    classpath("com.android.tools.build:gradle:4.2.0-alpha10")
     classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${Deps.kotlin.version}")
     classpath("org.jetbrains.kotlin:kotlin-serialization:${Deps.kotlin.version}")
     classpath("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5")
@@ -32,7 +32,7 @@ subprojects {
       freeCompilerArgs = freeCompilerArgs + listOf(
         "-Xuse-experimental=kotlinx.coroutines.FlowPreview",
         "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi",
-        "-Xuse-experimental=kotlinx.serialization.ImplicitReflectionSerializer",
+        "-Xuse-experimental=kotlinx.serialization.ExperimentalSerializationApi",
 
         // For Jetpack Compose
         "-Xallow-jvm-ir-dependencies",
