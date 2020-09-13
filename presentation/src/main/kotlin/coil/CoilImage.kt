@@ -12,10 +12,10 @@ import android.graphics.drawable.Drawable
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.onCommit
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.state
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.WithConstraints
 import androidx.compose.ui.geometry.toRect
@@ -36,7 +36,7 @@ fun <T> CoilImage(
   modifier: Modifier = Modifier.fillMaxSize()
 ) {
   WithConstraints {
-    var drawable by state<Drawable?> { null }
+    val drawable: MutableState<Drawable?> = remember { mutableStateOf(null) }
     val context = ContextAmbient.current
     onCommit(model) {
       val width =
@@ -59,22 +59,21 @@ fun <T> CoilImage(
         .size(size)
         .scale(scale)
         .listener(onError = { _, t -> Log.warn(t) })
-        .target(onSuccess = { drawable = it })
+        .target(onSuccess = { drawable.value = it })
         .build()
 
       val disposable = CoilLoader.execute(request)
 
       onDispose {
         disposable.dispose()
-        drawable = null
+        drawable.value = null
       }
     }
 
-    val theDrawable = drawable
-    if (theDrawable != null) {
+    drawable.value?.let { theDrawable ->
       Canvas(modifier = modifier) {
         theDrawable.bounds = size.toRect().toAndroidRect()
-        drawCanvas { canvas, pxSize ->
+        drawCanvas { canvas, _ ->
           theDrawable.draw(canvas.nativeCanvas)
         }
       }

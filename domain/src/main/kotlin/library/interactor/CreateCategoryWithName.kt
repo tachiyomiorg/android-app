@@ -28,7 +28,7 @@ class CreateCategoryWithName @Inject internal constructor(
       return@f Result.CategoryAlreadyExistsError(name)
     }
 
-    val nextOrder = categories.maxBy { it.order }?.order?.plus(1) ?: 0
+    val nextOrder = categories.maxByOrNull { it.order }?.order?.plus(1) ?: 0
     val newCategory = Category(
       id = 0,
       name = name,

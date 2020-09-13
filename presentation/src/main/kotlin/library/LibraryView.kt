@@ -160,6 +160,6 @@ data class GradientPainter(val gradient: LinearGradient) : Painter() {
   }
 
   override val intrinsicSize: Size
-    get() = Size.UnspecifiedSize
+    get() = Size.Unspecified
 
 }

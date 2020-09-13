@@ -15,6 +15,7 @@ import okhttp3.FormBody
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.jsoup.Jsoup
 import tachiyomi.core.http.Http
 import tachiyomi.core.http.awaitBody
@@ -53,7 +54,7 @@ class MyAnimeList @Inject constructor(
       put("status", TrackStatus.Reading.toSiteState)
       put("csrf_token", csrf)
     }
-    val form = RequestBody.create(jsonType, payload.toString())
+    val form = payload.toString().toRequestBody(jsonType)
 
     val response = client.post(url, form).awaitSuccess()
     response.close()
@@ -69,7 +70,7 @@ class MyAnimeList @Inject constructor(
       if (track.lastChapterRead != null) put("num_read_chapters", Math.round(track.lastChapterRead))
       put("csrf_token", csrf)
     }
-    val form = RequestBody.create(jsonType, payload.toString())
+    val form = payload.toString().toRequestBody(jsonType)
 
     val response = client.post(url, form).awaitSuccess()
     response.close()
@@ -80,7 +81,7 @@ class MyAnimeList @Inject constructor(
     val payload = buildJsonObject {
       put("csrf_token", csrf)
     }
-    val form = RequestBody.create(jsonType, payload.toString())
+    val form = payload.toString().toRequestBody(jsonType)
 
     val response = client.post(url, form).awaitSuccess()
     response.close()

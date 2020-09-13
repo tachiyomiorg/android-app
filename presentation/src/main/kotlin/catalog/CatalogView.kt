@@ -243,7 +243,7 @@ fun CatalogItem(
         val installStep = state.value.installingCatalogs[catalog.pkgName]
         when {
           installStep != null && !installStep.isFinished() -> {
-            CircularProgressIndicator(modifier = rowModifier + Modifier.padding(4.dp))
+            CircularProgressIndicator(modifier = rowModifier.then(Modifier.padding(4.dp)))
           }
           hasUpdate -> {
             IconButton(onClick = { presenter.installCatalog(catalog) }) {
@@ -254,7 +254,7 @@ fun CatalogItem(
       } else if (catalog is CatalogRemote) {
         val installStep = state.value.installingCatalogs[catalog.pkgName]
         if (installStep != null && !installStep.isFinished()) {
-          CircularProgressIndicator(modifier = rowModifier + Modifier.padding(4.dp))
+          CircularProgressIndicator(modifier = rowModifier.then(Modifier.padding(4.dp)))
         } else {
           IconButton(onClick = { presenter.installCatalog(catalog) }) {
             Image(Icons.Filled.GetApp, colorFilter = ColorFilter.tint(mediumTextEmphasis))

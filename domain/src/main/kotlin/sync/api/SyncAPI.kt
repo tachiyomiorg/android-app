@@ -19,6 +19,7 @@ import okhttp3.Credentials
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import tachiyomi.core.http.Http
 import tachiyomi.core.http.awaitBody
 import tachiyomi.core.http.awaitResponse
@@ -54,7 +55,7 @@ class SyncAPI @Inject constructor(
 
     val request = Request.Builder()
       .url("$address/api/v3/auth/tokens")
-      .post(RequestBody.create(jsonMediaType, reqBody.toString()))
+      .post(reqBody.toString().toRequestBody(jsonMediaType))
       .addHeader("Authorization", credentials)
       .build()
 
