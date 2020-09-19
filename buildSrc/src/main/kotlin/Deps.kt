@@ -26,7 +26,7 @@ object Deps {
   }
 
   object compose {
-    const val version = "1.0.0-alpha02"
+    const val version = "1.0.0-alpha03"
     const val ui = "androidx.compose.ui:ui:$version"
     const val material = "androidx.compose.material:material:$version"
     const val icons = "androidx.compose.material:material-icons-extended:$version"
@@ -41,7 +41,7 @@ object Deps {
   }
 
   object workManager {
-    private const val version = "2.5.0-alpha01"
+    private const val version = "2.5.0-alpha02"
     const val runtime = "androidx.work:work-runtime-ktx:$version"
   }
 
@@ -63,7 +63,7 @@ object Deps {
     const val testing = "com.github.stephanenicolas.toothpick:toothpick-testing-junit5:$version"
   }
 
-  const val okhttp = "com.squareup.okhttp3:okhttp:4.8.1"
+  const val okhttp = "com.squareup.okhttp3:okhttp:4.9.0"
   const val duktape = "com.squareup.duktape:duktape-android:1.3.0"
   const val kotson = "com.github.salomonbrys.kotson:kotson:2.5.0"
   const val jsoup = "org.jsoup:jsoup:1.13.1"

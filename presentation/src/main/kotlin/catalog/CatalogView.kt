@@ -147,7 +147,7 @@ fun LanguageChip(choice: LanguageChoice, selectedChoice: LanguageChoice, onClick
       MaterialTheme.colors.onSurface.copy(alpha = 0.25f)
     },
     shape = RoundedCornerShape(16.dp),
-    modifier = Modifier.widthIn(minWidth = 56.dp).height(40.dp).padding(4.dp)
+    modifier = Modifier.widthIn(min = 56.dp).height(40.dp).padding(4.dp)
       .clickable(onClick = onClick)
   ) {
     val text = when (choice) {
@@ -235,7 +235,7 @@ fun CatalogItem(
     )
     Row(
       modifier = Modifier.layoutId("icons"),
-      verticalGravity = Alignment.CenterVertically
+      verticalAlignment = Alignment.CenterVertically
     ) {
       val rowModifier = Modifier.size(48.dp)
 

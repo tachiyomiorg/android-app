@@ -114,7 +114,7 @@ private fun HomeBottomNav() {
         label = { Text(stringResource(item.text), maxLines = 1) },
         icon = { Icon(item.icon) },
         selected = HomeScreen.current == item.screen,
-        onSelect = { HomeScreen.current = item.screen }
+        onClick = { HomeScreen.current = item.screen }
       )
     }
   }
