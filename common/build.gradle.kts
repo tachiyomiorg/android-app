@@ -8,7 +8,7 @@ plugins {
 
 dependencies {
   api(Deps.kotlin.stdlib)
-  api(Deps.kotlin.serialization.runtime)
+  api(Deps.kotlin.serialization.json)
   api(Deps.okhttp)
   api(Deps.jsoup)
   api(Deps.coroutines.core)

@@ -6,8 +6,8 @@ object Deps {
     const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version"
 
     object serialization {
-      private const val version = "1.0.0-RC"
-      const val runtime = "org.jetbrains.kotlinx:kotlinx-serialization-core:$version"
+      private const val version = "1.0.0-RC2"
+      const val json = "org.jetbrains.kotlinx:kotlinx-serialization-json:$version"
       const val protobuf = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf:$version"
     }
   }

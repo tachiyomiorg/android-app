@@ -51,7 +51,7 @@ class CreateBackup @Inject internal constructor(
       )
     }
 
-    return ProtoBuf { encodeDefaults = false }.encodeToByteArray(backup)
+    return ProtoBuf.encodeToByteArray(backup)
   }
 
   internal suspend fun dumpLibrary(): List<MangaProto> {
