@@ -8,12 +8,11 @@
 
 package tachiyomi.ui.library
 
-import androidx.compose.foundation.Box
 import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.currentTextStyle
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Stack
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,7 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.LinearGradient
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.drawCanvas
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.ConfigurationAmbient
 import androidx.compose.ui.res.stringResource
@@ -100,7 +99,7 @@ fun LibraryTableGridItem(manga: LibraryManga, gradientPainter: GradientPainter) 
     elevation = 4.dp,
     shape = RoundedCornerShape(4.dp)
   ) {
-    Stack(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize()) {
       CoilImage(model = cover)
       Box(modifier = Modifier.fillMaxSize().paint(gradientPainter))
       Text(
@@ -108,7 +107,7 @@ fun LibraryTableGridItem(manga: LibraryManga, gradientPainter: GradientPainter) 
         color = Color.White,
         style = fontStyle,
         modifier = Modifier.wrapContentHeight(Alignment.CenterVertically)
-          .gravity(Alignment.BottomStart)
+          .align(Alignment.BottomStart)
           .padding(8.dp)
       )
     }
@@ -149,13 +148,13 @@ data class GradientPainter(val gradient: LinearGradient) : Painter() {
   private var rect: Rect? = null
 
   override fun DrawScope.onDraw() {
-    drawCanvas { canvas, size ->
+    drawIntoCanvas {
       if (currentBounds != size) {
         gradient.copy(startY = 0f, endY = size.height).applyTo(paint, 1f)
         currentBounds = size
         rect = size.toRect()
       }
-      canvas.drawRect(rect!!, paint)
+      it.drawRect(rect!!, paint)
     }
   }
 

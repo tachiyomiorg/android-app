@@ -11,10 +11,11 @@ package tachiyomi.ui
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.compose.foundation.Box
 import androidx.compose.foundation.Icon
 import androidx.compose.foundation.Text
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.MaterialTheme
@@ -61,9 +62,9 @@ class MainActivity : ComponentActivity() {
             when (HomeScreen.current) {
               Screen.Library -> LibraryScreen()
               Screen.Catalogs -> CatalogScreen()
-              Screen.Updates -> Box()
-              Screen.History -> Box()
-              Screen.More -> Box()
+              Screen.Updates -> Box(modifier = Modifier.fillMaxSize())
+              Screen.History -> Box(modifier = Modifier.fillMaxSize())
+              Screen.More -> Box(modifier = Modifier.fillMaxSize())
             }
           }
           HomeBottomNav()

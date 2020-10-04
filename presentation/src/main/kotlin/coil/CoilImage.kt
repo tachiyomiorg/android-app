@@ -19,7 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.WithConstraints
 import androidx.compose.ui.geometry.toRect
-import androidx.compose.ui.graphics.drawscope.drawCanvas
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toAndroidRect
 import androidx.compose.ui.platform.ContextAmbient
@@ -73,8 +73,8 @@ fun <T> CoilImage(
     drawable.value?.let { theDrawable ->
       Canvas(modifier = modifier) {
         theDrawable.bounds = size.toRect().toAndroidRect()
-        drawCanvas { canvas, _ ->
-          theDrawable.draw(canvas.nativeCanvas)
+        drawIntoCanvas {
+          theDrawable.draw(it.nativeCanvas)
         }
       }
     }
