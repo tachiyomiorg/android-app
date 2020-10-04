@@ -52,6 +52,10 @@ subprojects {
       defaultConfig {
         minSdkVersion(Config.minSdk)
         targetSdkVersion(Config.targetSdk)
+        ndk {
+          version = Config.ndk
+        }
+
         versionCode(Config.versionCode)
         versionName(Config.versionName)
       }
