@@ -84,10 +84,10 @@ object Deps {
 
   const val coil = "io.coil-kt:coil:0.11.0"
 
-  const val mockk = "io.mockk:mockk:1.10.0"
+  const val mockk = "io.mockk:mockk:1.10.2"
 
   object kotest {
-    private const val version = "4.0.5"
+    private const val version = "4.2.5"
     const val framework = "io.kotest:kotest-runner-junit5-jvm:$version"
     const val assertions = "io.kotest:kotest-assertions-core-jvm:$version"
   }
