@@ -84,7 +84,7 @@ object Deps {
 
   const val coil = "io.coil-kt:coil:0.11.0"
 
-  const val mockk = "io.mockk:mockk:1.10.2"
+  const val mockk = "io.mockk:mockk:1.10.0"
 
   object kotest {
     private const val version = "4.2.5"
