@@ -8,7 +8,7 @@
 
 package tachiyomi.domain.download.service
 
-import io.kotest.core.spec.TestConfiguration
+import io.kotest.core.TestConfiguration
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.core.test.TestContext
 import io.kotest.matchers.shouldBe
