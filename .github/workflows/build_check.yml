@@ -1,4 +1,4 @@
-name: Build check
+name: CI
 on:
   push:
     branches:
@@ -6,7 +6,8 @@ on:
   pull_request:
 
 jobs:
-  build:
+  check_wrapper:
+    name: Validate Gradle Wrapper
     runs-on: ubuntu-latest
 
     steps:
@@ -15,6 +16,21 @@ jobs:
 
       - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@v1
+
+  build:
+    name: Build app
+    needs: check_wrapper
+    if: "!startsWith(github.event.head_commit.message, '[SKIP CI]')"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Cancel previous runs
+        uses: styfle/cancel-workflow-action@0.5.0
+        with:
+          access_token: ${{ github.token }}
+
+      - name: Clone repo
+        uses: actions/checkout@v2
 
       - name: Set up JDK 1.8
         uses: actions/setup-java@v1
@@ -25,7 +41,6 @@ jobs:
         run: |
           mkdir -p ~/.gradle
           cp .github/runner-files/ci-gradle.properties ~/.gradle/gradle.properties
-
       - name: Build app
         uses: eskatos/gradle-command-action@v1
         with:
