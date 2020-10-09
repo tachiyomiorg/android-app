@@ -9,12 +9,10 @@
 package tachiyomi.domain.track.sites.myanimelist
 
 import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.json
 import kotlinx.serialization.json.put
 import okhttp3.FormBody
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.jsoup.Jsoup
 import tachiyomi.core.http.Http

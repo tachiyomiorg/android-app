@@ -9,16 +9,12 @@
 package tachiyomi.domain.sync.api
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.json
 import kotlinx.serialization.json.put
-import kotlinx.serialization.parse
 import okhttp3.Credentials
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import tachiyomi.core.http.Http
 import tachiyomi.core.http.awaitBody

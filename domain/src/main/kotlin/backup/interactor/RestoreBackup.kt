@@ -11,7 +11,6 @@ package tachiyomi.domain.backup.interactor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromByteArray
-import kotlinx.serialization.load
 import kotlinx.serialization.protobuf.ProtoBuf
 import okio.buffer
 import okio.gzip
