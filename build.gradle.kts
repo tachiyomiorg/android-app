@@ -30,6 +30,7 @@ subprojects {
   tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile> {
     kotlinOptions {
       freeCompilerArgs = freeCompilerArgs + listOf(
+        "-Xuse-experimental=kotlin.ExperimentalStdlibApi",
         "-Xuse-experimental=kotlinx.coroutines.FlowPreview",
         "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi",
         "-Xuse-experimental=kotlinx.serialization.ExperimentalSerializationApi",
