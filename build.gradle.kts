@@ -4,7 +4,7 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath("com.android.tools.build:gradle:4.2.0-alpha13")
+    classpath("com.android.tools.build:gradle:4.2.0-alpha14")
     classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${Deps.kotlin.version}")
     classpath("org.jetbrains.kotlin:kotlin-serialization:${Deps.kotlin.version}")
     classpath("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5")
@@ -53,12 +53,11 @@ subprojects {
       defaultConfig {
         minSdkVersion(Config.minSdk)
         targetSdkVersion(Config.targetSdk)
+        versionCode(Config.versionCode)
+        versionName(Config.versionName)
         ndk {
           version = Config.ndk
         }
-
-        versionCode(Config.versionCode)
-        versionName(Config.versionName)
       }
       compileOptions {
         sourceCompatibility(JavaVersion.VERSION_1_8)
