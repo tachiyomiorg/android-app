@@ -38,7 +38,8 @@ class LibraryUpdaterWorker(
     }
 
     withContext(Dispatchers.IO) {
-      updater.enqueue(categoryId).awaitWork()
+      updater.enqueue(categoryId)
+      // TODO await on category?
     }
 
     return Result.success()

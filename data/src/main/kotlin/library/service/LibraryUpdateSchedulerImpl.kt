@@ -15,7 +15,6 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import tachiyomi.domain.library.service.LibraryUpdateScheduler
-import tachiyomi.domain.library.service.LibraryUpdater
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -23,7 +22,7 @@ class LibraryUpdateSchedulerImpl @Inject constructor() : LibraryUpdateScheduler 
 
   private val workManager = WorkManager.getInstance()
 
-  override fun schedule(categoryId: Long, target: LibraryUpdater.Target, timeInHours: Int) {
+  override fun schedule(categoryId: Long, timeInHours: Int) {
     val work = OneTimeWorkRequest.Builder(LibraryUpdaterWorker::class.java)
       .setInitialDelay(timeInHours.toLong(), TimeUnit.HOURS)
       .addTag(LIBRARY_UPDATER_TAG)
@@ -37,20 +36,20 @@ class LibraryUpdateSchedulerImpl @Inject constructor() : LibraryUpdateScheduler 
       )
       .build()
 
-    val workName = getUniqueWorkName(categoryId, target)
+    val workName = getUniqueWorkName(categoryId)
     workManager.enqueueUniqueWork(workName, ExistingWorkPolicy.REPLACE, work)
   }
 
-  override fun unschedule(categoryId: Long, target: LibraryUpdater.Target) {
-    workManager.cancelUniqueWork(getUniqueWorkName(categoryId, target))
+  override fun unschedule(categoryId: Long) {
+    workManager.cancelUniqueWork(getUniqueWorkName(categoryId))
   }
 
   override fun unscheduleAll(categoryId: Long) {
     workManager.cancelAllWorkByTag(getCategoryTag(categoryId))
   }
 
-  private fun getUniqueWorkName(categoryId: Long, target: LibraryUpdater.Target): String {
-    return "library_${target.name}_$categoryId"
+  private fun getUniqueWorkName(categoryId: Long): String {
+    return "library_chapters_$categoryId"
   }
 
   private fun getCategoryTag(categoryId: Long): String {

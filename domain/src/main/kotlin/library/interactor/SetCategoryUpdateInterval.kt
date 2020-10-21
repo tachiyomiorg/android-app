@@ -11,7 +11,6 @@ package tachiyomi.domain.library.interactor
 import tachiyomi.domain.library.model.CategoryUpdate
 import tachiyomi.domain.library.service.CategoryRepository
 import tachiyomi.domain.library.service.LibraryUpdateScheduler
-import tachiyomi.domain.library.service.LibraryUpdater
 import javax.inject.Inject
 
 class SetCategoryUpdateInterval @Inject internal constructor(
@@ -28,9 +27,9 @@ class SetCategoryUpdateInterval @Inject internal constructor(
       categoryRepository.updatePartial(update)
 
       if (intervalInHours > 0) {
-        libraryScheduler.schedule(categoryId, LibraryUpdater.Target.Chapters, intervalInHours)
+        libraryScheduler.schedule(categoryId, intervalInHours)
       } else {
-        libraryScheduler.unschedule(categoryId, LibraryUpdater.Target.Chapters)
+        libraryScheduler.unschedule(categoryId)
       }
       Result.Success
     } catch (e: Exception) {

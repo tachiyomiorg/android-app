@@ -10,9 +10,9 @@ package tachiyomi.domain.library.service
 
 interface LibraryUpdateScheduler {
 
-  fun schedule(categoryId: Long, target: LibraryUpdater.Target, timeInHours: Int)
+  fun schedule(categoryId: Long, timeInHours: Int)
 
-  fun unschedule(categoryId: Long, target: LibraryUpdater.Target)
+  fun unschedule(categoryId: Long)
 
   fun unscheduleAll(categoryId: Long)
 
