@@ -1,5 +1,6 @@
 plugins {
-  kotlin("jvm")
+  id("java-library")
+  id("kotlin")
   id("kotlin-kapt")
   id("kotlinx-serialization")
   jacoco
