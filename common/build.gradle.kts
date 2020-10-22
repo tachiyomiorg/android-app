@@ -1,6 +1,5 @@
 plugins {
-  id("java-library")
-  id("kotlin")
+  kotlin("jvm")
   id("kotlin-kapt")
   id("com.jfrog.bintray")
   id("maven-publish")
