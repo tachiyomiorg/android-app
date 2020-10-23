@@ -67,21 +67,18 @@ subprojects {
     }
   }
 
+  plugins.withType<JacocoPlugin> {
+    configure<JacocoPluginExtension> {
+      toolVersion = "0.8.6"
+    }
+  }
+
   afterEvaluate {
     tasks.withType<JacocoReport> {
       reports {
         xml.isEnabled = true
         html.isEnabled = false
       }
-    }
-  }
-
-  // Required until Kotest 4.3.0
-  configurations.all {
-    resolutionStrategy.eachDependency {
-      exclude("com.github.ajalt.clikt", "clikt-js")
-      exclude("com.github.ajalt.clikt", "clikt-linuxx64")
-      exclude("com.github.ajalt.clikt", "clikt-metadata")
     }
   }
 }

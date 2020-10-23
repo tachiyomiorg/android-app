@@ -87,7 +87,7 @@ object Deps {
   const val mockk = "io.mockk:mockk:1.10.0"
 
   object kotest {
-    private const val version = "4.2.6"
+    private const val version = "4.3.0"
     const val framework = "io.kotest:kotest-runner-junit5-jvm:$version"
     const val assertions = "io.kotest:kotest-assertions-core-jvm:$version"
   }
