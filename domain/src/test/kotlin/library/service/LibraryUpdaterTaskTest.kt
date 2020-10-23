@@ -9,6 +9,8 @@
 package tachiyomi.domain.library.service
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldExist
 import io.kotest.matchers.collections.shouldHaveSize
@@ -32,6 +34,7 @@ import tachiyomi.domain.manga.interactor.SyncChaptersFromSource.Result as SyncRe
 class LibraryUpdaterTaskTest : FunSpec({
 
   lateinit var syncChapters: SyncChaptersFromSource
+  lateinit var inputs: Channel<List<LibraryManga>>
   lateinit var events: MutableSharedFlow<LibraryUpdaterEvent>
   lateinit var job: Job
   lateinit var updater: LibraryUpdaterTask
@@ -51,13 +54,34 @@ class LibraryUpdaterTaskTest : FunSpec({
     syncChapters = mockk {
       coEvery { await(any()) } returns SyncResult.Success(Diff())
     }
-    val inputs = Channel<List<LibraryManga>>()
+    inputs = Channel()
     job = SupervisorJob()
     val scope = CoroutineScope(job)
     events = MutableSharedFlow(replay = Int.MAX_VALUE) // Store every event sent
     updater = LibraryUpdaterTask(syncChapters, scope, inputs, events) {
       scope.cancel()
     }
+  }
+
+  test("ignores empty inputs") {
+    updater.send(emptyList())
+    updater.send(emptyList()) // Send a second element to await completion of the first one
+    inputs.isClosedForSend.shouldBeFalse()
+    job.isActive.shouldBeTrue()
+  }
+
+  test("closes inputs once the task is complete") {
+    updater.send(testManga.take(1))
+    job.join()
+    inputs.isClosedForSend.shouldBeTrue()
+  }
+
+  test("closes inputs when the task is cancelled") {
+    coEvery { syncChapters.await(any()) } coAnswers { delay(10000); error("Timeout") }
+    updater.send(testManga.take(1))
+    updater.cancel()
+    job.join()
+    inputs.isClosedForSend.shouldBeTrue()
   }
 
   test("updates sequentially when using the same source") {
@@ -95,7 +119,7 @@ class LibraryUpdaterTaskTest : FunSpec({
     events.replayCache.shouldExist { it is LibraryUpdaterEvent.Completed }
   }
 
-  test("cancels tasks while updating") {
+  test("supports cancelling tasks while updating") {
     val sameSourceManga = testManga.groupBy { it.sourceId }.values.first()
     val cancelAfterManga = sameSourceManga[2]
     coEvery { syncChapters.await(match { it.id == cancelAfterManga.id }) } coAnswers {

@@ -53,17 +53,24 @@ internal class LibraryUpdaterTask @Inject constructor(
         }
       }
 
-      // Clean up
-      workers.forEach { it.channel.close() }
+      // Clean up when completed
+      closeChannels()
     }
   }
 
   suspend fun send(mangas: List<LibraryManga>) {
+    if (mangas.isEmpty()) return
     inputs.send(mangas)
   }
 
   fun cancel() {
     scope.cancel()
+    closeChannels()
+  }
+
+  private fun closeChannels() {
+    inputs.close()
+    workers.forEach { it.channel.close() }
   }
 
   private suspend fun reschedule(): Boolean {
