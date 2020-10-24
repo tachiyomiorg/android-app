@@ -36,9 +36,16 @@ class CreateBackup @Inject internal constructor(
   private val transactions: Transactions
 ) {
 
-  suspend fun saveTo(file: File) {
-    withContext(Dispatchers.IO) {
-      file.sink().gzip().buffer().use { it.write(createDump()) }
+  suspend fun saveTo(file: File): Boolean {
+    return try {
+      withContext(Dispatchers.IO) {
+        file.sink().gzip().buffer().use {
+          it.write(createDump())
+        }
+      }
+      true
+    } catch (e: Exception) {
+      false
     }
   }
 

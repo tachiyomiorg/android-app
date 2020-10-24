@@ -42,22 +42,27 @@ class RestoreBackup @Inject internal constructor(
   private val transactions: Transactions
 ) {
 
-  suspend fun restoreFrom(file: File) {
-    withContext(Dispatchers.IO) {
-      val bytes = file.source().gzip().buffer().use { it.readByteArray() }
-      val backup = loadDump(bytes)
+  suspend fun restoreFrom(file: File): Boolean {
+    return try {
+      withContext(Dispatchers.IO) {
+        val bytes = file.source().gzip().buffer().use { it.readByteArray() }
+        val backup = loadDump(bytes)
 
-      transactions.run {
-        restoreCategories(backup.categories)
-        val backupCategoriesWithId = getCategoryIdsByBackupId(backup.categories)
-        for (manga in backup.library) {
-          val mangaId = restoreManga(manga)
-          restoreChapters(manga)
-          restoreCategoriesOfManga(mangaId,
-            manga.categories.mapNotNull(backupCategoriesWithId::get))
-          restoreTracks(manga, mangaId)
+        transactions.run {
+          restoreCategories(backup.categories)
+          val backupCategoriesWithId = getCategoryIdsByBackupId(backup.categories)
+          for (manga in backup.library) {
+            val mangaId = restoreManga(manga)
+            val categoryIdsOfManga = manga.categories.mapNotNull(backupCategoriesWithId::get)
+            restoreChapters(manga)
+            restoreCategoriesOfManga(mangaId, categoryIdsOfManga)
+            restoreTracks(manga, mangaId)
+          }
         }
       }
+      true
+    } catch (e: Exception) {
+      false
     }
   }
 

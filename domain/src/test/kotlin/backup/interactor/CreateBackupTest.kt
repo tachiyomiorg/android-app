@@ -9,12 +9,20 @@
 package tachiyomi.domain.backup.interactor
 
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.engine.spec.tempfile
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.longs.shouldBeGreaterThan
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coInvoke
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import okio.IOException
+import okio.sink
 import tachiyomi.core.db.Transactions
 import tachiyomi.domain.backup.model.Backup
 import tachiyomi.domain.library.model.Category
@@ -116,6 +124,23 @@ class CreateBackupTest : StringSpec({
 
     coVerify { trackRepository.findAllForManga(1) }
     result shouldHaveSize 2
+  }
+
+  "writes to disk" {
+    val file = tempfile("dump.gz")
+
+    val result = interactor.saveTo(file)
+    result.shouldBeTrue()
+    file.length() shouldBeGreaterThan 0
+  }
+
+  "fails to write to disk" {
+    val file = tempfile("dumpfail.gz")
+    mockkStatic("okio.Okio")
+    every { file.sink(any()) } throws IOException("Simulated IO exception")
+
+    val result = interactor.saveTo(file)
+    result.shouldBeFalse()
   }
 
 })
