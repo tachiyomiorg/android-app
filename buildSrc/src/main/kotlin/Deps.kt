@@ -36,19 +36,19 @@ object Deps {
   }
 
   object lifecycle {
-    private const val version = "2.3.0-alpha07"
+    private const val version = "2.3.0-beta01"
     const val common = "androidx.lifecycle:lifecycle-common-java8:$version"
     const val process = "androidx.lifecycle:lifecycle-process:$version"
     const val extensions = "androidx.lifecycle:lifecycle-runtime-ktx:$version"
   }
 
   object workManager {
-    private const val version = "2.5.0-alpha02"
+    private const val version = "2.5.0-alpha03"
     const val runtime = "androidx.work:work-runtime-ktx:$version"
   }
 
   object room {
-    private const val version = "2.2.5"
+    private const val version = "2.3.0-alpha03"
     const val runtime = "androidx.room:room-runtime:$version"
     const val ktx = "androidx.room:room-ktx:$version"
     const val compiler = "androidx.room:room-compiler:$version"
