@@ -36,7 +36,10 @@ import androidx.compose.ui.graphics.vector.VectorAsset
 import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.res.stringResource
 import tachiyomi.ui.catalog.CatalogScreen
+import tachiyomi.ui.history.HistoryScreen
 import tachiyomi.ui.library.LibraryScreen
+import tachiyomi.ui.more.MoreScreen
+import tachiyomi.ui.updates.UpdatesScreen
 
 sealed class Screen {
   object Library : Screen()
@@ -62,9 +65,9 @@ class MainActivity : ComponentActivity() {
             when (HomeScreen.current) {
               Screen.Library -> LibraryScreen()
               Screen.Catalogs -> CatalogScreen()
-              Screen.Updates -> Box(modifier = Modifier.fillMaxSize())
-              Screen.History -> Box(modifier = Modifier.fillMaxSize())
-              Screen.More -> Box(modifier = Modifier.fillMaxSize())
+              Screen.Updates -> UpdatesScreen()
+              Screen.History -> HistoryScreen()
+              Screen.More -> MoreScreen()
             }
           }
           HomeBottomNav()
