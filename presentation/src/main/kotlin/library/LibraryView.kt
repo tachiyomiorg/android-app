@@ -8,9 +8,9 @@
 
 package tachiyomi.ui.library
 
+import androidx.compose.foundation.AmbientTextStyle
 import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.Text
-import androidx.compose.foundation.currentTextStyle
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
@@ -90,7 +90,7 @@ fun LibraryTable(state: State<LibraryState>) {
 @Composable
 fun LibraryTableGridItem(manga: LibraryManga, gradientPainter: GradientPainter) {
   val cover = MangaCover(manga.id, manga.sourceId, manga.cover, true)
-  val fontStyle = currentTextStyle().merge(
+  val fontStyle = AmbientTextStyle.current.merge(
     TextStyle(letterSpacing = 0.sp, fontFamily = ptSansFont, fontSize = 14.sp)
   )
 

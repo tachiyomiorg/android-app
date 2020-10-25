@@ -8,12 +8,12 @@
 
 package tachiyomi.ui.catalog
 
+import androidx.compose.foundation.AmbientContentColor
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.ScrollableRow
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.contentColor
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ConstraintLayout
@@ -29,8 +29,8 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.AmbientEmphasisLevels
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.EmphasisAmbient
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -78,8 +78,8 @@ fun CatalogScreen() {
     ScrollableColumn {
       val currState = state.value
 
-      val mediumTextEmphasis = EmphasisAmbient.current.medium
-        .applyEmphasis(contentColor())
+      val mediumTextEmphasis = AmbientEmphasisLevels.current.medium
+        .applyEmphasis(AmbientContentColor.current)
 
       if (currState.updatableCatalogs.isNotEmpty() || currState.localCatalogs.isNotEmpty()) {
         Text(
@@ -190,16 +190,12 @@ fun CatalogItem(
         bottom.linkTo(parent.bottom)
       }
       constrain(title) {
-        width = Dimension.fillToConstraints
-        start.linkTo(pic.end, 12.dp)
+        linkTo(start = pic.end, startMargin = 12.dp, end = icons.start, bias = 0.0f)
         top.linkTo(parent.top)
-        end.linkTo(icons.start)
       }
       constrain(description) {
-        width = Dimension.fillToConstraints
-        start.linkTo(title.start)
+        linkTo(start = title.start, end = parent.end, bias = 0.0f)
         top.linkTo(title.bottom)
-        end.linkTo(parent.end)
       }
       constrain(icons) {
         height = Dimension.value(48.dp)
@@ -210,8 +206,8 @@ fun CatalogItem(
     },
     modifier = Modifier.fillMaxWidth().padding(12.dp, 12.dp, 8.dp, 12.dp)
   ) {
-    val mediumTextEmphasis = EmphasisAmbient.current.medium
-      .applyEmphasis(contentColor())
+    val mediumTextEmphasis = AmbientEmphasisLevels.current.medium
+      .applyEmphasis(AmbientContentColor.current)
     val title = annotatedString {
       append("${catalog.name} ")
 
