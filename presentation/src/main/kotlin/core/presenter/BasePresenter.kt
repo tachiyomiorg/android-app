@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package tachiyomi.ui.presenter
+package tachiyomi.ui.core.presenter
 
 import androidx.annotation.CallSuper
 import com.freeletics.coredux.LogSink

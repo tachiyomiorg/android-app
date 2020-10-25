@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package tachiyomi.ui.presenter
+package tachiyomi.ui.core.presenter
 
 import com.freeletics.coredux.LogEvent
 import com.freeletics.coredux.SideEffect

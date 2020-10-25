@@ -60,7 +60,7 @@ import tachiyomi.domain.catalog.model.CatalogBundled
 import tachiyomi.domain.catalog.model.CatalogInstalled
 import tachiyomi.domain.catalog.model.CatalogRemote
 import tachiyomi.ui.R
-import tachiyomi.ui.coil.CoilImage
+import tachiyomi.ui.core.coil.CoilImage
 import kotlin.math.abs
 import kotlin.random.Random
 

@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package tachiyomi.ui
+package tachiyomi.ui.core
 
 import androidx.compose.material.Emphasis
 import androidx.compose.material.EmphasisLevels

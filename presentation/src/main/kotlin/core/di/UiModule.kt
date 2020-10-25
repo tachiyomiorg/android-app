@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package tachiyomi.ui.di
+package tachiyomi.ui.core.di
 
 import toothpick.ktp.binding.module
 

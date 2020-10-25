@@ -32,9 +32,9 @@ import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.domain.library.model.LibrarySort
 import tachiyomi.domain.library.model.LibrarySorting
 import tachiyomi.domain.library.service.LibraryPreferences
-import tachiyomi.ui.presenter.BasePresenter
-import tachiyomi.ui.presenter.EmptySideEffect
-import tachiyomi.ui.presenter.FlowSwitchSideEffect
+import tachiyomi.ui.core.presenter.BasePresenter
+import tachiyomi.ui.core.presenter.EmptySideEffect
+import tachiyomi.ui.core.presenter.FlowSwitchSideEffect
 import javax.inject.Inject
 
 class LibraryPresenter @Inject constructor(

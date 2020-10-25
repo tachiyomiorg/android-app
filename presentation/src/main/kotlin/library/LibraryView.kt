@@ -48,8 +48,8 @@ import androidx.compose.ui.unit.sp
 import tachiyomi.core.di.AppScope
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.ui.R
-import tachiyomi.ui.coil.CoilImage
-import tachiyomi.ui.coil.MangaCover
+import tachiyomi.ui.core.coil.CoilImage
+import tachiyomi.ui.core.coil.MangaCover
 
 val ptSansFont = fontFamily(font(R.font.ptsans_bold))
 

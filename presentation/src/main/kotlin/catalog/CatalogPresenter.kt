@@ -28,9 +28,9 @@ import tachiyomi.domain.catalog.model.Catalog
 import tachiyomi.domain.catalog.model.CatalogInstalled
 import tachiyomi.domain.catalog.model.CatalogLocal
 import tachiyomi.domain.catalog.model.CatalogRemote
-import tachiyomi.ui.presenter.BasePresenter
-import tachiyomi.ui.presenter.FlowSideEffect
-import tachiyomi.ui.presenter.FlowSwitchSideEffect
+import tachiyomi.ui.core.presenter.BasePresenter
+import tachiyomi.ui.core.presenter.FlowSideEffect
+import tachiyomi.ui.core.presenter.FlowSwitchSideEffect
 import javax.inject.Inject
 
 class CatalogsPresenter @Inject constructor(

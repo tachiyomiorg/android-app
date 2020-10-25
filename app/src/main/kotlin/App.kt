@@ -12,7 +12,7 @@ import android.app.Application
 import tachiyomi.app.initializers.AppInitializers
 import tachiyomi.core.CoreModule
 import tachiyomi.data.DataModule
-import tachiyomi.ui.di.UiModule
+import tachiyomi.ui.core.di.UiModule
 import toothpick.Toothpick
 import toothpick.configuration.Configuration
 import toothpick.ktp.delegate.inject
