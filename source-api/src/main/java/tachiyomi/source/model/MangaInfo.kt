@@ -22,5 +22,6 @@ data class MangaInfo(
     const val COMPLETED = 2
     const val LICENSED = 3
     const val PUBLISHING_FINISHED = 4
+    const val CANCELLED = 5
   }
 }
