@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toAndroidRect
 import androidx.compose.ui.platform.ContextAmbient
-import coil.request.LoadRequest
+import coil.request.ImageRequest
 import coil.size.OriginalSize
 import coil.size.PixelSize
 import coil.size.Scale
@@ -54,7 +54,7 @@ fun <T> CoilImage(
         }
       val size = if (width == 0 || height == 0) OriginalSize else PixelSize(width, height)
 
-      val request = LoadRequest.Builder(context)
+      val request = ImageRequest.Builder(context)
         .data(model)
         .size(size)
         .scale(scale)
@@ -62,7 +62,7 @@ fun <T> CoilImage(
         .target(onSuccess = { drawable.value = it })
         .build()
 
-      val disposable = CoilLoader.execute(request)
+      val disposable = CoilLoader.enqueue(request)
 
       onDispose {
         disposable.dispose()
