@@ -36,16 +36,16 @@ class CreateBackup @Inject internal constructor(
   private val transactions: Transactions
 ) {
 
-  suspend fun saveTo(file: File): Boolean {
+  suspend fun saveTo(file: File): Result {
     return try {
       withContext(Dispatchers.IO) {
         file.sink().gzip().buffer().use {
           it.write(createDump())
         }
       }
-      true
+      Result.Success
     } catch (e: Exception) {
-      false
+      Result.Error(e)
     }
   }
 
@@ -91,6 +91,11 @@ class CreateBackup @Inject internal constructor(
     return categoryRepository.findAll()
       .filter { !it.isSystemCategory }
       .map { cat -> CategoryProto.fromDomain(cat) }
+  }
+
+  sealed class Result {
+    object Success : Result()
+    data class Error(val error: Exception) : Result()
   }
 
 }

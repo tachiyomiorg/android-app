@@ -4,6 +4,7 @@ object Deps {
   object kotlin {
     const val version = "1.4.10"
     const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version"
+    const val reflect = "org.jetbrains.kotlin:kotlin-reflect:$version"
 
     object serialization {
       private const val version = "1.0.0"

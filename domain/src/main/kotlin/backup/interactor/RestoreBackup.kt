@@ -42,7 +42,7 @@ class RestoreBackup @Inject internal constructor(
   private val transactions: Transactions
 ) {
 
-  suspend fun restoreFrom(file: File): Boolean {
+  suspend fun restoreFrom(file: File): Result {
     return try {
       withContext(Dispatchers.IO) {
         val bytes = file.source().gzip().buffer().use { it.readByteArray() }
@@ -60,9 +60,9 @@ class RestoreBackup @Inject internal constructor(
           }
         }
       }
-      true
+      Result.Success
     } catch (e: Exception) {
-      false
+      Result.Error(e)
     }
   }
 
@@ -217,6 +217,11 @@ class RestoreBackup @Inject internal constructor(
       val dbId = dbCategories.first { it.name.equals(backupCategory.name, true) }.id
       backupCategory.order to dbId
     }
+  }
+
+  sealed class Result {
+    object Success : Result()
+    data class Error(val error: Exception) : Result()
   }
 
 }

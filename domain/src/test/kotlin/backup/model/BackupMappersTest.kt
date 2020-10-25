@@ -18,7 +18,6 @@ import tachiyomi.domain.track.model.Track
 import tachiyomi.domain.track.model.TrackStatus
 import tachiyomi.source.model.MangaInfo
 
-@Suppress("NO_REFLECTION_IN_CLASS_PATH")
 class BackupMappersTest : StringSpec({
 
   "should fail when domain models are updated to maybe add new backup fields" {

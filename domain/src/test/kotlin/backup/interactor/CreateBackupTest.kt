@@ -10,10 +10,10 @@ package tachiyomi.domain.backup.interactor
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.engine.spec.tempfile
-import io.kotest.matchers.booleans.shouldBeFalse
-import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.longs.shouldBeGreaterThan
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coInvoke
@@ -130,17 +130,19 @@ class CreateBackupTest : StringSpec({
     val file = tempfile("dump.gz")
 
     val result = interactor.saveTo(file)
-    result.shouldBeTrue()
+    result.shouldBeInstanceOf<CreateBackup.Result.Success>()
     file.length() shouldBeGreaterThan 0
   }
 
   "fails to write to disk" {
     val file = tempfile("dumpfail.gz")
     mockkStatic("okio.Okio")
-    every { file.sink(any()) } throws IOException("Simulated IO exception")
+    val error = IOException("Simulated IO exception")
+    every { file.sink(any()) } throws error
 
     val result = interactor.saveTo(file)
-    result.shouldBeFalse()
+    result.shouldBeInstanceOf<CreateBackup.Result.Error>()
+    result.error shouldBe error
   }
 
 })

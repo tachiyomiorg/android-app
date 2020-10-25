@@ -14,6 +14,7 @@ dependencies {
 
   implementation(Deps.kotlin.serialization.protobuf)
 
+  testImplementation(Deps.kotlin.reflect)
   testImplementation(Deps.mockk)
   testImplementation(Deps.toothpick.testing)
   testImplementation(Deps.kotest.framework)
