@@ -15,6 +15,14 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java) {
   finalizedBy(removeDomainClasses)
 }
 
+android {
+  kapt {
+    arguments {
+      arg("room.schemaLocation", "$projectDir/schemas")
+    }
+  }
+}
+
 dependencies {
   implementationProject(Projects.core)
   implementationProject(Projects.domain)
