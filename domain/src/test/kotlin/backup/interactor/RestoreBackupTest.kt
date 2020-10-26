@@ -9,13 +9,22 @@
 package tachiyomi.domain.backup.interactor
 
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.engine.spec.tempfile
+import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.Called
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
+import io.mockk.coInvoke
 import io.mockk.coVerify
 import io.mockk.coVerifyOrder
 import io.mockk.mockk
+import kotlinx.serialization.decodeFromByteArray
+import kotlinx.serialization.protobuf.ProtoBuf
+import okio.buffer
+import okio.gzip
+import okio.source
 import tachiyomi.core.db.Transactions
+import tachiyomi.domain.backup.model.Backup
 import tachiyomi.domain.backup.model.CategoryProto
 import tachiyomi.domain.backup.model.ChapterProto
 import tachiyomi.domain.backup.model.MangaProto
@@ -31,6 +40,8 @@ import tachiyomi.domain.manga.service.MangaRepository
 import tachiyomi.domain.track.model.Track
 import tachiyomi.domain.track.model.TrackUpdate
 import tachiyomi.domain.track.service.TrackRepository
+import java.io.File
+import java.io.IOException
 
 class RestoreBackupTest : StringSpec({
 
@@ -51,6 +62,9 @@ class RestoreBackupTest : StringSpec({
     coEvery { mangaRepository.findFavorites() } returns listOf()
     coEvery { chapterRepository.findForManga(any()) } returns listOf()
     coEvery { trackRepository.findAllForManga(any()) } returns listOf()
+    coEvery { transactions.run(captureCoroutine<suspend () -> Backup>()) } coAnswers {
+      coroutine<suspend () -> Backup>().coInvoke()
+    }
   }
 
   "restores non existent manga" {
@@ -362,6 +376,48 @@ class RestoreBackupTest : StringSpec({
     interactor.restoreTracks(backupManga, 1)
 
     coVerify { trackRepository.updatePartial(match<List<TrackUpdate>> { it.size == 1 }) }
+  }
+
+  "restores a full backup" {
+    val file = File(ClassLoader.getSystemClassLoader().getResource("dump1.gz")!!.file)
+    val byteArray = file.source().gzip().buffer().use { it.readByteArray() }
+    val backup = ProtoBuf.decodeFromByteArray<Backup>(byteArray)
+
+    val categoriesFromDb = backup.categories.mapIndexed { index, category ->
+      category.toDomain().copy(id = index + 1L)
+    }
+    coEvery { categoryRepository.findAll() } returns emptyList() andThen categoriesFromDb
+
+    // Even chapters are found in db, odds are missing
+    coEvery { mangaRepository.find(any(), any()) } answers {
+      // Hacky way to identify where the repository is called
+      val fromRestoreManga = invocation.callStack().any { it.methodName.startsWith("restoreManga") }
+      val mangaIndex = backup.library.indexOfFirst {
+        it.key == firstArg() && it.sourceId == secondArg()
+      }
+      if (!fromRestoreManga || mangaIndex % 2 == 0) {
+        backup.library[mangaIndex].toDomain().copy(id = mangaIndex + 1L, lastUpdate = -1)
+      } else {
+        null
+      }
+    }
+    coEvery { mangaRepository.insert(any()) } answers {
+      val mangaIndex = backup.library.indexOfFirst {
+        it.key == firstArg() && it.sourceId == secondArg()
+      }
+      mangaIndex + 1L
+    }
+
+    val result = interactor.restoreFrom(file)
+    coVerify { categoryRepository.insert(any<List<Category>>()) }
+    result.shouldBeInstanceOf<RestoreBackup.Result.Success>()
+  }
+
+  "fails to restore a full backup" {
+    val file = tempfile("nonexistentbackup.gz")
+    val result = interactor.restoreFrom(file)
+    result.shouldBeInstanceOf<RestoreBackup.Result.Error>()
+    result.error.shouldBeInstanceOf<IOException>()
   }
 
 })

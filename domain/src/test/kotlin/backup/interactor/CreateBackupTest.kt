@@ -33,6 +33,7 @@ import tachiyomi.domain.manga.service.ChapterRepository
 import tachiyomi.domain.manga.service.MangaRepository
 import tachiyomi.domain.track.model.Track
 import tachiyomi.domain.track.service.TrackRepository
+import java.io.File
 
 class CreateBackupTest : StringSpec({
 
@@ -143,6 +144,64 @@ class CreateBackupTest : StringSpec({
     val result = interactor.saveTo(file)
     result.shouldBeInstanceOf<CreateBackup.Result.Error>()
     result.error shouldBe error
+  }
+
+  "creates a full backup" {
+    val file = File("/tmp/dump1.gz")
+
+    coEvery { categoryRepository.findAll() } returns listOf(
+      Category(id = Category.ALL_ID, order = 0, updateInterval = 0),
+      Category(id = Category.UNCATEGORIZED_ID, order = 1, updateInterval = 0),
+      Category(id = 1, name = "cat1", order = 2, updateInterval = 0),
+      Category(id = 2, name = "cat2", order = 3, updateInterval = 0)
+    )
+
+    coEvery { mangaRepository.findFavorites() } returns listOf(
+      Manga(id = 1, sourceId = 1, key = "key1", title = "title1"),
+      Manga(id = 2, sourceId = 2, key = "key2", title = "title2"),
+      Manga(id = 3, sourceId = 3, key = "key3", title = "title3")
+    )
+
+    coEvery { categoryRepository.findCategoriesOfManga(1) } returns listOf(
+      Category(id = 1, name = "cat1", order = 2, updateInterval = 0),
+    )
+    coEvery { categoryRepository.findCategoriesOfManga(2) } returns listOf(
+      Category(id = 1, name = "cat1", order = 2, updateInterval = 0),
+      Category(id = 2, name = "cat2", order = 3, updateInterval = 0)
+    )
+    coEvery { categoryRepository.findCategoriesOfManga(3) } returns listOf(
+      Category(id = 2, name = "cat2", order = 3, updateInterval = 0)
+    )
+
+    coEvery { chapterRepository.findForManga(1) } returns listOf(
+      Chapter(id = 1, mangaId = 1, key = "chapter1", name = "Chapter 1"),
+      Chapter(id = 2, mangaId = 1, key = "chapter2", name = "Chapter 2"),
+      Chapter(id = 3, mangaId = 1, key = "chapter3", name = "Chapter 3")
+    )
+    coEvery { chapterRepository.findForManga(2) } returns listOf(
+      Chapter(id = 4, mangaId = 2, key = "chapter1", name = "Chapter 1"),
+      Chapter(id = 5, mangaId = 2, key = "chapter2", name = "Chapter 2"),
+      Chapter(id = 6, mangaId = 2, key = "chapter3", name = "Chapter 3")
+    )
+    coEvery { chapterRepository.findForManga(3) } returns listOf(
+      Chapter(id = 7, mangaId = 3, key = "chapter1", name = "Chapter 1"),
+      Chapter(id = 8, mangaId = 3, key = "chapter2", name = "Chapter 2"),
+      Chapter(id = 9, mangaId = 3, key = "chapter3", name = "Chapter 3")
+    )
+
+    coEvery { trackRepository.findAllForManga(1) } returns listOf(
+      Track(id = 1, mangaId = 1, siteId = 1, entryId = 1),
+    )
+    coEvery { trackRepository.findAllForManga(2) } returns listOf(
+      Track(id = 1, mangaId = 2, siteId = 1, entryId = 1),
+      Track(id = 2, mangaId = 2, siteId = 2, entryId = 2),
+    )
+    coEvery { trackRepository.findAllForManga(3) } returns listOf(
+      Track(id = 3, mangaId = 3, siteId = 3, entryId = 1)
+    )
+
+    val result = interactor.saveTo(file)
+    result.shouldBeInstanceOf<CreateBackup.Result.Success>()
   }
 
 })
