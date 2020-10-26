@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package tachiyomi.ui.catalog
+package tachiyomi.ui.catalogs
 
 import androidx.compose.foundation.AmbientContentColor
 import androidx.compose.foundation.Image
@@ -66,7 +66,7 @@ import kotlin.math.abs
 import kotlin.random.Random
 
 @Composable
-fun CatalogScreen(navController: NavController) {
+fun CatalogsScreen(navController: NavController) {
   val presenter = remember { AppScope.getInstance<CatalogsPresenter>() }
   onDispose { presenter.destroy() }
 
@@ -74,7 +74,7 @@ fun CatalogScreen(navController: NavController) {
 
   Column {
     TopAppBar(
-      title = { Text(stringResource(R.string.label_catalogues)) }
+      title = { Text(stringResource(R.string.label_catalogs)) }
     )
     ScrollableColumn {
       val currState = state.value

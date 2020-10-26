@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package tachiyomi.ui.catalog
+package tachiyomi.ui.catalogs
 
 data class LanguageChoices(val choices: List<LanguageChoice>, val selected: LanguageChoice)
 

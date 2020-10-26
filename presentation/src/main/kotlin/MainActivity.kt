@@ -35,7 +35,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigate
-import tachiyomi.ui.catalog.CatalogScreen
+import tachiyomi.ui.catalogs.CatalogsScreen
 import tachiyomi.ui.history.HistoryScreen
 import tachiyomi.ui.library.LibraryScreen
 import tachiyomi.ui.more.MoreScreen
@@ -93,7 +93,7 @@ private fun MainNavHost() {
 
   val items = listOf(
     Item(R.string.label_library2, Icons.Default.Book, Route.Library),
-    Item(R.string.label_catalogues, Icons.Default.Explore, Route.Catalogs),
+    Item(R.string.label_catalogs, Icons.Default.Explore, Route.Catalogs),
     Item(R.string.label_updates, Icons.Default.NewReleases, Route.Updates),
     Item(R.string.label_history, Icons.Default.History, Route.History),
     Item(R.string.label_more, Icons.Default.MoreHoriz, Route.More)
@@ -119,7 +119,7 @@ private fun MainNavHost() {
   ) {
     NavHost(navController, startDestination = Route.Catalogs.id) {
       composable(Route.Library.id) { LibraryScreen(navController) }
-      composable(Route.Catalogs.id) { CatalogScreen(navController) }
+      composable(Route.Catalogs.id) { CatalogsScreen(navController) }
       composable(Route.Updates.id) { UpdatesScreen(navController) }
       composable(Route.History.id) { HistoryScreen(navController) }
       composable(Route.More.id) { MoreScreen(navController) }

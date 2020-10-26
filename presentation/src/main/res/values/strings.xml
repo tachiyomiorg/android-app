@@ -15,7 +15,7 @@
   <string name="label_library">My library</string>
   <string name="label_library2">Library</string>
   <string name="label_recent_manga">Recently read</string>
-  <string name="label_catalogues">Catalogues</string>
+  <string name="label_catalogs">Catalogs</string>
   <string name="label_history">History</string>
   <string name="label_updates">Updates</string>
   <string name="label_latest_updates">Latest updates</string>
@@ -481,7 +481,7 @@
   <string name="information_no_downloads">No downloads</string>
   <string name="information_no_recent">No recent chapters</string>
   <string name="information_no_recent_manga">No recently read manga</string>
-  <string name="information_empty_library">Your library is empty, you can add series to your library from the Catalogues.</string>
+  <string name="information_empty_library">Your library is empty, you can add series to your library from the Catalogs.</string>
   <string name="information_empty_category">You have no categories. Hit the plus button to create one for organizing your library.</string>
 
   <!-- Download Notification -->
