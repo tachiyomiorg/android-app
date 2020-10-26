@@ -191,7 +191,7 @@ class DownloaderTest : FunSpec({
   context("digits in files") {
     test("1 digit") {
       val pages = IntRange(1, 9).map { Text("") }
-      coEvery { source.getPageList(any()) } returns listOf(Text(""))
+      coEvery { source.getPageList(any()) } returns pages
       val result = awaitDownload()
       result.shouldBeInstanceOf<Success>()
       result.tmpDir.listFiles()!!.forEach { it.nameWithoutExtension shouldHaveLength 1 }
