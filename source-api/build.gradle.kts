@@ -17,6 +17,29 @@ publishing {
       groupId = "tachiyomi.sourceapi"
       artifactId = "source-api"
       version = packageVersion
+      pom {
+        name.set("Tachiyomi Source API")
+        description.set("Core source API for Tachiyomi.")
+        url.set("https://github.com/tachiyomiorg/android-app")
+        licenses {
+          license {
+            name.set("Mozilla Public License 2.0")
+            url.set("https://www.mozilla.org/en-US/MPL/2.0/")
+          }
+        }
+        developers {
+          developer {
+            id.set("inorichi")
+            name.set("Javier Tomás")
+            email.set("len@kanade.eu")
+          }
+        }
+        scm {
+          connection.set("scm:git:git:github.com:tachiyomiorg/android-app.git")
+          developerConnection.set("scm:git:github.com:tachiyomiorg/android-app.git")
+          url.set("https://github.com/tachiyomiorg/android-app")
+        }
+      }
     }
   }
 }
