@@ -1,3 +1,5 @@
+![CI](https://github.com/tachiyomiorg/android-app/workflows/CI/badge.svg?event=push)
+
 ## What is this?
 
 A complete rewrite of Tachiyomi.
