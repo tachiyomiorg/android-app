@@ -91,14 +91,17 @@ internal open class Downloader @Inject constructor(
       throw PageListEmpty()
     }
 
+    // Number of digits
+    val digits = pages.size.toString().length
+
     // List of downloaded files when the download starts
     val downloadedFilesWithoutExtensionOnStart = if (tmpChapterDir.exists()) {
       val allFiles = tmpChapterDir.listFiles().orEmpty().asSequence()
       val tmpFilesFilter: (File) -> Boolean = { it.name.endsWith(".tmp") }
 
-      // Delete all temporary (unfinished) files
+      // Delete all temporary (unfinished) files or with a wrong number of digits
       allFiles
-        .filter(tmpFilesFilter)
+        .filter { tmpFilesFilter(it) || it.nameWithoutExtension.length != digits }
         .forEach { it.delete() }
 
       allFiles
@@ -115,7 +118,7 @@ internal open class Downloader @Inject constructor(
       .withIndex()
       .flatMapConcat { (index, page) ->
         // Check if page was downloaded
-        val nameWithoutExtension = String.format("%03d", index + 1)
+        val nameWithoutExtension = String.format("%0${digits}d", index + 1)
         if (nameWithoutExtension in downloadedFilesWithoutExtensionOnStart) {
           return@flatMapConcat emptyFlow<Page>()
         }

@@ -12,6 +12,7 @@ import io.kotest.core.TestConfiguration
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.core.test.TestContext
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldHaveLength
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
@@ -164,26 +165,57 @@ class DownloaderTest : FunSpec({
     test("ImageUrl is saved to disk") {
       coEvery { source.getPageList(any()) } returns listOf(imageUrl)
       val result = awaitDownload()
-      result as Success
+      result.shouldBeInstanceOf<Success>()
       result.tmpDir.listFiles()!!.first().extension shouldBe "jpg"
     }
     test("ImageUrl is retried") {
       coEvery { source.getImageRequest(any()) } throws Exception() andThen imageUrlRequest
       coEvery { source.getPageList(any()) } returns listOf(imageUrl)
       val result = awaitDownload()
-      result as Success
+      result.shouldBeInstanceOf<Success>()
     }
     test("ImageBase64 is saved to disk") {
       coEvery { source.getPageList(any()) } returns listOf(imageBase64)
       val result = awaitDownload()
-      result as Success
+      result.shouldBeInstanceOf<Success>()
       result.tmpDir.listFiles()!!.first().extension shouldBe "jpg"
     }
     test("Text is saved to disk") {
       coEvery { source.getPageList(any()) } returns listOf(Text("a"))
       val result = awaitDownload()
-      result as Success
+      result.shouldBeInstanceOf<Success>()
       result.tmpDir.listFiles()!!.first().extension shouldBe "txt"
+    }
+  }
+
+  context("digits in files") {
+    test("1 digit") {
+      val pages = IntRange(1, 9).map { Text("") }
+      coEvery { source.getPageList(any()) } returns listOf(Text(""))
+      val result = awaitDownload()
+      result.shouldBeInstanceOf<Success>()
+      result.tmpDir.listFiles()!!.forEach { it.nameWithoutExtension shouldHaveLength 1 }
+    }
+    test("2 digits") {
+      val pages = IntRange(1, 99).map { Text("") }
+      coEvery { source.getPageList(any()) } returns pages
+      val result = awaitDownload()
+      result.shouldBeInstanceOf<Success>()
+      result.tmpDir.listFiles()!!.forEach { it.nameWithoutExtension shouldHaveLength 2 }
+    }
+    test("3 digits") {
+      val pages = IntRange(1, 999).map { Text("") }
+      coEvery { source.getPageList(any()) } returns pages
+      val result = awaitDownload()
+      result.shouldBeInstanceOf<Success>()
+      result.tmpDir.listFiles()!!.forEach { it.nameWithoutExtension shouldHaveLength 3 }
+    }
+    test("4 digits") {
+      val pages = IntRange(1, 1000).map { Text("") }
+      coEvery { source.getPageList(any()) } returns pages
+      val result = awaitDownload()
+      result.shouldBeInstanceOf<Success>()
+      result.tmpDir.listFiles()!!.forEach { it.nameWithoutExtension shouldHaveLength 4 }
     }
   }
 
