@@ -3,7 +3,7 @@
 
   <application>
     <activity
-      android:name="tachiyomi.ui.MainActivity"
+      android:name=".MainActivity"
       android:launchMode="singleTask"
       android:windowSoftInputMode="adjustPan"
       android:configChanges="orientation|screenLayout|screenSize"
@@ -16,6 +16,8 @@
         <action android:name="android.intent.action.VIEW"/>
       </intent-filter>
     </activity>
+
+    <service android:name=".library.LibraryNotifier$Service" />
   </application>
 
 </manifest>

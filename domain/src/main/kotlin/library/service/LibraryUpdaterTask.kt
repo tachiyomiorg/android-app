@@ -14,7 +14,11 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import kotlinx.coroutines.selects.whileSelect
 import tachiyomi.core.util.removeFirst
 import tachiyomi.domain.library.model.LibraryManga
@@ -99,12 +103,12 @@ internal class LibraryUpdaterTask @Inject constructor(
     val worker = Worker(id, channel)
     workers.add(worker)
 
-    launch(CoroutineName("lib updater $id")) {
-      for (manga in channel) {
+    channel.consumeAsFlow()
+      .onEach { manga ->
         val diff = syncChaptersFromSource.await(manga)
         results.send(Result(manga, diff))
       }
-    }
+      .launchIn(this + CoroutineName("libupdater #$id"))
   }
 
   private data class Worker(val id: Int, val channel: SendChannel<LibraryManga>) {

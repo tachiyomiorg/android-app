@@ -11,10 +11,12 @@ package tachiyomi.app.initializers
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
+import tachiyomi.ui.library.LibraryNotifier
 import javax.inject.Inject
 
-class NotificationChannelsInitializer @Inject constructor(
-  notificationManager: NotificationManager
+class NotificationsInitializer @Inject constructor(
+  notificationManager: NotificationManager,
+  libraryNotifier: LibraryNotifier
 ) {
 
   init {
@@ -24,6 +26,8 @@ class NotificationChannelsInitializer @Inject constructor(
         NotificationChannel("library", "Library", NotificationManager.IMPORTANCE_LOW)
       notificationManager.createNotificationChannel(libraryChannel)
     }
+
+    libraryNotifier.init()
   }
 
 }
