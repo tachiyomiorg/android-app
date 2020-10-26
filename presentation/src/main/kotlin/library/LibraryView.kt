@@ -45,6 +45,7 @@ import androidx.compose.ui.text.font.fontFamily
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import tachiyomi.core.di.AppScope
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.ui.R
@@ -54,7 +55,7 @@ import tachiyomi.ui.core.coil.MangaCover
 val ptSansFont = fontFamily(font(R.font.ptsans_bold))
 
 @Composable
-fun LibraryScreen() {
+fun LibraryScreen(navController: NavController) {
   val presenter = remember { AppScope.getInstance<LibraryPresenter>() }
   onDispose {
     presenter.destroy()

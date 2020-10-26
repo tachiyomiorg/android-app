@@ -54,6 +54,7 @@ import androidx.compose.ui.text.annotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import tachiyomi.core.di.AppScope
 import tachiyomi.domain.catalog.model.Catalog
 import tachiyomi.domain.catalog.model.CatalogBundled
@@ -65,7 +66,7 @@ import kotlin.math.abs
 import kotlin.random.Random
 
 @Composable
-fun CatalogScreen() {
+fun CatalogScreen(navController: NavController) {
   val presenter = remember { AppScope.getInstance<CatalogsPresenter>() }
   onDispose { presenter.destroy() }
 

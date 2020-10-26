@@ -13,10 +13,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavController
 import tachiyomi.ui.R
 
 @Composable
-fun HistoryScreen() {
+fun HistoryScreen(navController: NavController) {
   Column {
     TopAppBar(title = { Text(stringResource(R.string.label_history)) })
   }

@@ -13,44 +13,39 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Icon
 import androidx.compose.foundation.Text
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.material.Scaffold
 import androidx.compose.material.darkColors
 import androidx.compose.material.icons.Icons
+import androidx.navigation.compose.rememberNavController
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.NewReleases
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.VectorAsset
 import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.compose.KEY_ROUTE
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.navigate
 import tachiyomi.ui.catalog.CatalogScreen
 import tachiyomi.ui.history.HistoryScreen
 import tachiyomi.ui.library.LibraryScreen
 import tachiyomi.ui.more.MoreScreen
 import tachiyomi.ui.updates.UpdatesScreen
 
-sealed class Screen {
-  object Library : Screen()
-  object Catalogs : Screen()
-  object Updates : Screen()
-  object History : Screen()
-  object More : Screen()
-}
-
-object HomeScreen {
-  var current by mutableStateOf<Screen>(Screen.Catalogs)
+sealed class Route(val id: String) {
+  object Library : Route("library")
+  object Catalogs : Route("catalogs")
+  object Updates : Route("updates")
+  object History : Route("history")
+  object More : Route("more")
 }
 
 class MainActivity : ComponentActivity() {
@@ -60,18 +55,7 @@ class MainActivity : ComponentActivity() {
 
     setContent {
       MaterialTheme(colors = darkColors()) {
-        Column {
-          Surface(modifier = Modifier.weight(1f)) {
-            when (HomeScreen.current) {
-              Screen.Library -> LibraryScreen()
-              Screen.Catalogs -> CatalogScreen()
-              Screen.Updates -> UpdatesScreen()
-              Screen.History -> HistoryScreen()
-              Screen.More -> MoreScreen()
-            }
-          }
-          HomeBottomNav()
-        }
+        MainNavHost()
       }
     }
   }
@@ -101,25 +85,42 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-private fun HomeBottomNav() {
-  data class Item(val text: Int, val icon: VectorAsset, val screen: Screen)
+private fun MainNavHost() {
+  data class Item(val text: Int, val icon: VectorAsset, val route: Route)
+
+  val navController = rememberNavController()
 
   val items = listOf(
-    Item(R.string.label_library2, Icons.Default.Book, Screen.Library),
-    Item(R.string.label_catalogues, Icons.Default.Explore, Screen.Catalogs),
-    Item(R.string.label_updates, Icons.Default.NewReleases, Screen.Updates),
-    Item(R.string.label_history, Icons.Default.History, Screen.History),
-    Item(R.string.label_more, Icons.Default.MoreHoriz, Screen.More)
+    Item(R.string.label_library2, Icons.Default.Book, Route.Library),
+    Item(R.string.label_catalogues, Icons.Default.Explore, Route.Catalogs),
+    Item(R.string.label_updates, Icons.Default.NewReleases, Route.Updates),
+    Item(R.string.label_history, Icons.Default.History, Route.History),
+    Item(R.string.label_more, Icons.Default.MoreHoriz, Route.More)
   )
 
-  BottomNavigation {
-    for (item in items) {
-      BottomNavigationItem(
-        label = { Text(stringResource(item.text), maxLines = 1) },
-        icon = { Icon(item.icon) },
-        selected = HomeScreen.current == item.screen,
-        onClick = { HomeScreen.current = item.screen }
-      )
+  Scaffold(
+    bottomBar = {
+      BottomNavigation {
+        val navBackStackEntry = navController.currentBackStackEntryAsState().value
+        val entryRoute = navBackStackEntry?.arguments?.getString(KEY_ROUTE)
+        items.forEach {
+          BottomNavigationItem(
+            icon = { Icon(it.icon) },
+            label = { Text(stringResource(it.text), maxLines = 1) },
+            selected = entryRoute == it.route.id,
+            onClick = { navController.navigate(it.route.id) }
+          )
+        }
+      }
+    }
+  ) {
+    NavHost(navController, startDestination = Route.Catalogs.id) {
+      composable(Route.Library.id) { LibraryScreen(navController) }
+      composable(Route.Catalogs.id) { CatalogScreen(navController) }
+      composable(Route.Updates.id) { UpdatesScreen(navController) }
+      composable(Route.History.id) { HistoryScreen(navController) }
+      composable(Route.More.id) { MoreScreen(navController) }
     }
   }
+
 }
