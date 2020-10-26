@@ -11,7 +11,6 @@ package tachiyomi.ui
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.compose.foundation.Icon
 import androidx.compose.foundation.Text
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
@@ -20,6 +19,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.darkColors
 import androidx.compose.material.icons.Icons
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.material.Icon
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.History
@@ -29,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.VectorAsset
 import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.compose.KEY_ROUTE
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -106,7 +107,9 @@ private fun MainNavHost() {
         items.forEach {
           BottomNavigationItem(
             icon = { Icon(it.icon) },
-            label = { Text(stringResource(it.text), maxLines = 1) },
+            label = {
+              Text(stringResource(it.text), maxLines = 1, overflow = TextOverflow.Ellipsis)
+            },
             selected = entryRoute == it.route.id,
             onClick = { navController.navigate(it.route.id) }
           )
