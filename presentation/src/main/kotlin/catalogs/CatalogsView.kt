@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AmbientEmphasisLevels
+import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -55,12 +56,14 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.navigate
 import tachiyomi.core.di.AppScope
 import tachiyomi.domain.catalog.model.Catalog
 import tachiyomi.domain.catalog.model.CatalogBundled
 import tachiyomi.domain.catalog.model.CatalogInstalled
 import tachiyomi.domain.catalog.model.CatalogRemote
 import tachiyomi.ui.R
+import tachiyomi.ui.Route
 import tachiyomi.ui.core.coil.CoilImage
 import kotlin.math.abs
 import kotlin.random.Random
@@ -98,7 +101,7 @@ fun CatalogsScreen(navController: NavController) {
         )
 
         for (catalog in currState.updatableCatalogs) {
-          CatalogItem(presenter, catalog, state, hasUpdate = true)
+          CatalogItem(presenter, catalog, state, navController, hasUpdate = true)
         }
       }
       if (currState.localCatalogs.isNotEmpty()) {
@@ -111,7 +114,7 @@ fun CatalogsScreen(navController: NavController) {
           )
         }
         for (catalog in currState.localCatalogs) {
-          CatalogItem(presenter, catalog, state)
+          CatalogItem(presenter, catalog, state, navController)
         }
       }
       if (currState.remoteCatalogs.isNotEmpty()) {
@@ -132,7 +135,7 @@ fun CatalogsScreen(navController: NavController) {
         }
 
         for (catalog in currState.remoteCatalogs) {
-          CatalogItem(presenter, catalog, state)
+          CatalogItem(presenter, catalog, state, navController)
         }
       }
     }
@@ -174,6 +177,7 @@ fun CatalogItem(
   presenter: CatalogsPresenter,
   catalog: Catalog,
   state: State<ViewState>,
+  navController: NavController,
   hasUpdate: Boolean = false
 ) {
   ConstraintLayout(
@@ -205,7 +209,17 @@ fun CatalogItem(
         bottom.linkTo(title.bottom)
       }
     },
-    modifier = Modifier.fillMaxWidth().padding(12.dp, 12.dp, 8.dp, 12.dp)
+    modifier = Modifier
+      .clickable(
+        enabled = catalog is CatalogInstalled,
+        onClick = {
+          // TODO: should handle local sources too (CatalogLocal)
+          navController.navigate(Route.Catalog.id + "?pkgName=" + (catalog as
+            CatalogInstalled)
+            .pkgName)
+        })
+      .fillMaxWidth()
+      .padding(12.dp, 12.dp, 8.dp, 12.dp)
   ) {
     val mediumTextEmphasis = AmbientEmphasisLevels.current.medium
       .applyEmphasis(AmbientContentColor.current)

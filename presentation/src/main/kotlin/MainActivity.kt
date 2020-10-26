@@ -20,22 +20,27 @@ import androidx.compose.material.darkColors
 import androidx.compose.material.icons.Icons
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.material.Icon
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.NewReleases
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.vector.VectorAsset
 import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.navigation.NavDestination
 import androidx.navigation.compose.KEY_ROUTE
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigate
+import tachiyomi.domain.catalog.model.Catalog
 import tachiyomi.ui.catalogs.CatalogsScreen
+import tachiyomi.ui.catalogs.catalog.CatalogScreen
 import tachiyomi.ui.history.HistoryScreen
 import tachiyomi.ui.library.LibraryScreen
 import tachiyomi.ui.more.MoreScreen
@@ -44,6 +49,7 @@ import tachiyomi.ui.updates.UpdatesScreen
 sealed class Route(val id: String) {
   object Library : Route("library")
   object Catalogs : Route("catalogs")
+  object Catalog : Route("catalog")
   object Updates : Route("updates")
   object History : Route("history")
   object More : Route("more")
@@ -100,6 +106,22 @@ private fun MainNavHost() {
   )
 
   Scaffold(
+    bodyContent = {
+      NavHost(navController, startDestination = Route.Catalogs.id) {
+        composable(Route.Library.id) { LibraryScreen(navController) }
+
+        // TODO: Have a NavHost per individual top-level route?
+        composable(Route.Catalogs.id) { CatalogsScreen(navController) }
+        composable(Route.Catalog.id + "?pkgName={pkgName}") { backStackEntry ->
+          val pkgName = backStackEntry.arguments?.get("pkgName") as String
+          CatalogScreen(navController, pkgName)
+        }
+
+        composable(Route.Updates.id) { UpdatesScreen(navController) }
+        composable(Route.History.id) { HistoryScreen(navController) }
+        composable(Route.More.id) { MoreScreen(navController) }
+      }
+    },
     bottomBar = {
       BottomNavigation {
         val navBackStackEntry = navController.currentBackStackEntryAsState().value
@@ -116,14 +138,6 @@ private fun MainNavHost() {
         }
       }
     }
-  ) {
-    NavHost(navController, startDestination = Route.Catalogs.id) {
-      composable(Route.Library.id) { LibraryScreen(navController) }
-      composable(Route.Catalogs.id) { CatalogsScreen(navController) }
-      composable(Route.Updates.id) { UpdatesScreen(navController) }
-      composable(Route.History.id) { HistoryScreen(navController) }
-      composable(Route.More.id) { MoreScreen(navController) }
-    }
-  }
+  )
 
 }

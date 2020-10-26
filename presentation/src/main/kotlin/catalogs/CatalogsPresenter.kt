@@ -44,7 +44,7 @@ class CatalogsPresenter @Inject constructor(
   private val initialState = getInitialViewState()
 
   private val store = scope.createStore(
-    name = "Catalog presenter",
+    name = "Catalogs presenter",
     initialState = initialState,
     sideEffects = getSideEffects(),
     logSinks = getLogSinks(),
