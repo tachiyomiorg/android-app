@@ -13,7 +13,6 @@ import androidx.compose.runtime.onDispose
 import androidx.compose.runtime.remember
 import tachiyomi.core.di.AppScope
 import toothpick.Toothpick
-import toothpick.config.Module
 import toothpick.ktp.binding.module
 import toothpick.ktp.extension.getInstance
 
@@ -30,10 +29,12 @@ inline fun <reified VM : BaseViewModel> viewModel(): VM {
 
 @Composable
 inline fun <reified VM : BaseViewModel> viewModel(
-  crossinline bindings: Module.() -> Unit,
+  crossinline binding: () -> Any,
 ): VM {
   val (viewModel, submodule) = remember {
-    val submodule = module { bindings() }
+    val submodule = module {
+      binding().let { bind(it.javaClass).toInstance(it) }
+    }
     val subscope = AppScope.subscope(submodule).also {
       it.installModules(submodule)
     }

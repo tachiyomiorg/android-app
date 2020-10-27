@@ -13,13 +13,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
-import tachiyomi.core.di.bindInstance
 import tachiyomi.ui.core.viewmodel.viewModel
 
 @Composable
 fun CatalogScreen(navController: NavController, sourceId: Long) {
   val vm = viewModel<CatalogViewModel> {
-    bindInstance(CatalogViewModel.Params(sourceId))
+    CatalogViewModel.Params(sourceId)
   }
 
   Column {
