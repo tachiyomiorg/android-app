@@ -8,7 +8,8 @@
 
 package tachiyomi.core.prefs
 
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.StateFlow
 
 /**
  * A wrapper around application preferences without knowing implementation details. Instances of
@@ -42,14 +43,14 @@ interface Preference<T> {
   fun delete()
 
   /**
-   * Returns the default value of this preference
+   * Returns the default value of this preference.
    */
   fun defaultValue(): T
 
   /**
-   * Returns an observer of the changes made to this preference. The current value can be emitted
-   * on subscription through [emitOnStart].
+   * Returns a [StateFlow] of this preference, allowing to read the current value and receive
+   * preference updates.
    */
-  fun changes(emitOnStart: Boolean = false): Flow<T>
+  fun stateIn(scope: CoroutineScope): StateFlow<T>
 
 }

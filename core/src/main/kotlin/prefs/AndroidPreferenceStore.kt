@@ -9,7 +9,11 @@
 package tachiyomi.core.prefs
 
 import android.content.SharedPreferences
-import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.shareIn
 
 /**
  * An implementation of a [PreferenceStore] backed by Android's [SharedPreferences]. All the
@@ -19,15 +23,15 @@ import kotlinx.coroutines.channels.BroadcastChannel
  */
 class AndroidPreferenceStore(private val preferences: SharedPreferences) : PreferenceStore {
 
-  private val keyChanges = BroadcastChannel<String>(1)
-
-  private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-    keyChanges.offer(key)
-  }
-
-  init {
+  private val keyChanges = callbackFlow {
+    val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+      offer(key)
+    }
     preferences.registerOnSharedPreferenceChangeListener(listener)
-  }
+    awaitClose {
+      preferences.unregisterOnSharedPreferenceChangeListener(listener)
+    }
+  }.shareIn(GlobalScope, SharingStarted.WhileSubscribed(1000))
 
   /**
    * Returns an [String] preference for this [key].

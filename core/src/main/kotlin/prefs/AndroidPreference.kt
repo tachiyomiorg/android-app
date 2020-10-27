@@ -9,12 +9,13 @@
 package tachiyomi.core.prefs
 
 import android.content.SharedPreferences
-import kotlinx.coroutines.channels.BroadcastChannel
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
 /**
  * An implementation of [Preference] backed by Android's [SharedPreferences].
@@ -24,7 +25,7 @@ internal class AndroidPreference<T>(
   private val key: String,
   private val defaultValue: T,
   private val adapter: Adapter<T>,
-  private val keyChanges: BroadcastChannel<String>
+  private val keyChanges: SharedFlow<String>
 ) : Preference<T> {
 
   interface Adapter<T> {
@@ -82,22 +83,14 @@ internal class AndroidPreference<T>(
   }
 
   /**
-   * Returns an observer of the changes made to this preference. The current value of the preference
-   * must be returned when subscribed. Callers may decide to skip this initial value with the skip
-   * operator.
+   * Returns a [StateFlow] of this preference, allowing to read the current value and receive
+   * preference updates.
    */
-  override fun changes(emitOnStart: Boolean): Flow<T> {
-    return flow {
-      val subscription = keyChanges.openSubscription()
-      if (emitOnStart) {
-        emit(key)
-      }
-      subscription.consumeEach { value ->
-        emit(value)
-      }
-    }
+  override fun stateIn(scope: CoroutineScope): StateFlow<T> {
+    return keyChanges
       .filter { it == key }
       .map { get() }
+      .stateIn(scope, SharingStarted.Eagerly, get())
   }
 
 }
