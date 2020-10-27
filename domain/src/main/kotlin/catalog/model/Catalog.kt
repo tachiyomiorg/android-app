@@ -14,11 +14,12 @@ import java.io.File
 sealed class Catalog {
   abstract val name: String
   abstract val description: String
+  abstract val sourceId: Long
 }
 
 sealed class CatalogLocal : Catalog() {
   abstract val source: Source
-  val sourceId get() = source.id
+  override val sourceId get() = source.id
 }
 
 data class CatalogBundled(
@@ -55,7 +56,7 @@ sealed class CatalogInstalled : CatalogLocal() {
 data class CatalogRemote(
   override val name: String,
   override val description: String = "",
-  val sourceId: Long,
+  override val sourceId: Long,
   val pkgName: String,
   val versionName: String,
   val versionCode: Int,
