@@ -14,31 +14,27 @@ import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Text
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.darkColors
 import androidx.compose.material.icons.Icons
-import androidx.navigation.compose.rememberNavController
-import androidx.compose.material.Icon
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.NewReleases
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.vector.VectorAsset
 import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.navigation.NavDestination
 import androidx.navigation.compose.KEY_ROUTE
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigate
-import tachiyomi.domain.catalog.model.Catalog
+import androidx.navigation.compose.rememberNavController
 import tachiyomi.ui.catalogs.CatalogsScreen
 import tachiyomi.ui.catalogs.catalog.CatalogScreen
 import tachiyomi.ui.history.HistoryScreen
@@ -112,9 +108,9 @@ private fun MainNavHost() {
 
         // TODO: Have a NavHost per individual top-level route?
         composable(Route.Catalogs.id) { CatalogsScreen(navController) }
-        composable(Route.Catalog.id + "?pkgName={pkgName}") { backStackEntry ->
-          val pkgName = backStackEntry.arguments?.get("pkgName") as String
-          CatalogScreen(navController, pkgName)
+        composable(Route.Catalog.id + "?id={id}") { backStackEntry ->
+          val id = backStackEntry.arguments?.get("id") as String
+          CatalogScreen(navController, id.toLong())
         }
 
         composable(Route.Updates.id) { UpdatesScreen(navController) }

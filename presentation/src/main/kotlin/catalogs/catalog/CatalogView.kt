@@ -12,20 +12,16 @@ import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.onDispose
-import androidx.compose.runtime.remember
 import androidx.navigation.NavController
-import tachiyomi.core.di.AppScope
+import tachiyomi.ui.core.viewmodel.viewModel
 
 @Composable
-fun CatalogScreen(navController: NavController, pkgName: String) {
-  val presenter = remember { AppScope.getInstance<CatalogPresenter>() }
-  onDispose { presenter.destroy() }
-
-  val state = presenter.state()
+fun CatalogScreen(navController: NavController, sourceId: Long) {
+  val vm = viewModel<CatalogViewModel>()
+  val state = vm.state()
   val currState = state.value
 
-  presenter.setCatalog(pkgName)
+  vm.setCatalog(sourceId)
 
   Column {
     TopAppBar(title = { Text(currState.catalog?.name ?: "?") })

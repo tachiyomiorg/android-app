@@ -56,7 +56,7 @@ val ptSansFont = fontFamily(font(R.font.ptsans_bold))
 
 @Composable
 fun LibraryScreen(navController: NavController) {
-  val presenter = remember { AppScope.getInstance<LibraryPresenter>() }
+  val presenter = remember { AppScope.getInstance<LibraryViewModel>() }
   onDispose {
     presenter.destroy()
   }

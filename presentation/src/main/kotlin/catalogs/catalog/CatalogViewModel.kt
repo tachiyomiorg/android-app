@@ -13,21 +13,13 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import com.freeletics.coredux.SideEffect
 import com.freeletics.coredux.createStore
-import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.runBlocking
-import tachiyomi.domain.catalog.interactor.GetInstalledCatalog
 import tachiyomi.domain.catalog.interactor.GetLocalCatalog
-import tachiyomi.ui.core.presenter.BasePresenter
-import tachiyomi.ui.core.presenter.FlowSideEffect
-import tachiyomi.ui.core.presenter.FlowSwitchSideEffect
+import tachiyomi.ui.core.viewmodel.BaseViewModel
 import javax.inject.Inject
 
-class CatalogPresenter @Inject constructor(
-  private val getInstalledCatalog: GetInstalledCatalog
-) : BasePresenter() {
+class CatalogViewModel @Inject constructor(
+  private val getLocalCatalog: GetLocalCatalog
+) : BaseViewModel() {
 
   private val initialState = getInitialViewState()
 
@@ -58,8 +50,8 @@ class CatalogPresenter @Inject constructor(
     return sideEffects
   }
 
-  fun setCatalog(pkgName: String) {
-    getInstalledCatalog.get(pkgName)?.let {
+  fun setCatalog(sourceId: Long) {
+    getLocalCatalog.get(sourceId)?.let {
       store.dispatch(Action.SetCatalog(it))
     }
   }

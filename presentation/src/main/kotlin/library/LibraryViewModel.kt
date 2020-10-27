@@ -32,12 +32,12 @@ import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.domain.library.model.LibrarySort
 import tachiyomi.domain.library.model.LibrarySorting
 import tachiyomi.domain.library.service.LibraryPreferences
-import tachiyomi.ui.core.presenter.BasePresenter
-import tachiyomi.ui.core.presenter.EmptySideEffect
-import tachiyomi.ui.core.presenter.FlowSwitchSideEffect
+import tachiyomi.ui.core.viewmodel.BaseViewModel
+import tachiyomi.ui.core.viewmodel.EmptySideEffect
+import tachiyomi.ui.core.viewmodel.FlowSwitchSideEffect
 import javax.inject.Inject
 
-class LibraryPresenter @Inject constructor(
+class LibraryViewModel @Inject constructor(
   private val getUserCategories: GetUserCategories,
   private val getLibraryCategory: GetLibraryCategory,
   private val setCategoriesForMangas: SetCategoriesForMangas,
@@ -45,7 +45,7 @@ class LibraryPresenter @Inject constructor(
   private val setCategoryFilters: SetCategoryFilters,
   private val setCategorySorting: SetCategorySorting,
   private val updateLibraryCategory: UpdateLibraryCategory
-) : BasePresenter() {
+) : BaseViewModel() {
 
   private val lastSortPreference = libraryPreferences.lastSorting()
 

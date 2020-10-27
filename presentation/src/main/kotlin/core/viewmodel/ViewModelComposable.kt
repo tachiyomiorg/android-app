@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package tachiyomi.ui.core.presenter
+package tachiyomi.ui.core.viewmodel
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.onDispose
@@ -17,7 +17,7 @@ import toothpick.config.Module
 import toothpick.ktp.extension.getInstance
 
 @Composable
-inline fun <reified P : BasePresenter> presenter(
+inline fun <reified P : BaseViewModel> viewModel(
   submodule: Module? = null,
 ): P {
   val subscope = remember {
@@ -29,13 +29,13 @@ inline fun <reified P : BasePresenter> presenter(
       null
     }
   }
-  val presenter = remember {
+  val viewModel = remember {
     val instanceScope = subscope ?: AppScope
     instanceScope.getInstance<P>()
   }
   onDispose {
-    presenter.destroy()
+    viewModel.destroy()
     subscope?.let { Toothpick.closeScope(submodule) }
   }
-  return presenter
+  return viewModel
 }

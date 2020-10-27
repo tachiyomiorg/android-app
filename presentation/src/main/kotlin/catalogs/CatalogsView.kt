@@ -30,7 +30,6 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AmbientEmphasisLevels
-import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -40,11 +39,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.GetApp
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.onDispose
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.gesture.longPressGestureFilter
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -57,55 +54,63 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
-import tachiyomi.core.di.AppScope
 import tachiyomi.domain.catalog.model.Catalog
 import tachiyomi.domain.catalog.model.CatalogBundled
 import tachiyomi.domain.catalog.model.CatalogInstalled
+import tachiyomi.domain.catalog.model.CatalogLocal
 import tachiyomi.domain.catalog.model.CatalogRemote
+import tachiyomi.domain.catalog.model.InstallStep
 import tachiyomi.ui.R
 import tachiyomi.ui.Route
 import tachiyomi.ui.core.coil.CoilImage
+import tachiyomi.ui.core.viewmodel.viewModel
 import kotlin.math.abs
 import kotlin.random.Random
 
 @Composable
 fun CatalogsScreen(navController: NavController) {
-  val presenter = remember { AppScope.getInstance<CatalogsPresenter>() }
-  onDispose { presenter.destroy() }
+  val vm = viewModel<CatalogsViewModel>()
 
-  val state = presenter.state()
+  val onClick: (Catalog) -> Unit = {
+    navController.navigate(Route.Catalog.id + "?id=" + it.sourceId)
+  }
 
   Column {
     TopAppBar(
       title = { Text(stringResource(R.string.label_catalogs)) }
     )
     ScrollableColumn {
-      val currState = state.value
-
       val mediumTextEmphasis = AmbientEmphasisLevels.current.medium
         .applyEmphasis(AmbientContentColor.current)
 
-      if (currState.updatableCatalogs.isNotEmpty() || currState.localCatalogs.isNotEmpty()) {
+      if (vm.updatableCatalogs.isNotEmpty() || vm.localCatalogs.isNotEmpty()) {
         Text(
           "Installed",
           style = MaterialTheme.typography.h6,
           modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 4.dp)
         )
       }
-      if (currState.updatableCatalogs.isNotEmpty()) {
+      if (vm.updatableCatalogs.isNotEmpty()) {
         Text(
-          "Update available (${currState.updatableCatalogs.size})",
+          "Update available (${vm.updatableCatalogs.size})",
           style = MaterialTheme.typography.subtitle1,
           color = mediumTextEmphasis,
           modifier = Modifier.padding(16.dp, 8.dp, 16.dp, 4.dp)
         )
 
-        for (catalog in currState.updatableCatalogs) {
-          CatalogItem(presenter, catalog, state, navController, hasUpdate = true)
+        for (catalog in vm.updatableCatalogs) {
+          CatalogItem(
+            catalog = catalog,
+            showInstallButton = true,
+            installStep = vm.installSteps[catalog.pkgName],
+            onClick = { onClick(catalog) },
+            onInstall = { vm.installCatalog(catalog) },
+            onUninstall = { vm.uninstallCatalog(catalog) }
+          )
         }
       }
-      if (currState.localCatalogs.isNotEmpty()) {
-        if (currState.updatableCatalogs.isNotEmpty()) {
+      if (vm.localCatalogs.isNotEmpty()) {
+        if (vm.updatableCatalogs.isNotEmpty()) {
           Text(
             "Up to date",
             style = MaterialTheme.typography.subtitle1,
@@ -113,11 +118,18 @@ fun CatalogsScreen(navController: NavController) {
             modifier = Modifier.padding(16.dp, 8.dp, 16.dp, 4.dp)
           )
         }
-        for (catalog in currState.localCatalogs) {
-          CatalogItem(presenter, catalog, state, navController)
+        for (catalog in vm.localCatalogs) {
+          CatalogItem(
+            catalog = catalog,
+            showInstallButton = false,
+            installStep = null,
+            onClick = { onClick(catalog) },
+            onInstall = { vm.installCatalog(catalog) },
+            onUninstall = { vm.uninstallCatalog(catalog) }
+          )
         }
       }
-      if (currState.remoteCatalogs.isNotEmpty()) {
+      if (vm.remoteCatalogs.isNotEmpty()) {
         Text(
           "Available",
           style = MaterialTheme.typography.h6,
@@ -125,17 +137,24 @@ fun CatalogsScreen(navController: NavController) {
         )
 
         ScrollableRow(modifier = Modifier.padding(8.dp)) {
-          for (choice in currState.languageChoices) {
+          for (choice in vm.languageChoices) {
             LanguageChip(
               choice = choice,
-              selectedChoice = currState.languageChoice,
-              onClick = { presenter.setLanguageChoice(choice) }
+              isSelected = choice == vm.selectedLanguage,
+              onClick = { vm.setLanguageChoice(choice) }
             )
           }
         }
 
-        for (catalog in currState.remoteCatalogs) {
-          CatalogItem(presenter, catalog, state, navController)
+        for (catalog in vm.remoteCatalogs) {
+          CatalogItem(
+            catalog = catalog,
+            showInstallButton = true,
+            installStep = vm.installSteps[catalog.pkgName],
+            onClick = { onClick(catalog) },
+            onInstall = { vm.installCatalog(catalog) },
+            onUninstall = { vm.uninstallCatalog(catalog) }
+          )
         }
       }
     }
@@ -143,16 +162,15 @@ fun CatalogsScreen(navController: NavController) {
 }
 
 @Composable
-fun LanguageChip(choice: LanguageChoice, selectedChoice: LanguageChoice, onClick: () -> Unit) {
+fun LanguageChip(choice: LanguageChoice, isSelected: Boolean, onClick: () -> Unit) {
   Surface(
-    color = if (selectedChoice == choice) {
+    color = if (isSelected) {
       MaterialTheme.colors.primary
     } else {
       MaterialTheme.colors.onSurface.copy(alpha = 0.25f)
     },
-    shape = RoundedCornerShape(16.dp),
     modifier = Modifier.widthIn(min = 56.dp).height(40.dp).padding(4.dp)
-      .clickable(onClick = onClick)
+      .clip(RoundedCornerShape(16.dp)).clickable(onClick = onClick)
   ) {
     val text = when (choice) {
       LanguageChoice.All -> stringResource(R.string.lang_all)
@@ -163,7 +181,7 @@ fun LanguageChip(choice: LanguageChoice, selectedChoice: LanguageChoice, onClick
     Text(
       text,
       modifier = Modifier.wrapContentSize(Alignment.Center),
-      color = if (selectedChoice == choice) {
+      color = if (isSelected) {
         MaterialTheme.colors.onPrimary
       } else {
         Color.Black
@@ -174,11 +192,12 @@ fun LanguageChip(choice: LanguageChoice, selectedChoice: LanguageChoice, onClick
 
 @Composable
 fun CatalogItem(
-  presenter: CatalogsPresenter,
   catalog: Catalog,
-  state: State<ViewState>,
-  navController: NavController,
-  hasUpdate: Boolean = false
+  showInstallButton: Boolean = false,
+  installStep: InstallStep? = null,
+  onClick: (Catalog) -> Any,
+  onInstall: (Catalog) -> Unit,
+  onUninstall: (Catalog) -> Unit
 ) {
   ConstraintLayout(
     constraintSet = ConstraintSet {
@@ -211,13 +230,9 @@ fun CatalogItem(
     },
     modifier = Modifier
       .clickable(
-        enabled = catalog is CatalogInstalled,
-        onClick = {
-          // TODO: should handle local sources too (CatalogLocal)
-          navController.navigate(Route.Catalog.id + "?pkgName=" + (catalog as
-            CatalogInstalled)
-            .pkgName)
-        })
+        enabled = catalog is CatalogLocal,
+        onClick = { onClick(catalog) }
+      )
       .fillMaxWidth()
       .padding(12.dp, 12.dp, 8.dp, 12.dp)
   ) {
@@ -250,35 +265,21 @@ fun CatalogItem(
     ) {
       val rowModifier = Modifier.size(48.dp)
 
-      if (catalog is CatalogInstalled) {
-        val installStep = state.value.installingCatalogs[catalog.pkgName]
-        when {
-          installStep != null && !installStep.isFinished() -> {
-            CircularProgressIndicator(modifier = rowModifier.then(Modifier.padding(4.dp)))
-          }
-          hasUpdate -> {
-            IconButton(onClick = { presenter.installCatalog(catalog) }) {
-              Image(Icons.Filled.GetApp, colorFilter = ColorFilter.tint(mediumTextEmphasis))
-            }
-          }
-        }
-      } else if (catalog is CatalogRemote) {
-        val installStep = state.value.installingCatalogs[catalog.pkgName]
-        if (installStep != null && !installStep.isFinished()) {
-          CircularProgressIndicator(modifier = rowModifier.then(Modifier.padding(4.dp)))
-        } else {
-          IconButton(onClick = { presenter.installCatalog(catalog) }) {
-            Image(Icons.Filled.GetApp, colorFilter = ColorFilter.tint(mediumTextEmphasis))
-          }
+      // Show either progress indicator or install button
+      if (installStep != null && !installStep.isFinished()) {
+        CircularProgressIndicator(modifier = rowModifier.then(Modifier.padding(4.dp)))
+      } else if (showInstallButton) {
+        IconButton(onClick = { onInstall(catalog) }) {
+          Image(Icons.Filled.GetApp, colorFilter = ColorFilter.tint(mediumTextEmphasis))
         }
       }
       if (catalog !is CatalogBundled) {
-        IconButton(onClick = { }, modifier = Modifier.longPressGestureFilter(onLongPress = {
-          if (catalog is CatalogInstalled) {
-            presenter.uninstallCatalog(catalog)
-          }
-        })) {
-          Image(Icons.Filled.Settings, colorFilter = ColorFilter.tint(mediumTextEmphasis))
+        val longPressMod = Modifier.longPressGestureFilter {
+          (catalog as? CatalogInstalled)?.let(onUninstall)
+        }
+        IconButton(onClick = { }, modifier = rowModifier) {
+          Image(Icons.Filled.Settings, colorFilter = ColorFilter.tint(mediumTextEmphasis),
+            modifier = longPressMod)
         }
       }
     }

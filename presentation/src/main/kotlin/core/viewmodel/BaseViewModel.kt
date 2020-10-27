@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package tachiyomi.ui.core.presenter
+package tachiyomi.ui.core.viewmodel
 
 import androidx.annotation.CallSuper
 import com.freeletics.coredux.LogSink
@@ -17,22 +17,21 @@ import com.freeletics.coredux.subscribeToChangedStateUpdates
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
 import tachiyomi.core.log.Log
 import tachiyomi.ui.BuildConfig
 
-abstract class BasePresenter {
+abstract class BaseViewModel {
 
-  protected val job = SupervisorJob()
-
-  protected val scope = CoroutineScope(job + Dispatchers.Main)
+  protected val scope = MainScope()
 
   @CallSuper
   open fun destroy() {
-    job.cancel()
+    scope.cancel()
   }
 
   fun <S : Any, A : Any> Store<S, A>.asFlow() = callbackFlow {
