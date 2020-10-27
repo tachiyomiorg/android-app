@@ -28,7 +28,7 @@ abstract class BasePresenter {
 
   protected val job = SupervisorJob()
 
-  protected val scope = CoroutineScope(job + Dispatchers.Default)
+  protected val scope = CoroutineScope(job + Dispatchers.Main)
 
   @CallSuper
   open fun destroy() {
