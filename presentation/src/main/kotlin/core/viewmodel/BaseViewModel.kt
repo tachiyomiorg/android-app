@@ -8,85 +8,19 @@
 
 package tachiyomi.ui.core.viewmodel
 
-import androidx.annotation.CallSuper
-import com.freeletics.coredux.LogSink
-import com.freeletics.coredux.StateReceiver
-import com.freeletics.coredux.Store
-import com.freeletics.coredux.log.common.LoggerLogSink
-import com.freeletics.coredux.subscribeToChangedStateUpdates
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.launch
-import tachiyomi.core.log.Log
-import tachiyomi.ui.BuildConfig
 
 abstract class BaseViewModel {
 
   protected val scope = MainScope()
 
-  @CallSuper
-  open fun destroy() {
+  fun destroy() {
     scope.cancel()
+    onDestroy()
   }
 
-  fun <S : Any, A : Any> Store<S, A>.asFlow() = callbackFlow {
-    var previousState: S? = null
-
-    val receiver: StateReceiver<S> = { newState ->
-      if (newState !== previousState) {
-        previousState = newState
-        offer(newState)
-      }
-    }
-    subscribe(receiver)
-    awaitClose { unsubscribe(receiver) }
-  }
-
-  fun <S : Any, A : Any> Store<S, A>.subscribeToChangedStateUpdatesInMain(
-    stateReceiver: StateReceiver<S>
-  ) {
-    subscribeToChangedStateUpdates {
-      scope.launch(Dispatchers.Main) { stateReceiver(it) }
-    }
-  }
-
-  protected fun getLogSinks(): List<LogSink> {
-    return if (BuildConfig.DEBUG) {
-      listOf(AndroidLogSink())
-    } else {
-      emptyList()
-    }
-  }
-
-  private class AndroidLogSink(scope: CoroutineScope = GlobalScope) : LoggerLogSink(scope) {
-    override fun debug(tag: String, message: String, throwable: Throwable?) {
-      if (throwable == null) {
-        Log.debug(message)
-      } else {
-        Log.debug(throwable, message)
-      }
-    }
-
-    override fun info(tag: String, message: String, throwable: Throwable?) {
-      if (throwable == null) {
-        Log.info(message)
-      } else {
-        Log.info(throwable, message)
-      }
-    }
-
-    override fun warning(tag: String, message: String, throwable: Throwable?) {
-      if (throwable == null) {
-        Log.warn(message)
-      } else {
-        Log.warn(throwable, message)
-      }
-    }
+  open fun onDestroy() {
   }
 
 }

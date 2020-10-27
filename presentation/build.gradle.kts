@@ -28,9 +28,6 @@ dependencies {
   implementation(Deps.toothpick.ktp)
   kapt(Deps.toothpick.compiler)
 
-  implementation(Deps.coRedux)
-  implementation(Deps.coReduxLog)
-
   implementation(Deps.compose.compiler)
   implementation(Deps.compose.ui)
   implementation(Deps.compose.tooling)

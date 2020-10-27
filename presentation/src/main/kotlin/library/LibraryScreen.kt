@@ -22,9 +22,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.onDispose
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
@@ -46,33 +43,30 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import tachiyomi.core.di.AppScope
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.ui.R
 import tachiyomi.ui.core.coil.CoilImage
 import tachiyomi.ui.core.coil.MangaCover
+import tachiyomi.ui.core.viewmodel.viewModel
 
 val ptSansFont = fontFamily(font(R.font.ptsans_bold))
 
 @Composable
 fun LibraryScreen(navController: NavController) {
-  val presenter = remember { AppScope.getInstance<LibraryViewModel>() }
-  onDispose {
-    presenter.destroy()
-  }
-  val state = presenter.state()
+  val vm = viewModel<LibraryViewModel>()
+
   Column {
     TopAppBar(title = { Text(stringResource(R.string.label_library2)) })
     Box(Modifier.padding(2.dp)) {
       ScrollableColumn {
-        LibraryTable(state)
+        LibraryTable(vm.library)
       }
     }
   }
 }
 
 @Composable
-fun LibraryTable(state: State<LibraryState>) {
+fun LibraryTable(library: List<LibraryManga>) {
   val gradient = LinearGradient(
     0.75f to Color.Transparent,
     1.0f to Color(0xAA000000),
@@ -83,7 +77,7 @@ fun LibraryTable(state: State<LibraryState>) {
   )
   val painter = GradientPainter(gradient)
 
-  AutofitGrid(data = state.value.library, defaultColumnWidth = 160.dp) { manga ->
+  AutofitGrid(data = library, defaultColumnWidth = 160.dp) { manga ->
     LibraryTableGridItem(manga = manga, gradientPainter = painter)
   }
 }

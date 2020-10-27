@@ -81,9 +81,6 @@ object Deps {
 
   const val commonsCodec = "commons-codec:commons-codec:1.14"
 
-  const val coRedux = "com.freeletics.coredux:core:1.1.1"
-  const val coReduxLog = "com.freeletics.coredux:log-common:1.1.1"
-
   const val coil = "io.coil-kt:coil:1.0.0"
 
   const val mockk = "io.mockk:mockk:1.10.0"
