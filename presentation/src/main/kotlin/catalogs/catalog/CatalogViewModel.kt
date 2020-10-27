@@ -8,51 +8,31 @@
 
 package tachiyomi.ui.catalogs.catalog
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
-import com.freeletics.coredux.SideEffect
-import com.freeletics.coredux.createStore
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import tachiyomi.domain.catalog.interactor.GetLocalCatalog
+import tachiyomi.domain.catalog.model.CatalogLocal
 import tachiyomi.ui.core.viewmodel.BaseViewModel
 import javax.inject.Inject
 
 class CatalogViewModel @Inject constructor(
-  private val getLocalCatalog: GetLocalCatalog
+  private val params: Params,
+  private val getLocalCatalog: GetLocalCatalog,
 ) : BaseViewModel() {
 
-  private val initialState = getInitialViewState()
-
-  private val store = scope.createStore(
-    name = "Catalog presenter",
-    initialState = initialState,
-    sideEffects = getSideEffects(),
-    logSinks = getLogSinks(),
-    reducer = { state, action -> action.reduce(state) }
-  )
+  var catalog by mutableStateOf<CatalogLocal?>(null)
+    private set
+  var isRefreshing by mutableStateOf(false)
+    private set
 
   init {
-    store.dispatch(Action.Init)
+    catalog = getLocalCatalog.get(params.sourceId)
   }
 
-  @Composable
-  fun state(): State<ViewState> {
-    return store.asFlow().collectAsState(initialState)
+  fun toggle() {
+    isRefreshing = !isRefreshing
   }
 
-  private fun getInitialViewState(): ViewState {
-    return ViewState()
-  }
-
-  private fun getSideEffects(): List<SideEffect<ViewState, Action>> {
-    val sideEffects = mutableListOf<SideEffect<ViewState, Action>>()
-
-    return sideEffects
-  }
-
-  fun setCatalog(sourceId: Long) {
-    getLocalCatalog.get(sourceId)?.let {
-      store.dispatch(Action.SetCatalog(it))
-    }
-  }
+  data class Params(val sourceId: Long)
 }

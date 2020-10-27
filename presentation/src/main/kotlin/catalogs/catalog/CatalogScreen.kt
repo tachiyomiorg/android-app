@@ -13,17 +13,23 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
+import tachiyomi.core.di.bindInstance
 import tachiyomi.ui.core.viewmodel.viewModel
 
 @Composable
 fun CatalogScreen(navController: NavController, sourceId: Long) {
-  val vm = viewModel<CatalogViewModel>()
-  val state = vm.state()
-  val currState = state.value
-
-  vm.setCatalog(sourceId)
+  val vm = viewModel<CatalogViewModel> {
+    bindInstance(CatalogViewModel.Params(sourceId))
+  }
 
   Column {
-    TopAppBar(title = { Text(currState.catalog?.name ?: "?") })
+    val catalog = vm.catalog
+    if (catalog == null) {
+      // TODO empty screen
+      TopAppBar(title = { Text("Catalog not found") })
+    } else {
+      TopAppBar(title = { Text(catalog.name) })
+    }
+
   }
 }

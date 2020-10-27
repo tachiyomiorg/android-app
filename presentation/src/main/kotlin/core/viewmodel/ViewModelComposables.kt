@@ -14,28 +14,35 @@ import androidx.compose.runtime.remember
 import tachiyomi.core.di.AppScope
 import toothpick.Toothpick
 import toothpick.config.Module
+import toothpick.ktp.binding.module
 import toothpick.ktp.extension.getInstance
 
 @Composable
-inline fun <reified P : BaseViewModel> viewModel(
-  submodule: Module? = null,
-): P {
-  val subscope = remember {
-    if (submodule != null) {
-      AppScope.subscope(submodule).also {
-        it.installModules(submodule)
-      }
-    } else {
-      null
-    }
-  }
+inline fun <reified VM : BaseViewModel> viewModel(): VM {
   val viewModel = remember {
-    val instanceScope = subscope ?: AppScope
-    instanceScope.getInstance<P>()
+    AppScope.getInstance<VM>()
   }
   onDispose {
     viewModel.destroy()
-    subscope?.let { Toothpick.closeScope(submodule) }
+  }
+  return viewModel
+}
+
+@Composable
+inline fun <reified VM : BaseViewModel> viewModel(
+  crossinline bindings: Module.() -> Unit,
+): VM {
+  val (viewModel, submodule) = remember {
+    val submodule = module { bindings() }
+    val subscope = AppScope.subscope(submodule).also {
+      it.installModules(submodule)
+    }
+    val viewModel = subscope.getInstance<VM>()
+    Pair(viewModel, submodule)
+  }
+  onDispose {
+    viewModel.destroy()
+    Toothpick.closeScope(submodule)
   }
   return viewModel
 }

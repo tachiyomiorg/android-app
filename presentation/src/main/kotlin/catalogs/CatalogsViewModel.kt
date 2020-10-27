@@ -44,7 +44,7 @@ class CatalogsViewModel @Inject constructor(
     private set
   var selectedLanguage by mutableStateOf<LanguageChoice>(LanguageChoice.All)
     private set
-  var installSteps by mutableStateOf<Map<String, InstallStep>>(emptyMap())
+  var installSteps by mutableStateOf(emptyMap<String, InstallStep>())
     private set
   var refreshingCatalogs by mutableStateOf(false)
     private set
