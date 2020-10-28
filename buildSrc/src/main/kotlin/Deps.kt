@@ -27,13 +27,13 @@ object Deps {
   }
 
   object compose {
-    const val version = "1.0.0-SNAPSHOT" // "1.0.0-alpha05"
+    const val version = "1.0.0-alpha06"
     const val compiler = "androidx.compose.compiler:compiler:$version"
     const val ui = "androidx.compose.ui:ui:$version"
     const val material = "androidx.compose.material:material:$version"
     const val icons = "androidx.compose.material:material-icons-extended:$version"
     const val tooling = "androidx.ui:ui-tooling:$version"
-    const val navigation = "androidx.navigation:navigation-compose:1.0.0-SNAPSHOT"
+    const val navigation = "androidx.navigation:navigation-compose:1.0.0-alpha01"
   }
 
   object lifecycle {

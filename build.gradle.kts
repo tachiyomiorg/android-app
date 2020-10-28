@@ -23,9 +23,6 @@ allprojects {
     maven { setUrl("https://google.bintray.com/flexbox-layout") }
     jcenter()
     maven { setUrl("https://oss.sonatype.org/content/repositories/snapshots/") }
-
-    // https://androidx.dev/snapshots/builds
-    maven { setUrl("https://androidx.dev/snapshots/builds/6930690/artifacts/repository") }
   }
 }
 

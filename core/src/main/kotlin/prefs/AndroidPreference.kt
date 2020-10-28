@@ -103,5 +103,4 @@ internal class AndroidPreference<T>(
       .stateIn(scope, SharingStarted.Eagerly, get())
   }
 
-
 }
