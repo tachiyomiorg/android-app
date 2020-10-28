@@ -9,6 +9,7 @@
 package tachiyomi.core.prefs
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -48,8 +49,13 @@ interface Preference<T> {
   fun defaultValue(): T
 
   /**
-   * Returns a [StateFlow] of this preference, allowing to read the current value and receive
-   * preference updates.
+   * Returns a cold [Flow] of this preference to receive updates when its value changes.
+   */
+  fun changes(): Flow<T>
+
+  /**
+   * Returns a hot [StateFlow] of this preference bound to the given [scope], allowing to read the
+   * current value and receive preference updates.
    */
   fun stateIn(scope: CoroutineScope): StateFlow<T>
 
