@@ -39,10 +39,12 @@ import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavType
 import androidx.navigation.compose.KEY_ROUTE
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
 import tachiyomi.core.di.AppScope
@@ -159,9 +161,12 @@ private fun MainNavHost() {
 
           // TODO: Have a NavHost per individual top-level route?
           composable(Route.Catalogs.id) { CatalogsScreen(navController) }
-          composable(Route.Catalog.id + "?id={id}") { backStackEntry ->
-            val id = backStackEntry.arguments?.get("id") as String
-            CatalogScreen(navController, id.toLong())
+          composable(
+            "${Route.Catalog.id}/{sourceId}",
+            arguments = listOf(navArgument("sourceId") { type = NavType.LongType })
+          ) { backStackEntry ->
+            val sourceId = backStackEntry.arguments?.get("sourceId") as Long
+            CatalogScreen(navController, sourceId)
           }
 
           composable(Route.Updates.id) { UpdatesScreen(navController) }

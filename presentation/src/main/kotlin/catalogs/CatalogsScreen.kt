@@ -72,7 +72,7 @@ fun CatalogsScreen(navController: NavController) {
   val vm = viewModel<CatalogsViewModel>()
 
   val onClick: (Catalog) -> Unit = {
-    navController.navigate(Route.Catalog.id + "?id=" + it.sourceId)
+    navController.navigate("${Route.Catalog.id}/${it.sourceId}")
   }
 
   Column {
