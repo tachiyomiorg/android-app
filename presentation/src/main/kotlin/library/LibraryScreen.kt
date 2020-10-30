@@ -9,7 +9,6 @@
 package tachiyomi.ui.library
 
 import androidx.compose.foundation.AmbientTextStyle
-import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -57,9 +56,7 @@ fun LibraryScreen(navController: NavController) {
   Column {
     TopAppBar(title = { Text(stringResource(R.string.label_library2)) })
     Box(Modifier.padding(2.dp)) {
-      ScrollableColumn {
-        LibraryTable(vm.library)
-      }
+      LibraryTable(vm.library)
     }
   }
 }

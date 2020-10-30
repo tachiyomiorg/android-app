@@ -154,7 +154,7 @@ private fun MainNavHost() {
   Scaffold(
     bodyContent = { paddingValues ->
       Box(Modifier.padding(paddingValues)) {
-        NavHost(navController, startDestination = Route.More.id) {
+        NavHost(navController, startDestination = Route.Catalogs.id) {
           composable(Route.Library.id) { LibraryScreen(navController) }
 
           // TODO: Have a NavHost per individual top-level route?
