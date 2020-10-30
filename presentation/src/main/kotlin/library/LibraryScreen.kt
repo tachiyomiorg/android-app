@@ -34,12 +34,10 @@ import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.platform.ConfigurationAmbient
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.font
 import androidx.compose.ui.text.font.fontFamily
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -47,6 +45,7 @@ import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.ui.R
 import tachiyomi.ui.core.coil.CoilImage
 import tachiyomi.ui.core.coil.MangaCover
+import tachiyomi.ui.core.components.AutofitGrid
 import tachiyomi.ui.core.viewmodel.viewModel
 
 val ptSansFont = fontFamily(font(R.font.ptsans_bold))
@@ -108,33 +107,6 @@ fun LibraryTableGridItem(manga: LibraryManga, gradientPainter: GradientPainter) 
     }
   }
 
-}
-
-@Composable
-fun <T> AutofitGrid(
-  columns: Int = 0,
-  defaultColumnWidth: Dp = 100.dp,
-  data: List<T>,
-  children: @Composable() (T) -> Unit
-) {
-  val numColumns = if (columns == 0) {
-    ConfigurationAmbient.current.screenWidthDp / defaultColumnWidth.value.toInt()
-  } else {
-    columns
-  }
-  // TODO table was deleted on dev11
-//  Table(columns = numColumns) {
-//    for (i in data.indices step numColumns) {
-//      tableRow {
-//        for (j in 0 until numColumns) {
-//          if (i + j >= data.size) break
-//
-//          val item = data[i + j]
-//          children(item)
-//        }
-//      }
-//    }
-//  }
 }
 
 data class GradientPainter(val gradient: LinearGradient) : Painter() {

@@ -1,0 +1,48 @@
+/*
+ * Copyright (C) 2018 The Tachiyomi Open Source Project
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+
+package tachiyomi.ui.core.components
+
+import androidx.compose.foundation.ScrollableColumn
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ConfigurationAmbient
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+
+@Composable
+fun <T> AutofitGrid(
+  columns: Int = 0,
+  defaultColumnWidth: Dp = 100.dp,
+  data: List<T>,
+  childModifier: Modifier = Modifier,
+  child: @Composable (T) -> Unit
+) {
+  val numColumns = if (columns == 0) {
+    ConfigurationAmbient.current.screenWidthDp / defaultColumnWidth.value.toInt()
+  } else {
+    columns
+  }
+  
+  ScrollableColumn {
+    data.forEachIndexed { index, item ->
+      Row(modifier = childModifier, horizontalArrangement = Arrangement.SpaceAround) {
+        for (cell in 0 until numColumns) {
+          val i = (index * numColumns) + cell
+          if (i < data.size) {
+            child(data[i])
+          } else {
+            break
+          }
+        }
+      }
+    }
+  }
+}
