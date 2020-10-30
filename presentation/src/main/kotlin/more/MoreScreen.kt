@@ -43,6 +43,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import tachiyomi.ui.R
@@ -64,11 +65,16 @@ fun MoreScreen(navController: NavController) {
   Column {
     TopAppBar(
       title = { Text(stringResource(R.string.label_more)) },
-      elevation = 0.dp
+      elevation = 0.dp,
+      modifier = Modifier.zIndex(1f)
     )
     Surface(
       color = MaterialTheme.colors.primarySurface,
-      modifier = Modifier.fillMaxWidth(),
+      modifier = Modifier
+        .fillMaxWidth()
+        // To ensure that the elevation shadow is drawn behind the TopAppBar
+        .zIndex(0f),
+      elevation = 4.dp
     ) {
       Icon(vectorResource(R.drawable.ic_tachi), modifier = Modifier.padding(32.dp).size(56.dp))
     }
