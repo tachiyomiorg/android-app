@@ -8,17 +8,28 @@
 
 package tachiyomi.ui.catalogs.catalog
 
+import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material.Button
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.onActive
 import androidx.navigation.NavController
+import tachiyomi.source.model.MangaInfo
 import tachiyomi.ui.core.viewmodel.viewModel
 
 @Composable
 fun CatalogScreen(navController: NavController, sourceId: Long) {
   val vm = viewModel<CatalogViewModel> {
     CatalogViewModel.Params(sourceId)
+  }
+
+  onActive {
+    vm.getNextPage()
   }
 
   Column {
@@ -28,7 +39,37 @@ fun CatalogScreen(navController: NavController, sourceId: Long) {
       TopAppBar(title = { Text("Catalog not found") })
     } else {
       TopAppBar(title = { Text(catalog.name) })
+
+      MangaList(
+        mangas = vm.mangas,
+        isLoading = vm.isRefreshing,
+        hasNextPage = vm.hasNextPage,
+        loadNextPage = { vm.getNextPage() }
+      )
+    }
+  }
+}
+
+@Composable
+fun MangaList(
+  mangas: List<MangaInfo>,
+  isLoading: Boolean = false,
+  hasNextPage: Boolean = false,
+  loadNextPage: () -> Unit = {}
+) {
+  ScrollableColumn {
+    mangas.forEach {
+      Row {
+        Text(text = it.title)
+      }
     }
 
+    Button(onClick = { loadNextPage() }, enabled = hasNextPage) {
+      if (isLoading) {
+        CircularProgressIndicator(color = MaterialTheme.colors.onPrimary)
+      } else {
+        Text(text = "Load next page")
+      }
+    }
   }
 }
