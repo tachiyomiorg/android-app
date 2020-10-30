@@ -10,4 +10,12 @@
     <item name="colorAccent">@color/colorAccent</item>
   </style>
 
+  <style name="Theme.Splash" parent="Theme.App">
+    <item name="colorBackgroundSplash">@color/colorPrimary</item>
+
+    <item name="android:windowBackground">@drawable/splash_background</item>
+    <item name="android:statusBarColor">?attr/colorBackgroundSplash</item>
+    <item name="android:navigationBarColor">?attr/colorBackgroundSplash</item>
+  </style>
+
 </resources>
