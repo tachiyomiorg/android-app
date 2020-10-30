@@ -9,10 +9,10 @@
 package tachiyomi.ui
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -38,7 +38,6 @@ import androidx.compose.ui.graphics.vector.VectorAsset
 import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavType
 import androidx.navigation.compose.KEY_ROUTE
 import androidx.navigation.compose.NavHost
@@ -49,12 +48,14 @@ import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
 import tachiyomi.core.di.AppScope
 import tachiyomi.domain.ui.UiPreferences
+import tachiyomi.domain.ui.model.ThemeMode
 import tachiyomi.ui.catalogs.CatalogsScreen
 import tachiyomi.ui.catalogs.catalog.CatalogScreen
-import tachiyomi.ui.core.viewmodel.PreferenceStateDelegate
+import tachiyomi.ui.core.activity.BaseActivity
 import tachiyomi.ui.history.HistoryScreen
 import tachiyomi.ui.library.LibraryScreen
 import tachiyomi.ui.more.MoreScreen
+import tachiyomi.ui.more.Theme
 import tachiyomi.ui.more.ThemesScreen
 import tachiyomi.ui.more.themes
 import tachiyomi.ui.updates.UpdatesScreen
@@ -69,22 +70,22 @@ sealed class Route(val id: String) {
   object Themes : Route("themes")
 }
 
-class MainActivity : ComponentActivity() {
+class MainActivity : BaseActivity() {
 
   private val uiPrefs = AppScope.getInstance<UiPreferences>()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    setContent {
-      val themePref by PreferenceStateDelegate(uiPrefs.theme(), lifecycleScope)
-      val colors = remember(themePref) {
-        val theme = themes.find { it.id == themePref } ?: themes.first()
-        tintSystemBars(theme.colors)
-        theme.colors
-      }
+    val themeMode by uiPrefs.themeMode().asState()
+    val lightTheme by uiPrefs.lightTheme().asState()
+    val darkTheme by uiPrefs.darkTheme().asState()
 
-      MaterialTheme(colors = colors) {
+    setContent {
+      val theme = getCurrentTheme(themeMode, lightTheme, darkTheme)
+      tintSystemBars(theme.colors)
+
+      MaterialTheme(colors = theme.colors) {
         MainNavHost()
       }
     }
@@ -107,6 +108,30 @@ class MainActivity : ComponentActivity() {
     return true
   }
 
+  @Composable
+  private fun getCurrentTheme(themeMode: ThemeMode, lightTheme: Int, darkTheme: Int): Theme {
+    return remember(themeMode, lightTheme, darkTheme) {
+      fun getTheme(id: Int, fallbackIsLight: Boolean): Theme {
+        return themes.find { it.id == id } ?: themes.first { it.colors.isLight == fallbackIsLight }
+      }
+
+      when (themeMode) {
+        ThemeMode.System -> {
+          if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK ==
+            Configuration.UI_MODE_NIGHT_YES
+          ) {
+            getTheme(darkTheme, false)
+          } else {
+            getTheme(lightTheme, true)
+          }
+        }
+        ThemeMode.Light -> getTheme(lightTheme, true)
+        ThemeMode.Dark -> getTheme(darkTheme, false)
+      }
+    }
+  }
+
+  @Composable
   private fun tintSystemBars(colors: Colors) {
     if (Build.VERSION.SDK_INT >= 23) {
       val statusBarColor = colors.primarySurface

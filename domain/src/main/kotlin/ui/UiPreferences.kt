@@ -10,11 +10,21 @@ package tachiyomi.domain.ui
 
 import tachiyomi.core.prefs.Preference
 import tachiyomi.core.prefs.PreferenceStore
+import tachiyomi.core.prefs.getEnum
+import tachiyomi.domain.ui.model.ThemeMode
 
 class UiPreferences(private val preferenceStore: PreferenceStore) {
 
-  fun theme(): Preference<Int> {
-    return preferenceStore.getInt("theme", 0)
+  fun themeMode(): Preference<ThemeMode> {
+    return preferenceStore.getEnum("theme_mode", ThemeMode.System)
+  }
+
+  fun lightTheme(): Preference<Int> {
+    return preferenceStore.getInt("theme_light", 0)
+  }
+
+  fun darkTheme(): Preference<Int> {
+    return preferenceStore.getInt("theme_dark", 0)
   }
 
 }

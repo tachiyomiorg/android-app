@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package tachiyomi.ui.core.viewmodel
+package tachiyomi.ui.core.prefs
 
 import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.CoroutineScope

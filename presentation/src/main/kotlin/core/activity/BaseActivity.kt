@@ -6,25 +6,15 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package tachiyomi.ui.core.viewmodel
+package tachiyomi.ui.core.activity
 
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
+import androidx.activity.ComponentActivity
+import androidx.lifecycle.lifecycleScope
 import tachiyomi.core.prefs.Preference
 import tachiyomi.ui.core.prefs.PreferenceStateDelegate
 
-abstract class BaseViewModel {
+open class BaseActivity : ComponentActivity() {
 
-  protected val scope = MainScope()
-
-  fun destroy() {
-    scope.cancel()
-    onDestroy()
-  }
-
-  open fun onDestroy() {
-  }
-
-  fun <T> Preference<T>.asState() = PreferenceStateDelegate(this, scope)
+  fun <T> Preference<T>.asState() = PreferenceStateDelegate(this, lifecycleScope)
 
 }
