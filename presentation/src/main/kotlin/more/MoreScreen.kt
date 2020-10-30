@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.preferredWidthIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.AmbientElevationOverlay
 import androidx.compose.material.AmbientEmphasisLevels
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -33,9 +34,10 @@ import androidx.compose.material.Switch
 import androidx.compose.material.SwitchConstants
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FormatPaint
+import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Providers
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.VectorAsset
@@ -47,6 +49,7 @@ import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import tachiyomi.ui.R
+import tachiyomi.ui.core.components.NoElevationOverlay
 import tachiyomi.ui.core.viewmodel.BaseViewModel
 import tachiyomi.ui.core.viewmodel.viewModel
 import javax.inject.Inject
@@ -68,20 +71,22 @@ fun MoreScreen(navController: NavController) {
       elevation = 0.dp,
       modifier = Modifier.zIndex(1f)
     )
-    Surface(
-      color = MaterialTheme.colors.primarySurface,
-      modifier = Modifier
-        .fillMaxWidth()
-        // To ensure that the elevation shadow is drawn behind the TopAppBar
-        .zIndex(0f),
-      elevation = 4.dp
-    ) {
-      Icon(vectorResource(R.drawable.ic_tachi), modifier = Modifier.padding(32.dp).size(56.dp))
+    Providers(AmbientElevationOverlay provides NoElevationOverlay()) {
+      Surface(
+        color = MaterialTheme.colors.primarySurface,
+        modifier = Modifier
+          .fillMaxWidth()
+          // To ensure that the elevation shadow is drawn behind the TopAppBar
+          .zIndex(0f),
+        elevation = 4.dp
+      ) {
+        Icon(vectorResource(R.drawable.ic_tachi), modifier = Modifier.padding(32.dp).size(56.dp))
+      }
     }
     ScrollableColumn(scrollState = scroll, modifier = Modifier.fillMaxSize()) {
       SettingsRow(
-        title = "Theme picker",
-        icon = Icons.Default.FormatPaint,
+        title = "Appearance",
+        icon = Icons.Default.Palette,
         onClick = {
           navController.navigate("themes")
         }
