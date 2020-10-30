@@ -45,6 +45,7 @@ import tachiyomi.domain.manga.service.ChapterRepository
 import tachiyomi.domain.manga.service.MangaRepository
 import tachiyomi.domain.sync.api.SyncDevice
 import tachiyomi.domain.sync.service.SyncPreferences
+import tachiyomi.domain.ui.UiPreferences
 import toothpick.ktp.binding.bind
 import toothpick.ktp.binding.module
 import java.io.File
@@ -101,6 +102,10 @@ fun DataModule(context: Application) = module {
       val defaultDownloads = context.getExternalFilesDir("downloads")!!
       DownloadPreferences(preferenceFactory.create("download"), defaultDownloads)
     }
+    .providesSingleton()
+
+  bind<UiPreferences>()
+    .toProviderInstance { UiPreferences(preferenceFactory.create("ui")) }
     .providesSingleton()
 
 }
