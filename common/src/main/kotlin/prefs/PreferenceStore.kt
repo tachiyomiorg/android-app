@@ -56,3 +56,13 @@ interface PreferenceStore {
   ): Preference<T>
 
 }
+
+/**
+ * Returns an enum preference of type [T] for this [key].
+ */
+inline fun <reified T : Enum<T>> PreferenceStore.getEnum(
+  key: String,
+  defaultValue: T
+): Preference<T> {
+  return getObject(key, defaultValue, { it.name }, { enumValueOf(it) })
+}
