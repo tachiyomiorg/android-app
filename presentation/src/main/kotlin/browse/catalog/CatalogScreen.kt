@@ -17,6 +17,7 @@ import androidx.compose.runtime.onActive
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
+import tachiyomi.domain.manga.model.Manga
 import tachiyomi.source.model.MangaInfo
 import tachiyomi.ui.Route
 import tachiyomi.ui.core.coil.MangaCover
@@ -49,7 +50,9 @@ fun CatalogScreen(navController: NavController, sourceId: Long) {
         isLoading = vm.isRefreshing,
         hasNextPage = vm.hasNextPage,
         loadNextPage = { vm.getNextPage() },
-        onClickManga = { navController.navigate("${Route.BrowseCatalogManga.id}/$sourceId/${it.key}") },
+        onClickManga = {
+          navController.navigate("${Route.BrowseCatalogManga.id}/$sourceId/${it.id}")
+        },
       )
     }
   }
@@ -58,11 +61,11 @@ fun CatalogScreen(navController: NavController, sourceId: Long) {
 @Composable
 private fun MangaTable(
   sourceId: Long,
-  mangas: List<MangaInfo>,
+  mangas: List<Manga>,
   isLoading: Boolean = false,
   hasNextPage: Boolean = false,
   loadNextPage: () -> Unit = {},
-  onClickManga: (MangaInfo) -> Unit = {}
+  onClickManga: (Manga) -> Unit = {}
 ) {
   if (mangas.isEmpty()) {
     LoadingScreen()
@@ -76,7 +79,7 @@ private fun MangaTable(
       AutofitGrid(data = mangas, defaultColumnWidth = 160.dp) { manga ->
         MangaGridItem(
           title = manga.title,
-          cover = MangaCover.from(manga, sourceId),
+          cover = MangaCover.from(manga),
           onClick = { onClickManga(manga) }
         )
       }

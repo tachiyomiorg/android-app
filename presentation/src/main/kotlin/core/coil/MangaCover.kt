@@ -27,10 +27,6 @@ class MangaCover(
       return MangaCover(manga.id, manga.sourceId, manga.cover, manga.favorite)
     }
 
-    fun from(manga: MangaInfo, sourceId: Long): MangaCover {
-      return MangaCover(-1L, sourceId, manga.cover, false)
-    }
-
     fun from(manga: LibraryManga): MangaCover {
       return MangaCover(manga.id, manga.sourceId, manga.cover, true)
     }

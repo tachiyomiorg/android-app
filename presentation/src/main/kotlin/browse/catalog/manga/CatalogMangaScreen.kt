@@ -17,13 +17,13 @@ import tachiyomi.ui.core.components.manga.MangaScreen
 import tachiyomi.ui.core.viewmodel.viewModel
 
 @Composable
-fun CatalogMangaScreen(navController: NavController, sourceId: Long, key: String) {
+fun CatalogMangaScreen(navController: NavController, sourceId: Long, mangaId: Long) {
   val vm = viewModel<CatalogMangaViewModel> {
-    CatalogMangaViewModel.Params(sourceId, key)
+    CatalogMangaViewModel.Params(sourceId, mangaId)
   }
 
   Scaffold(
-    topBar = { TopAppBar(title = { Text(vm.manga?.title ?: "$sourceId/$key") }) },
-    bodyContent = { MangaScreen() }
+    topBar = { TopAppBar(title = { Text(vm.manga?.title ?: "$sourceId/$mangaId") }) },
+    bodyContent = { MangaScreen(navController, vm.manga, vm.chapters) }
   )
 }

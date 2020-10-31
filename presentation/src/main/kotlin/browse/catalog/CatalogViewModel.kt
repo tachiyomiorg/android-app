@@ -14,23 +14,25 @@ import androidx.compose.runtime.setValue
 import kotlinx.coroutines.launch
 import tachiyomi.domain.catalog.interactor.GetLocalCatalog
 import tachiyomi.domain.catalog.model.CatalogLocal
+import tachiyomi.domain.manga.interactor.ListMangaPageFromCatalogSource
+import tachiyomi.domain.manga.model.Manga
 import tachiyomi.source.CatalogSource
-import tachiyomi.source.model.MangaInfo
 import tachiyomi.ui.core.viewmodel.BaseViewModel
 import javax.inject.Inject
 
 class CatalogViewModel @Inject constructor(
   private val params: Params,
   private val getLocalCatalog: GetLocalCatalog,
+  private val listMangaPageFromCatalogSource: ListMangaPageFromCatalogSource,
 ) : BaseViewModel() {
 
-  private var page: Int = 0
+  private var page: Int = 1
 
   var catalog by mutableStateOf<CatalogLocal?>(null)
     private set
   var isRefreshing by mutableStateOf(false)
     private set
-  var mangas by mutableStateOf<List<MangaInfo>>(mutableListOf())
+  var mangas by mutableStateOf<List<Manga>>(mutableListOf())
     private set
   var hasNextPage by mutableStateOf(true)
     private set
@@ -48,9 +50,10 @@ class CatalogViewModel @Inject constructor(
       isRefreshing = true
 
       if (catalog?.source is CatalogSource) {
-        val mangaInfo = (catalog!!.source as CatalogSource).getMangaList(sort = null, page = page)
-        mangas += mangaInfo.mangas
-        hasNextPage = mangaInfo.hasNextPage
+        val mangaPage = listMangaPageFromCatalogSource.await((catalog!!.source as CatalogSource),
+          null, page)
+        mangas += mangaPage.mangas
+        hasNextPage = mangaPage.hasNextPage
 
         page++
       }

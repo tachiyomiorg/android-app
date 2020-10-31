@@ -213,15 +213,15 @@ private fun MainNavHost() {
             CatalogScreen(navController, sourceId)
           }
           composable(
-            "${Route.BrowseCatalogManga.id}/{sourceId}/{key}",
+            "${Route.BrowseCatalogManga.id}/{sourceId}/{mangaId}",
             arguments = listOf(
               navArgument("sourceId") { type = NavType.LongType },
-              navArgument("key") { type = NavType.StringType },
+              navArgument("mangaId") { type = NavType.LongType },
             )
           ) { backStackEntry ->
             val sourceId = backStackEntry.arguments?.getLong("sourceId") as Long
-            val key = backStackEntry.arguments?.getString("key") as String
-            CatalogMangaScreen(navController, sourceId, key)
+            val mangaId = backStackEntry.arguments?.getLong("mangaId") as Long
+            CatalogMangaScreen(navController, sourceId, mangaId)
           }
 
           composable(Route.More.id) { MoreScreen(navController) }

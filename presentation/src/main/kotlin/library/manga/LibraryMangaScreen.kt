@@ -24,6 +24,6 @@ fun LibraryMangaScreen(navController: NavController, mangaId: Long) {
 
   Scaffold(
     topBar = { TopAppBar(title = { Text(vm.manga?.title ?: "$mangaId") }) },
-    bodyContent = { MangaScreen() }
+    bodyContent = { MangaScreen(navController, vm.manga) }
   )
 }
