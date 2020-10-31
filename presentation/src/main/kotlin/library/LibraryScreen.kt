@@ -36,7 +36,7 @@ fun LibraryScreen(navController: NavController) {
   val vm = viewModel<LibraryViewModel>()
 
   Column {
-    TopAppBar(title = { Text(stringResource(R.string.label_library2)) })
+    TopAppBar(title = { Text(stringResource(R.string.label_library)) })
     Box(Modifier.padding(2.dp)) {
       LibraryTable(
         vm.library,

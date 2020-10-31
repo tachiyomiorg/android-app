@@ -179,7 +179,7 @@ private fun MainNavHost() {
   val navController = rememberNavController()
 
   val topLevelRoutes = listOf(
-    TopLevelRoute(R.string.label_library2, Icons.Default.Book, Route.Library),
+    TopLevelRoute(R.string.label_library, Icons.Default.Book, Route.Library),
     TopLevelRoute(R.string.label_updates, Icons.Default.NewReleases, Route.Updates),
     TopLevelRoute(R.string.label_history, Icons.Default.History, Route.History),
     TopLevelRoute(R.string.label_browse, Icons.Default.Explore, Route.Browse),
