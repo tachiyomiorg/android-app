@@ -10,11 +10,12 @@ package tachiyomi.ui.core.coil
 
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.domain.manga.model.Manga
+import tachiyomi.source.model.MangaInfo
 
 /**
  * Class used to load manga covers with Coil.
  */
-internal class MangaCover(
+class MangaCover(
   val id: Long,
   val sourceId: Long,
   val cover: String,
@@ -24,6 +25,10 @@ internal class MangaCover(
   companion object {
     fun from(manga: Manga): MangaCover {
       return MangaCover(manga.id, manga.sourceId, manga.cover, manga.favorite)
+    }
+
+    fun from(manga: MangaInfo, sourceId: Long): MangaCover {
+      return MangaCover(-1L, sourceId, manga.cover, false)
     }
 
     fun from(manga: LibraryManga): MangaCover {

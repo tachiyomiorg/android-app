@@ -11,16 +11,17 @@ package tachiyomi.ui.catalogs.catalog
 import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.material.Button
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.onActive
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import tachiyomi.source.model.MangaInfo
+import tachiyomi.ui.core.coil.MangaCover
+import tachiyomi.ui.core.components.AutofitGrid
 import tachiyomi.ui.core.components.LoadingScreen
+import tachiyomi.ui.core.components.MangaGridItem
 import tachiyomi.ui.core.viewmodel.viewModel
 
 @Composable
@@ -42,6 +43,7 @@ fun CatalogScreen(navController: NavController, sourceId: Long) {
       TopAppBar(title = { Text(catalog.name) })
 
       MangaList(
+        sourceId = sourceId,
         mangas = vm.mangas,
         isLoading = vm.isRefreshing,
         hasNextPage = vm.hasNextPage,
@@ -53,6 +55,7 @@ fun CatalogScreen(navController: NavController, sourceId: Long) {
 
 @Composable
 fun MangaList(
+  sourceId: Long,
   mangas: List<MangaInfo>,
   isLoading: Boolean = false,
   hasNextPage: Boolean = false,
@@ -61,19 +64,17 @@ fun MangaList(
   if (mangas.isEmpty()) {
     LoadingScreen()
   } else {
-    ScrollableColumn {
-      mangas.forEach {
-        Row {
-          Text(text = it.title)
-        }
+    Column {
+      // TODO: this should happen automatically on scroll
+      Button(onClick = { loadNextPage() }, enabled = hasNextPage) {
+        Text(text = if (isLoading) "Loading..." else "Load next page")
       }
 
-      Button(onClick = { loadNextPage() }, enabled = hasNextPage) {
-        if (isLoading) {
-          CircularProgressIndicator(color = MaterialTheme.colors.onPrimary)
-        } else {
-          Text(text = "Load next page")
-        }
+      AutofitGrid(data = mangas, defaultColumnWidth = 160.dp) { manga ->
+        MangaGridItem(
+          title = manga.title,
+          cover = MangaCover.from(manga, sourceId)
+        )
       }
     }
   }
