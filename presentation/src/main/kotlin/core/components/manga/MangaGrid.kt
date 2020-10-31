@@ -6,10 +6,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package tachiyomi.ui.core.components
+package tachiyomi.ui.core.components.manga
 
 import androidx.compose.foundation.AmbientTextStyle
 import androidx.compose.foundation.Text
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -42,7 +43,7 @@ import tachiyomi.ui.library.ptSansFont
 fun MangaGridItem(
   title: String,
   cover: MangaCover,
-  modifier: Modifier = Modifier,
+  onClick: () -> Unit = {},
 ) {
   val gradient = LinearGradient(
     0.75f to Color.Transparent,
@@ -59,7 +60,11 @@ fun MangaGridItem(
   )
 
   Surface(
-    modifier = modifier.fillMaxWidth().aspectRatio(3f / 4f).padding(4.dp),
+    modifier = Modifier
+      .fillMaxWidth()
+      .aspectRatio(3f / 4f)
+      .padding(4.dp)
+      .clickable(onClick = onClick),
     elevation = 4.dp,
     shape = RoundedCornerShape(4.dp)
   ) {

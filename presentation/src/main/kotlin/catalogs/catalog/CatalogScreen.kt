@@ -8,15 +8,12 @@
 
 package tachiyomi.ui.catalogs.catalog
 
-import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.Text
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Button
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.onActive
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
@@ -25,7 +22,7 @@ import tachiyomi.ui.Route
 import tachiyomi.ui.core.coil.MangaCover
 import tachiyomi.ui.core.components.AutofitGrid
 import tachiyomi.ui.core.components.LoadingScreen
-import tachiyomi.ui.core.components.MangaGridItem
+import tachiyomi.ui.core.components.manga.MangaGridItem
 import tachiyomi.ui.core.viewmodel.viewModel
 
 @Composable
@@ -46,20 +43,20 @@ fun CatalogScreen(navController: NavController, sourceId: Long) {
     } else {
       TopAppBar(title = { Text(catalog.name) })
 
-      MangaList(
+      MangaTable(
         sourceId = sourceId,
         mangas = vm.mangas,
         isLoading = vm.isRefreshing,
         hasNextPage = vm.hasNextPage,
         loadNextPage = { vm.getNextPage() },
-        onClickManga = { navController.navigate("${Route.Manga.id}/${it.key}") },
+        onClickManga = { navController.navigate("${Route.CatalogManga.id}/$sourceId/${it.key}") },
       )
     }
   }
 }
 
 @Composable
-fun MangaList(
+private fun MangaTable(
   sourceId: Long,
   mangas: List<MangaInfo>,
   isLoading: Boolean = false,
@@ -80,7 +77,7 @@ fun MangaList(
         MangaGridItem(
           title = manga.title,
           cover = MangaCover.from(manga, sourceId),
-          modifier = Modifier.clickable(onClick = { onClickManga(manga) })
+          onClick = { onClickManga(manga) }
         )
       }
     }

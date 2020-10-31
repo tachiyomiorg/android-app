@@ -52,23 +52,29 @@ import tachiyomi.domain.ui.UiPreferences
 import tachiyomi.domain.ui.model.ThemeMode
 import tachiyomi.ui.catalogs.CatalogsScreen
 import tachiyomi.ui.catalogs.catalog.CatalogScreen
-import tachiyomi.ui.catalogs.manga.MangaScreen
+import tachiyomi.ui.catalogs.catalog.manga.CatalogMangaScreen
 import tachiyomi.ui.core.activity.BaseActivity
 import tachiyomi.ui.core.theme.Theme
 import tachiyomi.ui.core.theme.themes
 import tachiyomi.ui.history.HistoryScreen
 import tachiyomi.ui.library.LibraryScreen
+import tachiyomi.ui.library.manga.LibraryMangaScreen
 import tachiyomi.ui.more.MoreScreen
 import tachiyomi.ui.more.ThemesScreen
 import tachiyomi.ui.updates.UpdatesScreen
 
 sealed class Route(val id: String) {
   object Library : Route("library")
+  object LibraryManga : Route("library/manga")
+
   object Catalogs : Route("catalogs")
   object Catalog : Route("catalog")
-  object Manga : Route("manga")
+  object CatalogManga : Route("catalog/manga")
+
   object Updates : Route("updates")
+
   object History : Route("history")
+
   object More : Route("more")
   object Themes : Route("themes")
 }
@@ -173,7 +179,7 @@ private fun MainNavHost() {
 
   val navController = rememberNavController()
 
-  val items = listOf(
+  val topLevelNavRoutes = listOf(
     Item(R.string.label_library2, Icons.Default.Book, Route.Library),
     Item(R.string.label_catalogs, Icons.Default.Explore, Route.Catalogs),
     Item(R.string.label_updates, Icons.Default.NewReleases, Route.Updates),
@@ -186,6 +192,13 @@ private fun MainNavHost() {
       Box(Modifier.padding(paddingValues)) {
         NavHost(navController, startDestination = Route.Catalogs.id) {
           composable(Route.Library.id) { LibraryScreen(navController) }
+          composable(
+            "${Route.LibraryManga.id}/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.LongType })
+          ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getLong("id") as Long
+            LibraryMangaScreen(navController, id)
+          }
 
           // TODO: Have a NavHost per individual top-level route?
           composable(Route.Catalogs.id) { CatalogsScreen(navController) }
@@ -193,15 +206,19 @@ private fun MainNavHost() {
             "${Route.Catalog.id}/{sourceId}",
             arguments = listOf(navArgument("sourceId") { type = NavType.LongType })
           ) { backStackEntry ->
-            val sourceId = backStackEntry.arguments?.get("sourceId") as Long
+            val sourceId = backStackEntry.arguments?.getLong("sourceId") as Long
             CatalogScreen(navController, sourceId)
           }
           composable(
-            "${Route.Manga.id}/{key}",
-            arguments = listOf(navArgument("key") { type = NavType.StringType })
+            "${Route.CatalogManga.id}/{sourceId}/{key}",
+            arguments = listOf(
+              navArgument("sourceId") { type = NavType.LongType },
+              navArgument("key") { type = NavType.StringType },
+            )
           ) { backStackEntry ->
-            val key = backStackEntry.arguments?.get("key") as String
-            MangaScreen(navController, key)
+            val sourceId = backStackEntry.arguments?.getLong("sourceId") as Long
+            val key = backStackEntry.arguments?.getString("key") as String
+            CatalogMangaScreen(navController, sourceId, key)
           }
 
           composable(Route.Updates.id) { UpdatesScreen(navController) }
@@ -213,9 +230,9 @@ private fun MainNavHost() {
     },
     bottomBar = {
       BottomNavigation {
-        val navBackStackEntry = navController.currentBackStackEntryAsState().value
-        val entryRoute = navBackStackEntry?.arguments?.getString(KEY_ROUTE)
-        items.forEach {
+        val currentScreen by navController.currentBackStackEntryAsState()
+        val entryRoute = currentScreen?.arguments?.getString(KEY_ROUTE)
+        topLevelNavRoutes.forEach {
           BottomNavigationItem(
             icon = { Icon(it.icon) },
             label = {
