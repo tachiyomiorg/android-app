@@ -14,13 +14,10 @@
   <string name="label_download_queue">Download queue</string>
   <string name="label_library">My library</string>
   <string name="label_library2">Library</string>
-  <string name="label_recent_manga">Recently read</string>
-  <string name="label_catalogs">Catalogs</string>
-  <string name="label_history">History</string>
   <string name="label_updates">Updates</string>
-  <string name="label_latest_updates">Latest updates</string>
+  <string name="label_history">History</string>
+  <string name="label_browse">Browse</string>
   <string name="label_categories">Categories</string>
-  <string name="label_selected">Selected: %1$d</string>
   <string name="label_backup">Backup</string>
   <string name="label_migration">Source migration</string>
   <string name="label_extensions">Extensions</string>

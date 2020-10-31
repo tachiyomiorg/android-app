@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package tachiyomi.ui.catalogs.catalog.manga
+package tachiyomi.ui.browse.catalog.manga
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package tachiyomi.ui.catalogs
+package tachiyomi.ui.browse
 
 import androidx.core.os.LocaleListCompat
 import tachiyomi.domain.catalog.model.CatalogLocal

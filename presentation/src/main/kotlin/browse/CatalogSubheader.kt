@@ -6,11 +6,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package tachiyomi.ui.catalogs
+package tachiyomi.ui.browse
 
-sealed class CatalogHeader {
+sealed class CatalogSubheader {
 
-  object Installed : CatalogHeader()
-  object Available : CatalogHeader()
+  data class UpdateAvailable(val updatable: Int) : CatalogSubheader()
+  object UpToDate : CatalogSubheader()
 
 }

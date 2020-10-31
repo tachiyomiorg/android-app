@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package tachiyomi.ui.catalogs
+package tachiyomi.ui.browse
 
 import androidx.compose.foundation.AmbientContentColor
 import androidx.compose.foundation.Image
@@ -72,12 +72,12 @@ fun CatalogsScreen(navController: NavController) {
   val vm = viewModel<CatalogsViewModel>()
 
   val onClick: (Catalog) -> Unit = {
-    navController.navigate("${Route.Catalog.id}/${it.sourceId}")
+    navController.navigate("${Route.BrowseCatalog.id}/${it.sourceId}")
   }
 
   Column {
     TopAppBar(
-      title = { Text(stringResource(R.string.label_catalogs)) }
+      title = { Text(stringResource(R.string.label_browse)) }
     )
     ScrollableColumn {
       val mediumTextEmphasis = AmbientEmphasisLevels.current.medium

@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package tachiyomi.ui.catalogs.catalog
+package tachiyomi.ui.browse.catalog
 
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Column
@@ -49,7 +49,7 @@ fun CatalogScreen(navController: NavController, sourceId: Long) {
         isLoading = vm.isRefreshing,
         hasNextPage = vm.hasNextPage,
         loadNextPage = { vm.getNextPage() },
-        onClickManga = { navController.navigate("${Route.CatalogManga.id}/$sourceId/${it.key}") },
+        onClickManga = { navController.navigate("${Route.BrowseCatalogManga.id}/$sourceId/${it.key}") },
       )
     }
   }
