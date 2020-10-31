@@ -22,8 +22,8 @@ object Deps {
   object androidX {
     const val core = "androidx.core:core-ktx:1.4.0-alpha01"
     const val appCompat = "androidx.appcompat:appcompat:1.3.0-alpha02"
-    const val preference = "androidx.preference:preference:1.1.1"
-    const val sqlite = "androidx.sqlite:sqlite:2.1.0"
+    const val preference = "androidx.preference:preference-ktx:1.1.1"
+    const val sqlite = "androidx.sqlite:sqlite-ktx:2.1.0"
   }
 
   object compose {
@@ -44,7 +44,7 @@ object Deps {
   }
 
   object workManager {
-    private const val version = "2.5.0-alpha03"
+    private const val version = "2.5.0-beta01"
     const val runtime = "androidx.work:work-runtime-ktx:$version"
   }
 
@@ -66,7 +66,7 @@ object Deps {
     const val testing = "com.github.stephanenicolas.toothpick:toothpick-testing-junit5:$version"
   }
 
-  const val okhttp = "com.squareup.okhttp3:okhttp:4.9.0"
+  const val okhttp = "com.squareup.okhttp3:okhttp:4.10.0-RC1"
   const val duktape = "com.squareup.duktape:duktape-android:1.3.0"
   const val kotson = "com.github.salomonbrys.kotson:kotson:2.5.0"
   const val jsoup = "org.jsoup:jsoup:1.13.1"
