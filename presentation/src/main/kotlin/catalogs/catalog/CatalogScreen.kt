@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.onActive
 import androidx.navigation.NavController
 import tachiyomi.source.model.MangaInfo
+import tachiyomi.ui.core.components.LoadingScreen
 import tachiyomi.ui.core.viewmodel.viewModel
 
 @Composable
@@ -57,18 +58,22 @@ fun MangaList(
   hasNextPage: Boolean = false,
   loadNextPage: () -> Unit = {}
 ) {
-  ScrollableColumn {
-    mangas.forEach {
-      Row {
-        Text(text = it.title)
+  if (mangas.isEmpty()) {
+    LoadingScreen()
+  } else {
+    ScrollableColumn {
+      mangas.forEach {
+        Row {
+          Text(text = it.title)
+        }
       }
-    }
 
-    Button(onClick = { loadNextPage() }, enabled = hasNextPage) {
-      if (isLoading) {
-        CircularProgressIndicator(color = MaterialTheme.colors.onPrimary)
-      } else {
-        Text(text = "Load next page")
+      Button(onClick = { loadNextPage() }, enabled = hasNextPage) {
+        if (isLoading) {
+          CircularProgressIndicator(color = MaterialTheme.colors.onPrimary)
+        } else {
+          Text(text = "Load next page")
+        }
       }
     }
   }
