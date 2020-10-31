@@ -11,7 +11,7 @@ package tachiyomi.ui.core.viewmodel
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import tachiyomi.core.prefs.Preference
-import tachiyomi.ui.core.prefs.PreferenceStateDelegate
+import tachiyomi.ui.core.prefs.PreferenceMutableState
 
 abstract class BaseViewModel {
 
@@ -25,6 +25,6 @@ abstract class BaseViewModel {
   open fun onDestroy() {
   }
 
-  fun <T> Preference<T>.asState() = PreferenceStateDelegate(this, scope)
+  fun <T> Preference<T>.asState() = PreferenceMutableState(this, scope)
 
 }

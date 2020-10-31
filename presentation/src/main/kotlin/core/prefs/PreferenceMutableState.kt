@@ -8,17 +8,17 @@
 
 package tachiyomi.ui.core.prefs
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import tachiyomi.core.prefs.Preference
-import kotlin.reflect.KProperty
 
-class PreferenceStateDelegate<T>(
+class PreferenceMutableState<T>(
   private val preference: Preference<T>,
   scope: CoroutineScope
-) {
+) : MutableState<T> {
 
   private val state = mutableStateOf(preference.get())
 
@@ -28,12 +28,18 @@ class PreferenceStateDelegate<T>(
       .launchIn(scope)
   }
 
-  operator fun getValue(thisRef: Any?, prop: KProperty<*>): T {
+  override var value: T
+    get() = state.value
+    set(value) {
+      preference.set(value)
+    }
+
+  override fun component1(): T {
     return state.value
   }
 
-  operator fun setValue(thisRef: Any?, prop: KProperty<*>, value: T) {
-    preference.set(value)
+  override fun component2(): (T) -> Unit {
+    return { preference.set(it) }
   }
 
 }

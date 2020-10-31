@@ -11,10 +11,10 @@ package tachiyomi.ui.core.activity
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 import tachiyomi.core.prefs.Preference
-import tachiyomi.ui.core.prefs.PreferenceStateDelegate
+import tachiyomi.ui.core.prefs.PreferenceMutableState
 
 open class BaseActivity : ComponentActivity() {
 
-  fun <T> Preference<T>.asState() = PreferenceStateDelegate(this, lifecycleScope)
+  fun <T> Preference<T>.asState() = PreferenceMutableState(this, lifecycleScope)
 
 }

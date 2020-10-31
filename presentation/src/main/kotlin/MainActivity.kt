@@ -30,6 +30,7 @@ import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.NewReleases
 import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.luminance
@@ -52,12 +53,12 @@ import tachiyomi.domain.ui.model.ThemeMode
 import tachiyomi.ui.catalogs.CatalogsScreen
 import tachiyomi.ui.catalogs.catalog.CatalogScreen
 import tachiyomi.ui.core.activity.BaseActivity
+import tachiyomi.ui.core.theme.Theme
+import tachiyomi.ui.core.theme.themes
 import tachiyomi.ui.history.HistoryScreen
 import tachiyomi.ui.library.LibraryScreen
 import tachiyomi.ui.more.MoreScreen
-import tachiyomi.ui.more.Theme
 import tachiyomi.ui.more.ThemesScreen
-import tachiyomi.ui.more.themes
 import tachiyomi.ui.updates.UpdatesScreen
 
 sealed class Route(val id: String) {
