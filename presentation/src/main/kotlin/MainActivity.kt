@@ -52,6 +52,7 @@ import tachiyomi.domain.ui.UiPreferences
 import tachiyomi.domain.ui.model.ThemeMode
 import tachiyomi.ui.catalogs.CatalogsScreen
 import tachiyomi.ui.catalogs.catalog.CatalogScreen
+import tachiyomi.ui.catalogs.manga.MangaScreen
 import tachiyomi.ui.core.activity.BaseActivity
 import tachiyomi.ui.core.theme.Theme
 import tachiyomi.ui.core.theme.themes
@@ -65,6 +66,7 @@ sealed class Route(val id: String) {
   object Library : Route("library")
   object Catalogs : Route("catalogs")
   object Catalog : Route("catalog")
+  object Manga : Route("manga")
   object Updates : Route("updates")
   object History : Route("history")
   object More : Route("more")
@@ -193,6 +195,13 @@ private fun MainNavHost() {
           ) { backStackEntry ->
             val sourceId = backStackEntry.arguments?.get("sourceId") as Long
             CatalogScreen(navController, sourceId)
+          }
+          composable(
+            "${Route.Manga.id}/{key}",
+            arguments = listOf(navArgument("key") { type = NavType.StringType })
+          ) { backStackEntry ->
+            val key = backStackEntry.arguments?.get("key") as String
+            MangaScreen(navController, key)
           }
 
           composable(Route.Updates.id) { UpdatesScreen(navController) }

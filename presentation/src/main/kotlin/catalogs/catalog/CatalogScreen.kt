@@ -10,14 +10,18 @@ package tachiyomi.ui.catalogs.catalog
 
 import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.Text
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Button
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.onActive
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.navigate
 import tachiyomi.source.model.MangaInfo
+import tachiyomi.ui.Route
 import tachiyomi.ui.core.coil.MangaCover
 import tachiyomi.ui.core.components.AutofitGrid
 import tachiyomi.ui.core.components.LoadingScreen
@@ -47,7 +51,8 @@ fun CatalogScreen(navController: NavController, sourceId: Long) {
         mangas = vm.mangas,
         isLoading = vm.isRefreshing,
         hasNextPage = vm.hasNextPage,
-        loadNextPage = { vm.getNextPage() }
+        loadNextPage = { vm.getNextPage() },
+        onClickManga = { navController.navigate("${Route.Manga.id}/${it.key}") },
       )
     }
   }
@@ -59,7 +64,8 @@ fun MangaList(
   mangas: List<MangaInfo>,
   isLoading: Boolean = false,
   hasNextPage: Boolean = false,
-  loadNextPage: () -> Unit = {}
+  loadNextPage: () -> Unit = {},
+  onClickManga: (MangaInfo) -> Unit = {}
 ) {
   if (mangas.isEmpty()) {
     LoadingScreen()
@@ -73,7 +79,8 @@ fun MangaList(
       AutofitGrid(data = mangas, defaultColumnWidth = 160.dp) { manga ->
         MangaGridItem(
           title = manga.title,
-          cover = MangaCover.from(manga, sourceId)
+          cover = MangaCover.from(manga, sourceId),
+          modifier = Modifier.clickable(onClick = { onClickManga(manga) })
         )
       }
     }

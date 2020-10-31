@@ -39,7 +39,11 @@ import tachiyomi.ui.core.coil.MangaCover
 import tachiyomi.ui.library.ptSansFont
 
 @Composable
-fun MangaGridItem(title: String, cover: MangaCover) {
+fun MangaGridItem(
+  title: String,
+  cover: MangaCover,
+  modifier: Modifier = Modifier,
+) {
   val gradient = LinearGradient(
     0.75f to Color.Transparent,
     1.0f to Color(0xAA000000),
@@ -55,7 +59,7 @@ fun MangaGridItem(title: String, cover: MangaCover) {
   )
 
   Surface(
-    modifier = Modifier.fillMaxWidth().aspectRatio(3f / 4f).padding(4.dp),
+    modifier = modifier.fillMaxWidth().aspectRatio(3f / 4f).padding(4.dp),
     elevation = 4.dp,
     shape = RoundedCornerShape(4.dp)
   ) {
