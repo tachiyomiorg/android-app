@@ -64,5 +64,11 @@ inline fun <reified T : Enum<T>> PreferenceStore.getEnum(
   key: String,
   defaultValue: T
 ): Preference<T> {
-  return getObject(key, defaultValue, { it.name }, { enumValueOf(it) })
+  return getObject(key, defaultValue, { it.name }, {
+    try {
+      enumValueOf(it)
+    } catch (e: IllegalArgumentException) {
+      defaultValue
+    }
+  })
 }
