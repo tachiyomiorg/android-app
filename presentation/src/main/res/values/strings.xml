@@ -1,15 +1,29 @@
 <resources>
   <string name="app_name" translatable="false">Tachiyomi</string>
 
-  <!-- Activities and fragments labels (toolbar title) -->
-  <string name="label_library">Library</string>
-  <string name="label_updates">Updates</string>
-  <string name="label_history">History</string>
-  <string name="label_browse">Browse</string>
-  <string name="label_more">More</string>
+  <string name="library_label">Library</string>
+  <string name="updates_label">Updates</string>
+  <string name="history_label">History</string>
+  <string name="browse_label">Browse</string>
+  <string name="more_label">More</string>
 
-  <!-- Tachiyomi 1.x TODO reorganize file and remove unused -->
   <string name="lang_all">All</string>
   <string name="lang_others">Others</string>
+
+  <!-- More screen -->
+  <string name="settings_label">Settings</string>
+  <string name="about_label">About</string>
+  <string name="help_label">Help</string>
+
+  <!-- Settings screen -->
+  <string name="general_label">General</string>
+  <string name="appearance_label">Appearance</string>
+  <string name="reader_label">Reader</string>
+  <string name="downloads_label">Downloads</string>
+  <string name="tracking_label">Tracking</string>
+  <string name="backup_label">Backup</string>
+  <string name="security_label">Security</string>
+  <string name="parental_controls_label">Parental controls</string>
+  <string name="advanced_label">Advanced</string>
 
 </resources>

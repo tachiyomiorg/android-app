@@ -19,6 +19,6 @@ import tachiyomi.ui.R
 @Composable
 fun UpdatesScreen(navController: NavController) {
   Column {
-    TopAppBar(title = { Text(stringResource(R.string.label_updates)) })
+    TopAppBar(title = { Text(stringResource(R.string.updates_label)) })
   }
 }

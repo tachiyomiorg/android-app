@@ -22,7 +22,9 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.Help
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Providers
@@ -53,7 +55,7 @@ fun MoreScreen(navController: NavController) {
 
   Column {
     TopAppBar(
-      title = { Text(stringResource(R.string.label_more)) },
+      title = { Text(stringResource(R.string.more_label)) },
       elevation = 0.dp,
       modifier = Modifier.zIndex(1f)
     )
@@ -71,13 +73,20 @@ fun MoreScreen(navController: NavController) {
     }
     ScrollableColumn(scrollState = scroll, modifier = Modifier.fillMaxSize()) {
       PreferenceRow(
-        title = "Appearance",
-        icon = Icons.Default.Palette,
-        onClick = {
-          navController.navigate("themes")
-        }
+        title = stringResource(R.string.settings_label),
+        icon = Icons.Default.Settings,
+        onClick = { navController.navigate("settings") }
+      )
+      PreferenceRow(
+        title = stringResource(R.string.about_label),
+        icon = Icons.Default.Info,
+        onClick = { /* TODO */ }
+      )
+      PreferenceRow(
+        title = stringResource(R.string.help_label),
+        icon = Icons.Default.Help,
+        onClick = { /* TODO */ }
       )
     }
   }
 }
-

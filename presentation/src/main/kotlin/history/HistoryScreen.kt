@@ -19,6 +19,6 @@ import tachiyomi.ui.R
 @Composable
 fun HistoryScreen(navController: NavController) {
   Column {
-    TopAppBar(title = { Text(stringResource(R.string.label_history)) })
+    TopAppBar(title = { Text(stringResource(R.string.history_label)) })
   }
 }

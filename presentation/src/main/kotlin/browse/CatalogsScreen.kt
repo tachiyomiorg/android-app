@@ -77,7 +77,7 @@ fun CatalogsScreen(navController: NavController) {
 
   Column {
     TopAppBar(
-      title = { Text(stringResource(R.string.label_browse)) }
+      title = { Text(stringResource(R.string.browse_label)) }
     )
     ScrollableColumn {
       val mediumTextEmphasis = AmbientEmphasisLevels.current.medium

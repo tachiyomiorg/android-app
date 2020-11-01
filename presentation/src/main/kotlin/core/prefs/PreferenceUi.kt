@@ -8,23 +8,21 @@
 
 package tachiyomi.ui.core.prefs
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredWidthIn
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumnFor
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.AmbientEmphasisLevels
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ProvideEmphasis
 import androidx.compose.material.RadioButton
@@ -39,7 +37,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.VectorAsset
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -150,15 +147,18 @@ fun PreferenceRow(
 ) {
   val height = if (subtitle != null) 72.dp else 56.dp
 
-  Row(Modifier.fillMaxWidth().height(height).clickable(onClick = onClick)) {
+  Row(
+    modifier = Modifier.fillMaxWidth().height(height).clickable(onClick = onClick),
+    verticalAlignment = Alignment.CenterVertically
+  ) {
     if (icon != null) {
-      Image(
+      Icon(
         asset = icon,
-        modifier = Modifier.padding(horizontal = 16.dp).height(height).size(24.dp),
-        colorFilter = ColorFilter.tint(MaterialTheme.colors.secondaryVariant)
+        modifier = Modifier.padding(horizontal = 16.dp).size(24.dp),
+        tint = MaterialTheme.colors.secondaryVariant
       )
     }
-    Column(Modifier.padding(horizontal = 16.dp).weight(1f).fillMaxHeight().wrapContentHeight()) {
+    Column(Modifier.padding(horizontal = 16.dp).weight(1f)) {
       Text(
         text = title,
         overflow = TextOverflow.Ellipsis,
@@ -177,7 +177,7 @@ fun PreferenceRow(
       }
     }
     if (action != null) {
-      Box(Modifier.preferredWidthIn(min = 56.dp).height(height).wrapContentHeight()) {
+      Box(Modifier.preferredWidthIn(min = 56.dp)) {
         action()
       }
     }

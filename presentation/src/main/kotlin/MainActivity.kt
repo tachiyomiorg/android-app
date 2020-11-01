@@ -60,7 +60,18 @@ import tachiyomi.ui.history.HistoryScreen
 import tachiyomi.ui.library.LibraryScreen
 import tachiyomi.ui.library.manga.LibraryMangaScreen
 import tachiyomi.ui.more.MoreScreen
-import tachiyomi.ui.more.ThemesScreen
+import tachiyomi.ui.more.SettingsAdvancedScreen
+import tachiyomi.ui.more.SettingsAppearance
+import tachiyomi.ui.more.SettingsBackupScreen
+import tachiyomi.ui.more.SettingsBrowseScreen
+import tachiyomi.ui.more.SettingsDownloadsScreen
+import tachiyomi.ui.more.SettingsGeneralScreen
+import tachiyomi.ui.more.SettingsLibraryScreen
+import tachiyomi.ui.more.SettingsParentalControlsScreen
+import tachiyomi.ui.more.SettingsReaderScreen
+import tachiyomi.ui.more.SettingsScreen
+import tachiyomi.ui.more.SettingsSecurityScreen
+import tachiyomi.ui.more.SettingsTrackingScreen
 import tachiyomi.ui.updates.UpdatesScreen
 
 sealed class Route(val id: String) {
@@ -76,7 +87,19 @@ sealed class Route(val id: String) {
   object BrowseCatalogManga : Route("browse/catalog/manga")
 
   object More : Route("more")
-  object Themes : Route("themes")
+
+  object Settings : Route("settings")
+  object SettingsGeneral : Route("settings/general")
+  object SettingsAppearance : Route("settings/appearance")
+  object SettingsLibrary : Route("settings/library")
+  object SettingsReader : Route("settings/reader")
+  object SettingsDownloads : Route("settings/downloads")
+  object SettingsTracking : Route("settings/tracking")
+  object SettingsBrowse : Route("settings/browse")
+  object SettingsBackup : Route("settings/backup")
+  object SettingsSecurity : Route("settings/security")
+  object SettingsParentalControls : Route("settings/parentalControls")
+  object SettingsAdvanced : Route("settings/advanced")
 }
 
 class MainActivity : BaseActivity() {
@@ -179,11 +202,11 @@ private fun MainNavHost() {
   val navController = rememberNavController()
 
   val topLevelRoutes = listOf(
-    TopLevelRoute(R.string.label_library, Icons.Default.Book, Route.Library),
-    TopLevelRoute(R.string.label_updates, Icons.Default.NewReleases, Route.Updates),
-    TopLevelRoute(R.string.label_history, Icons.Default.History, Route.History),
-    TopLevelRoute(R.string.label_browse, Icons.Default.Explore, Route.Browse),
-    TopLevelRoute(R.string.label_more, Icons.Default.MoreHoriz, Route.More)
+    TopLevelRoute(R.string.library_label, Icons.Default.Book, Route.Library),
+    TopLevelRoute(R.string.updates_label, Icons.Default.NewReleases, Route.Updates),
+    TopLevelRoute(R.string.history_label, Icons.Default.History, Route.History),
+    TopLevelRoute(R.string.browse_label, Icons.Default.Explore, Route.Browse),
+    TopLevelRoute(R.string.more_label, Icons.Default.MoreHoriz, Route.More)
   )
 
   Scaffold(
@@ -225,7 +248,21 @@ private fun MainNavHost() {
           }
 
           composable(Route.More.id) { MoreScreen(navController) }
-          composable(Route.Themes.id) { ThemesScreen(navController) }
+
+          composable(Route.Settings.id) { SettingsScreen(navController) }
+          composable(Route.SettingsGeneral.id) { SettingsGeneralScreen(navController) }
+          composable(Route.SettingsAppearance.id) { SettingsAppearance(navController) }
+          composable(Route.SettingsLibrary.id) { SettingsLibraryScreen(navController) }
+          composable(Route.SettingsReader.id) { SettingsReaderScreen(navController) }
+          composable(Route.SettingsDownloads.id) { SettingsDownloadsScreen(navController) }
+          composable(Route.SettingsTracking.id) { SettingsTrackingScreen(navController) }
+          composable(Route.SettingsBrowse.id) { SettingsBrowseScreen(navController) }
+          composable(Route.SettingsBackup.id) { SettingsBackupScreen(navController) }
+          composable(Route.SettingsSecurity.id) { SettingsSecurityScreen(navController) }
+          composable(Route.SettingsParentalControls.id) {
+            SettingsParentalControlsScreen(navController)
+          }
+          composable(Route.SettingsAdvanced.id) { SettingsAdvancedScreen(navController) }
         }
       }
     },

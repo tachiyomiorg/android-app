@@ -32,11 +32,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import tachiyomi.domain.ui.UiPreferences
 import tachiyomi.domain.ui.model.ThemeMode
+import tachiyomi.ui.R
 import tachiyomi.ui.core.prefs.PreferencesScrollableColumn
 import tachiyomi.ui.core.theme.Theme
 import tachiyomi.ui.core.theme.themesById
@@ -55,12 +57,12 @@ class ThemesViewModel @Inject constructor(
 }
 
 @Composable
-fun ThemesScreen(navController: NavHostController) {
+fun SettingsAppearance(navController: NavHostController) {
   val vm = viewModel<ThemesViewModel>()
 
   Column {
     TopAppBar(
-      title = { Text("Appearance") },
+      title = { Text(stringResource(R.string.appearance_label)) },
       navigationIcon = {
         IconButton(onClick = { navController.popBackStack() }) {
           Icon(Icons.Default.ArrowBack)
