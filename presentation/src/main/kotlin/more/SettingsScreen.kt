@@ -10,11 +10,8 @@ package tachiyomi.ui.more
 
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Backup
 import androidx.compose.material.icons.filled.ChromeReaderMode
 import androidx.compose.material.icons.filled.Code
@@ -32,6 +29,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
 import tachiyomi.ui.R
 import tachiyomi.ui.Route
+import tachiyomi.ui.core.components.BackIconButton
 import tachiyomi.ui.core.prefs.PreferenceRow
 import tachiyomi.ui.core.prefs.PreferencesScrollableColumn
 
@@ -40,11 +38,7 @@ fun SettingsScreen(navController: NavHostController) {
   Column {
     TopAppBar(
       title = { Text(stringResource(R.string.settings_label)) },
-      navigationIcon = {
-        IconButton(onClick = { navController.popBackStack() }) {
-          Icon(Icons.Default.ArrowBack)
-        }
-      }
+      navigationIcon = { BackIconButton(navController) }
     )
     PreferencesScrollableColumn {
       PreferenceRow(

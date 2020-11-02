@@ -10,24 +10,21 @@ package tachiyomi.ui.more
 
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import tachiyomi.domain.ui.UiPreferences
 import tachiyomi.domain.ui.model.StartScreen
 import tachiyomi.ui.R
+import tachiyomi.ui.core.components.BackIconButton
 import tachiyomi.ui.core.prefs.PreferencesScrollableColumn
 import tachiyomi.ui.core.viewmodel.BaseViewModel
 import tachiyomi.ui.core.viewmodel.viewModel
 import javax.inject.Inject
 
 class SettingsGeneralViewModel @Inject constructor(
-  private val uiPreferences: UiPreferences
+  uiPreferences: UiPreferences
 ) : BaseViewModel() {
 
   val startScreen = uiPreferences.startScreen().asState()
@@ -42,11 +39,7 @@ fun SettingsGeneralScreen(navController: NavHostController) {
   Column {
     TopAppBar(
       title = { Text(stringResource(R.string.general_label)) },
-      navigationIcon = {
-        IconButton(onClick = { navController.popBackStack() }) {
-          Icon(Icons.Default.ArrowBack)
-        }
-      }
+      navigationIcon = { BackIconButton(navController) }
     )
     PreferencesScrollableColumn {
       ChoicePref(

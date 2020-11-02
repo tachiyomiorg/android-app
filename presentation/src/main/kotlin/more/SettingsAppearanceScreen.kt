@@ -24,7 +24,6 @@ import androidx.compose.material.Surface
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.contentColorFor
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.Composable
@@ -39,6 +38,7 @@ import androidx.navigation.NavHostController
 import tachiyomi.domain.ui.UiPreferences
 import tachiyomi.domain.ui.model.ThemeMode
 import tachiyomi.ui.R
+import tachiyomi.ui.core.components.BackIconButton
 import tachiyomi.ui.core.prefs.PreferencesScrollableColumn
 import tachiyomi.ui.core.theme.Theme
 import tachiyomi.ui.core.theme.themesById
@@ -63,11 +63,7 @@ fun SettingsAppearance(navController: NavHostController) {
   Column {
     TopAppBar(
       title = { Text(stringResource(R.string.appearance_label)) },
-      navigationIcon = {
-        IconButton(onClick = { navController.popBackStack() }) {
-          Icon(Icons.Default.ArrowBack)
-        }
-      },
+      navigationIcon = { BackIconButton(navController) },
     )
     PreferencesScrollableColumn {
       ChoicePref(
