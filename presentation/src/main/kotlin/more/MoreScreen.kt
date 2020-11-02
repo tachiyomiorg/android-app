@@ -8,14 +8,11 @@
 
 package tachiyomi.ui.more
 
-import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.AmbientElevationOverlay
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -36,22 +33,21 @@ import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import tachiyomi.ui.R
+import tachiyomi.ui.Route
 import tachiyomi.ui.core.components.NoElevationOverlay
 import tachiyomi.ui.core.prefs.PreferenceRow
+import tachiyomi.ui.core.prefs.PreferencesScrollableColumn
 import tachiyomi.ui.core.viewmodel.BaseViewModel
 import tachiyomi.ui.core.viewmodel.viewModel
 import javax.inject.Inject
 
 class MoreViewModel @Inject constructor(
 ) : BaseViewModel() {
-
 }
 
 @Composable
 fun MoreScreen(navController: NavController) {
   val vm = viewModel<MoreViewModel>()
-
-  val scroll = rememberScrollState()
 
   Column {
     TopAppBar(
@@ -71,11 +67,11 @@ fun MoreScreen(navController: NavController) {
         Icon(vectorResource(R.drawable.ic_tachi), modifier = Modifier.padding(32.dp).size(56.dp))
       }
     }
-    ScrollableColumn(scrollState = scroll, modifier = Modifier.fillMaxSize()) {
+    PreferencesScrollableColumn {
       PreferenceRow(
         title = stringResource(R.string.settings_label),
         icon = Icons.Default.Settings,
-        onClick = { navController.navigate("settings") }
+        onClick = { navController.navigate(Route.Settings.id) }
       )
       PreferenceRow(
         title = stringResource(R.string.about_label),

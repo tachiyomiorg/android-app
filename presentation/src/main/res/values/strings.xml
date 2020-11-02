@@ -26,4 +26,7 @@
   <string name="parental_controls_label">Parental controls</string>
   <string name="advanced_label">Advanced</string>
 
+  <!-- Settings general screen -->
+  <string name="start_screen">Start screen</string>
+
 </resources>

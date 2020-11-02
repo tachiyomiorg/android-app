@@ -11,6 +11,7 @@ package tachiyomi.domain.ui
 import tachiyomi.core.prefs.Preference
 import tachiyomi.core.prefs.PreferenceStore
 import tachiyomi.core.prefs.getEnum
+import tachiyomi.domain.ui.model.StartScreen
 import tachiyomi.domain.ui.model.ThemeMode
 
 class UiPreferences(private val preferenceStore: PreferenceStore) {
@@ -25,6 +26,10 @@ class UiPreferences(private val preferenceStore: PreferenceStore) {
 
   fun darkTheme(): Preference<Int> {
     return preferenceStore.getInt("theme_dark", 0)
+  }
+
+  fun startScreen(): Preference<StartScreen> {
+    return preferenceStore.getEnum("start_screen", StartScreen.Library)
   }
 
 }

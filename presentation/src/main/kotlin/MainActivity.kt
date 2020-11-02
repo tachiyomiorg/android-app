@@ -49,6 +49,7 @@ import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
 import tachiyomi.core.di.AppScope
 import tachiyomi.domain.ui.UiPreferences
+import tachiyomi.domain.ui.model.StartScreen
 import tachiyomi.domain.ui.model.ThemeMode
 import tachiyomi.ui.browse.CatalogsScreen
 import tachiyomi.ui.browse.catalog.CatalogScreen
@@ -112,13 +113,14 @@ class MainActivity : BaseActivity() {
     val themeMode by uiPrefs.themeMode().asState()
     val lightTheme by uiPrefs.lightTheme().asState()
     val darkTheme by uiPrefs.darkTheme().asState()
+    val startRoute = uiPrefs.startScreen().get().toRoute()
 
     setContent {
       val theme = getCurrentTheme(themeMode, lightTheme, darkTheme)
       tintSystemBars(theme.colors)
 
       MaterialTheme(colors = theme.colors) {
-        MainNavHost()
+        MainNavHost(startRoute)
       }
     }
   }
@@ -196,7 +198,7 @@ class MainActivity : BaseActivity() {
 }
 
 @Composable
-private fun MainNavHost() {
+private fun MainNavHost(startRoute: Route) {
   data class TopLevelRoute(val text: Int, val icon: VectorAsset, val route: Route)
 
   val navController = rememberNavController()
@@ -212,7 +214,7 @@ private fun MainNavHost() {
   Scaffold(
     bodyContent = { paddingValues ->
       Box(Modifier.padding(paddingValues)) {
-        NavHost(navController, startDestination = Route.Browse.id) {
+        NavHost(navController, startDestination = startRoute.id) {
           composable(Route.Library.id) { LibraryScreen(navController) }
           composable(
             "${Route.LibraryManga.id}/{id}",
@@ -284,4 +286,14 @@ private fun MainNavHost() {
       }
     }
   )
+}
+
+private fun StartScreen.toRoute(): Route {
+  return when (this) {
+    StartScreen.Library -> Route.Library
+    StartScreen.Updates -> Route.Updates
+    StartScreen.History -> Route.History
+    StartScreen.Browse -> Route.Browse
+    StartScreen.More -> Route.More
+  }
 }
