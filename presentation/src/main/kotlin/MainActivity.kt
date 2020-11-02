@@ -265,7 +265,7 @@ private fun MainNavHost(startRoute: Route) {
       // TODO: should hide on non-top-level routes. Not sure how to get the proper ID to check.
 //      if (TopLevelRoutes.isTopLevelRoute(entryRoute)) {
       BottomNavigation {
-        TopLevelRoutes.values().forEach {
+        TopLevelRoutes.values.forEach {
           BottomNavigationItem(
             icon = { Icon(it.icon) },
             label = {
@@ -299,8 +299,9 @@ private enum class TopLevelRoutes(val route: Route, val text: Int, val icon: Vec
   More(Route.More, R.string.more_label, Icons.Default.MoreHoriz);
 
   companion object {
+    val values = values().toList()
     fun isTopLevelRoute(route: String?): Boolean {
-      return route != null && values().any { it.route.id == route }
+      return route != null && values.any { it.route.id == route }
     }
   }
 }
