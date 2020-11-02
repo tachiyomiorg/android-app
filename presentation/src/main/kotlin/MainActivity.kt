@@ -199,17 +199,7 @@ class MainActivity : BaseActivity() {
 
 @Composable
 private fun MainNavHost(startRoute: Route) {
-  data class TopLevelRoute(val text: Int, val icon: VectorAsset, val route: Route)
-
   val navController = rememberNavController()
-
-  val topLevelRoutes = listOf(
-    TopLevelRoute(R.string.library_label, Icons.Default.Book, Route.Library),
-    TopLevelRoute(R.string.updates_label, Icons.Default.NewReleases, Route.Updates),
-    TopLevelRoute(R.string.history_label, Icons.Default.History, Route.History),
-    TopLevelRoute(R.string.browse_label, Icons.Default.Explore, Route.Browse),
-    TopLevelRoute(R.string.more_label, Icons.Default.MoreHoriz, Route.More)
-  )
 
   Scaffold(
     bodyContent = { paddingValues ->
@@ -269,11 +259,13 @@ private fun MainNavHost(startRoute: Route) {
       }
     },
     bottomBar = {
-      // TODO: should only be shown if at a top-level route
+      val currentScreen by navController.currentBackStackEntryAsState()
+      val entryRoute = currentScreen?.arguments?.getString(KEY_ROUTE)
+
+      // TODO: should hide on non-top-level routes. Not sure how to get the proper ID to check.
+//      if (TopLevelRoutes.isTopLevelRoute(entryRoute)) {
       BottomNavigation {
-        val currentScreen by navController.currentBackStackEntryAsState()
-        val entryRoute = currentScreen?.arguments?.getString(KEY_ROUTE)
-        topLevelRoutes.forEach {
+        TopLevelRoutes.values().forEach {
           BottomNavigationItem(
             icon = { Icon(it.icon) },
             label = {
@@ -283,6 +275,7 @@ private fun MainNavHost(startRoute: Route) {
             onClick = { navController.navigate(it.route.id) },
           )
         }
+//        }
       }
     }
   )
@@ -295,5 +288,19 @@ private fun StartScreen.toRoute(): Route {
     StartScreen.History -> Route.History
     StartScreen.Browse -> Route.Browse
     StartScreen.More -> Route.More
+  }
+}
+
+private enum class TopLevelRoutes(val route: Route, val text: Int, val icon: VectorAsset) {
+  Library(Route.Library, R.string.library_label, Icons.Default.Book),
+  Updates(Route.Updates, R.string.updates_label, Icons.Default.NewReleases),
+  History(Route.History, R.string.history_label, Icons.Default.History),
+  Browse(Route.Browse, R.string.browse_label, Icons.Default.Explore),
+  More(Route.More, R.string.more_label, Icons.Default.MoreHoriz);
+
+  companion object {
+    fun isTopLevelRoute(route: String?): Boolean {
+      return route != null && values().any { it.route.id == route }
+    }
   }
 }
