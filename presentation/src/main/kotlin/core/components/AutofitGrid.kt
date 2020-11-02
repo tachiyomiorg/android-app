@@ -10,10 +10,10 @@ package tachiyomi.ui.core.components
 
 import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.Text
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ConfigurationAmbient
@@ -26,7 +26,6 @@ fun <T> AutofitGrid(
   columns: Int = 0,
   defaultColumnWidth: Dp = 100.dp,
   data: List<T>,
-  childModifier: Modifier = Modifier,
   child: @Composable (T) -> Unit
 ) {
   val numColumns = if (columns == 0) {
@@ -37,11 +36,13 @@ fun <T> AutofitGrid(
   
   ScrollableColumn {
     data.forEachIndexed { index, _ ->
-      Row(modifier = childModifier, horizontalArrangement = Arrangement.SpaceAround) {
+      Row(Modifier.fillMaxWidth()) {
         for (cell in 0 until numColumns) {
           val i = (index * numColumns) + cell
           if (i < data.size) {
-            child(data[i])
+            Box(modifier = Modifier.weight(1f)) {
+              child(data[i])
+            }
           } else {
             break
           }
