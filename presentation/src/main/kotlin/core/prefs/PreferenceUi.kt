@@ -8,6 +8,7 @@
 
 package tachiyomi.ui.core.prefs
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.clickable
@@ -38,6 +39,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.VectorAsset
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
@@ -58,6 +60,15 @@ class PreferenceScope(dialog: MutableState<DialogComposable?>) {
       action = { ReadOnlySwitch(checked = preference.value) },
       onClick = { preference.value = !preference.value }
     )
+  }
+
+  @Composable
+  fun SwitchPref(
+    preference: PreferenceMutableState<Boolean>,
+    @StringRes title: Int,
+    subtitle: String? = null,
+  ) {
+    SwitchPref(preference, stringResource(title), subtitle)
   }
 
   @Composable
@@ -88,20 +99,31 @@ class PreferenceScope(dialog: MutableState<DialogComposable?>) {
   }
 
   @Composable
+  fun <Key> ChoicePref(
+    preference: PreferenceMutableState<Key>,
+    choices: Map<Key, Int>,
+    @StringRes title: Int,
+    subtitle: String? = null
+  ) {
+    ChoicePref(preference, choices.mapValues { stringResource(it.value) }, stringResource(title),
+      subtitle)
+  }
+
+  @Composable
   fun <Key, Item> ChoicePref(
     preference: PreferenceMutableState<Key>,
     choices: Map<Key, Item>,
-    title: String,
+    @StringRes title: Int,
     subtitle: String? = null,
     renderItem: @Composable (Key, Item) -> Unit
   ) {
     PreferenceRow(
-      title = title,
+      title = stringResource(title),
       subtitle = subtitle,
       onClick = {
         dialog = {
           AlertDialog(
-            title = { Text(title) },
+            title = { Text(stringResource(title)) },
             onDismissRequest = { dialog = null },
             buttons = {},
             text = {
@@ -182,6 +204,17 @@ fun PreferenceRow(
       }
     }
   }
+}
+
+@Composable
+fun PreferenceRow(
+  @StringRes title: Int,
+  icon: VectorAsset? = null,
+  onClick: () -> Unit = {},
+  subtitle: String? = null,
+  action: @Composable (() -> Unit)? = null,
+) {
+  PreferenceRow(stringResource(title), icon, onClick, subtitle, action)
 }
 
 @Composable

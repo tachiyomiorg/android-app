@@ -30,7 +30,9 @@ class SettingsGeneralViewModel @Inject constructor(
   private val uiPreferences: UiPreferences
 ) : BaseViewModel() {
 
-  var startScreen = uiPreferences.startScreen().asState()
+  val startScreen = uiPreferences.startScreen().asState()
+  val confirmExit = uiPreferences.confirmExit().asState()
+  val hideBottomBarOnScroll = uiPreferences.hideBottomBarOnScroll().asState()
 }
 
 @Composable
@@ -49,15 +51,17 @@ fun SettingsGeneralScreen(navController: NavHostController) {
     PreferencesScrollableColumn {
       ChoicePref(
         preference = vm.startScreen,
-        title = stringResource(R.string.start_screen),
+        title = R.string.start_screen,
         choices = mapOf(
-          StartScreen.Library to stringResource(R.string.library_label),
-          StartScreen.Updates to stringResource(R.string.updates_label),
-          StartScreen.History to stringResource(R.string.history_label),
-          StartScreen.Browse to stringResource(R.string.browse_label),
-          StartScreen.More to stringResource(R.string.more_label),
+          StartScreen.Library to R.string.library_label,
+          StartScreen.Updates to R.string.updates_label,
+          StartScreen.History to R.string.history_label,
+          StartScreen.Browse to R.string.browse_label,
+          StartScreen.More to R.string.more_label,
         )
       )
+      SwitchPref(preference = vm.confirmExit, title = R.string.confirm_exit)
+      SwitchPref(preference = vm.hideBottomBarOnScroll, title = R.string.hide_bottom_bar_on_scroll)
     }
   }
 }

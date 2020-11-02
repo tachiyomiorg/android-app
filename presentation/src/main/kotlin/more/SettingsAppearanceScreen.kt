@@ -50,9 +50,9 @@ class ThemesViewModel @Inject constructor(
   private val uiPreferences: UiPreferences,
 ) : BaseViewModel() {
 
-  var themeMode = uiPreferences.themeMode().asState()
-  var lightTheme = uiPreferences.lightTheme().asState()
-  var darkTheme = uiPreferences.darkTheme().asState()
+  val themeMode = uiPreferences.themeMode().asState()
+  val lightTheme = uiPreferences.lightTheme().asState()
+  val darkTheme = uiPreferences.darkTheme().asState()
 
 }
 
@@ -73,17 +73,17 @@ fun SettingsAppearance(navController: NavHostController) {
       ChoicePref(
         preference = vm.themeMode,
         choices = mapOf(
-          ThemeMode.System to "System default",
-          ThemeMode.Light to "Light",
-          ThemeMode.Dark to "Dark"
+          ThemeMode.System to R.string.system_default,
+          ThemeMode.Light to R.string.light,
+          ThemeMode.Dark to R.string.dark
         ),
-        title = "Theme mode"
+        title = R.string.theme_mode
       )
       if (vm.themeMode.value != ThemeMode.Dark) {
         ChoicePref(
           preference = vm.lightTheme,
           choices = themesById,
-          title = "Light theme",
+          title = R.string.light_theme,
           subtitle = themesById[vm.lightTheme.value]?.name
         ) { _, theme ->
           if (theme.colors.isLight) {
@@ -99,7 +99,7 @@ fun SettingsAppearance(navController: NavHostController) {
         ChoicePref(
           preference = vm.darkTheme,
           choices = themesById,
-          title = "Light theme",
+          title = R.string.dark_theme,
           subtitle = themesById[vm.darkTheme.value]?.name
         ) { _, theme ->
           if (!theme.colors.isLight) {

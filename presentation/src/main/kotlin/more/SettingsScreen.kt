@@ -48,57 +48,57 @@ fun SettingsScreen(navController: NavHostController) {
     )
     PreferencesScrollableColumn {
       PreferenceRow(
-        title = stringResource(R.string.general_label),
+        title = R.string.general_label,
         icon = Icons.Default.Tune,
         onClick = { navController.navigate(Route.SettingsGeneral.id) }
       )
       PreferenceRow(
-        title = stringResource(R.string.appearance_label),
+        title = R.string.appearance_label,
         icon = Icons.Default.Palette,
         onClick = { navController.navigate(Route.SettingsAppearance.id) }
       )
       PreferenceRow(
-        title = stringResource(R.string.library_label),
+        title = R.string.library_label,
         icon = Icons.Default.CollectionsBookmark,
         onClick = { navController.navigate(Route.SettingsLibrary.id) }
       )
       PreferenceRow(
-        title = stringResource(R.string.reader_label),
+        title = R.string.reader_label,
         icon = Icons.Default.ChromeReaderMode,
         onClick = { navController.navigate(Route.SettingsReader.id) }
       )
       PreferenceRow(
-        title = stringResource(R.string.downloads_label),
+        title = R.string.downloads_label,
         icon = Icons.Default.GetApp,
         onClick = { navController.navigate(Route.SettingsDownloads.id) }
       )
       PreferenceRow(
-        title = stringResource(R.string.tracking_label),
+        title = R.string.tracking_label,
         icon = Icons.Default.Sync,
         onClick = { navController.navigate(Route.SettingsTracking.id) }
       )
       PreferenceRow(
-        title = stringResource(R.string.browse_label),
+        title = R.string.browse_label,
         icon = Icons.Default.Explore,
         onClick = { navController.navigate(Route.SettingsBrowse.id) }
       )
       PreferenceRow(
-        title = stringResource(R.string.backup_label),
+        title = R.string.backup_label,
         icon = Icons.Default.Backup,
         onClick = { navController.navigate(Route.SettingsBackup.id) }
       )
       PreferenceRow(
-        title = stringResource(R.string.security_label),
+        title = R.string.security_label,
         icon = Icons.Default.Security,
         onClick = { navController.navigate(Route.SettingsSecurity.id) }
       )
       PreferenceRow(
-        title = stringResource(R.string.parental_controls_label),
+        title = R.string.parental_controls_label,
         icon = Icons.Default.PeopleOutline,
         onClick = { navController.navigate(Route.SettingsParentalControls.id) }
       )
       PreferenceRow(
-        title = stringResource(R.string.advanced_label),
+        title = R.string.advanced_label,
         icon = Icons.Default.Code,
         onClick = { navController.navigate(Route.SettingsAdvanced.id) }
       )

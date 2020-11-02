@@ -32,4 +32,12 @@ class UiPreferences(private val preferenceStore: PreferenceStore) {
     return preferenceStore.getEnum("start_screen", StartScreen.Library)
   }
 
+  fun confirmExit(): Preference<Boolean> {
+    return preferenceStore.getBoolean("confirm_exit", false)
+  }
+
+  fun hideBottomBarOnScroll(): Preference<Boolean> {
+    return preferenceStore.getBoolean("hide_bottom_bar_on_scroll", true)
+  }
+
 }
