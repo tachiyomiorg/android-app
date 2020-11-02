@@ -11,7 +11,9 @@ package tachiyomi.ui.browse.catalog
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import tachiyomi.domain.catalog.interactor.GetLocalCatalog
 import tachiyomi.domain.catalog.model.CatalogLocal
 import tachiyomi.domain.manga.interactor.ListMangaPageFromCatalogSource
@@ -46,20 +48,22 @@ class CatalogViewModel @Inject constructor(
   }
 
   fun getNextPage() {
+    isRefreshing = true
+
     scope.launch {
-      isRefreshing = true
+      withContext(Dispatchers.IO) {
+        if (catalog?.source is CatalogSource) {
+          val mangaPage = listMangaPageFromCatalogSource.await((catalog!!.source as CatalogSource),
+            null, page)
+          mangas += mangaPage.mangas
+          hasNextPage = mangaPage.hasNextPage
 
-      if (catalog?.source is CatalogSource) {
-        val mangaPage = listMangaPageFromCatalogSource.await((catalog!!.source as CatalogSource),
-          null, page)
-        mangas += mangaPage.mangas
-        hasNextPage = mangaPage.hasNextPage
-
-        page++
+          page++
+        }
       }
-
-      isRefreshing = false
     }
+
+    isRefreshing = false
   }
 
   data class Params(val sourceId: Long)

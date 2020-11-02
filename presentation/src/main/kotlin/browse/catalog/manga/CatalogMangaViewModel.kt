@@ -11,7 +11,9 @@ package tachiyomi.ui.browse.catalog.manga
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import tachiyomi.domain.catalog.interactor.GetLocalCatalog
 import tachiyomi.domain.manga.interactor.GetChaptersFromSource
 import tachiyomi.domain.manga.interactor.GetManga
@@ -36,11 +38,13 @@ class CatalogMangaViewModel @Inject constructor(
 
   init {
     scope.launch {
-      manga = getManga.await(params.mangaId)
+      withContext(Dispatchers.IO) {
+        manga = getManga.await(params.mangaId)
 
-      manga?.let { manga ->
-        getLocalCatalog.get(params.sourceId)?.source?.let { source ->
-          chapters = getChaptersFromSource.await(source, manga)
+        manga?.let { manga ->
+          getLocalCatalog.get(params.sourceId)?.source?.let { source ->
+            chapters = getChaptersFromSource.await(source, manga)
+          }
         }
       }
     }
