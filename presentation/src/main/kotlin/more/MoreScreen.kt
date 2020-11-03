@@ -26,6 +26,7 @@ import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Providers
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ContextAmbient
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
@@ -37,6 +38,7 @@ import tachiyomi.ui.Route
 import tachiyomi.ui.core.components.NoElevationOverlay
 import tachiyomi.ui.core.prefs.PreferenceRow
 import tachiyomi.ui.core.prefs.PreferencesScrollableColumn
+import tachiyomi.ui.core.util.openInBrowser
 import tachiyomi.ui.core.viewmodel.BaseViewModel
 import tachiyomi.ui.core.viewmodel.viewModel
 import javax.inject.Inject
@@ -48,6 +50,7 @@ class MoreViewModel @Inject constructor(
 @Composable
 fun MoreScreen(navController: NavController) {
   val vm = viewModel<MoreViewModel>()
+  val context = ContextAmbient.current
 
   Column {
     TopAppBar(
@@ -81,7 +84,7 @@ fun MoreScreen(navController: NavController) {
       PreferenceRow(
         title = stringResource(R.string.help_label),
         icon = Icons.Default.Help,
-        onClick = { /* TODO */ }
+        onClick = { context.openInBrowser("https://tachiyomi.org/help/") }
       )
     }
   }

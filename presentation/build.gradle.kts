@@ -23,6 +23,7 @@ dependencies {
   implementationProject(Projects.domain)
 
   implementation(Deps.androidX.appCompat)
+  implementation(Deps.androidX.browser)
 
   implementation(Deps.toothpick.runtime)
   implementation(Deps.toothpick.ktp)
