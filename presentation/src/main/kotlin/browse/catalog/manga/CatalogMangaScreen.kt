@@ -12,18 +12,24 @@ import androidx.compose.foundation.Text
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import tachiyomi.ui.core.components.BackIconButton
 import tachiyomi.ui.core.components.manga.MangaScreen
 import tachiyomi.ui.core.viewmodel.viewModel
 
 @Composable
-fun CatalogMangaScreen(navController: NavController, sourceId: Long, mangaId: Long) {
+fun CatalogMangaScreen(navController: NavHostController, sourceId: Long, mangaId: Long) {
   val vm = viewModel<CatalogMangaViewModel> {
     CatalogMangaViewModel.Params(sourceId, mangaId)
   }
 
   Scaffold(
-    topBar = { TopAppBar(title = { Text(vm.manga?.title ?: "$sourceId/$mangaId") }) },
+    topBar = {
+      TopAppBar(
+        title = { Text(vm.manga?.title ?: "$sourceId/$mangaId") },
+        navigationIcon = { BackIconButton(navController) },
+      )
+    },
     bodyContent = { MangaScreen(navController, vm.manga, vm.chapters) }
   )
 }

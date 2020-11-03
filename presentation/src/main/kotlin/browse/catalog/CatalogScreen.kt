@@ -15,19 +15,19 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.onActive
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
 import tachiyomi.domain.manga.model.Manga
-import tachiyomi.source.model.MangaInfo
 import tachiyomi.ui.Route
 import tachiyomi.ui.core.coil.MangaCover
 import tachiyomi.ui.core.components.AutofitGrid
+import tachiyomi.ui.core.components.BackIconButton
 import tachiyomi.ui.core.components.LoadingScreen
 import tachiyomi.ui.core.components.manga.MangaGridItem
 import tachiyomi.ui.core.viewmodel.viewModel
 
 @Composable
-fun CatalogScreen(navController: NavController, sourceId: Long) {
+fun CatalogScreen(navController: NavHostController, sourceId: Long) {
   val vm = viewModel<CatalogViewModel> {
     CatalogViewModel.Params(sourceId)
   }
@@ -40,9 +40,15 @@ fun CatalogScreen(navController: NavController, sourceId: Long) {
     val catalog = vm.catalog
     if (catalog == null) {
       // TODO empty screen
-      TopAppBar(title = { Text("Catalog not found") })
+      TopAppBar(
+        title = { Text("Catalog not found") },
+        navigationIcon = { BackIconButton(navController) },
+      )
     } else {
-      TopAppBar(title = { Text(catalog.name) })
+      TopAppBar(
+        title = { Text(catalog.name) },
+        navigationIcon = { BackIconButton(navController) },
+      )
 
       MangaTable(
         sourceId = sourceId,
