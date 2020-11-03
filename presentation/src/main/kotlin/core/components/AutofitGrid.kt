@@ -26,6 +26,7 @@ fun <T> AutofitGrid(
   columns: Int = 0,
   defaultColumnWidth: Dp = 100.dp,
   data: List<T>,
+  modifier: Modifier = Modifier,
   child: @Composable (T) -> Unit
 ) {
   val numColumns = if (columns == 0) {
@@ -33,18 +34,16 @@ fun <T> AutofitGrid(
   } else {
     columns
   }
-  
-  ScrollableColumn {
+
+  ScrollableColumn(modifier) {
     data.forEachIndexed { index, _ ->
       Row(Modifier.fillMaxWidth()) {
         for (cell in 0 until numColumns) {
           val i = (index * numColumns) + cell
-          if (i < data.size) {
-            Box(modifier = Modifier.weight(1f)) {
+          Box(modifier = Modifier.weight(1f)) {
+            if (i < data.size) {
               child(data[i])
             }
-          } else {
-            break
           }
         }
       }

@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -53,6 +54,8 @@ class ThemesViewModel @Inject constructor(
   val themeMode = uiPreferences.themeMode().asState()
   val lightTheme = uiPreferences.lightTheme().asState()
   val darkTheme = uiPreferences.darkTheme().asState()
+  val colorPrimary = uiPreferences.colorPrimary().asState()
+  val colorSecondary = uiPreferences.colorSecondary().asState()
 
 }
 
@@ -107,6 +110,10 @@ fun SettingsAppearance(navController: NavHostController) {
           }
         }
       }
+      ColorPref(preference = vm.colorPrimary, title = "Color primary",
+        subtitle = "Displayed most frequently across your app")
+      ColorPref(preference = vm.colorSecondary, title = "Color secondary",
+        subtitle = "Accents select parts of the UI")
     }
   }
 }
@@ -125,6 +132,9 @@ private fun ThemeItem(theme: Theme) {
     Surface(modifier = Modifier.fillMaxWidth().height(124.dp)) {
       Box(Modifier.padding(16.dp)) {
         Text(text = "Primary text")
+        Button(onClick = {}, modifier = Modifier.align(Alignment.BottomStart)) {
+          Text("Button")
+        }
         StatelessFloatingActionButton(modifier = Modifier.align(Alignment.BottomEnd)) {
           Icon(Icons.Default.Edit)
         }

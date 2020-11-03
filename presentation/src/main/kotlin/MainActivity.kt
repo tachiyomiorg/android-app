@@ -33,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.VectorAsset
@@ -113,10 +114,12 @@ class MainActivity : BaseActivity() {
     val themeMode by uiPrefs.themeMode().asState()
     val lightTheme by uiPrefs.lightTheme().asState()
     val darkTheme by uiPrefs.darkTheme().asState()
+    val colorPrimary by uiPrefs.colorPrimary().asState()
+    val colorSecondary by uiPrefs.colorSecondary().asState()
     val startRoute = uiPrefs.startScreen().get().toRoute()
 
     setContent {
-      val theme = getCurrentTheme(themeMode, lightTheme, darkTheme)
+      val theme = getCurrentTheme(themeMode, lightTheme, darkTheme, colorPrimary, colorSecondary)
       tintSystemBars(theme.colors)
 
       MaterialTheme(colors = theme.colors) {
@@ -143,13 +146,19 @@ class MainActivity : BaseActivity() {
   }
 
   @Composable
-  private fun getCurrentTheme(themeMode: ThemeMode, lightTheme: Int, darkTheme: Int): Theme {
-    return remember(themeMode, lightTheme, darkTheme) {
+  private fun getCurrentTheme(
+    themeMode: ThemeMode,
+    lightTheme: Int,
+    darkTheme: Int,
+    colorPrimary: Int,
+    colorSecondary: Int
+  ): Theme {
+    return remember(themeMode, lightTheme, darkTheme, colorPrimary, colorSecondary) {
       fun getTheme(id: Int, fallbackIsLight: Boolean): Theme {
         return themes.find { it.id == id } ?: themes.first { it.colors.isLight == fallbackIsLight }
       }
 
-      when (themeMode) {
+      val baseTheme = when (themeMode) {
         ThemeMode.System -> {
           if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK ==
             Configuration.UI_MODE_NIGHT_YES
@@ -162,6 +171,22 @@ class MainActivity : BaseActivity() {
         ThemeMode.Light -> getTheme(lightTheme, true)
         ThemeMode.Dark -> getTheme(darkTheme, false)
       }
+
+      val primary = if (colorPrimary != 0) {
+        Color(colorPrimary)
+      } else {
+        baseTheme.colors.primary
+      }
+      val secondary = if (colorSecondary != 0) {
+        Color(colorSecondary)
+      } else {
+        baseTheme.colors.secondary
+      }
+      baseTheme.copy(colors = baseTheme.colors.copy(
+        primary = primary,
+        secondary = secondary,
+        secondaryVariant = secondary
+      ))
     }
   }
 

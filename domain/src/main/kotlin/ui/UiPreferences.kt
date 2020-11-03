@@ -28,6 +28,14 @@ class UiPreferences(private val preferenceStore: PreferenceStore) {
     return preferenceStore.getInt("theme_dark", 0)
   }
 
+  fun colorPrimary(): Preference<Int> {
+    return preferenceStore.getInt("color_primary", 0)
+  }
+
+  fun colorSecondary(): Preference<Int> {
+    return preferenceStore.getInt("color_secondary", 0)
+  }
+
   fun startScreen(): Preference<StartScreen> {
     return preferenceStore.getEnum("start_screen", StartScreen.Library)
   }
