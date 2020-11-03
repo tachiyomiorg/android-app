@@ -25,9 +25,7 @@ import javax.inject.Inject
 
 internal class CatalogGithubApi @Inject constructor(private val http: Http) : CatalogRemoteApi {
 
-  // TODO: gzipped JSON
   private val repoUrl = "https://raw.githubusercontent.com/tachiyomiorg/extensions/repo"
-//  private val repoUrl = "https://tachiyomi.kanade.eu/repo"
 
   override suspend fun fetchCatalogs(): List<CatalogRemote> {
     val body = http.defaultClient.get("$repoUrl/index.min.json").awaitBody()
