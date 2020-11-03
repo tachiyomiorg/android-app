@@ -62,18 +62,18 @@ import tachiyomi.ui.history.HistoryScreen
 import tachiyomi.ui.library.LibraryScreen
 import tachiyomi.ui.library.manga.LibraryMangaScreen
 import tachiyomi.ui.more.MoreScreen
-import tachiyomi.ui.more.SettingsAdvancedScreen
-import tachiyomi.ui.more.SettingsAppearance
-import tachiyomi.ui.more.SettingsBackupScreen
-import tachiyomi.ui.more.SettingsBrowseScreen
-import tachiyomi.ui.more.SettingsDownloadsScreen
-import tachiyomi.ui.more.SettingsGeneralScreen
-import tachiyomi.ui.more.SettingsLibraryScreen
-import tachiyomi.ui.more.SettingsParentalControlsScreen
-import tachiyomi.ui.more.SettingsReaderScreen
-import tachiyomi.ui.more.SettingsScreen
-import tachiyomi.ui.more.SettingsSecurityScreen
-import tachiyomi.ui.more.SettingsTrackingScreen
+import tachiyomi.ui.more.settings.SettingsAdvancedScreen
+import tachiyomi.ui.more.settings.SettingsAppearance
+import tachiyomi.ui.more.settings.SettingsBackupScreen
+import tachiyomi.ui.more.settings.SettingsBrowseScreen
+import tachiyomi.ui.more.settings.SettingsDownloadsScreen
+import tachiyomi.ui.more.settings.SettingsGeneralScreen
+import tachiyomi.ui.more.settings.SettingsLibraryScreen
+import tachiyomi.ui.more.settings.SettingsParentalControlsScreen
+import tachiyomi.ui.more.settings.SettingsReaderScreen
+import tachiyomi.ui.more.settings.SettingsScreen
+import tachiyomi.ui.more.settings.SettingsSecurityScreen
+import tachiyomi.ui.more.settings.SettingsTrackingScreen
 import tachiyomi.ui.updates.UpdatesScreen
 
 sealed class Route(val id: String) {
@@ -192,7 +192,7 @@ class MainActivity : BaseActivity() {
 
   @Composable
   private fun tintSystemBars(colors: Colors) {
-    if (Build.VERSION.SDK_INT >= 23) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       val statusBarColor = colors.primarySurface
       window.statusBarColor = statusBarColor.toArgb()
       with(window.decorView) {
@@ -203,7 +203,7 @@ class MainActivity : BaseActivity() {
         }
       }
     }
-    if (Build.VERSION.SDK_INT >= 26) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       val navBarColor = colors.primarySurface
       window.navigationBarColor = navBarColor.toArgb()
       with(window.decorView) {

@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package tachiyomi.ui.more
+package tachiyomi.ui.more.settings
 
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Column

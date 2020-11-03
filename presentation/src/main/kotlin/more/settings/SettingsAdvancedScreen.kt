@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package tachiyomi.ui.more
+package tachiyomi.ui.more.settings
 
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Column
@@ -19,10 +19,10 @@ import tachiyomi.ui.core.components.BackIconButton
 import tachiyomi.ui.core.prefs.PreferencesScrollableColumn
 
 @Composable
-fun SettingsParentalControlsScreen(navController: NavHostController) {
+fun SettingsAdvancedScreen(navController: NavHostController) {
   Column {
     TopAppBar(
-      title = { Text(stringResource(R.string.parental_controls_label)) },
+      title = { Text(stringResource(R.string.advanced_label)) },
       navigationIcon = { BackIconButton(navController) }
     )
     PreferencesScrollableColumn {
