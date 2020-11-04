@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.useOrElse
 import androidx.compose.ui.graphics.vector.VectorAsset
 import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.res.stringResource
@@ -55,6 +56,7 @@ import tachiyomi.ui.browse.CatalogsScreen
 import tachiyomi.ui.browse.catalog.CatalogScreen
 import tachiyomi.ui.browse.catalog.manga.CatalogMangaScreen
 import tachiyomi.ui.core.activity.BaseActivity
+import tachiyomi.ui.core.prefs.asColor
 import tachiyomi.ui.core.theme.Theme
 import tachiyomi.ui.core.theme.themes
 import tachiyomi.ui.history.HistoryScreen
@@ -113,12 +115,13 @@ class MainActivity : BaseActivity() {
     val themeMode by uiPrefs.themeMode().asState()
     val lightTheme by uiPrefs.lightTheme().asState()
     val darkTheme by uiPrefs.darkTheme().asState()
-    val colorPrimary by uiPrefs.colorPrimary().asState()
-    val colorSecondary by uiPrefs.colorSecondary().asState()
+    val colorPrimary by uiPrefs.colorPrimary().asColor().asState()
+    val colorSecondary by uiPrefs.colorSecondary().asColor().asState()
     val startRoute = uiPrefs.startScreen().get().toRoute()
 
     setContent {
-      val colors = getAppColors(themeMode, lightTheme, darkTheme, colorPrimary, colorSecondary)
+      val baseTheme = getBaseTheme(themeMode, lightTheme, darkTheme)
+      val colors = getAppColors(baseTheme.colors, colorPrimary, colorSecondary)
       tintSystemBars(colors)
 
       MaterialTheme(colors = colors) {
@@ -145,18 +148,16 @@ class MainActivity : BaseActivity() {
   }
 
   @Composable
-  private fun getAppColors(
+  private fun getBaseTheme(
     themeMode: ThemeMode,
     lightTheme: Int,
-    darkTheme: Int,
-    colorPrimary: Int,
-    colorSecondary: Int
-  ): Colors {
+    darkTheme: Int
+  ): Theme {
     fun getTheme(id: Int, fallbackIsLight: Boolean): Theme {
       return themes.find { it.id == id } ?: themes.first { it.colors.isLight == fallbackIsLight }
     }
 
-    val baseTheme = when (themeMode) {
+    return when (themeMode) {
       ThemeMode.System -> if (!isSystemInDarkTheme()) {
         getTheme(lightTheme, true)
       } else {
@@ -165,18 +166,17 @@ class MainActivity : BaseActivity() {
       ThemeMode.Light -> getTheme(lightTheme, true)
       ThemeMode.Dark -> getTheme(darkTheme, false)
     }
+  }
 
-    val primary = if (colorPrimary != 0) {
-      Color(colorPrimary)
-    } else {
-      baseTheme.colors.primary
-    }
-    val secondary = if (colorSecondary != 0) {
-      Color(colorSecondary)
-    } else {
-      baseTheme.colors.secondary
-    }
-    return baseTheme.colors.copy(
+  @Composable
+  private fun getAppColors(
+    baseColors: Colors,
+    colorPrimary: Color,
+    colorSecondary: Color
+  ): Colors {
+    val primary = colorPrimary.useOrElse { baseColors.primary }
+    val secondary = colorSecondary.useOrElse { baseColors.secondary }
+    return baseColors.copy(
       primary = primary,
       primaryVariant = primary,
       secondary = secondary,

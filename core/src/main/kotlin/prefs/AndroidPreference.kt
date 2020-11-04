@@ -97,10 +97,7 @@ internal class AndroidPreference<T>(
    * current value and receive preference updates.
    */
   override fun stateIn(scope: CoroutineScope): StateFlow<T> {
-    return keyChanges
-      .filter { it == key }
-      .map { get() }
-      .stateIn(scope, SharingStarted.Eagerly, get())
+    return changes().stateIn(scope, SharingStarted.Eagerly, get())
   }
 
 }
