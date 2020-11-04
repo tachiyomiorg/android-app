@@ -9,11 +9,11 @@
 package tachiyomi.ui
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.compose.foundation.Text
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
@@ -118,10 +118,10 @@ class MainActivity : BaseActivity() {
     val startRoute = uiPrefs.startScreen().get().toRoute()
 
     setContent {
-      val theme = getCurrentTheme(themeMode, lightTheme, darkTheme, colorPrimary, colorSecondary)
-      tintSystemBars(theme.colors)
+      val colors = getAppColors(themeMode, lightTheme, darkTheme, colorPrimary, colorSecondary)
+      tintSystemBars(colors)
 
-      MaterialTheme(colors = theme.colors) {
+      MaterialTheme(colors = colors) {
         MainNavHost(startRoute)
       }
     }
@@ -145,26 +145,22 @@ class MainActivity : BaseActivity() {
   }
 
   @Composable
-  private fun getCurrentTheme(
+  private fun getAppColors(
     themeMode: ThemeMode,
     lightTheme: Int,
     darkTheme: Int,
     colorPrimary: Int,
     colorSecondary: Int
-  ): Theme {
+  ): Colors {
     fun getTheme(id: Int, fallbackIsLight: Boolean): Theme {
       return themes.find { it.id == id } ?: themes.first { it.colors.isLight == fallbackIsLight }
     }
 
     val baseTheme = when (themeMode) {
-      ThemeMode.System -> {
-        if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK ==
-          Configuration.UI_MODE_NIGHT_YES
-        ) {
-          getTheme(darkTheme, false)
-        } else {
-          getTheme(lightTheme, true)
-        }
+      ThemeMode.System -> if (!isSystemInDarkTheme()) {
+        getTheme(lightTheme, true)
+      } else {
+        getTheme(darkTheme, false)
       }
       ThemeMode.Light -> getTheme(lightTheme, true)
       ThemeMode.Dark -> getTheme(darkTheme, false)
@@ -180,14 +176,14 @@ class MainActivity : BaseActivity() {
     } else {
       baseTheme.colors.secondary
     }
-    return baseTheme.copy(colors = baseTheme.colors.copy(
+    return baseTheme.colors.copy(
       primary = primary,
       primaryVariant = primary,
       secondary = secondary,
       secondaryVariant = secondary,
       onPrimary = if (primary.luminance() > 0.5) Color.Black else Color.White,
       onSecondary = if (secondary.luminance() > 0.5) Color.Black else Color.White,
-    ))
+    )
   }
 
   @Composable
