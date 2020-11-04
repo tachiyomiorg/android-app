@@ -9,18 +9,13 @@
 package tachiyomi.ui
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
-import android.view.View
 import androidx.compose.foundation.Text
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Colors
 import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Book
@@ -28,14 +23,9 @@ import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.NewReleases
-import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.graphics.useOrElse
 import androidx.compose.ui.graphics.vector.VectorAsset
 import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.res.stringResource
@@ -51,14 +41,10 @@ import androidx.navigation.compose.rememberNavController
 import tachiyomi.core.di.AppScope
 import tachiyomi.domain.ui.UiPreferences
 import tachiyomi.domain.ui.model.StartScreen
-import tachiyomi.domain.ui.model.ThemeMode
 import tachiyomi.ui.browse.CatalogsScreen
 import tachiyomi.ui.browse.catalog.CatalogScreen
 import tachiyomi.ui.browse.catalog.manga.CatalogMangaScreen
 import tachiyomi.ui.core.activity.BaseActivity
-import tachiyomi.ui.core.prefs.asColor
-import tachiyomi.ui.core.theme.Theme
-import tachiyomi.ui.core.theme.themes
 import tachiyomi.ui.history.HistoryScreen
 import tachiyomi.ui.library.LibraryScreen
 import tachiyomi.ui.library.manga.LibraryMangaScreen
@@ -111,20 +97,10 @@ class MainActivity : BaseActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-
-    val themeMode by uiPrefs.themeMode().asState()
-    val lightTheme by uiPrefs.lightTheme().asState()
-    val darkTheme by uiPrefs.darkTheme().asState()
-    val colorPrimary by uiPrefs.colorPrimary().asColor().asState()
-    val colorSecondary by uiPrefs.colorSecondary().asColor().asState()
     val startRoute = uiPrefs.startScreen().get().toRoute()
 
     setContent {
-      val baseTheme = getBaseTheme(themeMode, lightTheme, darkTheme)
-      val colors = getAppColors(baseTheme.colors, colorPrimary, colorSecondary)
-      tintSystemBars(colors)
-
-      MaterialTheme(colors = colors) {
+      AppTheme {
         MainNavHost(startRoute)
       }
     }
@@ -145,71 +121,6 @@ class MainActivity : BaseActivity() {
       else -> return false
     }
     return true
-  }
-
-  @Composable
-  private fun getBaseTheme(
-    themeMode: ThemeMode,
-    lightTheme: Int,
-    darkTheme: Int
-  ): Theme {
-    fun getTheme(id: Int, fallbackIsLight: Boolean): Theme {
-      return themes.find { it.id == id } ?: themes.first { it.colors.isLight == fallbackIsLight }
-    }
-
-    return when (themeMode) {
-      ThemeMode.System -> if (!isSystemInDarkTheme()) {
-        getTheme(lightTheme, true)
-      } else {
-        getTheme(darkTheme, false)
-      }
-      ThemeMode.Light -> getTheme(lightTheme, true)
-      ThemeMode.Dark -> getTheme(darkTheme, false)
-    }
-  }
-
-  @Composable
-  private fun getAppColors(
-    baseColors: Colors,
-    colorPrimary: Color,
-    colorSecondary: Color
-  ): Colors {
-    val primary = colorPrimary.useOrElse { baseColors.primary }
-    val secondary = colorSecondary.useOrElse { baseColors.secondary }
-    return baseColors.copy(
-      primary = primary,
-      primaryVariant = primary,
-      secondary = secondary,
-      secondaryVariant = secondary,
-      onPrimary = if (primary.luminance() > 0.5) Color.Black else Color.White,
-      onSecondary = if (secondary.luminance() > 0.5) Color.Black else Color.White,
-    )
-  }
-
-  @Composable
-  private fun tintSystemBars(colors: Colors) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-      val statusBarColor = colors.primarySurface
-      window.statusBarColor = statusBarColor.toArgb()
-      with(window.decorView) {
-        systemUiVisibility = if (statusBarColor.luminance() > 0.5f) {
-          systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-        } else {
-          systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-        }
-      }
-    }
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-      val navBarColor = colors.primarySurface
-      window.navigationBarColor = navBarColor.toArgb()
-      with(window.decorView) {
-        systemUiVisibility = if (navBarColor.luminance() > 0.5f) {
-          systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
-        } else {
-          systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR.inv()
-        }
-      }
-    }
   }
 
   companion object {
