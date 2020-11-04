@@ -31,7 +31,6 @@ import androidx.compose.material.icons.filled.NewReleases
 import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
@@ -153,41 +152,42 @@ class MainActivity : BaseActivity() {
     colorPrimary: Int,
     colorSecondary: Int
   ): Theme {
-    return remember(themeMode, lightTheme, darkTheme, colorPrimary, colorSecondary) {
-      fun getTheme(id: Int, fallbackIsLight: Boolean): Theme {
-        return themes.find { it.id == id } ?: themes.first { it.colors.isLight == fallbackIsLight }
-      }
-
-      val baseTheme = when (themeMode) {
-        ThemeMode.System -> {
-          if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK ==
-            Configuration.UI_MODE_NIGHT_YES
-          ) {
-            getTheme(darkTheme, false)
-          } else {
-            getTheme(lightTheme, true)
-          }
-        }
-        ThemeMode.Light -> getTheme(lightTheme, true)
-        ThemeMode.Dark -> getTheme(darkTheme, false)
-      }
-
-      val primary = if (colorPrimary != 0) {
-        Color(colorPrimary)
-      } else {
-        baseTheme.colors.primary
-      }
-      val secondary = if (colorSecondary != 0) {
-        Color(colorSecondary)
-      } else {
-        baseTheme.colors.secondary
-      }
-      baseTheme.copy(colors = baseTheme.colors.copy(
-        primary = primary,
-        secondary = secondary,
-        secondaryVariant = secondary
-      ))
+    fun getTheme(id: Int, fallbackIsLight: Boolean): Theme {
+      return themes.find { it.id == id } ?: themes.first { it.colors.isLight == fallbackIsLight }
     }
+
+    val baseTheme = when (themeMode) {
+      ThemeMode.System -> {
+        if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK ==
+          Configuration.UI_MODE_NIGHT_YES
+        ) {
+          getTheme(darkTheme, false)
+        } else {
+          getTheme(lightTheme, true)
+        }
+      }
+      ThemeMode.Light -> getTheme(lightTheme, true)
+      ThemeMode.Dark -> getTheme(darkTheme, false)
+    }
+
+    val primary = if (colorPrimary != 0) {
+      Color(colorPrimary)
+    } else {
+      baseTheme.colors.primary
+    }
+    val secondary = if (colorSecondary != 0) {
+      Color(colorSecondary)
+    } else {
+      baseTheme.colors.secondary
+    }
+    return baseTheme.copy(colors = baseTheme.colors.copy(
+      primary = primary,
+      primaryVariant = primary,
+      secondary = secondary,
+      secondaryVariant = secondary,
+      onPrimary = if (primary.luminance() > 0.5) Color.Black else Color.White,
+      onSecondary = if (secondary.luminance() > 0.5) Color.Black else Color.White,
+    ))
   }
 
   @Composable
