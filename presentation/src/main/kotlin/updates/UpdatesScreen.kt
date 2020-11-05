@@ -10,15 +10,15 @@ package tachiyomi.ui.updates
 
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import tachiyomi.ui.R
+import tachiyomi.ui.core.components.Toolbar
 
 @Composable
 fun UpdatesScreen(navController: NavController) {
   Column {
-    TopAppBar(title = { Text(stringResource(R.string.updates_label)) })
+    Toolbar(title = { Text(stringResource(R.string.updates_label)) })
   }
 }

@@ -10,10 +10,10 @@ package tachiyomi.ui.browse.catalog.manga
 
 import androidx.compose.foundation.Text
 import androidx.compose.material.Scaffold
-import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import tachiyomi.ui.core.components.BackIconButton
+import tachiyomi.ui.core.components.Toolbar
 import tachiyomi.ui.core.components.manga.MangaScreen
 import tachiyomi.ui.core.viewmodel.viewModel
 
@@ -25,7 +25,7 @@ fun CatalogMangaScreen(navController: NavHostController, sourceId: Long, mangaId
 
   Scaffold(
     topBar = {
-      TopAppBar(
+      Toolbar(
         title = { Text(vm.manga?.title ?: "$sourceId/$mangaId") },
         navigationIcon = { BackIconButton(navController) },
       )

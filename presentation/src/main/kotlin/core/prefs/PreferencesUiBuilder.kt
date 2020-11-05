@@ -44,7 +44,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.VectorAsset
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -152,7 +151,7 @@ class PreferenceScope(dialog: MutableState<DialogComposable?>) {
 
   @Composable
   fun ColorPref(
-    preference: PreferenceMutableState<Int>,
+    preference: PreferenceMutableState<Color>,
     title: String,
     subtitle: String? = null
   ) {
@@ -165,21 +164,23 @@ class PreferenceScope(dialog: MutableState<DialogComposable?>) {
             title = { Text(title) },
             onDismissRequest = { dialog = null },
             onSelected = {
-              preference.value = it.toArgb()
+              preference.value = it
               dialog = null
             },
-            initialSelectedColor = Color(preference.value)
+            initialSelectedColor = preference.value
           )
         }
       },
       action = {
-        val borderColor = MaterialTheme.colors.onBackground.copy(alpha = 0.54f)
-        Box(modifier = Modifier
-          .padding(4.dp)
-          .size(32.dp)
-          .clip(CircleShape)
-          .background(Color(preference.value))
-          .border(BorderStroke(1.dp, borderColor), CircleShape))
+        if (preference.value != Color.Unspecified) {
+          val borderColor = MaterialTheme.colors.onBackground.copy(alpha = 0.54f)
+          Box(modifier = Modifier
+            .padding(4.dp)
+            .size(32.dp)
+            .clip(CircleShape)
+            .background(preference.value)
+            .border(BorderStroke(1.dp, borderColor), CircleShape))
+        }
       }
     )
   }

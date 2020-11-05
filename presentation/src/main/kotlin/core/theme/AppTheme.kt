@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package tachiyomi.ui
+package tachiyomi.ui.core.theme
 
 import android.app.Activity
 import android.os.Build
@@ -15,17 +15,20 @@ import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Providers
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.useOrElse
 import androidx.compose.ui.platform.ContextAmbient
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
 import tachiyomi.domain.ui.UiPreferences
 import tachiyomi.domain.ui.model.ThemeMode
-import tachiyomi.ui.core.prefs.asColor
-import tachiyomi.ui.core.theme.Theme
-import tachiyomi.ui.core.theme.themes
 import tachiyomi.ui.core.viewmodel.BaseViewModel
 import tachiyomi.ui.core.viewmodel.viewModel
 import javax.inject.Inject
@@ -33,25 +36,43 @@ import javax.inject.Inject
 @Composable
 fun AppTheme(content: @Composable () -> Unit) {
   val vm = viewModel<AppThemeViewModel>()
-  val colors = vm.getColors()
-  tintSystemBars(colors)
+  val (colors, customColors) = vm.getColors()
+  val rememberedCustomColors = remember { CustomColors() }.apply {
+    updateFrom(customColors)
+  }
+  vm.tintSystemBars(rememberedCustomColors.bars)
 
-  MaterialTheme(colors = colors, content = content)
+  Providers(AmbientCustomColors provides rememberedCustomColors) {
+    MaterialTheme(colors = colors, content = content)
+  }
 }
 
-class AppThemeViewModel @Inject constructor(
+private class AppThemeViewModel @Inject constructor(
   private val uiPreferences: UiPreferences
 ) : BaseViewModel() {
   private val themeMode by uiPreferences.themeMode().asState()
   private val lightTheme by uiPreferences.lightTheme().asState()
   private val darkTheme by uiPreferences.darkTheme().asState()
-  private val colorPrimary by uiPreferences.colorPrimary().asColor().asState()
-  private val colorSecondary by uiPreferences.colorSecondary().asColor().asState()
+
+  private val baseThemeJob = SupervisorJob()
+  private val baseThemeScope = CoroutineScope(baseThemeJob)
 
   @Composable
-  fun getColors(): Colors {
+  fun getColors(): Pair<Colors, CustomColors> {
     val baseTheme = getBaseTheme(themeMode, lightTheme, darkTheme)
-    return getAppColors(baseTheme.colors, colorPrimary, colorSecondary)
+    val colors = remember(baseTheme.colors.isLight) {
+      baseThemeJob.cancelChildren()
+
+      if (baseTheme.colors.isLight) {
+        uiPreferences.getLightColors().asState(baseThemeScope)
+      } else {
+        uiPreferences.getDarkColors().asState(baseThemeScope)
+      }
+    }
+
+    val material = getMaterialColors(baseTheme.colors, colors.primary, colors.secondary)
+    val custom = getCustomColors(material, colors.bars)
+    return material to custom
   }
 
   @Composable
@@ -75,8 +96,7 @@ class AppThemeViewModel @Inject constructor(
     }
   }
 
-  @Composable
-  private fun getAppColors(
+  private fun getMaterialColors(
     baseColors: Colors,
     colorPrimary: Color,
     colorSecondary: Color
@@ -93,31 +113,41 @@ class AppThemeViewModel @Inject constructor(
     )
   }
 
-}
+  private fun getCustomColors(colors: Colors, colorBars: Color): CustomColors {
+    val appbar = colorBars.useOrElse { colors.primarySurface }
+    return CustomColors(
+      bars = appbar,
+      onBars = if (colorBars.luminance() > 0.5) Color.Black else Color.White
+    )
+  }
 
-@Composable
-private fun tintSystemBars(colors: Colors) {
-  val activity = ContextAmbient.current as Activity
-  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-    val statusBarColor = colors.primarySurface
-    activity.window.statusBarColor = statusBarColor.toArgb()
-    with(activity.window.decorView) {
-      systemUiVisibility = if (statusBarColor.luminance() > 0.5f) {
-        systemUiVisibility or android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-      } else {
-        systemUiVisibility and android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+  @Composable
+  fun tintSystemBars(color: Color) {
+    val activity = ContextAmbient.current as Activity
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      activity.window.statusBarColor = color.toArgb()
+      with(activity.window.decorView) {
+        systemUiVisibility = if (color.luminance() > 0.5f) {
+          systemUiVisibility or android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        } else {
+          systemUiVisibility and android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+        }
+      }
+    }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      activity.window.navigationBarColor = color.toArgb()
+      with(activity.window.decorView) {
+        systemUiVisibility = if (color.luminance() > 0.5f) {
+          systemUiVisibility or android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+        } else {
+          systemUiVisibility and android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR.inv()
+        }
       }
     }
   }
-  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-    val navBarColor = colors.primarySurface
-    activity.window.navigationBarColor = navBarColor.toArgb()
-    with(activity.window.decorView) {
-      systemUiVisibility = if (navBarColor.luminance() > 0.5f) {
-        systemUiVisibility or android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
-      } else {
-        systemUiVisibility and android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR.inv()
-      }
-    }
+
+  override fun onDestroy() {
+    baseThemeScope.cancel()
   }
+
 }

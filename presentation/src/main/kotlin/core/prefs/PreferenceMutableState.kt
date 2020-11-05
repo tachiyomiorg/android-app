@@ -43,3 +43,7 @@ class PreferenceMutableState<T>(
   }
 
 }
+
+fun <T> Preference<T>.asStateIn(scope: CoroutineScope): PreferenceMutableState<T> {
+  return PreferenceMutableState(this, scope)
+}

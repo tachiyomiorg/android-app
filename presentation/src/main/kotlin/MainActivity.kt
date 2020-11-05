@@ -45,6 +45,8 @@ import tachiyomi.ui.browse.CatalogsScreen
 import tachiyomi.ui.browse.catalog.CatalogScreen
 import tachiyomi.ui.browse.catalog.manga.CatalogMangaScreen
 import tachiyomi.ui.core.activity.BaseActivity
+import tachiyomi.ui.core.theme.AppTheme
+import tachiyomi.ui.core.theme.CustomColors
 import tachiyomi.ui.history.HistoryScreen
 import tachiyomi.ui.library.LibraryScreen
 import tachiyomi.ui.library.manga.LibraryMangaScreen
@@ -196,7 +198,10 @@ private fun MainNavHost(startRoute: Route) {
 
       // TODO: should hide on non-top-level routes. Not sure how to get the proper ID to check.
 //      if (TopLevelRoutes.isTopLevelRoute(entryRoute)) {
-      BottomNavigation {
+      BottomNavigation(
+        backgroundColor = CustomColors.current.bars,
+        contentColor = CustomColors.current.onBars,
+      ) {
         TopLevelRoutes.values.forEach {
           BottomNavigationItem(
             icon = { Icon(it.icon) },

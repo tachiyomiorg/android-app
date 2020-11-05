@@ -10,7 +10,6 @@ package tachiyomi.ui.more.settings
 
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Backup
 import androidx.compose.material.icons.filled.ChromeReaderMode
@@ -30,13 +29,14 @@ import androidx.navigation.compose.navigate
 import tachiyomi.ui.R
 import tachiyomi.ui.Route
 import tachiyomi.ui.core.components.BackIconButton
+import tachiyomi.ui.core.components.Toolbar
 import tachiyomi.ui.core.prefs.PreferenceRow
 import tachiyomi.ui.core.prefs.PreferencesScrollableColumn
 
 @Composable
 fun SettingsScreen(navController: NavHostController) {
   Column {
-    TopAppBar(
+    Toolbar(
       title = { Text(stringResource(R.string.settings_label)) },
       navigationIcon = { BackIconButton(navController) }
     )

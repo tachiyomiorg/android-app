@@ -10,7 +10,6 @@ package tachiyomi.ui.more.settings
 
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
@@ -18,6 +17,7 @@ import tachiyomi.domain.ui.UiPreferences
 import tachiyomi.domain.ui.model.StartScreen
 import tachiyomi.ui.R
 import tachiyomi.ui.core.components.BackIconButton
+import tachiyomi.ui.core.components.Toolbar
 import tachiyomi.ui.core.prefs.PreferencesScrollableColumn
 import tachiyomi.ui.core.viewmodel.BaseViewModel
 import tachiyomi.ui.core.viewmodel.viewModel
@@ -37,7 +37,7 @@ fun SettingsGeneralScreen(navController: NavHostController) {
   val vm = viewModel<SettingsGeneralViewModel>()
 
   Column {
-    TopAppBar(
+    Toolbar(
       title = { Text(stringResource(R.string.general_label)) },
       navigationIcon = { BackIconButton(navController) }
     )

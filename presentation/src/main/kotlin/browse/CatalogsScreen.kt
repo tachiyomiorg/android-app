@@ -34,7 +34,6 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.GetApp
 import androidx.compose.material.icons.filled.Settings
@@ -63,6 +62,7 @@ import tachiyomi.domain.catalog.model.InstallStep
 import tachiyomi.ui.R
 import tachiyomi.ui.Route
 import tachiyomi.ui.core.coil.CoilImage
+import tachiyomi.ui.core.components.Toolbar
 import tachiyomi.ui.core.viewmodel.viewModel
 import kotlin.math.abs
 import kotlin.random.Random
@@ -76,7 +76,7 @@ fun CatalogsScreen(navController: NavController) {
   }
 
   Column {
-    TopAppBar(
+    Toolbar(
       title = { Text(stringResource(R.string.browse_label)) }
     )
     ScrollableColumn {

@@ -30,7 +30,7 @@ val themes = listOf(
   Theme(4, "AMOLED", darkColors(
     primary = Color.Black,
     onPrimary = Color.White,
-    surface = Color.Black
+    background = Color.Black
   )),
 )
 

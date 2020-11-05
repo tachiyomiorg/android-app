@@ -12,7 +12,6 @@ import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -26,6 +25,7 @@ import tachiyomi.ui.R
 import tachiyomi.ui.Route
 import tachiyomi.ui.core.coil.MangaCover
 import tachiyomi.ui.core.components.AutofitGrid
+import tachiyomi.ui.core.components.Toolbar
 import tachiyomi.ui.core.components.manga.MangaGridItem
 import tachiyomi.ui.core.viewmodel.viewModel
 
@@ -36,7 +36,7 @@ fun LibraryScreen(navController: NavController) {
   val vm = viewModel<LibraryViewModel>()
 
   Column {
-    TopAppBar(title = { Text(stringResource(R.string.library_label)) })
+    Toolbar(title = { Text(stringResource(R.string.library_label)) })
     Box(Modifier.padding(2.dp)) {
       LibraryTable(
         vm.library,

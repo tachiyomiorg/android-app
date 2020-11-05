@@ -40,8 +40,13 @@ import tachiyomi.domain.ui.UiPreferences
 import tachiyomi.domain.ui.model.ThemeMode
 import tachiyomi.ui.R
 import tachiyomi.ui.core.components.BackIconButton
+import tachiyomi.ui.core.components.Toolbar
 import tachiyomi.ui.core.prefs.PreferencesScrollableColumn
+import tachiyomi.ui.core.theme.PreferenceColorsState
 import tachiyomi.ui.core.theme.Theme
+import tachiyomi.ui.core.theme.asState
+import tachiyomi.ui.core.theme.getDarkColors
+import tachiyomi.ui.core.theme.getLightColors
 import tachiyomi.ui.core.theme.themesById
 import tachiyomi.ui.core.viewmodel.BaseViewModel
 import tachiyomi.ui.core.viewmodel.viewModel
@@ -54,9 +59,13 @@ class ThemesViewModel @Inject constructor(
   val themeMode = uiPreferences.themeMode().asState()
   val lightTheme = uiPreferences.lightTheme().asState()
   val darkTheme = uiPreferences.darkTheme().asState()
-  val colorPrimary = uiPreferences.colorPrimary().asState()
-  val colorSecondary = uiPreferences.colorSecondary().asState()
+  val lightColors = uiPreferences.getLightColors().asState(scope)
+  val darkColors = uiPreferences.getDarkColors().asState(scope)
 
+  @Composable
+  fun getActiveColors(): PreferenceColorsState {
+    return if (MaterialTheme.colors.isLight) lightColors else darkColors
+  }
 }
 
 @Composable
@@ -64,7 +73,7 @@ fun SettingsAppearance(navController: NavHostController) {
   val vm = viewModel<ThemesViewModel>()
 
   Column {
-    TopAppBar(
+    Toolbar(
       title = { Text(stringResource(R.string.appearance_label)) },
       navigationIcon = { BackIconButton(navController) },
     )
@@ -110,10 +119,13 @@ fun SettingsAppearance(navController: NavHostController) {
           }
         }
       }
-      ColorPref(preference = vm.colorPrimary, title = "Color primary",
+      val activeColors = vm.getActiveColors()
+      ColorPref(preference = activeColors.primaryState, title = "Color primary",
         subtitle = "Displayed most frequently across your app")
-      ColorPref(preference = vm.colorSecondary, title = "Color secondary",
+      ColorPref(preference = activeColors.secondaryState, title = "Color secondary",
         subtitle = "Accents select parts of the UI")
+      ColorPref(preference = activeColors.barsState, title = "Toolbar color",
+        subtitle = "The toolbars color")
     }
   }
 }

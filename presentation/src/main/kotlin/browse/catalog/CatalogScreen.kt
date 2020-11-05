@@ -11,7 +11,6 @@ package tachiyomi.ui.browse.catalog
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Button
-import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.onActive
 import androidx.compose.ui.unit.dp
@@ -23,6 +22,7 @@ import tachiyomi.ui.core.coil.MangaCover
 import tachiyomi.ui.core.components.AutofitGrid
 import tachiyomi.ui.core.components.BackIconButton
 import tachiyomi.ui.core.components.LoadingScreen
+import tachiyomi.ui.core.components.Toolbar
 import tachiyomi.ui.core.components.manga.MangaGridItem
 import tachiyomi.ui.core.viewmodel.viewModel
 
@@ -40,12 +40,12 @@ fun CatalogScreen(navController: NavHostController, sourceId: Long) {
     val catalog = vm.catalog
     if (catalog == null) {
       // TODO empty screen
-      TopAppBar(
+      Toolbar(
         title = { Text("Catalog not found") },
         navigationIcon = { BackIconButton(navController) },
       )
     } else {
-      TopAppBar(
+      Toolbar(
         title = { Text(catalog.name) },
         navigationIcon = { BackIconButton(navController) },
       )

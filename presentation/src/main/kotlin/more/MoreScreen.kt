@@ -15,14 +15,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.AmbientElevationOverlay
 import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Help
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Providers
 import androidx.compose.ui.Modifier
@@ -36,8 +33,10 @@ import androidx.navigation.compose.navigate
 import tachiyomi.ui.R
 import tachiyomi.ui.Route
 import tachiyomi.ui.core.components.NoElevationOverlay
+import tachiyomi.ui.core.components.Toolbar
 import tachiyomi.ui.core.prefs.PreferenceRow
 import tachiyomi.ui.core.prefs.PreferencesScrollableColumn
+import tachiyomi.ui.core.theme.CustomColors
 import tachiyomi.ui.core.util.openInBrowser
 import tachiyomi.ui.core.viewmodel.BaseViewModel
 import tachiyomi.ui.core.viewmodel.viewModel
@@ -53,17 +52,18 @@ fun MoreScreen(navController: NavController) {
   val context = ContextAmbient.current
 
   Column {
-    TopAppBar(
+    Toolbar(
       title = { Text(stringResource(R.string.more_label)) },
       elevation = 0.dp,
       modifier = Modifier.zIndex(1f)
     )
-    Providers(AmbientElevationOverlay provides NoElevationOverlay()) {
+    Providers(AmbientElevationOverlay provides NoElevationOverlay) {
       Surface(
-        color = MaterialTheme.colors.primarySurface,
+        color = CustomColors.current.bars,
+        contentColor = CustomColors.current.onBars,
         modifier = Modifier
           .fillMaxWidth()
-          // To ensure that the elevation shadow is drawn behind the TopAppBar
+          // To ensure that the elevation shadow is drawn behind the Toolbar
           .zIndex(0f),
         elevation = 4.dp
       ) {
