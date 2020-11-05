@@ -35,7 +35,11 @@ class ColorPreference(
   }
 
   override fun set(value: Color) {
-    preference.set(value.toArgb())
+    if (value != Color.Unspecified) {
+      preference.set(value.toArgb())
+    } else {
+      preference.delete()
+    }
   }
 
   override fun isSet(): Boolean {

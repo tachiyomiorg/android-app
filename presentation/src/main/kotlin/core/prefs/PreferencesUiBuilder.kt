@@ -43,6 +43,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.gesture.longPressGestureFilter
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.VectorAsset
 import androidx.compose.ui.res.stringResource
@@ -171,6 +172,7 @@ class PreferenceScope(dialog: MutableState<DialogComposable?>) {
           )
         }
       },
+      onLongClick = { preference.value = Color.Unspecified },
       action = {
         if (preference.value != Color.Unspecified) {
           val borderColor = MaterialTheme.colors.onBackground.copy(alpha = 0.54f)
@@ -207,13 +209,15 @@ fun PreferenceRow(
   title: String,
   icon: VectorAsset? = null,
   onClick: () -> Unit = {},
+  onLongClick: () -> Unit = {},
   subtitle: String? = null,
   action: @Composable (() -> Unit)? = null,
 ) {
   val height = if (subtitle != null) 72.dp else 56.dp
 
   Row(
-    modifier = Modifier.fillMaxWidth().height(height).clickable(onClick = onClick),
+    modifier = Modifier.fillMaxWidth().height(height).clickable(onClick = onClick)
+      .longPressGestureFilter { onLongClick() },
     verticalAlignment = Alignment.CenterVertically
   ) {
     if (icon != null) {
@@ -254,10 +258,11 @@ fun PreferenceRow(
   @StringRes title: Int,
   icon: VectorAsset? = null,
   onClick: () -> Unit = {},
+  onLongClick: () -> Unit = {},
   subtitle: String? = null,
   action: @Composable (() -> Unit)? = null,
 ) {
-  PreferenceRow(stringResource(title), icon, onClick, subtitle, action)
+  PreferenceRow(stringResource(title), icon, onClick, onLongClick, subtitle, action)
 }
 
 @Composable
