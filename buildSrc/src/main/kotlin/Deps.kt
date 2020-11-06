@@ -7,7 +7,7 @@ object Deps {
     const val reflect = "org.jetbrains.kotlin:kotlin-reflect:$version"
 
     object serialization {
-      private const val version = "1.0.0"
+      private const val version = "1.0.1"
       const val json = "org.jetbrains.kotlinx:kotlinx-serialization-json:$version"
       const val protobuf = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf:$version"
     }
