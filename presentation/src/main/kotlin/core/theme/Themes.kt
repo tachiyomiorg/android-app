@@ -16,21 +16,37 @@ import androidx.compose.ui.graphics.Color
 data class Theme(
   val id: Int,
   val name: String,
-  val colors: Colors
+  val colors: Colors,
+  val customColors: CustomColors
 )
 
 val themes = listOf(
-  Theme(1, "White", lightColors(
-    primary = Color.White,
-    primaryVariant = Color.White,
-    onPrimary = Color.Black
+  Theme(1, "White", lightColors(), CustomColors(
+    bars = Color.White,
+    onBars = Color.Black
   )),
-  Theme(2, "White/Blue", lightColors()),
-  Theme(3, "Dark", darkColors()),
+  Theme(2, "White/Blue", lightColors(
+    primary = Color(0xFF2979FF),
+    primaryVariant = Color(0xFF2979FF),
+    onPrimary = Color.White,
+    secondary = Color(0xFF2979FF),
+    secondaryVariant = Color(0xFF2979FF),
+    onSecondary = Color.White
+  ), CustomColors(
+    bars = Color(0xFF54759E),
+    onBars = Color.White
+  )),
+  Theme(3, "Dark", darkColors(), CustomColors(
+    bars = Color(0xFF212121),
+    onBars = Color.White
+  )),
   Theme(4, "AMOLED", darkColors(
     primary = Color.Black,
     onPrimary = Color.White,
     background = Color.Black
+  ), CustomColors(
+    bars = Color.Black,
+    onBars = Color.White
   )),
 )
 

@@ -8,33 +8,32 @@
 
 package tachiyomi.ui.more.settings
 
-import androidx.compose.foundation.ProvideTextStyle
 import androidx.compose.foundation.Text
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRowFor
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.material.BottomAppBar
 import androidx.compose.material.Button
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
+import androidx.compose.material.ButtonConstants
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.TopAppBar
-import androidx.compose.material.contentColorFor
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.emptyContent
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import tachiyomi.domain.ui.UiPreferences
 import tachiyomi.domain.ui.model.ThemeMode
@@ -47,7 +46,7 @@ import tachiyomi.ui.core.theme.Theme
 import tachiyomi.ui.core.theme.asState
 import tachiyomi.ui.core.theme.getDarkColors
 import tachiyomi.ui.core.theme.getLightColors
-import tachiyomi.ui.core.theme.themesById
+import tachiyomi.ui.core.theme.themes
 import tachiyomi.ui.core.viewmodel.BaseViewModel
 import tachiyomi.ui.core.viewmodel.viewModel
 import javax.inject.Inject
@@ -72,6 +71,12 @@ class ThemesViewModel @Inject constructor(
 fun SettingsAppearance(navController: NavHostController) {
   val vm = viewModel<ThemesViewModel>()
 
+  val activeColors = vm.getActiveColors()
+  val isLight = MaterialTheme.colors.isLight
+  val themesForCurrentMode = remember(isLight) {
+    themes.filter { it.colors.isLight == isLight }
+  }
+
   Column {
     Toolbar(
       title = { Text(stringResource(R.string.appearance_label)) },
@@ -87,93 +92,60 @@ fun SettingsAppearance(navController: NavHostController) {
         ),
         title = R.string.theme_mode
       )
-      if (vm.themeMode.value != ThemeMode.Dark) {
-        ChoicePref(
-          preference = vm.lightTheme,
-          choices = themesById,
-          title = R.string.light_theme,
-          subtitle = themesById[vm.lightTheme.value]?.name
-        ) { _, theme ->
-          if (theme.colors.isLight) {
-            MaterialTheme(theme.colors) {
-              Surface(modifier = Modifier.padding(8.dp), elevation = 4.dp) {
-                ThemeItem(theme)
-              }
-            }
-          }
-        }
+      Text("Preset themes", modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 4.dp))
+      LazyRowFor(themesForCurrentMode, Modifier.padding(horizontal = 8.dp)) { theme ->
+        ThemeItem(theme, onClick = {
+          activeColors.primaryState.value = it.colors.primary
+          activeColors.secondaryState.value = it.colors.secondary
+          activeColors.barsState.value = it.customColors.bars
+        })
       }
-      if (vm.themeMode.value != ThemeMode.Light) {
-        ChoicePref(
-          preference = vm.darkTheme,
-          choices = themesById,
-          title = R.string.dark_theme,
-          subtitle = themesById[vm.darkTheme.value]?.name
-        ) { _, theme ->
-          if (!theme.colors.isLight) {
-            MaterialTheme(theme.colors) {
-              Surface(modifier = Modifier.padding(8.dp), elevation = 4.dp) {
-                ThemeItem(theme)
-              }
-            }
-          }
-        }
-      }
-      val activeColors = vm.getActiveColors()
+
       ColorPref(preference = activeColors.primaryState, title = "Color primary",
         subtitle = "Displayed most frequently across your app")
       ColorPref(preference = activeColors.secondaryState, title = "Color secondary",
         subtitle = "Accents select parts of the UI")
-      ColorPref(preference = activeColors.barsState, title = "Toolbar color",
-        subtitle = "The toolbars color")
+      ColorPref(preference = activeColors.barsState, title = "Toolbar color")
     }
   }
 }
 
 @Composable
-private fun ThemeItem(theme: Theme) {
-  Column {
-    TopAppBar(
-      title = { Text(theme.name) },
-      actions = {
-        IconButton(onClick = {}, enabled = false) {
-          Icon(Icons.Default.MoreVert)
-        }
-      }
-    )
-    Surface(modifier = Modifier.fillMaxWidth().height(124.dp)) {
-      Box(Modifier.padding(16.dp)) {
-        Text(text = "Primary text")
-        Button(onClick = {}, modifier = Modifier.align(Alignment.BottomStart)) {
-          Text("Button")
-        }
-        StatelessFloatingActionButton(modifier = Modifier.align(Alignment.BottomEnd)) {
-          Icon(Icons.Default.Edit)
-        }
-      }
-    }
-  }
-}
-
-@Composable
-private fun StatelessFloatingActionButton(
-  modifier: Modifier = Modifier,
-  shape: Shape = MaterialTheme.shapes.small.copy(CornerSize(percent = 50)),
-  backgroundColor: Color = MaterialTheme.colors.secondary,
-  contentColor: Color = contentColorFor(backgroundColor),
-  elevation: Dp = 6.dp,
-  icon: @Composable () -> Unit
+private fun ThemeItem(
+  theme: Theme,
+  onClick: (Theme) -> Unit
 ) {
-  Surface(
-    modifier = modifier,
-    shape = shape,
-    color = backgroundColor,
-    contentColor = contentColor,
-    elevation = elevation
+  val borders = MaterialTheme.shapes.small
+  Surface(elevation = 4.dp, color = theme.colors.background, shape = borders,
+    modifier = Modifier
+      .size(100.dp, 160.dp)
+      .padding(8.dp)
+      .border(1.dp, Color.Black.copy(alpha = 0.25f), borders)
+      .clickable(onClick = { onClick(theme) })
   ) {
-    ProvideTextStyle(MaterialTheme.typography.button) {
-      Box(modifier = Modifier.size(56.dp), alignment = Alignment.Center) {
-        icon()
+    Column {
+      Toolbar(modifier = Modifier.height(24.dp), title = emptyContent(),
+        backgroundColor = theme.customColors.bars)
+      Box(Modifier.fillMaxWidth().weight(1f).padding(6.dp)) {
+        Text("Text", fontSize = 11.sp)
+        Button(
+          onClick = {},
+          enabled = false,
+          contentPadding = PaddingValues(),
+          modifier = Modifier.align(Alignment.BottomStart).size(40.dp, 20.dp),
+          content = {},
+          colors = ButtonConstants.defaultButtonColors(
+            disabledBackgroundColor = theme.colors.primary
+          )
+        )
+        Surface(Modifier.size(24.dp).align(Alignment.BottomEnd),
+          shape = MaterialTheme.shapes.small.copy(CornerSize(percent = 50)),
+          color = theme.colors.secondary,
+          elevation = 6.dp,
+          content = emptyContent()
+        )
+      }
+      BottomAppBar(Modifier.height(24.dp), backgroundColor = theme.customColors.bars) {
       }
     }
   }

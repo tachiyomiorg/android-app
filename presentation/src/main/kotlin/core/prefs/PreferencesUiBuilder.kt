@@ -118,39 +118,6 @@ class PreferenceScope(dialog: MutableState<DialogComposable?>) {
   }
 
   @Composable
-  fun <Key, Item> ChoicePref(
-    preference: PreferenceMutableState<Key>,
-    choices: Map<Key, Item>,
-    @StringRes title: Int,
-    subtitle: String? = null,
-    renderItem: @Composable (Key, Item) -> Unit
-  ) {
-    PreferenceRow(
-      title = stringResource(title),
-      subtitle = subtitle,
-      onClick = {
-        dialog = {
-          AlertDialog(
-            title = { Text(stringResource(title)) },
-            onDismissRequest = { dialog = null },
-            buttons = {},
-            text = {
-              LazyColumnFor(items = choices.toList()) { (value, text) ->
-                Box(modifier = Modifier.clickable(onClick = {
-                  preference.value = value
-                  dialog = null
-                })) {
-                  renderItem(value, text)
-                }
-              }
-            }
-          )
-        }
-      }
-    )
-  }
-
-  @Composable
   fun ColorPref(
     preference: PreferenceMutableState<Color>,
     title: String,
