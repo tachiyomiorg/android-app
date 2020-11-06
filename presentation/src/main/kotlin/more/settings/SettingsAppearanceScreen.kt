@@ -95,6 +95,7 @@ fun SettingsAppearance(navController: NavHostController) {
       Text("Preset themes", modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 4.dp))
       LazyRowFor(themesForCurrentMode, Modifier.padding(horizontal = 8.dp)) { theme ->
         ThemeItem(theme, onClick = {
+          (if (isLight) vm.lightTheme else vm.darkTheme).value = it.id
           activeColors.primaryState.value = it.colors.primary
           activeColors.secondaryState.value = it.colors.secondary
           activeColors.barsState.value = it.customColors.bars
