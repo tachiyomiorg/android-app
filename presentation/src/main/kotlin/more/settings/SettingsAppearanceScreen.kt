@@ -117,11 +117,16 @@ private fun ThemeItem(
   onClick: (Theme) -> Unit
 ) {
   val borders = MaterialTheme.shapes.small
+  val borderColor = if (theme.colors.isLight) {
+    Color.Black.copy(alpha = 0.25f)
+  } else {
+    Color.White.copy(alpha = 0.15f)
+  }
   Surface(elevation = 4.dp, color = theme.colors.background, shape = borders,
     modifier = Modifier
       .size(100.dp, 160.dp)
       .padding(8.dp)
-      .border(1.dp, Color.Black.copy(alpha = 0.25f), borders)
+      .border(1.dp, borderColor, borders)
       .clickable(onClick = { onClick(theme) })
   ) {
     Column {
