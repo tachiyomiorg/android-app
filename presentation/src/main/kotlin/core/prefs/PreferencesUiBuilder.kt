@@ -123,6 +123,7 @@ class PreferenceScope(dialog: MutableState<(@Composable () -> Unit)?>) {
     subtitle: String? = null,
     unsetColor: Color = Color.Unspecified
   ) {
+    val initialColor = preference.value.useOrElse { unsetColor }
     PreferenceRow(
       title = title,
       subtitle = subtitle,
@@ -135,7 +136,7 @@ class PreferenceScope(dialog: MutableState<(@Composable () -> Unit)?>) {
               preference.value = it
               dialog = null
             },
-            initialSelectedColor = preference.value
+            initialColor = initialColor
           )
         }
       },
@@ -147,7 +148,7 @@ class PreferenceScope(dialog: MutableState<(@Composable () -> Unit)?>) {
             .padding(4.dp)
             .size(32.dp)
             .clip(CircleShape)
-            .background(preference.value.useOrElse { unsetColor })
+            .background(initialColor)
             .border(BorderStroke(1.dp, borderColor), CircleShape))
         }
       }

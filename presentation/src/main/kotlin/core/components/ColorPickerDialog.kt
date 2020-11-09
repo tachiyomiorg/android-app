@@ -92,9 +92,9 @@ fun ColorPickerDialog(
   onSelected: (Color) -> Unit,
   modifier: Modifier = Modifier,
   title: (@Composable () -> Unit)? = null,
-  initialSelectedColor: Color = Color.Unspecified,
+  initialColor: Color = Color.Unspecified,
 ) {
-  var currentColor by mutableStateOf(initialSelectedColor)
+  var currentColor by mutableStateOf(initialColor)
   var showPresets by mutableStateOf(true)
 
   AlertDialog(
