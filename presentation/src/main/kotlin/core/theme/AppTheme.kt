@@ -13,7 +13,6 @@ import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Providers
 import androidx.compose.runtime.getValue
@@ -33,6 +32,10 @@ import tachiyomi.ui.core.viewmodel.BaseViewModel
 import tachiyomi.ui.core.viewmodel.viewModel
 import javax.inject.Inject
 
+/**
+ * Composable used to apply the application colors to [content].
+ * It applies the [MaterialTheme] colors and the app's [CustomColors].
+ */
 @Composable
 fun AppTheme(content: @Composable () -> Unit) {
   val vm = viewModel<AppThemeViewModel>()
@@ -71,7 +74,7 @@ private class AppThemeViewModel @Inject constructor(
     }
 
     val material = getMaterialColors(baseTheme.colors, colors.primary, colors.secondary)
-    val custom = getCustomColors(material, colors.bars)
+    val custom = getCustomColors(baseTheme.customColors, colors.bars)
     return material to custom
   }
 
@@ -113,11 +116,11 @@ private class AppThemeViewModel @Inject constructor(
     )
   }
 
-  private fun getCustomColors(colors: Colors, colorBars: Color): CustomColors {
-    val appbar = colorBars.useOrElse { colors.primarySurface }
+  private fun getCustomColors(colors: CustomColors, colorBars: Color): CustomColors {
+    val appbar = colorBars.useOrElse { colors.bars }
     return CustomColors(
       bars = appbar,
-      onBars = if (colorBars.luminance() > 0.5) Color.Black else Color.White
+      onBars = if (appbar.luminance() > 0.5) Color.Black else Color.White
     )
   }
 

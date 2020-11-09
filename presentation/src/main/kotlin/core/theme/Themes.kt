@@ -15,17 +15,18 @@ import androidx.compose.ui.graphics.Color
 
 data class Theme(
   val id: Int,
-  val name: String,
   val colors: Colors,
   val customColors: CustomColors
 )
 
 val themes = listOf(
-  Theme(1, "White", lightColors(), CustomColors(
+  // Pure white
+  Theme(1, lightColors(), CustomColors(
     bars = Color.White,
     onBars = Color.Black
   )),
-  Theme(2, "White/Blue", lightColors(
+  // Tachiyomi 0.x default colors
+  Theme(2, lightColors(
     primary = Color(0xFF2979FF),
     primaryVariant = Color(0xFF2979FF),
     onPrimary = Color.White,
@@ -36,11 +37,13 @@ val themes = listOf(
     bars = Color(0xFF54759E),
     onBars = Color.White
   )),
-  Theme(3, "Dark", darkColors(), CustomColors(
+  // Tachiyomi 0.x dark theme
+  Theme(3, darkColors(), CustomColors(
     bars = Color(0xFF212121),
     onBars = Color.White
   )),
-  Theme(4, "AMOLED", darkColors(
+  // AMOLED theme
+  Theme(4, darkColors(
     primary = Color.Black,
     onPrimary = Color.White,
     background = Color.Black
@@ -49,5 +52,3 @@ val themes = listOf(
     onBars = Color.White
   )),
 )
-
-val themesById = themes.associateBy { it.id }

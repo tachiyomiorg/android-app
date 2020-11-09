@@ -45,15 +45,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.gesture.longPressGestureFilter
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.useOrElse
 import androidx.compose.ui.graphics.vector.VectorAsset
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import tachiyomi.ui.core.components.ColorPickerDialog
 
-private typealias DialogComposable = @Composable () -> Unit
-
-class PreferenceScope(dialog: MutableState<DialogComposable?>) {
+class PreferenceScope(dialog: MutableState<(@Composable () -> Unit)?>) {
   var dialog by dialog
 
   @Composable
@@ -121,7 +120,8 @@ class PreferenceScope(dialog: MutableState<DialogComposable?>) {
   fun ColorPref(
     preference: PreferenceMutableState<Color>,
     title: String,
-    subtitle: String? = null
+    subtitle: String? = null,
+    unsetColor: Color = Color.Unspecified
   ) {
     PreferenceRow(
       title = title,
@@ -141,13 +141,13 @@ class PreferenceScope(dialog: MutableState<DialogComposable?>) {
       },
       onLongClick = { preference.value = Color.Unspecified },
       action = {
-        if (preference.value != Color.Unspecified) {
+        if (preference.value != Color.Unspecified || unsetColor != Color.Unspecified) {
           val borderColor = MaterialTheme.colors.onBackground.copy(alpha = 0.54f)
           Box(modifier = Modifier
             .padding(4.dp)
             .size(32.dp)
             .clip(CircleShape)
-            .background(preference.value)
+            .background(preference.value.useOrElse { unsetColor })
             .border(BorderStroke(1.dp, borderColor), CircleShape))
         }
       }
@@ -161,7 +161,7 @@ fun PreferencesScrollableColumn(
   modifier: Modifier = Modifier,
   children: @Composable PreferenceScope.() -> Unit
 ) {
-  val dialog = remember { mutableStateOf<DialogComposable?>(null) }
+  val dialog = remember { mutableStateOf<(@Composable () -> Unit)?>(null) }
   Box {
     ScrollableColumn(modifier) {
       val scope = PreferenceScope(dialog)

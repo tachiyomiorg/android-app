@@ -32,10 +32,8 @@
   <string name="hide_bottom_bar_on_scroll">Hide bottom bar on scroll</string>
 
   <!-- Settings appearance screen -->
-  <string name="theme_mode">Theme mode</string>
-  <string name="light_theme">Light theme</string>
-  <string name="dark_theme">Dark theme</string>
-  <string name="system_default">System default</string>
+  <string name="theme">Theme</string>
+  <string name="follow_system_settings">Follow system settings</string>
   <string name="light">Light</string>
   <string name="dark">Dark</string>
 

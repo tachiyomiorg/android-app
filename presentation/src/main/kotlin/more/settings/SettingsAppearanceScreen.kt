@@ -41,7 +41,8 @@ import tachiyomi.ui.R
 import tachiyomi.ui.core.components.BackIconButton
 import tachiyomi.ui.core.components.Toolbar
 import tachiyomi.ui.core.prefs.PreferencesScrollableColumn
-import tachiyomi.ui.core.theme.PreferenceColorsState
+import tachiyomi.ui.core.theme.AppColorsPreferenceState
+import tachiyomi.ui.core.theme.CustomColors
 import tachiyomi.ui.core.theme.Theme
 import tachiyomi.ui.core.theme.asState
 import tachiyomi.ui.core.theme.getDarkColors
@@ -62,7 +63,7 @@ class ThemesViewModel @Inject constructor(
   val darkColors = uiPreferences.getDarkColors().asState(scope)
 
   @Composable
-  fun getActiveColors(): PreferenceColorsState {
+  fun getActiveColors(): AppColorsPreferenceState {
     return if (MaterialTheme.colors.isLight) lightColors else darkColors
   }
 }
@@ -86,11 +87,11 @@ fun SettingsAppearance(navController: NavHostController) {
       ChoicePref(
         preference = vm.themeMode,
         choices = mapOf(
-          ThemeMode.System to R.string.system_default,
+          ThemeMode.System to R.string.follow_system_settings,
           ThemeMode.Light to R.string.light,
           ThemeMode.Dark to R.string.dark
         ),
-        title = R.string.theme_mode
+        title = R.string.theme
       )
       Text("Preset themes", modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 4.dp))
       LazyRowFor(themesForCurrentMode, Modifier.padding(horizontal = 8.dp)) { theme ->
@@ -103,10 +104,13 @@ fun SettingsAppearance(navController: NavHostController) {
       }
 
       ColorPref(preference = activeColors.primaryState, title = "Color primary",
-        subtitle = "Displayed most frequently across your app")
+        subtitle = "Displayed most frequently across your app",
+        unsetColor = MaterialTheme.colors.primary)
       ColorPref(preference = activeColors.secondaryState, title = "Color secondary",
-        subtitle = "Accents select parts of the UI")
-      ColorPref(preference = activeColors.barsState, title = "Toolbar color")
+        subtitle = "Accents select parts of the UI",
+        unsetColor = MaterialTheme.colors.secondary)
+      ColorPref(preference = activeColors.barsState, title = "Toolbar color",
+        unsetColor = CustomColors.current.bars)
     }
   }
 }

@@ -17,13 +17,13 @@ import tachiyomi.ui.core.prefs.PreferenceMutableState
 import tachiyomi.ui.core.prefs.asColor
 import tachiyomi.ui.core.prefs.asStateIn
 
-data class PreferenceColors(
-  val primary: Preference<Int>,
-  val secondary: Preference<Int>,
-  val bars: Preference<Int>
+data class AppColorsPreference(
+  val primary: Preference<Color>,
+  val secondary: Preference<Color>,
+  val bars: Preference<Color>
 )
 
-class PreferenceColorsState(
+class AppColorsPreferenceState(
   val primaryState: PreferenceMutableState<Color>,
   val secondaryState: PreferenceMutableState<Color>,
   val barsState: PreferenceMutableState<Color>
@@ -33,26 +33,26 @@ class PreferenceColorsState(
   val bars by barsState
 }
 
-fun UiPreferences.getLightColors(): PreferenceColors {
-  return PreferenceColors(
-    colorPrimaryLight(),
-    colorSecondaryLight(),
-    colorBarsLight()
+fun UiPreferences.getLightColors(): AppColorsPreference {
+  return AppColorsPreference(
+    colorPrimaryLight().asColor(),
+    colorSecondaryLight().asColor(),
+    colorBarsLight().asColor()
   )
 }
 
-fun UiPreferences.getDarkColors(): PreferenceColors {
-  return PreferenceColors(
-    colorPrimaryDark(),
-    colorSecondaryDark(),
-    colorBarsDark()
+fun UiPreferences.getDarkColors(): AppColorsPreference {
+  return AppColorsPreference(
+    colorPrimaryDark().asColor(),
+    colorSecondaryDark().asColor(),
+    colorBarsDark().asColor()
   )
 }
 
-fun PreferenceColors.asState(scope: CoroutineScope): PreferenceColorsState {
-  return PreferenceColorsState(
-    primary.asColor().asStateIn(scope),
-    secondary.asColor().asStateIn(scope),
-    bars.asColor().asStateIn(scope)
+fun AppColorsPreference.asState(scope: CoroutineScope): AppColorsPreferenceState {
+  return AppColorsPreferenceState(
+    primary.asStateIn(scope),
+    secondary.asStateIn(scope),
+    bars.asStateIn(scope)
   )
 }
