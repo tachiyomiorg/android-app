@@ -64,4 +64,12 @@ class UiPreferences(private val preferenceStore: PreferenceStore) {
     return preferenceStore.getBoolean("hide_bottom_bar_on_scroll", true)
   }
 
+  fun downloadedOnly(): Preference<Boolean> {
+    return preferenceStore.getBoolean("downloaded_only", false)
+  }
+
+  fun incognitoMode(): Preference<Boolean> {
+    return preferenceStore.getBoolean("incognito_mode", false)
+  }
+
 }

@@ -14,11 +14,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.AmbientElevationOverlay
+import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CloudOff
+import androidx.compose.material.icons.filled.GetApp
 import androidx.compose.material.icons.filled.Help
+import androidx.compose.material.icons.filled.HourglassBottom
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Label
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Providers
@@ -30,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
+import tachiyomi.domain.ui.UiPreferences
 import tachiyomi.ui.R
 import tachiyomi.ui.Route
 import tachiyomi.ui.core.components.NoElevationOverlay
@@ -43,7 +49,11 @@ import tachiyomi.ui.core.viewmodel.viewModel
 import javax.inject.Inject
 
 class MoreViewModel @Inject constructor(
+  uiPreferences: UiPreferences
 ) : BaseViewModel() {
+
+  val downloadedOnly = uiPreferences.downloadedOnly().asState()
+  val incognitoMode = uiPreferences.incognitoMode().asState()
 }
 
 @Composable
@@ -71,18 +81,42 @@ fun MoreScreen(navController: NavController) {
       }
     }
     PreferencesScrollableColumn {
+      SwitchPref(
+        preference = vm.downloadedOnly,
+        title = R.string.downloaded_only,
+        subtitle = R.string.downloaded_only_subtitle,
+        icon = Icons.Default.CloudOff
+      )
+      SwitchPref(
+        preference = vm.incognitoMode,
+        title = R.string.incognito_mode,
+        subtitle = R.string.incognito_mode_subtitle,
+        icon = Icons.Default.HourglassBottom // TODO there are no glasses on material icons
+      )
+      Divider()
       PreferenceRow(
-        title = stringResource(R.string.settings_label),
+        title = R.string.download_queue,
+        icon = Icons.Default.GetApp,
+        onClick = { /* TODO navigate to downloads */ }
+      )
+      PreferenceRow(
+        title = R.string.categories,
+        icon = Icons.Default.Label,
+        onClick = { /* TODO navigate to categories */ }
+      )
+      Divider()
+      PreferenceRow(
+        title = R.string.settings_label,
         icon = Icons.Default.Settings,
         onClick = { navController.navigate(Route.Settings.id) }
       )
       PreferenceRow(
-        title = stringResource(R.string.about_label),
+        title = R.string.about_label,
         icon = Icons.Default.Info,
-        onClick = { /* TODO */ }
+        onClick = { /* TODO navigate to about */ }
       )
       PreferenceRow(
-        title = stringResource(R.string.help_label),
+        title = R.string.help_label,
         icon = Icons.Default.Help,
         onClick = { context.openInBrowser("https://tachiyomi.org/help/") }
       )

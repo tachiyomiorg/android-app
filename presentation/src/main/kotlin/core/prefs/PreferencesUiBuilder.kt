@@ -60,10 +60,12 @@ class PreferenceScope(dialog: MutableState<(@Composable () -> Unit)?>) {
     preference: PreferenceMutableState<Boolean>,
     title: String,
     subtitle: String? = null,
+    icon: VectorAsset? = null,
   ) {
     PreferenceRow(
       title = title,
       subtitle = subtitle,
+      icon = icon,
       action = { ReadOnlySwitch(checked = preference.value) },
       onClick = { preference.value = !preference.value }
     )
@@ -73,9 +75,10 @@ class PreferenceScope(dialog: MutableState<(@Composable () -> Unit)?>) {
   fun SwitchPref(
     preference: PreferenceMutableState<Boolean>,
     @StringRes title: Int,
-    subtitle: String? = null,
+    subtitle: Int? = null,
+    icon: VectorAsset? = null,
   ) {
-    SwitchPref(preference, stringResource(title), subtitle)
+    SwitchPref(preference, stringResource(title), subtitle?.let { stringResource(it) }, icon)
   }
 
   @Composable

@@ -11,6 +11,12 @@
   <string name="lang_others">Others</string>
 
   <!-- More screen -->
+  <string name="downloaded_only">Downloaded only</string>
+  <string name="downloaded_only_subtitle">Filters all manga in your library</string>
+  <string name="incognito_mode">Incognito mode</string>
+  <string name="incognito_mode_subtitle">Pauses reading history</string>
+  <string name="download_queue">Download queue</string>
+  <string name="categories">Categories</string>
   <string name="settings_label">Settings</string>
   <string name="about_label">About</string>
   <string name="help_label">Help</string>
