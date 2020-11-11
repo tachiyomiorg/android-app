@@ -10,6 +10,10 @@ package tachiyomi.ui
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
@@ -97,6 +101,7 @@ class MainActivity : BaseActivity() {
 
   private val uiPrefs = AppScope.getInstance<UiPreferences>()
 
+  @ExperimentalAnimationApi
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     val startRoute = uiPrefs.startScreen().get().toRoute()
@@ -131,6 +136,7 @@ class MainActivity : BaseActivity() {
   }
 }
 
+@ExperimentalAnimationApi
 @Composable
 private fun MainNavHost(startRoute: Route) {
   val navController = rememberNavController()
@@ -139,6 +145,8 @@ private fun MainNavHost(startRoute: Route) {
     bodyContent = { paddingValues ->
       Box(Modifier.padding(paddingValues)) {
         NavHost(navController, startDestination = startRoute.id) {
+          // TODO: Have a NavHost per individual top-level route?
+
           composable(Route.Library.id) { LibraryScreen(navController) }
           composable(
             "${Route.LibraryManga.id}/{id}",
@@ -152,7 +160,6 @@ private fun MainNavHost(startRoute: Route) {
 
           composable(Route.History.id) { HistoryScreen(navController) }
 
-          // TODO: Have a NavHost per individual top-level route?
           composable(Route.Browse.id) { CatalogsScreen(navController) }
           composable(
             "${Route.BrowseCatalog.id}/{sourceId}",
@@ -194,25 +201,34 @@ private fun MainNavHost(startRoute: Route) {
     },
     bottomBar = {
       val currentScreen by navController.currentBackStackEntryAsState()
-      val entryRoute = currentScreen?.arguments?.getString(KEY_ROUTE)
+      val currentRoute = currentScreen?.arguments?.getString(KEY_ROUTE)
 
-      // TODO: should hide on non-top-level routes. Not sure how to get the proper ID to check.
-//      if (TopLevelRoutes.isTopLevelRoute(entryRoute)) {
-      BottomNavigation(
-        backgroundColor = CustomColors.current.bars,
-        contentColor = CustomColors.current.onBars,
+      AnimatedVisibility(
+        visible = TopLevelRoutes.isTopLevelRoute(currentRoute),
+        enter = slideInVertically(initialOffsetY = { it }),
+        exit = slideOutVertically(targetOffsetY = { it }),
       ) {
-        TopLevelRoutes.values.forEach {
-          BottomNavigationItem(
-            icon = { Icon(it.icon) },
-            label = {
-              Text(stringResource(it.text), maxLines = 1, overflow = TextOverflow.Ellipsis)
-            },
-            selected = entryRoute == it.route.id,
-            onClick = { navController.navigate(it.route.id) },
-          )
+        BottomNavigation(
+          backgroundColor = CustomColors.current.bars,
+          contentColor = CustomColors.current.onBars,
+        ) {
+          TopLevelRoutes.values.forEach {
+            BottomNavigationItem(
+              icon = { Icon(it.icon) },
+              label = {
+                Text(stringResource(it.text), maxLines = 1, overflow = TextOverflow.Ellipsis)
+              },
+              selected = currentRoute == it.route.id,
+              onClick = {
+                navController.popBackStack(navController.graph.startDestination, false)
+
+                if (currentRoute != it.route.id) {
+                  navController.navigate(it.route.id)
+                }
+              },
+            )
+          }
         }
-//        }
       }
     }
   )
