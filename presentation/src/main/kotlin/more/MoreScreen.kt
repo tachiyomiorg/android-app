@@ -40,8 +40,9 @@ import tachiyomi.ui.R
 import tachiyomi.ui.Route
 import tachiyomi.ui.core.components.NoElevationOverlay
 import tachiyomi.ui.core.components.Toolbar
-import tachiyomi.ui.core.prefs.PreferenceRow
+import tachiyomi.ui.core.prefs.Pref
 import tachiyomi.ui.core.prefs.PreferencesScrollableColumn
+import tachiyomi.ui.core.prefs.SwitchPref
 import tachiyomi.ui.core.theme.CustomColors
 import tachiyomi.ui.core.util.openInBrowser
 import tachiyomi.ui.core.viewmodel.BaseViewModel
@@ -94,28 +95,28 @@ fun MoreScreen(navController: NavController) {
         icon = Icons.Default.HourglassBottom // TODO there are no glasses on material icons
       )
       Divider()
-      PreferenceRow(
+      Pref(
         title = R.string.download_queue,
         icon = Icons.Default.GetApp,
         onClick = { /* TODO navigate to downloads */ }
       )
-      PreferenceRow(
+      Pref(
         title = R.string.categories,
         icon = Icons.Default.Label,
         onClick = { /* TODO navigate to categories */ }
       )
       Divider()
-      PreferenceRow(
+      Pref(
         title = R.string.settings_label,
         icon = Icons.Default.Settings,
         onClick = { navController.navigate(Route.Settings.id) }
       )
-      PreferenceRow(
+      Pref(
         title = R.string.about_label,
         icon = Icons.Default.Info,
         onClick = { /* TODO navigate to about */ }
       )
-      PreferenceRow(
+      Pref(
         title = R.string.help_label,
         icon = Icons.Default.Help,
         onClick = { context.openInBrowser("https://tachiyomi.org/help/") }

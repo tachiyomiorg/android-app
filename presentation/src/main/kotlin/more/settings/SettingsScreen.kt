@@ -30,7 +30,7 @@ import tachiyomi.ui.R
 import tachiyomi.ui.Route
 import tachiyomi.ui.core.components.BackIconButton
 import tachiyomi.ui.core.components.Toolbar
-import tachiyomi.ui.core.prefs.PreferenceRow
+import tachiyomi.ui.core.prefs.Pref
 import tachiyomi.ui.core.prefs.PreferencesScrollableColumn
 
 @Composable
@@ -41,57 +41,57 @@ fun SettingsScreen(navController: NavHostController) {
       navigationIcon = { BackIconButton(navController) }
     )
     PreferencesScrollableColumn {
-      PreferenceRow(
+      Pref(
         title = R.string.general_label,
         icon = Icons.Default.Tune,
         onClick = { navController.navigate(Route.SettingsGeneral.id) }
       )
-      PreferenceRow(
+      Pref(
         title = R.string.appearance_label,
         icon = Icons.Default.Palette,
         onClick = { navController.navigate(Route.SettingsAppearance.id) }
       )
-      PreferenceRow(
+      Pref(
         title = R.string.library_label,
         icon = Icons.Default.CollectionsBookmark,
         onClick = { navController.navigate(Route.SettingsLibrary.id) }
       )
-      PreferenceRow(
+      Pref(
         title = R.string.reader_label,
         icon = Icons.Default.ChromeReaderMode,
         onClick = { navController.navigate(Route.SettingsReader.id) }
       )
-      PreferenceRow(
+      Pref(
         title = R.string.downloads_label,
         icon = Icons.Default.GetApp,
         onClick = { navController.navigate(Route.SettingsDownloads.id) }
       )
-      PreferenceRow(
+      Pref(
         title = R.string.tracking_label,
         icon = Icons.Default.Sync,
         onClick = { navController.navigate(Route.SettingsTracking.id) }
       )
-      PreferenceRow(
+      Pref(
         title = R.string.browse_label,
         icon = Icons.Default.Explore,
         onClick = { navController.navigate(Route.SettingsBrowse.id) }
       )
-      PreferenceRow(
+      Pref(
         title = R.string.backup_label,
         icon = Icons.Default.Backup,
         onClick = { navController.navigate(Route.SettingsBackup.id) }
       )
-      PreferenceRow(
+      Pref(
         title = R.string.security_label,
         icon = Icons.Default.Security,
         onClick = { navController.navigate(Route.SettingsSecurity.id) }
       )
-      PreferenceRow(
+      Pref(
         title = R.string.parental_controls_label,
         icon = Icons.Default.PeopleOutline,
         onClick = { navController.navigate(Route.SettingsParentalControls.id) }
       )
-      PreferenceRow(
+      Pref(
         title = R.string.advanced_label,
         icon = Icons.Default.Code,
         onClick = { navController.navigate(Route.SettingsAdvanced.id) }

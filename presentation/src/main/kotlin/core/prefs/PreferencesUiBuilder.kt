@@ -52,34 +52,23 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import tachiyomi.ui.core.components.ColorPickerDialog
 
+@Composable
+fun PreferencesScrollableColumn(
+  modifier: Modifier = Modifier,
+  children: @Composable PreferenceScope.() -> Unit
+) {
+  val dialog = remember { mutableStateOf<(@Composable () -> Unit)?>(null) }
+  Box {
+    ScrollableColumn(modifier) {
+      val scope = PreferenceScope(dialog)
+      scope.children()
+    }
+    dialog.value?.invoke()
+  }
+}
+
 class PreferenceScope(dialog: MutableState<(@Composable () -> Unit)?>) {
   var dialog by dialog
-
-  @Composable
-  fun SwitchPref(
-    preference: PreferenceMutableState<Boolean>,
-    title: String,
-    subtitle: String? = null,
-    icon: VectorAsset? = null,
-  ) {
-    PreferenceRow(
-      title = title,
-      subtitle = subtitle,
-      icon = icon,
-      action = { ReadOnlySwitch(checked = preference.value) },
-      onClick = { preference.value = !preference.value }
-    )
-  }
-
-  @Composable
-  fun SwitchPref(
-    preference: PreferenceMutableState<Boolean>,
-    @StringRes title: Int,
-    subtitle: Int? = null,
-    icon: VectorAsset? = null,
-  ) {
-    SwitchPref(preference, stringResource(title), subtitle?.let { stringResource(it) }, icon)
-  }
 
   @Composable
   fun <Key> ChoicePref(
@@ -88,7 +77,7 @@ class PreferenceScope(dialog: MutableState<(@Composable () -> Unit)?>) {
     title: String,
     subtitle: String? = null
   ) {
-    PreferenceRow(
+    Pref(
       title = title,
       subtitle = if (subtitle == null) choices[preference.value] else null,
       onClick = {
@@ -127,7 +116,7 @@ class PreferenceScope(dialog: MutableState<(@Composable () -> Unit)?>) {
     unsetColor: Color = Color.Unspecified
   ) {
     val initialColor = preference.value.useOrElse { unsetColor }
-    PreferenceRow(
+    Pref(
       title = title,
       subtitle = subtitle,
       onClick = {
@@ -158,25 +147,35 @@ class PreferenceScope(dialog: MutableState<(@Composable () -> Unit)?>) {
     )
   }
 
-}
-
-@Composable
-fun PreferencesScrollableColumn(
-  modifier: Modifier = Modifier,
-  children: @Composable PreferenceScope.() -> Unit
-) {
-  val dialog = remember { mutableStateOf<(@Composable () -> Unit)?>(null) }
-  Box {
-    ScrollableColumn(modifier) {
-      val scope = PreferenceScope(dialog)
-      scope.children()
-    }
-    dialog.value?.invoke()
+  @Composable
+  private fun <T> ChoiceDialog(
+    items: List<Pair<T, String>>,
+    selected: T?,
+    onDismissRequest: () -> Unit,
+    onSelected: (T) -> Unit,
+    title: (@Composable () -> Unit)? = null,
+    buttons: @Composable () -> Unit = emptyContent()
+  ) {
+    AlertDialog(onDismissRequest = onDismissRequest, buttons = buttons, title = title, text = {
+      LazyColumnFor(items = items) { (value, text) ->
+        Row(
+          modifier = Modifier.height(48.dp).fillMaxWidth().clickable(onClick = { onSelected(value) }),
+          verticalAlignment = Alignment.CenterVertically
+        ) {
+          RadioButton(
+            selected = value == selected,
+            onClick = { onSelected(value) },
+          )
+          Text(text = text, modifier = Modifier.padding(start = 24.dp))
+        }
+      }
+    })
   }
+
 }
 
 @Composable
-fun PreferenceRow(
+fun Pref(
   title: String,
   icon: VectorAsset? = null,
   onClick: () -> Unit = {},
@@ -225,7 +224,7 @@ fun PreferenceRow(
 }
 
 @Composable
-fun PreferenceRow(
+fun Pref(
   @StringRes title: Int,
   icon: VectorAsset? = null,
   onClick: () -> Unit = {},
@@ -233,32 +232,33 @@ fun PreferenceRow(
   subtitle: String? = null,
   action: @Composable (() -> Unit)? = null,
 ) {
-  PreferenceRow(stringResource(title), icon, onClick, onLongClick, subtitle, action)
+  Pref(stringResource(title), icon, onClick, onLongClick, subtitle, action)
 }
 
 @Composable
-fun <T> ChoiceDialog(
-  items: List<Pair<T, String>>,
-  selected: T?,
-  onDismissRequest: () -> Unit,
-  onSelected: (T) -> Unit,
-  title: (@Composable () -> Unit)? = null,
-  buttons: @Composable () -> Unit = emptyContent()
+fun SwitchPref(
+  preference: PreferenceMutableState<Boolean>,
+  title: String,
+  subtitle: String? = null,
+  icon: VectorAsset? = null,
 ) {
-  AlertDialog(onDismissRequest = onDismissRequest, buttons = buttons, title = title, text = {
-    LazyColumnFor(items = items) { (value, text) ->
-      Row(
-        modifier = Modifier.height(48.dp).fillMaxWidth().clickable(onClick = { onSelected(value) }),
-        verticalAlignment = Alignment.CenterVertically
-      ) {
-        RadioButton(
-          selected = value == selected,
-          onClick = { onSelected(value) },
-        )
-        Text(text = text, modifier = Modifier.padding(start = 24.dp))
-      }
-    }
-  })
+  Pref(
+    title = title,
+    subtitle = subtitle,
+    icon = icon,
+    action = { ReadOnlySwitch(checked = preference.value) },
+    onClick = { preference.value = !preference.value }
+  )
+}
+
+@Composable
+fun SwitchPref(
+  preference: PreferenceMutableState<Boolean>,
+  @StringRes title: Int,
+  subtitle: Int? = null,
+  icon: VectorAsset? = null,
+) {
+  SwitchPref(preference, stringResource(title), subtitle?.let { stringResource(it) }, icon)
 }
 
 @Composable
