@@ -10,7 +10,6 @@ package tachiyomi.ui.core.components
 
 import android.view.MotionEvent
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Text
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -34,6 +33,7 @@ import androidx.compose.material.AlertDialog
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -58,7 +58,7 @@ import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.useOrElse
 import androidx.compose.ui.input.pointer.pointerInteropFilter
-import androidx.compose.ui.onSizeChanged
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed

@@ -8,9 +8,9 @@
 
 package tachiyomi.ui.browse.catalog
 
-import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Button
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.onActive
 import androidx.compose.ui.unit.dp

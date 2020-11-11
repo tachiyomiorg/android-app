@@ -8,11 +8,9 @@
 
 package tachiyomi.ui.browse
 
-import androidx.compose.foundation.AmbientContentColor
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.ScrollableRow
-import androidx.compose.foundation.Text
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,11 +27,13 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AmbientEmphasisLevels
+import androidx.compose.material.AmbientContentColor
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.GetApp
 import androidx.compose.material.icons.filled.Settings
@@ -80,9 +80,6 @@ fun CatalogsScreen(navController: NavController) {
       title = { Text(stringResource(R.string.browse_label)) }
     )
     ScrollableColumn {
-      val mediumTextEmphasis = AmbientEmphasisLevels.current.medium
-        .applyEmphasis(AmbientContentColor.current)
-
       if (vm.updatableCatalogs.isNotEmpty() || vm.localCatalogs.isNotEmpty()) {
         Text(
           "Installed",
@@ -94,7 +91,7 @@ fun CatalogsScreen(navController: NavController) {
         Text(
           "Update available (${vm.updatableCatalogs.size})",
           style = MaterialTheme.typography.subtitle1,
-          color = mediumTextEmphasis,
+          color = AmbientContentColor.current.copy(alpha = ContentAlpha.medium),
           modifier = Modifier.padding(16.dp, 8.dp, 16.dp, 4.dp)
         )
 
@@ -114,7 +111,7 @@ fun CatalogsScreen(navController: NavController) {
           Text(
             "Up to date",
             style = MaterialTheme.typography.subtitle1,
-            color = mediumTextEmphasis,
+            color = AmbientContentColor.current.copy(alpha = ContentAlpha.medium),
             modifier = Modifier.padding(16.dp, 8.dp, 16.dp, 4.dp)
           )
         }
@@ -236,12 +233,10 @@ fun CatalogItem(
       .fillMaxWidth()
       .padding(12.dp, 12.dp, 8.dp, 12.dp)
   ) {
-    val mediumTextEmphasis = AmbientEmphasisLevels.current.medium
-      .applyEmphasis(AmbientContentColor.current)
+    val mediumColor = AmbientContentColor.current.copy(alpha = ContentAlpha.medium)
     val title = annotatedString {
       append("${catalog.name} ")
-
-      val versionSpan = SpanStyle(fontSize = 12.sp, color = mediumTextEmphasis)
+      val versionSpan = SpanStyle(fontSize = 12.sp, color = mediumColor)
       if (catalog is CatalogInstalled) {
         withStyle(versionSpan) { append("v${catalog.versionCode}") }
       } else if (catalog is CatalogRemote) {
@@ -257,7 +252,7 @@ fun CatalogItem(
       catalog.description,
       modifier = Modifier.layoutId("description"),
       style = MaterialTheme.typography.body2,
-      color = mediumTextEmphasis
+      color = mediumColor
     )
     Row(
       modifier = Modifier.layoutId("icons"),
@@ -270,7 +265,7 @@ fun CatalogItem(
         CircularProgressIndicator(modifier = rowModifier.then(Modifier.padding(4.dp)))
       } else if (showInstallButton) {
         IconButton(onClick = { onInstall(catalog) }) {
-          Image(Icons.Filled.GetApp, colorFilter = ColorFilter.tint(mediumTextEmphasis))
+          Image(Icons.Filled.GetApp, colorFilter = ColorFilter.tint(mediumColor))
         }
       }
       if (catalog !is CatalogBundled) {
@@ -278,7 +273,7 @@ fun CatalogItem(
           (catalog as? CatalogInstalled)?.let(onUninstall)
         }
         IconButton(onClick = { }, modifier = rowModifier) {
-          Image(Icons.Filled.Settings, colorFilter = ColorFilter.tint(mediumTextEmphasis),
+          Image(Icons.Filled.Settings, colorFilter = ColorFilter.tint(mediumColor),
             modifier = longPressMod)
         }
       }

@@ -10,7 +10,6 @@ package tachiyomi.ui.core.coil
 
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.domain.manga.model.Manga
-import tachiyomi.source.model.MangaInfo
 
 /**
  * Class used to load manga covers with Coil.

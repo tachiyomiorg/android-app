@@ -11,7 +11,6 @@ package tachiyomi.ui.core.prefs
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollableColumn
-import androidx.compose.foundation.Text
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -26,13 +25,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumnFor
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.AlertDialog
-import androidx.compose.material.AmbientEmphasisLevels
+import androidx.compose.material.AmbientContentColor
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ProvideEmphasis
 import androidx.compose.material.RadioButton
 import androidx.compose.material.Switch
 import androidx.compose.material.SwitchConstants
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.emptyContent
@@ -205,14 +205,13 @@ fun Pref(
         style = MaterialTheme.typography.subtitle1,
       )
       if (subtitle != null) {
-        ProvideEmphasis(AmbientEmphasisLevels.current.medium) {
-          Text(
-            text = subtitle,
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 1,
-            style = MaterialTheme.typography.subtitle1,
-          )
-        }
+        Text(
+          text = subtitle,
+          overflow = TextOverflow.Ellipsis,
+          maxLines = 1,
+          color = AmbientContentColor.current.copy(alpha = ContentAlpha.medium),
+          style = MaterialTheme.typography.subtitle1
+        )
       }
     }
     if (action != null) {

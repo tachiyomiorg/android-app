@@ -8,8 +8,8 @@
 
 package tachiyomi.ui.more.settings
 
-import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
