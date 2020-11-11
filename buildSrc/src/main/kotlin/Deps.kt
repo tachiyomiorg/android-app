@@ -22,7 +22,7 @@ object Deps {
   object androidX {
     const val core = "androidx.core:core-ktx:1.4.0-alpha01"
     const val appCompat = "androidx.appcompat:appcompat:1.3.0-alpha02"
-    const val browser = "androidx.browser:browser:1.3.0-beta01"
+    const val browser = "androidx.browser:browser:1.3.0-rc01"
     const val preference = "androidx.preference:preference-ktx:1.1.1"
     const val sqlite = "androidx.sqlite:sqlite-ktx:2.1.0"
   }
