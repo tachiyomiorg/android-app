@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.ContextAmbient
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
@@ -44,6 +43,33 @@ class SettingsGeneralViewModel @Inject constructor(
   val hideBottomBarOnScroll = uiPreferences.hideBottomBarOnScroll().asState()
   val language = uiPreferences.language().asState()
   val dateFormat = uiPreferences.dateFormat().asState()
+
+  private val now = Date()
+
+  @Composable
+  fun getLanguageChoices(): Map<String, String> {
+    val currentLocaleDisplayName = Locale.getDefault().let { it.getDisplayName(it).capitalize() }
+    return mapOf(
+      "" to "${stringResource(R.string.system_default)} ($currentLocaleDisplayName)"
+    )
+  }
+
+  @Composable
+  fun getDateChoices(): Map<String, String> {
+    return mapOf(
+      "" to stringResource(R.string.system_default),
+      "MM/dd/yy" to "MM/dd/yy",
+      "dd/MM/yy" to "dd/MM/yy",
+      "yyyy-MM-dd" to "yyyy-MM-dd"
+    ).mapValues { "${it.value} (${getFormattedDate(it.key)})" }
+  }
+
+  private fun getFormattedDate(prefValue: String): String {
+    return when (prefValue) {
+      "" -> DateFormat.getDateInstance(DateFormat.SHORT)
+      else -> SimpleDateFormat(prefValue, Locale.getDefault())
+    }.format(now.time)
+  }
 }
 
 @Composable
@@ -78,32 +104,16 @@ fun SettingsGeneralScreen(navController: NavHostController) {
         })
       }
       Divider()
-      val currentLocaleDisplayName = Locale.getDefault().let { it.getDisplayName(it).capitalize() }
       ChoicePref(
         preference = vm.language,
         title = stringResource(R.string.language),
-        choices = mapOf(
-          "" to "${stringResource(R.string.system_default)} ($currentLocaleDisplayName)"
-        ),
+        choices = vm.getLanguageChoices(),
       )
-      val now = remember { Date() }
       ChoicePref(
         preference = vm.dateFormat,
         title = stringResource(R.string.date_format),
-        choices = mapOf(
-          "" to stringResource(R.string.system_default),
-          "MM/dd/yy" to "MM/dd/yy",
-          "dd/MM/yy" to "dd/MM/yy",
-          "yyyy-MM-dd" to "yyyy-MM-dd"
-        ).mapValues { "${it.value} (${getFormattedDate(it.key, now)})" }
+        choices = vm.getDateChoices()
       )
     }
   }
-}
-
-private fun getFormattedDate(prefValue: String, date: Date): String {
-  return when (prefValue) {
-    "" -> DateFormat.getDateInstance(DateFormat.SHORT)
-    else -> SimpleDateFormat(prefValue, Locale.getDefault())
-  }.format(date.time)
 }
