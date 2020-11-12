@@ -64,6 +64,14 @@ class UiPreferences(private val preferenceStore: PreferenceStore) {
     return preferenceStore.getBoolean("hide_bottom_bar_on_scroll", true)
   }
 
+  fun language(): Preference<String> {
+    return preferenceStore.getString("language", "")
+  }
+
+  fun dateFormat(): Preference<String> {
+    return preferenceStore.getString("date_format", "")
+  }
+
   fun downloadedOnly(): Preference<Boolean> {
     return preferenceStore.getBoolean("downloaded_only", false)
   }

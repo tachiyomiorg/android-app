@@ -36,6 +36,10 @@
   <string name="start_screen">Start screen</string>
   <string name="confirm_exit">Confirm exit</string>
   <string name="hide_bottom_bar_on_scroll">Hide bottom bar on scroll</string>
+  <string name="manage_notifications">Manage notifications</string>
+  <string name="language">Language</string>
+  <string name="date_format">Date format</string>
+  <string name="system_default">Default</string>
 
   <!-- Settings appearance screen -->
   <string name="theme">Theme</string>
