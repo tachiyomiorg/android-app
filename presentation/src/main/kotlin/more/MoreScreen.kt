@@ -21,7 +21,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.GetApp
 import androidx.compose.material.icons.filled.Help
-import androidx.compose.material.icons.filled.HourglassBottom
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Label
 import androidx.compose.material.icons.filled.Settings
@@ -92,7 +91,7 @@ fun MoreScreen(navController: NavController) {
         preference = vm.incognitoMode,
         title = R.string.incognito_mode,
         subtitle = R.string.incognito_mode_subtitle,
-        icon = Icons.Default.HourglassBottom // TODO there are no glasses on material icons
+        icon = vectorResource(R.drawable.ic_glasses)
       )
       Divider()
       Pref(
@@ -103,7 +102,7 @@ fun MoreScreen(navController: NavController) {
       Pref(
         title = R.string.categories,
         icon = Icons.Default.Label,
-        onClick = { /* TODO navigate to categories */ }
+        onClick = { navController.navigate(Route.Categories.id) }
       )
       Divider()
       Pref(

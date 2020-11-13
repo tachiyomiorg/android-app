@@ -48,6 +48,7 @@ import tachiyomi.domain.ui.model.StartScreen
 import tachiyomi.ui.browse.CatalogsScreen
 import tachiyomi.ui.browse.catalog.CatalogScreen
 import tachiyomi.ui.browse.catalog.manga.CatalogMangaScreen
+import tachiyomi.ui.categories.CategoriesScreen
 import tachiyomi.ui.core.activity.BaseActivity
 import tachiyomi.ui.core.theme.AppTheme
 import tachiyomi.ui.core.theme.CustomColors
@@ -80,6 +81,8 @@ sealed class Route(val id: String) {
   object Browse : Route("browse")
   object BrowseCatalog : Route("browse/catalog")
   object BrowseCatalogManga : Route("browse/catalog/manga")
+
+  object Categories : Route("categories")
 
   object More : Route("more")
 
@@ -178,6 +181,8 @@ private fun MainNavHost(startRoute: Route) {
             val mangaId = backStackEntry.arguments?.getLong("mangaId") as Long
             CatalogMangaScreen(navController, sourceId, mangaId)
           }
+
+          composable(Route.Categories.id) { CategoriesScreen(navController) }
 
           composable(Route.More.id) { MoreScreen(navController) }
 
