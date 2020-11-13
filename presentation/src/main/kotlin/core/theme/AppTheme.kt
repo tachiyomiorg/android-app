@@ -10,6 +10,7 @@ package tachiyomi.ui.core.theme
 
 import android.app.Activity
 import android.os.Build
+import android.view.View
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
@@ -131,9 +132,9 @@ private class AppThemeViewModel @Inject constructor(
       activity.window.statusBarColor = color.toArgb()
       with(activity.window.decorView) {
         systemUiVisibility = if (color.luminance() > 0.5f) {
-          systemUiVisibility or android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+          systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         } else {
-          systemUiVisibility and android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+          systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
         }
       }
     }
@@ -141,9 +142,9 @@ private class AppThemeViewModel @Inject constructor(
       activity.window.navigationBarColor = color.toArgb()
       with(activity.window.decorView) {
         systemUiVisibility = if (color.luminance() > 0.5f) {
-          systemUiVisibility or android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+          systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
         } else {
-          systemUiVisibility and android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR.inv()
+          systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR.inv()
         }
       }
     }

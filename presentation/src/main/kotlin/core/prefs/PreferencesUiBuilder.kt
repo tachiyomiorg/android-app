@@ -194,7 +194,7 @@ fun Pref(
       Icon(
         asset = icon,
         modifier = Modifier.padding(horizontal = 16.dp).size(24.dp),
-        tint = MaterialTheme.colors.secondaryVariant
+        tint = MaterialTheme.colors.primary
       )
     }
     Column(Modifier.padding(horizontal = 16.dp).weight(1f)) {
