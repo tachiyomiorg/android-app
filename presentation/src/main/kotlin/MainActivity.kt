@@ -101,7 +101,6 @@ class MainActivity : BaseActivity() {
 
   private val uiPrefs = AppScope.getInstance<UiPreferences>()
 
-  @ExperimentalAnimationApi
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     val startRoute = uiPrefs.startScreen().get().toRoute()
@@ -136,7 +135,7 @@ class MainActivity : BaseActivity() {
   }
 }
 
-@ExperimentalAnimationApi
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun MainNavHost(startRoute: Route) {
   val navController = rememberNavController()

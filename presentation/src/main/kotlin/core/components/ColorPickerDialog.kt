@@ -315,7 +315,7 @@ fun ColorPalette(
           }
           val cursorSize = Size(size.width, 10f)
           val cursorTopLeft = Offset(0f, hueCursor - (cursorSize.height / 2))
-          onDraw {
+          onDrawBehind {
             colors.fastForEachIndexed { i, color ->
               val pos = i.toFloat()
               drawLine(color, Offset(0f, pos), Offset(size.width, pos))
