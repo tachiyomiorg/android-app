@@ -5,13 +5,13 @@
    just the color of the Status Bar. -->
 
   <style name="Theme.App" parent="Theme.AppCompat.Light.NoActionBar">
-    <item name="colorPrimary">@color/colorPrimary</item>
-    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-    <item name="colorAccent">@color/colorAccent</item>
+    <item name="colorPrimary">#54759E</item>
+    <item name="colorPrimaryDark">#435E7E</item>
+    <item name="colorAccent">#2979FF</item>
   </style>
 
   <style name="Theme.Splash" parent="Theme.App">
-    <item name="colorBackgroundSplash">@color/splashBackgroundLight</item>
+    <item name="colorBackgroundSplash">#54759E</item>
 
     <item name="android:windowBackground">@drawable/splash_background</item>
     <item name="android:statusBarColor">?attr/colorBackgroundSplash</item>

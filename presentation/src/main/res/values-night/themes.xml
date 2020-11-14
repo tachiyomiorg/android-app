@@ -2,7 +2,7 @@
 <resources>
 
   <style name="Theme.Splash" parent="Theme.App">
-    <item name="colorBackgroundSplash">@color/splashBackgroundDark</item>
+    <item name="colorBackgroundSplash">#1C1C1D</item>
 
     <item name="android:windowBackground">@drawable/splash_background</item>
     <item name="android:statusBarColor">?attr/colorBackgroundSplash</item>
