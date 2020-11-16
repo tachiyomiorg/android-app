@@ -10,12 +10,10 @@ package tachiyomi.domain.catalog.service
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import tachiyomi.domain.catalog.model.CatalogInstalled
 import tachiyomi.domain.catalog.model.CatalogLocal
@@ -35,7 +33,7 @@ class CatalogStore @Inject constructor(
       field = value
       updatableCatalogs = field.filterUpdatable()
       catalogsBySource = field.associateBy { it.sourceId }
-      catalogsChannel.offer(field)
+      catalogsChannel.value = field
     }
 
   var updatableCatalogs = emptyList<CatalogInstalled>()
@@ -45,12 +43,12 @@ class CatalogStore @Inject constructor(
 
   private var catalogsBySource = emptyMap<Long, CatalogLocal>()
 
-  private val catalogsChannel = ConflatedBroadcastChannel(catalogs)
+  private val catalogsChannel = MutableStateFlow(catalogs)
 
   init {
     catalogs = loader.loadAll()
 
-    installationChanges.channel.receiveAsFlow()
+    installationChanges.flow
       .onEach { change ->
         when (change) {
           is CatalogInstallationChange.SystemInstall -> onInstalled(change.pkgName, false)
@@ -76,7 +74,7 @@ class CatalogStore @Inject constructor(
   }
 
   fun getCatalogsFlow(): Flow<List<CatalogLocal>> {
-    return catalogsChannel.asFlow()
+    return catalogsChannel
   }
 
   private fun List<CatalogLocal>.filterUpdatable(): List<CatalogInstalled> {

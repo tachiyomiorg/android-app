@@ -11,9 +11,8 @@ package tachiyomi.data.catalog.service
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import tachiyomi.data.AppDatabase
 import tachiyomi.domain.catalog.model.CatalogRemote
@@ -26,15 +25,7 @@ internal class CatalogRemoteRepositoryImpl @Inject constructor(
 
   private val dao = db.catalogRemote
 
-  private var remoteCatalogs = emptyList<CatalogRemote>()
-    set(value) {
-      if (field != value) {
-        field = value
-        remoteCatalogsChannel.offer(value)
-      }
-    }
-
-  private val remoteCatalogsChannel = ConflatedBroadcastChannel(remoteCatalogs)
+  private val remoteCatalogs = MutableStateFlow(emptyList<CatalogRemote>())
 
   private val initDeferred = CompletableDeferred<Unit>()
 
@@ -44,16 +35,16 @@ internal class CatalogRemoteRepositoryImpl @Inject constructor(
 
   override suspend fun getRemoteCatalogs(): List<CatalogRemote> {
     initDeferred.await()
-    return remoteCatalogs
+    return remoteCatalogs.value
   }
 
   override fun getRemoteCatalogsFlow(): Flow<List<CatalogRemote>> {
-    return remoteCatalogsChannel.asFlow()
+    return remoteCatalogs
   }
 
   private fun initRemoteCatalogs() {
     GlobalScope.launch(Dispatchers.IO) {
-      remoteCatalogs = dao.findAll()
+      remoteCatalogs.value = dao.findAll()
       initDeferred.complete(Unit)
     }
   }
@@ -61,7 +52,7 @@ internal class CatalogRemoteRepositoryImpl @Inject constructor(
   override suspend fun setRemoteCatalogs(catalogs: List<CatalogRemote>) {
     initDeferred.await()
     dao.replaceAll(catalogs)
-    remoteCatalogs = catalogs
+    remoteCatalogs.value = catalogs
   }
 
 }

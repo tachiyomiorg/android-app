@@ -15,8 +15,7 @@ import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
 import io.github.erikhuizinga.flomo.isNetworkConnectedFlow
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import tachiyomi.core.log.Log
@@ -26,42 +25,30 @@ class AndroidAppState @Inject constructor(
   context: Application
 ) : AppState, LifecycleObserver {
 
-  override var hasNetwork = false
-    private set(value) {
-      field = value
-      networkChannel.offer(value)
-    }
+  private val _networkFlow = MutableStateFlow(false)
+  override val networkFlow get() = _networkFlow
 
-  override var isInForeground = false
-    private set(value) {
-      field = value
-      foregroundChannel.offer(value)
-    }
-
-  private val foregroundChannel = ConflatedBroadcastChannel<Boolean>()
-  override val foregroundRelay = foregroundChannel.asFlow()
-
-  private val networkChannel = ConflatedBroadcastChannel<Boolean>()
-  override val networkRelay = networkChannel.asFlow()
+  private val _foregroundFlow = MutableStateFlow(false)
+  override val foregroundFlow get() = _foregroundFlow
 
   init {
     ProcessLifecycleOwner.get().lifecycle.addObserver(this)
 
     GlobalScope.launch {
-      context.isNetworkConnectedFlow.collect { hasNetwork = it }
+      context.isNetworkConnectedFlow.collect { _networkFlow.value = it }
     }
   }
 
   @OnLifecycleEvent(Lifecycle.Event.ON_START)
   private fun setForeground() {
     Log.debug("Application now in foreground")
-    isInForeground = true
+    foregroundFlow.value = true
   }
 
   @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
   private fun setBackground() {
     Log.debug("Application went to background")
-    isInForeground = false
+    foregroundFlow.value = false
   }
 
 }

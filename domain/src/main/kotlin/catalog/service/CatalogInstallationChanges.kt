@@ -8,10 +8,10 @@
 
 package tachiyomi.domain.catalog.service
 
-import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.flow.Flow
 
 interface CatalogInstallationChanges {
-  val channel: ReceiveChannel<CatalogInstallationChange>
+  val flow: Flow<CatalogInstallationChange>
 }
 
 sealed class CatalogInstallationChange {

@@ -13,8 +13,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import tachiyomi.domain.catalog.service.CatalogInstallationChange
 import tachiyomi.domain.catalog.service.CatalogInstallationChanges
 import javax.inject.Inject
@@ -23,10 +23,10 @@ internal class AndroidCatalogInstallationChanges @Inject constructor(
   context: Application
 ) : CatalogInstallationChanges {
 
-  private val sendChannel = Channel<CatalogInstallationChange>()
+  private val sharedFlow = MutableSharedFlow<CatalogInstallationChange>()
 
-  override val channel: ReceiveChannel<CatalogInstallationChange>
-    get() = sendChannel
+  override val flow: Flow<CatalogInstallationChange>
+    get() = sharedFlow
 
   init {
     val filter = IntentFilter().apply {
@@ -38,11 +38,11 @@ internal class AndroidCatalogInstallationChanges @Inject constructor(
   }
 
   fun notifyAppInstall(pkgName: String) {
-    sendChannel.offer(CatalogInstallationChange.LocalInstall(pkgName))
+    sharedFlow.tryEmit(CatalogInstallationChange.LocalInstall(pkgName))
   }
 
   fun notifyAppUninstall(pkgName: String) {
-    sendChannel.offer(CatalogInstallationChange.LocalUninstall(pkgName))
+    sharedFlow.tryEmit(CatalogInstallationChange.LocalUninstall(pkgName))
   }
 
   private inner class Receiver : BroadcastReceiver() {
@@ -53,10 +53,10 @@ internal class AndroidCatalogInstallationChanges @Inject constructor(
 
       when (intent.action) {
         Intent.ACTION_PACKAGE_ADDED -> {
-          sendChannel.offer(CatalogInstallationChange.SystemInstall(pkgName))
+          sharedFlow.tryEmit(CatalogInstallationChange.SystemInstall(pkgName))
         }
         Intent.ACTION_PACKAGE_REMOVED -> {
-          sendChannel.offer(CatalogInstallationChange.SystemUninstall(pkgName))
+          sharedFlow.tryEmit(CatalogInstallationChange.SystemUninstall(pkgName))
         }
       }
     }

@@ -8,16 +8,12 @@
 
 package tachiyomi.core.os
 
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 interface AppState {
 
-  val hasNetwork: Boolean
+  val networkFlow: StateFlow<Boolean>
 
-  val isInForeground: Boolean
-
-  val networkRelay: Flow<Boolean>
-
-  val foregroundRelay: Flow<Boolean>
+  val foregroundFlow: StateFlow<Boolean>
 
 }
