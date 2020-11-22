@@ -20,6 +20,11 @@ dependencies {
 
 val packageVersion = "1.1"
 
+java {
+  withJavadocJar()
+  withSourcesJar()
+}
+
 publishing {
   publications {
     create<MavenPublication>("publication") {
