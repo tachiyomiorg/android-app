@@ -13,7 +13,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import tachiyomi.domain.catalog.service.CatalogInstallationChange
 import tachiyomi.domain.catalog.service.CatalogInstallationChanges
@@ -23,10 +22,7 @@ internal class AndroidCatalogInstallationChanges @Inject constructor(
   context: Application
 ) : CatalogInstallationChanges {
 
-  private val sharedFlow = MutableSharedFlow<CatalogInstallationChange>()
-
-  override val flow: Flow<CatalogInstallationChange>
-    get() = sharedFlow
+  override val flow = MutableSharedFlow<CatalogInstallationChange>()
 
   init {
     val filter = IntentFilter().apply {
@@ -38,11 +34,11 @@ internal class AndroidCatalogInstallationChanges @Inject constructor(
   }
 
   fun notifyAppInstall(pkgName: String) {
-    sharedFlow.tryEmit(CatalogInstallationChange.LocalInstall(pkgName))
+    flow.tryEmit(CatalogInstallationChange.LocalInstall(pkgName))
   }
 
   fun notifyAppUninstall(pkgName: String) {
-    sharedFlow.tryEmit(CatalogInstallationChange.LocalUninstall(pkgName))
+    flow.tryEmit(CatalogInstallationChange.LocalUninstall(pkgName))
   }
 
   private inner class Receiver : BroadcastReceiver() {
@@ -53,10 +49,10 @@ internal class AndroidCatalogInstallationChanges @Inject constructor(
 
       when (intent.action) {
         Intent.ACTION_PACKAGE_ADDED -> {
-          sharedFlow.tryEmit(CatalogInstallationChange.SystemInstall(pkgName))
+          flow.tryEmit(CatalogInstallationChange.SystemInstall(pkgName))
         }
         Intent.ACTION_PACKAGE_REMOVED -> {
-          sharedFlow.tryEmit(CatalogInstallationChange.SystemUninstall(pkgName))
+          flow.tryEmit(CatalogInstallationChange.SystemUninstall(pkgName))
         }
       }
     }

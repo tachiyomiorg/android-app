@@ -33,7 +33,7 @@ class CatalogStore @Inject constructor(
       field = value
       updatableCatalogs = field.filterUpdatable()
       catalogsBySource = field.associateBy { it.sourceId }
-      catalogsChannel.value = field
+      catalogsFlow.value = field
     }
 
   var updatableCatalogs = emptyList<CatalogInstalled>()
@@ -43,7 +43,7 @@ class CatalogStore @Inject constructor(
 
   private var catalogsBySource = emptyMap<Long, CatalogLocal>()
 
-  private val catalogsChannel = MutableStateFlow(catalogs)
+  private val catalogsFlow = MutableStateFlow(catalogs)
 
   init {
     catalogs = loader.loadAll()
@@ -74,7 +74,7 @@ class CatalogStore @Inject constructor(
   }
 
   fun getCatalogsFlow(): Flow<List<CatalogLocal>> {
-    return catalogsChannel
+    return catalogsFlow
   }
 
   private fun List<CatalogLocal>.filterUpdatable(): List<CatalogInstalled> {
