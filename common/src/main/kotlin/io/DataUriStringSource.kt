@@ -21,10 +21,18 @@ class DataUriStringSource(private val data: String) : Source {
 
   private var pos = headers.length + 1
 
-  private val decoder: (String) -> ByteArray = if ("base64" in headers) {
-    { it.decodeBase64() }
+  private val decoder: (Buffer, String) -> Long = if ("base64" in headers) {
+    { sink, bytes ->
+      val decoded = bytes.decodeBase64()
+      sink.write(decoded)
+      decoded.size.toLong()
+    }
   } else {
-    { it.toByteArray() }
+    { sink, bytes ->
+      val decoded = bytes.toByteArray()
+      sink.write(decoded)
+      decoded.size.toLong()
+    }
   }
 
   override fun read(sink: Buffer, byteCount: Long): Long {
@@ -35,10 +43,7 @@ class DataUriStringSource(private val data: String) : Source {
 
     pos += charsToRead
 
-    val decoded = decoder(nextChars)
-    sink.write(decoded)
-
-    return decoded.size.toLong()
+    return decoder(sink, nextChars)
   }
 
   override fun timeout(): Timeout {

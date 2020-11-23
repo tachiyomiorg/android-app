@@ -81,8 +81,6 @@ object Deps {
     const val api = "org.tinylog:tinylog-api:$version"
   }
 
-  const val commonsCodec = "commons-codec:commons-codec:1.14"
-
   const val coil = "io.coil-kt:coil:1.0.0"
 
   const val mockk = "io.mockk:mockk:1.10.0"

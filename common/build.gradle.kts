@@ -15,7 +15,6 @@ dependencies {
   implementation(Deps.tinylog.api)
   implementation(Deps.tinylog.impl)
   implementation(Deps.toothpick.runtime)
-  implementation(Deps.commonsCodec)
 }
 
 val packageVersion = "1.1"

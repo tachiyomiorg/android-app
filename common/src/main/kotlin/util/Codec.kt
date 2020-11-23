@@ -8,11 +8,9 @@
 
 package tachiyomi.core.util
 
-import org.apache.commons.codec.binary.Base64
-import org.apache.commons.codec.digest.DigestUtils
+import okio.ByteString.Companion.decodeBase64
+import okio.ByteString.Companion.encode
 
-private val base64 = Base64()
+fun String.decodeBase64() = decodeBase64()!!
 
-fun String.decodeBase64() = base64.decode(this)
-
-fun String.md5() = DigestUtils.md5Hex(this)
+fun String.md5() = encode().md5().hex()
