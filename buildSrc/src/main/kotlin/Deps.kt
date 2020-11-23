@@ -20,7 +20,7 @@ object Deps {
   }
 
   object androidX {
-    const val core = "androidx.core:core-ktx:1.4.0-alpha01"
+    const val core = "androidx.core:core-ktx:1.5.0-alpha05"
     const val appCompat = "androidx.appcompat:appcompat:1.3.0-alpha02"
     const val browser = "androidx.browser:browser:1.3.0-rc01"
     const val preference = "androidx.preference:preference-ktx:1.1.1"
@@ -57,7 +57,7 @@ object Deps {
     const val compiler = "androidx.room:room-compiler:$version"
   }
 
-  const val sqlite = "io.requery:sqlite-android:3.32.2"
+  const val sqlite = "io.requery:sqlite-android:3.33.0"
 
   object toothpick {
     private const val version = "3.1.0"
@@ -76,7 +76,7 @@ object Deps {
   const val flomo = "io.github.erikhuizinga:flomo:0.1.0-beta"
 
   object tinylog {
-    private const val version = "2.1.2"
+    private const val version = "2.2.0"
     const val impl = "org.tinylog:tinylog-impl:$version"
     const val api = "org.tinylog:tinylog-api:$version"
   }
@@ -88,7 +88,7 @@ object Deps {
   const val mockk = "io.mockk:mockk:1.10.0"
 
   object kotest {
-    private const val version = "4.3.0"
+    private const val version = "4.3.1"
     const val framework = "io.kotest:kotest-runner-junit5-jvm:$version"
     const val assertions = "io.kotest:kotest-assertions-core-jvm:$version"
   }
