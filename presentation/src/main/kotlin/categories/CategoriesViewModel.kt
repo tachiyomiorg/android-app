@@ -15,23 +15,30 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import tachiyomi.domain.library.interactor.CreateCategoryWithName
+import tachiyomi.domain.library.interactor.DeleteCategories
 import tachiyomi.domain.library.interactor.GetCategories
+import tachiyomi.domain.library.interactor.RenameCategory
+import tachiyomi.domain.library.interactor.ReorderCategory
 import tachiyomi.domain.library.model.Category
 import tachiyomi.ui.core.viewmodel.BaseViewModel
 import javax.inject.Inject
 
 class CategoriesViewModel @Inject constructor(
   private val getCategories: GetCategories,
-  private val createCategoryWithName: CreateCategoryWithName
+  private val createCategoryWithName: CreateCategoryWithName,
+  private val renameCategory: RenameCategory,
+  private val reorderCategory: ReorderCategory,
+  private val deleteCategory: DeleteCategories
 ) : BaseViewModel() {
 
   var categories by mutableStateOf(emptyList<Category>())
     private set
-  var showCreateDialog by mutableStateOf(false)
+  var dialog by mutableStateOf<CategoriesDialogs?>(null)
+    private set
 
   init {
     getCategories.subscribe()
-      .onEach { categories = it.filter { !it.isSystemCategory } }
+      .onEach { categories = it.filterNot(Category::isSystemCategory) }
       .launchIn(scope)
   }
 
@@ -39,6 +46,46 @@ class CategoriesViewModel @Inject constructor(
     scope.launch {
       createCategoryWithName.await(name)
     }
+  }
+
+  fun renameCategory(category: Category, newName: String) {
+    scope.launch {
+      renameCategory.await(category, newName)
+    }
+  }
+
+  fun deleteCategory(category: Category) {
+    scope.launch {
+      deleteCategory.await(category.id)
+    }
+  }
+
+  fun moveUp(category: Category) {
+    scope.launch {
+      reorderCategory.await(category, category.order - 1)
+    }
+  }
+
+  fun moveDown(category: Category) {
+    scope.launch {
+      reorderCategory.await(category, category.order + 1)
+    }
+  }
+
+  fun showCreateDialog() {
+    dialog = CategoriesDialogs.Create
+  }
+
+  fun showRenameDialog(category: Category) {
+    dialog = CategoriesDialogs.Rename(category)
+  }
+
+  fun showDeleteDialog(category: Category) {
+    dialog = CategoriesDialogs.Delete(category)
+  }
+
+  fun dismissDialog() {
+    dialog = null
   }
 
 }

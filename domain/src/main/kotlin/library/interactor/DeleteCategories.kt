@@ -45,6 +45,8 @@ class DeleteCategories @Inject internal constructor(
     Result.Success
   }
 
+  suspend fun await(categoryId: Long) = await(listOf(categoryId))
+
   sealed class Result {
     object Success : Result()
     object NothingToDelete : Result()
