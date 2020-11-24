@@ -70,36 +70,6 @@ import tachiyomi.ui.more.settings.SettingsSecurityScreen
 import tachiyomi.ui.more.settings.SettingsTrackingScreen
 import tachiyomi.ui.updates.UpdatesScreen
 
-sealed class Route(val id: String) {
-  object Library : Route("library")
-  object LibraryManga : Route("library/manga")
-
-  object Updates : Route("updates")
-
-  object History : Route("history")
-
-  object Browse : Route("browse")
-  object BrowseCatalog : Route("browse/catalog")
-  object BrowseCatalogManga : Route("browse/catalog/manga")
-
-  object Categories : Route("categories")
-
-  object More : Route("more")
-
-  object Settings : Route("settings")
-  object SettingsGeneral : Route("settings/general")
-  object SettingsAppearance : Route("settings/appearance")
-  object SettingsLibrary : Route("settings/library")
-  object SettingsReader : Route("settings/reader")
-  object SettingsDownloads : Route("settings/downloads")
-  object SettingsTracking : Route("settings/tracking")
-  object SettingsBrowse : Route("settings/browse")
-  object SettingsBackup : Route("settings/backup")
-  object SettingsSecurity : Route("settings/security")
-  object SettingsParentalControls : Route("settings/parentalControls")
-  object SettingsAdvanced : Route("settings/advanced")
-}
-
 class MainActivity : BaseActivity() {
 
   private val uiPrefs = AppScope.getInstance<UiPreferences>()
@@ -138,106 +108,6 @@ class MainActivity : BaseActivity() {
   }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
-@Composable
-private fun MainNavHost(startRoute: Route) {
-  val navController = rememberNavController()
-
-  Scaffold(
-    bodyContent = { paddingValues ->
-      Box(Modifier.padding(paddingValues)) {
-        NavHost(navController, startDestination = startRoute.id) {
-          // TODO: Have a NavHost per individual top-level route?
-
-          composable(Route.Library.id) { LibraryScreen(navController) }
-          composable(
-            "${Route.LibraryManga.id}/{id}",
-            arguments = listOf(navArgument("id") { type = NavType.LongType })
-          ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getLong("id") as Long
-            LibraryMangaScreen(navController, id)
-          }
-
-          composable(Route.Updates.id) { UpdatesScreen(navController) }
-
-          composable(Route.History.id) { HistoryScreen(navController) }
-
-          composable(Route.Browse.id) { CatalogsScreen(navController) }
-          composable(
-            "${Route.BrowseCatalog.id}/{sourceId}",
-            arguments = listOf(navArgument("sourceId") { type = NavType.LongType })
-          ) { backStackEntry ->
-            val sourceId = backStackEntry.arguments?.getLong("sourceId") as Long
-            CatalogScreen(navController, sourceId)
-          }
-          composable(
-            "${Route.BrowseCatalogManga.id}/{sourceId}/{mangaId}",
-            arguments = listOf(
-              navArgument("sourceId") { type = NavType.LongType },
-              navArgument("mangaId") { type = NavType.LongType },
-            )
-          ) { backStackEntry ->
-            val sourceId = backStackEntry.arguments?.getLong("sourceId") as Long
-            val mangaId = backStackEntry.arguments?.getLong("mangaId") as Long
-            CatalogMangaScreen(navController, sourceId, mangaId)
-          }
-
-          composable(Route.Categories.id) { CategoriesScreen(navController) }
-
-          composable(Route.More.id) { MoreScreen(navController) }
-
-          composable(Route.Settings.id) { SettingsScreen(navController) }
-          composable(Route.SettingsGeneral.id) { SettingsGeneralScreen(navController) }
-          composable(Route.SettingsAppearance.id) { SettingsAppearance(navController) }
-          composable(Route.SettingsLibrary.id) { SettingsLibraryScreen(navController) }
-          composable(Route.SettingsReader.id) { SettingsReaderScreen(navController) }
-          composable(Route.SettingsDownloads.id) { SettingsDownloadsScreen(navController) }
-          composable(Route.SettingsTracking.id) { SettingsTrackingScreen(navController) }
-          composable(Route.SettingsBrowse.id) { SettingsBrowseScreen(navController) }
-          composable(Route.SettingsBackup.id) { SettingsBackupScreen(navController) }
-          composable(Route.SettingsSecurity.id) { SettingsSecurityScreen(navController) }
-          composable(Route.SettingsParentalControls.id) {
-            SettingsParentalControlsScreen(navController)
-          }
-          composable(Route.SettingsAdvanced.id) { SettingsAdvancedScreen(navController) }
-        }
-      }
-    },
-    bottomBar = {
-      val currentScreen by navController.currentBackStackEntryAsState()
-      val currentRoute = currentScreen?.arguments?.getString(KEY_ROUTE)
-
-      AnimatedVisibility(
-        visible = TopLevelRoutes.isTopLevelRoute(currentRoute),
-        enter = slideInVertically(initialOffsetY = { it }),
-        exit = slideOutVertically(targetOffsetY = { it }),
-      ) {
-        BottomNavigation(
-          backgroundColor = CustomColors.current.bars,
-          contentColor = CustomColors.current.onBars,
-        ) {
-          TopLevelRoutes.values.forEach {
-            BottomNavigationItem(
-              icon = { Icon(it.icon) },
-              label = {
-                Text(stringResource(it.text), maxLines = 1, overflow = TextOverflow.Ellipsis)
-              },
-              selected = currentRoute == it.route.id,
-              onClick = {
-                navController.popBackStack(navController.graph.startDestination, false)
-
-                if (currentRoute != it.route.id) {
-                  navController.navigate(it.route.id)
-                }
-              },
-            )
-          }
-        }
-      }
-    }
-  )
-}
-
 private fun StartScreen.toRoute(): Route {
   return when (this) {
     StartScreen.Library -> Route.Library
@@ -245,20 +115,5 @@ private fun StartScreen.toRoute(): Route {
     StartScreen.History -> Route.History
     StartScreen.Browse -> Route.Browse
     StartScreen.More -> Route.More
-  }
-}
-
-private enum class TopLevelRoutes(val route: Route, val text: Int, val icon: VectorAsset) {
-  Library(Route.Library, R.string.library_label, Icons.Default.Book),
-  Updates(Route.Updates, R.string.updates_label, Icons.Default.NewReleases),
-  History(Route.History, R.string.history_label, Icons.Default.History),
-  Browse(Route.Browse, R.string.browse_label, Icons.Default.Explore),
-  More(Route.More, R.string.more_label, Icons.Default.MoreHoriz);
-
-  companion object {
-    val values = values().toList()
-    fun isTopLevelRoute(route: String?): Boolean {
-      return route != null && values.any { it.route.id == route }
-    }
   }
 }
