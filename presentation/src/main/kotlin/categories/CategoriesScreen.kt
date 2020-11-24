@@ -8,7 +8,6 @@
 
 package tachiyomi.ui.categories
 
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.ui.tooling.preview.Preview
 import tachiyomi.domain.library.model.Category
+import tachiyomi.ui.categories.CategoriesViewModel.Dialog
 import tachiyomi.ui.core.components.BackIconButton
 import tachiyomi.ui.core.components.Toolbar
 import tachiyomi.ui.core.viewmodel.viewModel
@@ -72,35 +72,34 @@ fun CategoriesScreen(navController: NavHostController) {
         modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
         onClick = { vm.showCreateDialog() }
       )
-      when (val dialog = vm.dialog) {
-        CategoriesDialogs.Create -> {
-          CreateCategoryDialog(
-            onDismissRequest = { vm.dismissDialog() },
-            onCreate = { vm.createCategory(it) }
-          )
-        }
-        is CategoriesDialogs.Rename -> {
-          val category = dialog.category
-          RenameCategoryDialog(
-            category = dialog.category,
-            onDismissRequest = { vm.dismissDialog() },
-            onRename = { vm.renameCategory(category, it) }
-          )
-        }
-        is CategoriesDialogs.Delete -> {
-          val category = dialog.category
-          DeleteCategoryDialog(
-            category = category,
-            onDismissRequest = { vm.dismissDialog() },
-            onDelete = { vm.deleteCategory(category) }
-          )
-        }
-      }
+    }
+  }
+  when (val dialog = vm.dialog) {
+    Dialog.Create -> {
+      CreateCategoryDialog(
+        onDismissRequest = { vm.dismissDialog() },
+        onCreate = { vm.createCategory(it) }
+      )
+    }
+    is Dialog.Rename -> {
+      val category = dialog.category
+      RenameCategoryDialog(
+        category = dialog.category,
+        onDismissRequest = { vm.dismissDialog() },
+        onRename = { vm.renameCategory(category, it) }
+      )
+    }
+    is Dialog.Delete -> {
+      val category = dialog.category
+      DeleteCategoryDialog(
+        category = category,
+        onDismissRequest = { vm.dismissDialog() },
+        onDelete = { vm.deleteCategory(category) }
+      )
     }
   }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun CategoryRow(
   category: Category,

@@ -10,6 +10,7 @@ package tachiyomi.ui.categories
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.AlertDialog
@@ -22,12 +23,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import tachiyomi.domain.library.model.Category
-
-sealed class CategoriesDialogs {
-  object Create : CategoriesDialogs()
-  data class Rename(val category: Category) : CategoriesDialogs()
-  data class Delete(val category: Category) : CategoriesDialogs()
-}
 
 @Composable
 fun CreateCategoryDialog(
@@ -42,7 +37,7 @@ fun CreateCategoryDialog(
       OutlinedTextField(value = categoryName, onValueChange = setCategoryName)
     },
     buttons = {
-      Row(Modifier.fillMaxWidth().padding(8.dp), horizontalArrangement = Arrangement.End) {
+      ButtonsRow {
         TextButton(onClick = onDismissRequest) {
           Text("Cancel")
         }
@@ -71,7 +66,7 @@ fun RenameCategoryDialog(
       OutlinedTextField(value = categoryName, onValueChange = setCategoryName)
     },
     buttons = {
-      Row(Modifier.fillMaxWidth().padding(8.dp), horizontalArrangement = Arrangement.End) {
+      ButtonsRow {
         TextButton(onClick = onDismissRequest) {
           Text("Cancel")
         }
@@ -99,7 +94,7 @@ fun DeleteCategoryDialog(
       Text("Do you wish to delete the category ${category.name}?")
     },
     buttons = {
-      Row(Modifier.fillMaxWidth().padding(8.dp), horizontalArrangement = Arrangement.End) {
+      ButtonsRow {
         TextButton(onClick = onDismissRequest) {
           Text("No")
         }
@@ -111,5 +106,14 @@ fun DeleteCategoryDialog(
         }
       }
     }
+  )
+}
+
+@Composable
+private fun ButtonsRow(buttons: @Composable RowScope.() -> Unit) {
+  Row(
+    modifier = Modifier.fillMaxWidth().padding(8.dp),
+    horizontalArrangement = Arrangement.End,
+    children = buttons
   )
 }

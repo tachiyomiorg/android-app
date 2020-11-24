@@ -33,7 +33,7 @@ class CategoriesViewModel @Inject constructor(
 
   var categories by mutableStateOf(emptyList<Category>())
     private set
-  var dialog by mutableStateOf<CategoriesDialogs?>(null)
+  var dialog by mutableStateOf<Dialog?>(null)
     private set
 
   init {
@@ -73,19 +73,25 @@ class CategoriesViewModel @Inject constructor(
   }
 
   fun showCreateDialog() {
-    dialog = CategoriesDialogs.Create
+    dialog = Dialog.Create
   }
 
   fun showRenameDialog(category: Category) {
-    dialog = CategoriesDialogs.Rename(category)
+    dialog = Dialog.Rename(category)
   }
 
   fun showDeleteDialog(category: Category) {
-    dialog = CategoriesDialogs.Delete(category)
+    dialog = Dialog.Delete(category)
   }
 
   fun dismissDialog() {
     dialog = null
+  }
+
+  sealed class Dialog {
+    object Create : Dialog()
+    data class Rename(val category: Category) : Dialog()
+    data class Delete(val category: Category) : Dialog()
   }
 
 }
