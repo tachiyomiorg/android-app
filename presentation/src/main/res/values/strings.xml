@@ -10,6 +10,9 @@
   <string name="lang_all">All</string>
   <string name="lang_others">Others</string>
 
+  <string name="all_category">All</string>
+  <string name="uncategorized_category">Uncategorized</string>
+
   <!-- More screen -->
   <string name="downloaded_only">Downloaded only</string>
   <string name="downloaded_only_subtitle">Filters all manga in your library</string>

@@ -46,8 +46,8 @@ class LibraryPreferences(private val preferenceStore: PreferenceStore) {
     return preferenceStore.getLong("default_category", Category.UNCATEGORIZED_ID)
   }
 
-  fun quickCategories(): Preference<Boolean> {
-    return preferenceStore.getBoolean("quick_categories", false)
+  fun showAllCategory(): Preference<Boolean> {
+    return preferenceStore.getBoolean("show_all_category", true)
   }
 
 }

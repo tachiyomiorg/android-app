@@ -8,9 +8,15 @@
 
 package tachiyomi.ui.library
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.ScrollableTabRow
+import androidx.compose.material.Tab
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -23,20 +29,43 @@ import androidx.navigation.compose.navigate
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.ui.R
 import tachiyomi.ui.Route
+import tachiyomi.ui.categories.visibleName
 import tachiyomi.ui.core.coil.MangaCover
 import tachiyomi.ui.core.components.AutofitGrid
 import tachiyomi.ui.core.components.Toolbar
 import tachiyomi.ui.core.components.manga.MangaGridItem
+import tachiyomi.ui.core.theme.CustomColors
 import tachiyomi.ui.core.viewmodel.viewModel
 
 val ptSansFont = fontFamily(font(R.font.ptsans_bold))
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun LibraryScreen(navController: NavController) {
   val vm = viewModel<LibraryViewModel>()
 
   Column {
     Toolbar(title = { Text(stringResource(R.string.library_label)) })
+    AnimatedVisibility(
+      visible = vm.categories.isNotEmpty(),
+      enter = expandVertically(),
+      exit = shrinkVertically()
+    ) {
+      ScrollableTabRow(
+        selectedTabIndex = vm.selectedCategoryIndex,
+        backgroundColor = CustomColors.current.bars,
+        contentColor = CustomColors.current.onBars,
+        edgePadding = 0.dp
+      ) {
+        vm.categories.forEachIndexed { i, category ->
+          Tab(
+            selected = vm.selectedCategoryIndex == i,
+            onClick = { vm.setSelectedCategory(category) },
+            text = { Text(category.visibleName) }
+          )
+        }
+      }
+    }
     Box(Modifier.padding(2.dp)) {
       LibraryTable(
         vm.library,

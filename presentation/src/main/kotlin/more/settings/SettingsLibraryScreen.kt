@@ -13,19 +13,34 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
+import tachiyomi.domain.library.service.LibraryPreferences
 import tachiyomi.ui.R
 import tachiyomi.ui.core.components.BackIconButton
 import tachiyomi.ui.core.components.Toolbar
 import tachiyomi.ui.core.prefs.PreferencesScrollableColumn
+import tachiyomi.ui.core.prefs.SwitchPref
+import tachiyomi.ui.core.viewmodel.BaseViewModel
+import tachiyomi.ui.core.viewmodel.viewModel
+import javax.inject.Inject
+
+class SettingsLibraryViewModel @Inject constructor(
+  libraryPreferences: LibraryPreferences
+) : BaseViewModel() {
+
+  val showAllCategory = libraryPreferences.showAllCategory().asState()
+}
 
 @Composable
 fun SettingsLibraryScreen(navController: NavHostController) {
+  val vm = viewModel<SettingsLibraryViewModel>()
+
   Column {
     Toolbar(
       title = { Text(stringResource(R.string.library_label)) },
       navigationIcon = { BackIconButton(navController) }
     )
     PreferencesScrollableColumn {
+      SwitchPref(preference = vm.showAllCategory, title = "Show all category")
     }
   }
 }

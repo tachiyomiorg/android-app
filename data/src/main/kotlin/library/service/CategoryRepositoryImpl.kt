@@ -8,7 +8,11 @@
 
 package tachiyomi.data.library.service
 
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.shareIn
 import tachiyomi.data.AppDatabase
 import tachiyomi.domain.library.model.Category
 import tachiyomi.domain.library.model.CategoryUpdate
@@ -22,18 +26,11 @@ internal class CategoryRepositoryImpl @Inject constructor(
 
   private val dao = db.category
 
-  private lateinit var cachedCategories: List<Category>
-
-  // TODO autoconnect with flows
-//  private val categories = preparedCategories()
-//    .asRxFlowable(BackpressureStrategy.LATEST)
-//    .toObservable()
-//    .doOnNext { cachedCategories = it }
-//    .replay(1)
-//    .autoConnect()
+  private val sharedCategories = dao.subscribeAll()
+    .shareIn(GlobalScope, SharingStarted.Lazily, 1)
 
   override fun subscribeAll(): Flow<List<Category>> {
-    return dao.subscribeAll()
+    return sharedCategories
   }
 
   override fun subscribeWithCount(): Flow<List<CategoryWithCount>> {
@@ -45,11 +42,7 @@ internal class CategoryRepositoryImpl @Inject constructor(
   }
 
   override suspend fun findAll(): List<Category> {
-    return if (::cachedCategories.isInitialized) {
-      cachedCategories
-    } else {
-      dao.findAll()
-    }
+    return sharedCategories.first()
   }
 
   override suspend fun find(categoryId: Long): Category? {

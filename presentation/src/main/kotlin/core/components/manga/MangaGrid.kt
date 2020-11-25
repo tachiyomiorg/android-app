@@ -22,16 +22,9 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.paint
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.geometry.toRect
+import androidx.compose.ui.drawWithCache
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.LinearGradient
-import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,16 +38,6 @@ fun MangaGridItem(
   cover: MangaCover,
   onClick: () -> Unit = {},
 ) {
-  val gradient = LinearGradient(
-    0.75f to Color.Transparent,
-    1.0f to Color(0xAA000000),
-    startX = 0f,
-    startY = 0f,
-    endX = 0f,
-    endY = 0f
-  )
-  val gradientPainter = GradientPainter(gradient)
-
   val fontStyle = AmbientTextStyle.current.merge(
     TextStyle(letterSpacing = 0.sp, fontFamily = ptSansFont, fontSize = 14.sp)
   )
@@ -70,7 +53,7 @@ fun MangaGridItem(
   ) {
     Box(modifier = Modifier.fillMaxSize()) {
       CoilImage(model = cover)
-      Box(modifier = Modifier.fillMaxSize().paint(gradientPainter))
+      Box(modifier = Modifier.fillMaxSize().then(shadowGradient))
       Text(
         text = title,
         color = Color.White,
@@ -84,23 +67,16 @@ fun MangaGridItem(
 
 }
 
-data class GradientPainter(val gradient: LinearGradient) : Painter() {
-  private val paint = Paint()
-  private var currentBounds: Size? = null
-  private var rect: Rect? = null
-
-  override fun DrawScope.onDraw() {
-    drawIntoCanvas {
-      if (currentBounds != size) {
-        gradient.copy(startY = 0f, endY = size.height).applyTo(paint, 1f)
-        currentBounds = size
-        rect = size.toRect()
-      }
-      it.drawRect(rect!!, paint)
-    }
+private val shadowGradient = Modifier.drawWithCache {
+  val gradient = LinearGradient(
+    0.75f to Color.Transparent,
+    1.0f to Color(0xAA000000),
+    startX = 0f,
+    startY = 0f,
+    endX = 0f,
+    endY = size.height
+  )
+  onDrawBehind {
+    drawRect(gradient)
   }
-
-  override val intrinsicSize: Size
-    get() = Size.Unspecified
-
 }
