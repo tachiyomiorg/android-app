@@ -93,7 +93,7 @@ private object RawQueries {
       else -> defaultQuery()
     }
       .selection("NOT EXISTS (SELECT mangaCategory.mangaId FROM mangaCategory " +
-        "WHERE manga.id = mangaCategory.id)", null)
+        "WHERE library.id = mangaCategory.mangaId)", null)
       .groupBy(groupBy)
       .orderBy(orderBy(sort))
       .create()
