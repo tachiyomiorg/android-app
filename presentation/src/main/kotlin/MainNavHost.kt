@@ -39,7 +39,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
-import tachiyomi.domain.ui.model.StartScreen
 import tachiyomi.ui.browse.CatalogsScreen
 import tachiyomi.ui.browse.catalog.CatalogScreen
 import tachiyomi.ui.browse.catalog.manga.CatalogMangaScreen
