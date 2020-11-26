@@ -43,64 +43,77 @@ import tachiyomi.ui.core.components.manga.MangaGridItem
 import tachiyomi.ui.core.theme.CustomColors
 import tachiyomi.ui.core.viewmodel.viewModel
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun LibraryScreen(navController: NavController) {
   val vm = viewModel<LibraryViewModel>()
 
   Column {
     Toolbar(title = { Text(stringResource(R.string.library_label)) })
-    AnimatedVisibility(
-      visible = vm.categories.isNotEmpty(),
-      enter = expandVertically(),
-      exit = shrinkVertically()
-    ) {
-      ScrollableTabRow(
-        selectedTabIndex = vm.selectedCategoryIndex,
-        backgroundColor = CustomColors.current.bars,
-        contentColor = CustomColors.current.onBars,
-        edgePadding = 0.dp
-      ) {
-        vm.categories.forEachIndexed { i, category ->
-          Tab(
-            selected = vm.selectedCategoryIndex == i,
-            onClick = { vm.setSelectedCategory(category) },
-            text = { Text(category.visibleName) }
-          )
-        }
-      }
-    }
-    LibraryPager(
+    LibraryTabs(
       categories = vm.categories,
-      selectedIndex = vm.selectedCategoryIndex,
-      getLibrary = { vm.getLibraryForCategoryIndex(it) },
-      onClickManga = { navController.navigate("${Route.LibraryManga.id}/${it.id}") },
+      selectedPage = vm.selectedCategoryIndex,
       onPageChanged = { vm.setSelectedPage(it) }
     )
+    LibraryPager(
+      categories = vm.categories,
+      selectedPage = vm.selectedCategoryIndex,
+      getLibrary = { vm.getLibraryForCategoryIndex(it) },
+      onPageChanged = { vm.setSelectedPage(it) },
+      onClickManga = { navController.navigate("${Route.LibraryManga.id}/${it.id}") }
+    )
+  }
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+private fun LibraryTabs(
+  categories: List<Category>,
+  selectedPage: Int,
+  onPageChanged: (Int) -> Unit
+) {
+  AnimatedVisibility(
+    visible = categories.isNotEmpty(),
+    enter = expandVertically(),
+    exit = shrinkVertically()
+  ) {
+    ScrollableTabRow(
+      selectedTabIndex = selectedPage,
+      backgroundColor = CustomColors.current.bars,
+      contentColor = CustomColors.current.onBars,
+      edgePadding = 0.dp
+    ) {
+      categories.forEachIndexed { i, category ->
+        Tab(
+          selected = selectedPage == i,
+          onClick = { onPageChanged(i) },
+          text = { Text(category.visibleName) }
+        )
+      }
+    }
   }
 }
 
 @Composable
 private fun LibraryPager(
   categories: List<Category>,
-  selectedIndex: Int,
+  selectedPage: Int,
   getLibrary: (Int) -> Flow<List<LibraryManga>>,
-  onClickManga: (LibraryManga) -> Unit,
-  onPageChanged: (Int) -> Unit
+  onPageChanged: (Int) -> Unit,
+  onClickManga: (LibraryManga) -> Unit
 ) {
   if (categories.isEmpty()) return
 
   val clock = AnimationClockAmbient.current
-  val state = remember(categories.size, selectedIndex) {
+  val state = remember(categories.size, selectedPage) {
     PagerState(
       clock = clock,
-      currentPage = selectedIndex,
+      currentPage = selectedPage,
       minPage = 0,
       maxPage = categories.size
     )
   }
   onCommit(state.currentPage) {
-    if (state.currentPage != selectedIndex) {
+    if (state.currentPage != selectedPage) {
       onPageChanged(state.currentPage)
     }
   }

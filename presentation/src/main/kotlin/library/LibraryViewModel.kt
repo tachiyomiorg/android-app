@@ -77,14 +77,11 @@ class LibraryViewModel @Inject constructor(
       .launchIn(scope)
   }
 
-  fun setSelectedCategory(category: Category) {
-    val index = categories.indexOf(category).takeIf { it != -1 } ?: return
-    selectedCategoryIndex = index
-    lastUsedCategoryPreference.set(index.toLong())
-  }
-
   fun setSelectedPage(index: Int) {
+    val categories = categories
+    val category = categories.getOrNull(index) ?: return
     selectedCategoryIndex = index
+    lastUsedCategoryPreference.set(category.id)
   }
 
   fun getLibraryForCategoryIndex(categoryIndex: Int): Flow<List<LibraryManga>> {
