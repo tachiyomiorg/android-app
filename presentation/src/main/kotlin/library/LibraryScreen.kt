@@ -12,32 +12,36 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.ScrollableTabRow
 import androidx.compose.material.Tab
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.onCommit
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.AnimationClockAmbient
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.font
-import androidx.compose.ui.text.font.fontFamily
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
+import kotlinx.coroutines.flow.Flow
+import tachiyomi.domain.library.model.Category
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.ui.R
 import tachiyomi.ui.Route
 import tachiyomi.ui.categories.visibleName
 import tachiyomi.ui.core.coil.MangaCover
 import tachiyomi.ui.core.components.AutofitGrid
+import tachiyomi.ui.core.components.Pager
+import tachiyomi.ui.core.components.PagerState
 import tachiyomi.ui.core.components.Toolbar
 import tachiyomi.ui.core.components.manga.MangaGridItem
 import tachiyomi.ui.core.theme.CustomColors
 import tachiyomi.ui.core.viewmodel.viewModel
-
-val ptSansFont = fontFamily(font(R.font.ptsans_bold))
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -66,21 +70,59 @@ fun LibraryScreen(navController: NavController) {
         }
       }
     }
-    Box(Modifier.padding(2.dp)) {
-      LibraryTable(
-        vm.library,
-        onClickManga = { navController.navigate("${Route.LibraryManga.id}/${it.id}") },
-      )
-    }
+    LibraryPager(
+      categories = vm.categories,
+      selectedIndex = vm.selectedCategoryIndex,
+      getLibrary = { vm.getLibraryForCategoryIndex(it) },
+      onClickManga = { navController.navigate("${Route.LibraryManga.id}/${it.id}") },
+      onPageChanged = { vm.setSelectedPage(it) }
+    )
   }
 }
 
 @Composable
-private fun LibraryTable(
+private fun LibraryPager(
+  categories: List<Category>,
+  selectedIndex: Int,
+  getLibrary: (Int) -> Flow<List<LibraryManga>>,
+  onClickManga: (LibraryManga) -> Unit,
+  onPageChanged: (Int) -> Unit
+) {
+  if (categories.isEmpty()) return
+
+  val clock = AnimationClockAmbient.current
+  val state = remember(categories.size, selectedIndex) {
+    PagerState(
+      clock = clock,
+      currentPage = selectedIndex,
+      minPage = 0,
+      maxPage = categories.size
+    )
+  }
+  onCommit(state.currentPage) {
+    if (state.currentPage != selectedIndex) {
+      onPageChanged(state.currentPage)
+    }
+  }
+  Pager(state = state, offscreenLimit = 1) {
+    val library by remember { getLibrary(page) }.collectAsState(initial = emptyList())
+    LibraryGrid(
+      library = library,
+      onClickManga = onClickManga
+    )
+  }
+}
+
+@Composable
+private fun LibraryGrid(
   library: List<LibraryManga>,
   onClickManga: (LibraryManga) -> Unit = {}
 ) {
-  AutofitGrid(data = library, defaultColumnWidth = 160.dp) { manga ->
+  AutofitGrid(
+    data = library,
+    defaultColumnWidth = 160.dp,
+    modifier = Modifier.fillMaxSize()
+  ) { manga ->
     MangaGridItem(
       title = manga.title,
       cover = MangaCover.from(manga),

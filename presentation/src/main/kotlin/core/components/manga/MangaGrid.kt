@@ -26,11 +26,15 @@ import androidx.compose.ui.drawWithCache
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.LinearGradient
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.font
+import androidx.compose.ui.text.font.fontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import tachiyomi.ui.R
 import tachiyomi.ui.core.coil.CoilImage
 import tachiyomi.ui.core.coil.MangaCover
-import tachiyomi.ui.library.ptSansFont
+
+private val ptSansFont = fontFamily(font(R.font.ptsans_bold))
 
 @Composable
 fun MangaGridItem(
@@ -64,7 +68,6 @@ fun MangaGridItem(
       )
     }
   }
-
 }
 
 private val shadowGradient = Modifier.drawWithCache {
