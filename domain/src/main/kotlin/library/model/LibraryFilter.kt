@@ -11,10 +11,11 @@ package tachiyomi.domain.library.model
 enum class LibraryFilter {
   Downloaded,
   Unread,
-  Completed,
-  AllCategory;
+  Completed;
 
-  companion object
+  companion object {
+    val values = values()
+  }
 }
 
 fun LibraryFilter.serialize(): String {
@@ -22,7 +23,6 @@ fun LibraryFilter.serialize(): String {
     LibraryFilter.Downloaded -> "Downloaded"
     LibraryFilter.Unread -> "Unread"
     LibraryFilter.Completed -> "Completed"
-    LibraryFilter.AllCategory -> "AllCategory"
   }
 }
 
@@ -31,7 +31,6 @@ fun LibraryFilter.Companion.deserialize(serialized: String): LibraryFilter? {
     "Downloaded" -> LibraryFilter.Downloaded
     "Unread" -> LibraryFilter.Unread
     "Completed" -> LibraryFilter.Completed
-    "AllCategory" -> LibraryFilter.AllCategory
     else -> null
   }
 }

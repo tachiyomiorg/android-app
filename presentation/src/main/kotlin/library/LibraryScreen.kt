@@ -14,12 +14,19 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.ScrollableTabRow
 import androidx.compose.material.Tab
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.State
 import androidx.compose.runtime.onCommit
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -28,7 +35,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
-import kotlinx.coroutines.flow.Flow
 import tachiyomi.domain.library.model.Category
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.ui.R
@@ -43,24 +49,38 @@ import tachiyomi.ui.core.components.manga.MangaGridItem
 import tachiyomi.ui.core.theme.CustomColors
 import tachiyomi.ui.core.viewmodel.viewModel
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun LibraryScreen(navController: NavController) {
   val vm = viewModel<LibraryViewModel>()
+  val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
 
-  Column {
-    Toolbar(title = { Text(stringResource(R.string.library_label)) })
-    LibraryTabs(
-      categories = vm.categories,
-      selectedPage = vm.selectedCategoryIndex,
-      onPageChanged = { vm.setSelectedPage(it) }
-    )
-    LibraryPager(
-      categories = vm.categories,
-      selectedPage = vm.selectedCategoryIndex,
-      getLibrary = { vm.getLibraryForCategoryIndex(it) },
-      onPageChanged = { vm.setSelectedPage(it) },
-      onClickManga = { navController.navigate("${Route.LibraryManga.id}/${it.id}") }
-    )
+  ModalBottomSheetLayout(
+    sheetState = sheetState,
+    sheetContent = { LibrarySheet() }
+  ) {
+    Column {
+      Toolbar(
+        title = { Text(stringResource(R.string.library_label)) },
+        actions = {
+          IconButton(onClick = { sheetState.show() }) {
+            Icon(Icons.Default.FilterList)
+          }
+        }
+      )
+      LibraryTabs(
+        categories = vm.categories,
+        selectedPage = vm.selectedCategoryIndex,
+        onPageChanged = { vm.setSelectedPage(it) }
+      )
+      LibraryPager(
+        categories = vm.categories,
+        selectedPage = vm.selectedCategoryIndex,
+        getLibraryForPage = { vm.getLibraryForCategoryIndex(it) },
+        onPageChanged = { vm.setSelectedPage(it) },
+        onClickManga = { navController.navigate("${Route.LibraryManga.id}/${it.id}") }
+      )
+    }
   }
 }
 
@@ -97,7 +117,7 @@ private fun LibraryTabs(
 private fun LibraryPager(
   categories: List<Category>,
   selectedPage: Int,
-  getLibrary: (Int) -> Flow<List<LibraryManga>>,
+  getLibraryForPage: @Composable (Int) -> State<List<LibraryManga>>,
   onPageChanged: (Int) -> Unit,
   onClickManga: (LibraryManga) -> Unit
 ) {
@@ -118,9 +138,9 @@ private fun LibraryPager(
     }
   }
   Pager(state = state, offscreenLimit = 1) {
-    val library by remember { getLibrary(page) }.collectAsState(initial = emptyList())
+    val library = getLibraryForPage(page)
     LibraryGrid(
-      library = library,
+      library = library.value,
       onClickManga = onClickManga
     )
   }

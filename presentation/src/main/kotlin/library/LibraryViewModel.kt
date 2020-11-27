@@ -8,10 +8,13 @@
 
 package tachiyomi.ui.library
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -84,9 +87,11 @@ class LibraryViewModel @Inject constructor(
     lastUsedCategoryPreference.set(category.id)
   }
 
-  fun getLibraryForCategoryIndex(categoryIndex: Int): Flow<List<LibraryManga>> {
+  @Composable
+  fun getLibraryForCategoryIndex(categoryIndex: Int): State<List<LibraryManga>> {
     val categoryId = categories[categoryIndex].id
-    return getLibraryCategory.subscribe(categoryId)
+    return remember(categoryId) { getLibraryCategory.subscribe(categoryId) }
+      .collectAsState(emptyList())
   }
 
 //  private fun getSideEffects(): List<SideEffect<LibraryState, Action>> {
