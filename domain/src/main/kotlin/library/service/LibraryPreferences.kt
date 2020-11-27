@@ -11,7 +11,7 @@ package tachiyomi.domain.library.service
 import tachiyomi.core.prefs.Preference
 import tachiyomi.core.prefs.PreferenceStore
 import tachiyomi.domain.library.model.Category
-import tachiyomi.domain.library.model.LibraryFilter
+import tachiyomi.domain.library.model.LibraryFilterState
 import tachiyomi.domain.library.model.LibrarySort
 import tachiyomi.domain.library.model.LibrarySorting
 import tachiyomi.domain.library.model.deserialize
@@ -29,12 +29,12 @@ class LibraryPreferences(private val preferenceStore: PreferenceStore) {
     )
   }
 
-  fun filters(): Preference<List<LibraryFilter>> {
+  fun filters(includeAll: Boolean = false): Preference<List<LibraryFilterState>> {
     return preferenceStore.getObject(
       key = "filters",
       defaultValue = emptyList(),
       serializer = { it.serialize() },
-      deserializer = { LibraryFilter.deserializeList(it) }
+      deserializer = { LibraryFilterState.deserializeList(it, includeAll) }
     )
   }
 

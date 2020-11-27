@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.onEach
 import tachiyomi.domain.library.interactor.GetLibraryCategory
 import tachiyomi.domain.library.interactor.GetUserCategories
 import tachiyomi.domain.library.interactor.SetCategoriesForMangas
-import tachiyomi.domain.library.interactor.SetCategoryFilters
 import tachiyomi.domain.library.interactor.SetCategorySorting
 import tachiyomi.domain.library.interactor.UpdateLibraryCategory
 import tachiyomi.domain.library.model.Category
@@ -38,7 +37,6 @@ class LibraryViewModel @Inject constructor(
   private val getLibraryCategory: GetLibraryCategory,
   private val setCategoriesForMangas: SetCategoriesForMangas,
   private val libraryPreferences: LibraryPreferences,
-  private val setCategoryFilters: SetCategoryFilters,
   private val setCategorySorting: SetCategorySorting,
   private val updateLibraryCategory: UpdateLibraryCategory
 ) : BaseViewModel() {

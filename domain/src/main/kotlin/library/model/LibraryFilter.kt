@@ -8,6 +8,13 @@
 
 package tachiyomi.domain.library.model
 
+import tachiyomi.domain.library.model.LibraryFilter.Completed
+import tachiyomi.domain.library.model.LibraryFilter.Downloaded
+import tachiyomi.domain.library.model.LibraryFilter.Unread
+import tachiyomi.domain.library.model.LibraryFilterValue.Excluded
+import tachiyomi.domain.library.model.LibraryFilterValue.Included
+import tachiyomi.domain.library.model.LibraryFilterValue.Missing
+
 enum class LibraryFilter {
   Downloaded,
   Unread,
@@ -18,27 +25,60 @@ enum class LibraryFilter {
   }
 }
 
-fun LibraryFilter.serialize(): String {
-  return when (this) {
-    LibraryFilter.Downloaded -> "Downloaded"
-    LibraryFilter.Unread -> "Unread"
-    LibraryFilter.Completed -> "Completed"
+enum class LibraryFilterValue {
+  Included,
+  Excluded,
+  Missing;
+}
+
+data class LibraryFilterState(val filter: LibraryFilter, val value: LibraryFilterValue) {
+  companion object
+}
+
+fun LibraryFilterState.serialize(): String? {
+  val value = when (value) {
+    Included -> "i"
+    Excluded -> "e"
+    Missing -> return null // Missing filters are not saved
   }
-}
-
-fun LibraryFilter.Companion.deserialize(serialized: String): LibraryFilter? {
-  return when (serialized) {
-    "Downloaded" -> LibraryFilter.Downloaded
-    "Unread" -> LibraryFilter.Unread
-    "Completed" -> LibraryFilter.Completed
-    else -> null
+  val filter = when (filter) {
+    Downloaded -> "Downloaded"
+    Unread -> "Unread"
+    Completed -> "Completed"
   }
+  return "$filter:$value"
 }
 
-fun List<LibraryFilter>.serialize(): String {
-  return joinToString(";") { it.serialize() }
+fun LibraryFilterState.Companion.deserialize(serialized: String): LibraryFilterState? {
+  val parts = serialized.split(":")
+  val filter = when (parts[0]) {
+    "Downloaded" -> Downloaded
+    "Unread" -> Unread
+    "Completed" -> Completed
+    else -> return null
+  }
+  val state = when (parts[1]) {
+    "i" -> Included
+    "e" -> Excluded
+    else -> return null
+  }
+  return LibraryFilterState(filter, state)
 }
 
-fun LibraryFilter.Companion.deserializeList(serialized: String): List<LibraryFilter> {
-  return serialized.split(";").mapNotNull { LibraryFilter.deserialize(it) }
+fun List<LibraryFilterState>.serialize(): String {
+  return mapNotNull { it.serialize() }.joinToString(";")
+}
+
+fun LibraryFilterState.Companion.deserializeList(
+  serialized: String,
+  includeAll: Boolean
+): List<LibraryFilterState> {
+  val savedFilters = serialized.split(";").mapNotNull { LibraryFilterState.deserialize(it) }
+  return if (!includeAll) {
+    savedFilters
+  } else {
+    LibraryFilter.values.map { filter ->
+      savedFilters.find { it.filter == filter } ?: LibraryFilterState(filter, Missing)
+    }
+  }
 }

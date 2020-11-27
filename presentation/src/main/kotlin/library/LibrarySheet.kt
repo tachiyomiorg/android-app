@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.ToggleableState
+import androidx.compose.material.Checkbox
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.Text
@@ -30,9 +31,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.AnimationClockAmbient
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import tachiyomi.domain.library.model.LibraryFilter
+import tachiyomi.domain.library.model.LibraryFilterState
+import tachiyomi.domain.library.model.LibraryFilterValue
+import tachiyomi.domain.library.model.LibraryFilterValue.Excluded
+import tachiyomi.domain.library.model.LibraryFilterValue.Included
+import tachiyomi.domain.library.model.LibraryFilterValue.Missing
 import tachiyomi.domain.library.service.LibraryPreferences
 import tachiyomi.ui.core.components.Pager
 import tachiyomi.ui.core.components.PagerState
@@ -46,28 +50,31 @@ class LibrarySheetViewModel @Inject constructor(
 ) : BaseViewModel() {
   var selectedPage by mutableStateOf(0)
 
-  private val filtersPreference = libraryPreferences.filters()
-
-  // TODO support exclusion
-  var filters by mutableStateOf(emptyList<Pair<LibraryFilter, ToggleableState>>())
+  var filters by libraryPreferences.filters(includeAll = true).asState()
     private set
 
-  init {
-    filtersPreference.stateIn(scope)
-      .onEach { enabledFilters ->
-        filters = LibraryFilter.values.map { it to ToggleableState(enabledFilters.contains(it)) }
-      }
-      .launchIn(scope)
-  }
+  var showAllCategory by libraryPreferences.showAllCategory().asState()
+    private set
 
   fun toggle(filter: LibraryFilter) {
-    val currFilters = filtersPreference.get()
-    val newFilters = if (filter in currFilters) {
-      currFilters - filter
-    } else {
-      currFilters + filter
-    }
-    filtersPreference.set(newFilters)
+    val newFilters = filters
+      .map { filterState ->
+        if (filter == filterState.filter) {
+          LibraryFilterState(filter, when (filterState.value) {
+            Included -> Excluded
+            Excluded -> Missing
+            Missing -> Included
+          })
+        } else {
+          filterState
+        }
+      }
+
+    filters = newFilters
+  }
+
+  fun toggleShowAllCategory() {
+    showAllCategory = !showAllCategory
   }
 }
 
@@ -103,7 +110,10 @@ fun LibrarySheet() {
       when (page) {
         0 -> FiltersPage(filters = vm.filters, onClick = { vm.toggle(it) })
         1 -> SortPage()
-        2 -> DisplayPage()
+        2 -> DisplayPage(
+          showAllCategory = vm.showAllCategory,
+          onShowAllCategoryClick = { vm.toggleShowAllCategory() }
+        )
       }
     }
   }
@@ -111,17 +121,14 @@ fun LibrarySheet() {
 
 @Composable
 private fun FiltersPage(
-  filters: List<Pair<LibraryFilter, ToggleableState>>,
+  filters: List<LibraryFilterState>,
   onClick: (LibraryFilter) -> Unit
 ) {
   filters.forEach { (filter, state) ->
-    Row(
-      modifier = Modifier.fillMaxWidth().height(48.dp).clickable(onClick = { onClick(filter) }),
-      verticalAlignment = Alignment.CenterVertically
-    ) {
+    ClickableRow(onClick = { onClick(filter) }) {
       TriStateCheckbox(
         modifier = Modifier.padding(horizontal = 16.dp),
-        state = state,
+        state = state.asToggleableState(),
         onClick = { onClick(filter) }
       )
       Text(filter.name)
@@ -135,6 +142,33 @@ private fun SortPage() {
 }
 
 @Composable
-private fun DisplayPage() {
-  Text("Display")
+private fun DisplayPage(
+  showAllCategory: Boolean,
+  onShowAllCategoryClick: () -> Unit
+) {
+  ClickableRow(onClick = { onShowAllCategoryClick() }) {
+    Checkbox(
+      modifier = Modifier.padding(horizontal = 16.dp),
+      checked = showAllCategory,
+      onCheckedChange = { onShowAllCategoryClick() }
+    )
+    Text("Show all category")
+  }
+}
+
+@Composable
+private fun ClickableRow(onClick: () -> Unit, content: @Composable () -> Unit) {
+  Row(
+    modifier = Modifier.fillMaxWidth().height(48.dp).clickable(onClick = { onClick() }),
+    verticalAlignment = Alignment.CenterVertically,
+    children = { content() }
+  )
+}
+
+private fun LibraryFilterValue.asToggleableState(): ToggleableState {
+  return when (this) {
+    Included -> ToggleableState.On
+    Excluded -> ToggleableState.Indeterminate
+    Missing -> ToggleableState.Off
+  }
 }
