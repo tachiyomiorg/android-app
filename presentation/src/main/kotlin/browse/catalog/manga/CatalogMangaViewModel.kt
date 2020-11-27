@@ -15,6 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import tachiyomi.domain.catalog.interactor.GetLocalCatalog
+import tachiyomi.domain.library.interactor.ChangeMangaFavorite
 import tachiyomi.domain.manga.interactor.GetChaptersFromSource
 import tachiyomi.domain.manga.interactor.GetManga
 import tachiyomi.domain.manga.model.Manga
@@ -27,6 +28,7 @@ class CatalogMangaViewModel @Inject constructor(
   private val getManga: GetManga,
   private val getLocalCatalog: GetLocalCatalog,
   private val getChaptersFromSource: GetChaptersFromSource,
+  private val changeMangaFavorite: ChangeMangaFavorite,
 ) : BaseViewModel() {
 
   var isRefreshing by mutableStateOf(false)
@@ -45,6 +47,16 @@ class CatalogMangaViewModel @Inject constructor(
           getLocalCatalog.get(params.sourceId)?.source?.let { source ->
             chapters = getChaptersFromSource.await(source, manga)
           }
+        }
+      }
+    }
+  }
+
+  fun favorite() {
+    scope.launch {
+      withContext(Dispatchers.IO) {
+        manga?.let {
+          changeMangaFavorite.await(it)
         }
       }
     }

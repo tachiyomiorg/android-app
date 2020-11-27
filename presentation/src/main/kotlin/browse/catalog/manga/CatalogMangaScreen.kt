@@ -30,6 +30,6 @@ fun CatalogMangaScreen(navController: NavHostController, sourceId: Long, mangaId
         navigationIcon = { BackIconButton(navController) },
       )
     },
-    bodyContent = { MangaScreen(navController, vm.manga, vm.chapters) }
+    bodyContent = { MangaScreen(navController, vm.manga, vm.chapters, onFavorite = vm::favorite) }
   )
 }

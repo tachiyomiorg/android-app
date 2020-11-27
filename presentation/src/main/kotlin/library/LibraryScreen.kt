@@ -109,7 +109,7 @@ private fun LibraryPager(
       clock = clock,
       currentPage = selectedPage,
       minPage = 0,
-      maxPage = categories.size
+      maxPage = categories.lastIndex
     )
   }
   onCommit(state.currentPage) {

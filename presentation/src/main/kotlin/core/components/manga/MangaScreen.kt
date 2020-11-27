@@ -13,9 +13,19 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
+import androidx.compose.material.Icon
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import tachiyomi.domain.manga.model.Manga
 import tachiyomi.source.model.ChapterInfo
@@ -27,7 +37,8 @@ import tachiyomi.ui.core.components.LoadingScreen
 fun MangaScreen(
   navController: NavController,
   manga: Manga?,
-  chapters: List<ChapterInfo> = emptyList()
+  chapters: List<ChapterInfo> = emptyList(),
+  onFavorite: () -> Unit = {},
 ) {
   if (manga == null) {
     // TODO: loading UX
@@ -36,30 +47,41 @@ fun MangaScreen(
   }
 
   ScrollableColumn {
-    MangaInfoHeader(manga)
+    MangaInfoHeader(manga, onFavorite)
     MangaChapters(chapters)
   }
 }
 
 @Composable
-private fun MangaInfoHeader(manga: Manga) {
-  Row {
-    CoilImage(
-      model = MangaCover.from(manga),
-      modifier = Modifier
-        .fillMaxWidth(0.3f)
-        .aspectRatio(3f / 4f)
-    )
-    Column {
-      Text(manga.title)
-      if (manga.author.isNotBlank()) {
-        Text(manga.author)
+private fun MangaInfoHeader(manga: Manga, onFavorite: () -> Unit) {
+  Column {
+    Row(modifier = Modifier.padding(16.dp)) {
+      Surface(
+        modifier = Modifier
+          .fillMaxWidth(0.3f)
+          .aspectRatio(3f / 4f),
+        shape = RoundedCornerShape(4.dp)
+      ) {
+        CoilImage(model = MangaCover.from(manga))
       }
-      if (manga.artist.isNotBlank()) {
-        Text(manga.artist)
+      Column(modifier = Modifier.padding(start = 16.dp)) {
+        Text(manga.title, fontWeight = FontWeight.Bold)
+        if (manga.author.isNotBlank()) {
+          Text(manga.author)
+        }
+        if (manga.artist.isNotBlank()) {
+          Text(manga.artist)
+        }
+        Text(manga.status.toString())
+        Text(manga.sourceId.toString())
       }
-      Text(manga.status.toString())
-      Text(manga.sourceId.toString())
+    }
+    Row {
+      // TODO: favorite should be stateful so that the UI actually updates
+      Button(onClick = onFavorite) {
+        Icon(asset = if (manga.favorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder)
+        Text(if (manga.favorite) "In library" else "Add to library")
+      }
     }
   }
 }
