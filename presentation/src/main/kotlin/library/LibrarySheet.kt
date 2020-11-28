@@ -32,11 +32,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.AnimationClockAmbient
 import androidx.compose.ui.unit.dp
 import tachiyomi.domain.library.model.LibraryFilter
-import tachiyomi.domain.library.model.LibraryFilterState
-import tachiyomi.domain.library.model.LibraryFilterValue
-import tachiyomi.domain.library.model.LibraryFilterValue.Excluded
-import tachiyomi.domain.library.model.LibraryFilterValue.Included
-import tachiyomi.domain.library.model.LibraryFilterValue.Missing
+import tachiyomi.domain.library.model.LibraryFilter.Value.Excluded
+import tachiyomi.domain.library.model.LibraryFilter.Value.Included
+import tachiyomi.domain.library.model.LibraryFilter.Value.Missing
 import tachiyomi.domain.library.service.LibraryPreferences
 import tachiyomi.ui.core.components.Pager
 import tachiyomi.ui.core.components.PagerState
@@ -56,11 +54,11 @@ class LibrarySheetViewModel @Inject constructor(
   var showAllCategory by libraryPreferences.showAllCategory().asState()
     private set
 
-  fun toggle(filter: LibraryFilter) {
+  fun toggle(type: LibraryFilter.Type) {
     val newFilters = filters
       .map { filterState ->
-        if (filter == filterState.filter) {
-          LibraryFilterState(filter, when (filterState.value) {
+        if (type == filterState.type) {
+          LibraryFilter(type, when (filterState.value) {
             Included -> Excluded
             Excluded -> Missing
             Missing -> Included
@@ -121,8 +119,8 @@ fun LibrarySheet() {
 
 @Composable
 private fun FiltersPage(
-  filters: List<LibraryFilterState>,
-  onClick: (LibraryFilter) -> Unit
+  filters: List<LibraryFilter>,
+  onClick: (LibraryFilter.Type) -> Unit
 ) {
   filters.forEach { (filter, state) ->
     ClickableRow(onClick = { onClick(filter) }) {
@@ -165,7 +163,7 @@ private fun ClickableRow(onClick: () -> Unit, content: @Composable () -> Unit) {
   )
 }
 
-private fun LibraryFilterValue.asToggleableState(): ToggleableState {
+private fun LibraryFilter.Value.asToggleableState(): ToggleableState {
   return when (this) {
     Included -> ToggleableState.On
     Excluded -> ToggleableState.Indeterminate
