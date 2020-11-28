@@ -16,7 +16,6 @@ import androidx.sqlite.db.SupportSQLiteQueryBuilder
 import kotlinx.coroutines.flow.Flow
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.domain.library.model.LibrarySort
-import tachiyomi.domain.library.model.LibrarySorting
 import tachiyomi.domain.library.model.MangaCategory
 import tachiyomi.domain.manga.model.Chapter
 import tachiyomi.domain.manga.model.Manga
@@ -24,27 +23,27 @@ import tachiyomi.domain.manga.model.Manga
 @Dao
 abstract class LibraryDao {
 
-  fun subscribeAll(sort: LibrarySorting): Flow<List<LibraryManga>> {
+  fun subscribeAll(sort: LibrarySort): Flow<List<LibraryManga>> {
     return subscribeAll(RawQueries.all(sort))
   }
 
-  fun subscribeUncategorized(sort: LibrarySorting): Flow<List<LibraryManga>> {
+  fun subscribeUncategorized(sort: LibrarySort): Flow<List<LibraryManga>> {
     return subscribeCategory(RawQueries.uncategorized(sort))
   }
 
-  fun subscribeCategory(categoryId: Long, sort: LibrarySorting): Flow<List<LibraryManga>> {
+  fun subscribeCategory(categoryId: Long, sort: LibrarySort): Flow<List<LibraryManga>> {
     return subscribeCategory(RawQueries.category(categoryId, sort))
   }
 
-  suspend fun findAll(sort: LibrarySorting): List<LibraryManga> {
+  suspend fun findAll(sort: LibrarySort): List<LibraryManga> {
     return findAll(RawQueries.all(sort))
   }
 
-  suspend fun findUncategorized(sort: LibrarySorting): List<LibraryManga> {
+  suspend fun findUncategorized(sort: LibrarySort): List<LibraryManga> {
     return findCategory(RawQueries.uncategorized(sort))
   }
 
-  suspend fun findCategory(categoryId: Long, sort: LibrarySorting): List<LibraryManga> {
+  suspend fun findCategory(categoryId: Long, sort: LibrarySort): List<LibraryManga> {
     return findCategory(RawQueries.category(categoryId, sort))
   }
 
@@ -77,9 +76,9 @@ private object RawQueries {
 
   private val groupBy = "library.id"
 
-  fun all(sort: LibrarySorting): SupportSQLiteQuery {
+  fun all(sort: LibrarySort): SupportSQLiteQuery {
     return when (sort.type) {
-      LibrarySort.TotalChapters -> defaultQueryWithTotalChapters()
+      LibrarySort.Type.TotalChapters -> defaultQueryWithTotalChapters()
       else -> defaultQuery()
     }
       .groupBy(groupBy)
@@ -87,9 +86,9 @@ private object RawQueries {
       .create()
   }
 
-  fun uncategorized(sort: LibrarySorting): SupportSQLiteQuery {
+  fun uncategorized(sort: LibrarySort): SupportSQLiteQuery {
     return when (sort.type) {
-      LibrarySort.TotalChapters -> defaultQueryWithTotalChapters()
+      LibrarySort.Type.TotalChapters -> defaultQueryWithTotalChapters()
       else -> defaultQuery()
     }
       .selection("NOT EXISTS (SELECT mangaCategory.mangaId FROM mangaCategory " +
@@ -99,9 +98,9 @@ private object RawQueries {
       .create()
   }
 
-  fun category(categoryId: Long, sort: LibrarySorting): SupportSQLiteQuery {
+  fun category(categoryId: Long, sort: LibrarySort): SupportSQLiteQuery {
     return when (sort.type) {
-      LibrarySort.TotalChapters -> categoryWithTotalChapters()
+      LibrarySort.Type.TotalChapters -> categoryWithTotalChapters()
       else -> categoryQuery()
     }
       .selection(null, arrayOf(categoryId))
@@ -137,16 +136,16 @@ private object RawQueries {
       .columns(arrayOf(defaultFields, totalChaptersFields))
   }
 
-  private fun orderBy(sort: LibrarySorting): String {
+  private fun orderBy(sort: LibrarySort): String {
     return when (sort.type) {
-      LibrarySort.Title -> "library.title ${sort.dir}"
-      LibrarySort.LastRead -> "" // TODO
-      LibrarySort.LastUpdated -> "library.lastUpdate ${sort.dir}"
-      LibrarySort.Unread -> "unread ${sort.dir}"
-      LibrarySort.TotalChapters -> "total ${sort.dir}"
-      LibrarySort.Source -> "library.sourceId ${sort.dir}, library.title ${sort.dir}"
+      LibrarySort.Type.Title -> "library.title ${sort.dir}"
+      LibrarySort.Type.LastRead -> "" // TODO
+      LibrarySort.Type.LastUpdated -> "library.lastUpdate ${sort.dir}"
+      LibrarySort.Type.Unread -> "unread ${sort.dir}"
+      LibrarySort.Type.TotalChapters -> "total ${sort.dir}"
+      LibrarySort.Type.Source -> "library.sourceId ${sort.dir}, library.title ${sort.dir}"
     }
   }
 
-  val LibrarySorting.dir get() = if (isAscending) "ASC" else "DESC"
+  val LibrarySort.dir get() = if (isAscending) "ASC" else "DESC"
 }

@@ -8,19 +8,26 @@
 
 package tachiyomi.ui.library
 
+import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.ToggleableState
 import androidx.compose.material.Checkbox
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.Text
 import androidx.compose.material.TriStateCheckbox
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,6 +42,7 @@ import tachiyomi.domain.library.model.LibraryFilter
 import tachiyomi.domain.library.model.LibraryFilter.Value.Excluded
 import tachiyomi.domain.library.model.LibraryFilter.Value.Included
 import tachiyomi.domain.library.model.LibraryFilter.Value.Missing
+import tachiyomi.domain.library.model.LibrarySort
 import tachiyomi.domain.library.service.LibraryPreferences
 import tachiyomi.ui.core.components.Pager
 import tachiyomi.ui.core.components.PagerState
@@ -51,10 +59,13 @@ class LibrarySheetViewModel @Inject constructor(
   var filters by libraryPreferences.filters(includeAll = true).asState()
     private set
 
+  var sorting by libraryPreferences.sorting().asState()
+    private set
+
   var showAllCategory by libraryPreferences.showAllCategory().asState()
     private set
 
-  fun toggle(type: LibraryFilter.Type) {
+  fun toggleFilter(type: LibraryFilter.Type) {
     val newFilters = filters
       .map { filterState ->
         if (type == filterState.type) {
@@ -69,6 +80,15 @@ class LibrarySheetViewModel @Inject constructor(
       }
 
     filters = newFilters
+  }
+
+  fun toggleSort(type: LibrarySort.Type) {
+    val currentSort = sorting
+    sorting = if (type == currentSort.type) {
+      currentSort.copy(isAscending = !currentSort.isAscending)
+    } else {
+      currentSort.copy(type = type)
+    }
   }
 
   fun toggleShowAllCategory() {
@@ -104,10 +124,10 @@ fun LibrarySheet() {
     }
   }
   Pager(state = state) {
-    Column(modifier = Modifier.fillMaxSize()) {
+    ScrollableColumn(modifier = Modifier.fillMaxSize()) {
       when (page) {
-        0 -> FiltersPage(filters = vm.filters, onClick = { vm.toggle(it) })
-        1 -> SortPage()
+        0 -> FiltersPage(filters = vm.filters, onClick = { vm.toggleFilter(it) })
+        1 -> SortPage(sorting = vm.sorting, onClick = { vm.toggleSort(it) })
         2 -> DisplayPage(
           showAllCategory = vm.showAllCategory,
           onShowAllCategoryClick = { vm.toggleShowAllCategory() }
@@ -135,8 +155,26 @@ private fun FiltersPage(
 }
 
 @Composable
-private fun SortPage() {
-  Text("Sort")
+private fun SortPage(
+  sorting: LibrarySort,
+  onClick: (LibrarySort.Type) -> Unit
+) {
+  LibrarySort.types.forEach { type ->
+    ClickableRow(onClick = { onClick(type) }) {
+      val iconModifier = Modifier.width(56.dp)
+      if (sorting.type == type) {
+        val icon = if (sorting.isAscending) {
+          Icons.Default.KeyboardArrowUp
+        } else {
+          Icons.Default.KeyboardArrowDown
+        }
+        Icon(icon, iconModifier, MaterialTheme.colors.primary)
+      } else {
+        Spacer(iconModifier)
+      }
+      Text(type.name)
+    }
+  }
 }
 
 @Composable

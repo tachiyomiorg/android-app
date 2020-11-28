@@ -21,13 +21,9 @@ import kotlinx.coroutines.flow.onEach
 import tachiyomi.domain.library.interactor.GetLibraryCategory
 import tachiyomi.domain.library.interactor.GetUserCategories
 import tachiyomi.domain.library.interactor.SetCategoriesForMangas
-import tachiyomi.domain.library.interactor.SetCategorySorting
 import tachiyomi.domain.library.interactor.UpdateLibraryCategory
 import tachiyomi.domain.library.model.Category
-import tachiyomi.domain.library.model.LibraryFilter
 import tachiyomi.domain.library.model.LibraryManga
-import tachiyomi.domain.library.model.LibrarySort
-import tachiyomi.domain.library.model.LibrarySorting
 import tachiyomi.domain.library.service.LibraryPreferences
 import tachiyomi.ui.core.viewmodel.BaseViewModel
 import javax.inject.Inject
@@ -37,13 +33,8 @@ class LibraryViewModel @Inject constructor(
   private val getLibraryCategory: GetLibraryCategory,
   private val setCategoriesForMangas: SetCategoriesForMangas,
   private val libraryPreferences: LibraryPreferences,
-  private val setCategorySorting: SetCategorySorting,
   private val updateLibraryCategory: UpdateLibraryCategory
 ) : BaseViewModel() {
-
-  private val lastSortPreference = libraryPreferences.lastSorting()
-
-  private val filtersPreference = libraryPreferences.filters()
 
   private val lastUsedCategoryPreference = libraryPreferences.lastUsedCategory()
 
@@ -53,10 +44,8 @@ class LibraryViewModel @Inject constructor(
     private set
   var library by mutableStateOf(emptyList<LibraryManga>())
     private set
-  var filters by mutableStateOf(emptyList<LibraryFilter>())
-    private set
-  var sorting by mutableStateOf(LibrarySorting(LibrarySort.Title, true))
-    private set
+  val filters by libraryPreferences.filters().asState()
+  val sorting by libraryPreferences.sorting().asState()
   var selectedManga by mutableStateOf(emptySet<Long>())
     private set
   var showUpdatingCategory by mutableStateOf(false)
@@ -88,7 +77,7 @@ class LibraryViewModel @Inject constructor(
   @Composable
   fun getLibraryForCategoryIndex(categoryIndex: Int): State<List<LibraryManga>> {
     val categoryId = categories[categoryIndex].id
-    return remember(categoryId) { getLibraryCategory.subscribe(categoryId) }
+    return remember(categoryId, sorting) { getLibraryCategory.subscribe(categoryId, sorting) }
       .collectAsState(emptyList())
   }
 

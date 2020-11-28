@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.Flow
 import tachiyomi.domain.library.model.Category
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.domain.library.model.LibrarySort
-import tachiyomi.domain.library.model.LibrarySorting
 import tachiyomi.domain.library.service.LibraryRepository
 import javax.inject.Inject
 
@@ -22,7 +21,7 @@ class GetLibraryCategory @Inject internal constructor(
 
   suspend fun await(
     categoryId: Long,
-    sort: LibrarySorting = LibrarySorting(LibrarySort.Title, true)
+    sort: LibrarySort = LibrarySort(LibrarySort.Type.Title, true)
   ): List<LibraryManga> {
     return when (categoryId) {
       Category.ALL_ID -> libraryRepository.findAll(sort)
@@ -33,7 +32,7 @@ class GetLibraryCategory @Inject internal constructor(
 
   fun subscribe(
     categoryId: Long,
-    sort: LibrarySorting = LibrarySorting(LibrarySort.Title, true)
+    sort: LibrarySort = LibrarySort(LibrarySort.Type.Title, true)
   ): Flow<List<LibraryManga>> {
     return when (categoryId) {
       Category.ALL_ID -> libraryRepository.subscribeAll(sort)

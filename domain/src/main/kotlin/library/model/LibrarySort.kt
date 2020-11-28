@@ -8,46 +8,55 @@
 
 package tachiyomi.domain.library.model
 
-enum class LibrarySort {
-  Title,
-  LastRead,
-  LastUpdated,
-  Unread,
-  TotalChapters,
-  Source;
+import tachiyomi.domain.library.model.LibrarySort.Type.LastRead
+import tachiyomi.domain.library.model.LibrarySort.Type.LastUpdated
+import tachiyomi.domain.library.model.LibrarySort.Type.Source
+import tachiyomi.domain.library.model.LibrarySort.Type.Title
+import tachiyomi.domain.library.model.LibrarySort.Type.TotalChapters
+import tachiyomi.domain.library.model.LibrarySort.Type.Unread
+
+data class LibrarySort(val type: Type, val isAscending: Boolean) {
+
+  enum class Type {
+    Title,
+    LastRead,
+    LastUpdated,
+    Unread,
+    TotalChapters,
+    Source;
+  }
+
+  companion object {
+    val types = Type.values()
+  }
 }
 
-data class LibrarySorting(val type: LibrarySort, val isAscending: Boolean) {
-
-  companion object
-}
-
-fun LibrarySorting.serialize(): String {
-  val className = when (type) {
-    LibrarySort.Title -> "Title"
-    LibrarySort.LastRead -> "LastRead"
-    LibrarySort.LastUpdated -> "LastUpdated"
-    LibrarySort.Unread -> "Unread"
-    LibrarySort.TotalChapters -> "TotalChapters"
-    LibrarySort.Source -> "Source"
+fun LibrarySort.serialize(): String {
+  val type = when (type) {
+    Title -> "Title"
+    LastRead -> "LastRead"
+    LastUpdated -> "LastUpdated"
+    Unread -> "Unread"
+    TotalChapters -> "TotalChapters"
+    Source -> "Source"
   }
   val order = if (isAscending) "a" else "d"
-  return "$className;$order"
+  return "$type,$order"
 }
 
-fun LibrarySorting.Companion.deserialize(serialized: String): LibrarySorting {
-  if (serialized.isEmpty()) return LibrarySorting(LibrarySort.Title, true)
+fun LibrarySort.Companion.deserialize(serialized: String): LibrarySort {
+  if (serialized.isEmpty()) return LibrarySort(Title, true)
 
-  val values = serialized.split(";")
-  val className = values[0]
+  val values = serialized.split(",")
+  val type = values[0]
   val ascending = values[1] == "a"
 
-  return when (className) {
-    "LastRead" -> LibrarySorting(LibrarySort.LastRead, ascending)
-    "LastUpdated" -> LibrarySorting(LibrarySort.LastUpdated, ascending)
-    "Unread" -> LibrarySorting(LibrarySort.Unread, ascending)
-    "TotalChapters" -> LibrarySorting(LibrarySort.TotalChapters, ascending)
-    "Source" -> LibrarySorting(LibrarySort.Source, ascending)
-    else -> LibrarySorting(LibrarySort.Title, ascending)
+  return when (type) {
+    "LastRead" -> LibrarySort(LastRead, ascending)
+    "LastUpdated" -> LibrarySort(LastUpdated, ascending)
+    "Unread" -> LibrarySort(Unread, ascending)
+    "TotalChapters" -> LibrarySort(TotalChapters, ascending)
+    "Source" -> LibrarySort(Source, ascending)
+    else -> LibrarySort(Title, ascending)
   }
 }

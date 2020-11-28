@@ -13,19 +13,18 @@ import tachiyomi.core.prefs.PreferenceStore
 import tachiyomi.domain.library.model.Category
 import tachiyomi.domain.library.model.LibraryFilter
 import tachiyomi.domain.library.model.LibrarySort
-import tachiyomi.domain.library.model.LibrarySorting
 import tachiyomi.domain.library.model.deserialize
 import tachiyomi.domain.library.model.deserializeList
 import tachiyomi.domain.library.model.serialize
 
 class LibraryPreferences(private val preferenceStore: PreferenceStore) {
 
-  fun lastSorting(): Preference<LibrarySorting> {
+  fun sorting(): Preference<LibrarySort> {
     return preferenceStore.getObject(
-      key = "last_sorting",
-      defaultValue = LibrarySorting(LibrarySort.Title, true),
+      key = "sorting",
+      defaultValue = LibrarySort(LibrarySort.Type.Title, true),
       serializer = { it.serialize() },
-      deserializer = { LibrarySorting.deserialize(it) }
+      deserializer = { LibrarySort.deserialize(it) }
     )
   }
 

@@ -45,12 +45,12 @@ private fun LibraryFilter.serialize(): String? {
     Unread -> "Unread"
     Completed -> "Completed"
   }
-  return "$type:$value"
+  return "$type,$value"
 }
 
 private fun LibraryFilter.Companion.deserialize(serialized: String): LibraryFilter? {
-  val parts = serialized.split(":")
-  val filter = when (parts[0]) {
+  val parts = serialized.split(",")
+  val type = when (parts[0]) {
     "Downloaded" -> Downloaded
     "Unread" -> Unread
     "Completed" -> Completed
@@ -61,7 +61,7 @@ private fun LibraryFilter.Companion.deserialize(serialized: String): LibraryFilt
     "e" -> Excluded
     else -> return null
   }
-  return LibraryFilter(filter, state)
+  return LibraryFilter(type, state)
 }
 
 fun List<LibraryFilter>.serialize(): String {
