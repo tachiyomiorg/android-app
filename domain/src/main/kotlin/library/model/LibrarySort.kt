@@ -8,13 +8,6 @@
 
 package tachiyomi.domain.library.model
 
-import tachiyomi.domain.library.model.LibrarySort.Type.LastRead
-import tachiyomi.domain.library.model.LibrarySort.Type.LastUpdated
-import tachiyomi.domain.library.model.LibrarySort.Type.Source
-import tachiyomi.domain.library.model.LibrarySort.Type.Title
-import tachiyomi.domain.library.model.LibrarySort.Type.TotalChapters
-import tachiyomi.domain.library.model.LibrarySort.Type.Unread
-
 data class LibrarySort(val type: Type, val isAscending: Boolean) {
 
   enum class Type {
@@ -28,35 +21,25 @@ data class LibrarySort(val type: Type, val isAscending: Boolean) {
 
   companion object {
     val types = Type.values()
+    val default = LibrarySort(Type.Title, true)
   }
 }
 
 fun LibrarySort.serialize(): String {
-  val type = when (type) {
-    Title -> "Title"
-    LastRead -> "LastRead"
-    LastUpdated -> "LastUpdated"
-    Unread -> "Unread"
-    TotalChapters -> "TotalChapters"
-    Source -> "Source"
-  }
+  val type = type.name
   val order = if (isAscending) "a" else "d"
   return "$type,$order"
 }
 
 fun LibrarySort.Companion.deserialize(serialized: String): LibrarySort {
-  if (serialized.isEmpty()) return LibrarySort(Title, true)
+  if (serialized.isEmpty()) return default
 
-  val values = serialized.split(",")
-  val type = values[0]
-  val ascending = values[1] == "a"
-
-  return when (type) {
-    "LastRead" -> LibrarySort(LastRead, ascending)
-    "LastUpdated" -> LibrarySort(LastUpdated, ascending)
-    "Unread" -> LibrarySort(Unread, ascending)
-    "TotalChapters" -> LibrarySort(TotalChapters, ascending)
-    "Source" -> LibrarySort(Source, ascending)
-    else -> LibrarySort(Title, ascending)
+  return try {
+    val values = serialized.split(",")
+    val type = enumValueOf<LibrarySort.Type>(values[0])
+    val ascending = values[1] == "a"
+    LibrarySort(type, ascending)
+  } catch (e: Exception) {
+    default
   }
 }
