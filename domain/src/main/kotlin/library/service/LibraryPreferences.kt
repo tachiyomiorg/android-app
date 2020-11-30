@@ -10,7 +10,9 @@ package tachiyomi.domain.library.service
 
 import tachiyomi.core.prefs.Preference
 import tachiyomi.core.prefs.PreferenceStore
+import tachiyomi.core.prefs.getEnum
 import tachiyomi.domain.library.model.Category
+import tachiyomi.domain.library.model.DisplayMode
 import tachiyomi.domain.library.model.LibraryFilter
 import tachiyomi.domain.library.model.LibrarySort
 import tachiyomi.domain.library.model.deserialize
@@ -22,7 +24,7 @@ class LibraryPreferences(private val preferenceStore: PreferenceStore) {
   fun sorting(): Preference<LibrarySort> {
     return preferenceStore.getObject(
       key = "sorting",
-      defaultValue = LibrarySort(LibrarySort.Type.Title, true),
+      defaultValue = LibrarySort.default,
       serializer = { it.serialize() },
       deserializer = { LibrarySort.deserialize(it) }
     )
@@ -31,7 +33,7 @@ class LibraryPreferences(private val preferenceStore: PreferenceStore) {
   fun filters(includeAll: Boolean = false): Preference<List<LibraryFilter>> {
     return preferenceStore.getObject(
       key = "filters",
-      defaultValue = emptyList(),
+      defaultValue = LibraryFilter.getDefault(includeAll),
       serializer = { it.serialize() },
       deserializer = { LibraryFilter.deserializeList(it, includeAll) }
     )
@@ -45,8 +47,24 @@ class LibraryPreferences(private val preferenceStore: PreferenceStore) {
     return preferenceStore.getLong("default_category", Category.UNCATEGORIZED_ID)
   }
 
+  fun displayMode(): Preference<DisplayMode> {
+    return preferenceStore.getEnum("display_mode", DisplayMode.CompactGrid)
+  }
+
+  fun downloadBadges(): Preference<Boolean> {
+    return preferenceStore.getBoolean("download_badges", false)
+  }
+
+  fun unreadBadges(): Preference<Boolean> {
+    return preferenceStore.getBoolean("unread_badges", true)
+  }
+
+  fun showCategoryTabs(): Preference<Boolean> {
+    return preferenceStore.getBoolean("category_tabs", true)
+  }
+
   fun showAllCategory(): Preference<Boolean> {
-    return preferenceStore.getBoolean("show_all_category", true)
+    return preferenceStore.getBoolean("show_all_category", false)
   }
 
 }

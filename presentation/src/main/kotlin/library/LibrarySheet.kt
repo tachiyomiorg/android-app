@@ -10,6 +10,9 @@ package tachiyomi.ui.library
 
 import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayout
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,7 +21,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.ToggleableState
+import androidx.compose.material.AmbientContentColor
 import androidx.compose.material.Checkbox
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Tab
@@ -29,72 +34,24 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.onCommit
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.AnimationClockAmbient
 import androidx.compose.ui.unit.dp
+import tachiyomi.domain.library.model.DisplayMode
 import tachiyomi.domain.library.model.LibraryFilter
 import tachiyomi.domain.library.model.LibraryFilter.Value.Excluded
 import tachiyomi.domain.library.model.LibraryFilter.Value.Included
 import tachiyomi.domain.library.model.LibraryFilter.Value.Missing
 import tachiyomi.domain.library.model.LibrarySort
-import tachiyomi.domain.library.service.LibraryPreferences
+import tachiyomi.ui.core.components.ChoiceChip
 import tachiyomi.ui.core.components.Pager
 import tachiyomi.ui.core.components.PagerState
 import tachiyomi.ui.core.theme.CustomColors
-import tachiyomi.ui.core.viewmodel.BaseViewModel
 import tachiyomi.ui.core.viewmodel.viewModel
-import javax.inject.Inject
-
-class LibrarySheetViewModel @Inject constructor(
-  private val libraryPreferences: LibraryPreferences
-) : BaseViewModel() {
-  var selectedPage by mutableStateOf(0)
-
-  var filters by libraryPreferences.filters(includeAll = true).asState()
-    private set
-
-  var sorting by libraryPreferences.sorting().asState()
-    private set
-
-  var showAllCategory by libraryPreferences.showAllCategory().asState()
-    private set
-
-  fun toggleFilter(type: LibraryFilter.Type) {
-    val newFilters = filters
-      .map { filterState ->
-        if (type == filterState.type) {
-          LibraryFilter(type, when (filterState.value) {
-            Included -> Excluded
-            Excluded -> Missing
-            Missing -> Included
-          })
-        } else {
-          filterState
-        }
-      }
-
-    filters = newFilters
-  }
-
-  fun toggleSort(type: LibrarySort.Type) {
-    val currentSort = sorting
-    sorting = if (type == currentSort.type) {
-      currentSort.copy(isAscending = !currentSort.isAscending)
-    } else {
-      currentSort.copy(type = type)
-    }
-  }
-
-  fun toggleShowAllCategory() {
-    showAllCategory = !showAllCategory
-  }
-}
+import java.util.Locale
 
 @Composable
 fun LibrarySheet() {
@@ -129,8 +86,16 @@ fun LibrarySheet() {
         0 -> FiltersPage(filters = vm.filters, onClick = { vm.toggleFilter(it) })
         1 -> SortPage(sorting = vm.sorting, onClick = { vm.toggleSort(it) })
         2 -> DisplayPage(
-          showAllCategory = vm.showAllCategory,
-          onShowAllCategoryClick = { vm.toggleShowAllCategory() }
+          displayMode = vm.displayMode,
+          downloadBadges = vm.downloadBadges,
+          unreadBadges = vm.unreadBadges,
+          categoryTabs = vm.showCategoryTabs,
+          allCategory = vm.showAllCategory,
+          onDisplayModeClick = { vm.changeDisplayMode(it) },
+          onDownloadBadgesClick = { vm.toggleDownloadBadges() },
+          onUnreadBadgesClick = { vm.toggleUnreadBadges() },
+          onCategoryTabsClick = { vm.toggleShowCategoryTabs() },
+          onAllCategoryClick = { vm.toggleShowAllCategory() }
         )
       }
     }
@@ -177,16 +142,76 @@ private fun SortPage(
   }
 }
 
+@OptIn(ExperimentalLayout::class)
 @Composable
 private fun DisplayPage(
-  showAllCategory: Boolean,
-  onShowAllCategoryClick: () -> Unit
+  displayMode: DisplayMode,
+  downloadBadges: Boolean,
+  unreadBadges: Boolean,
+  categoryTabs: Boolean,
+  allCategory: Boolean,
+  onDisplayModeClick: (DisplayMode) -> Unit,
+  onDownloadBadgesClick: () -> Unit,
+  onUnreadBadgesClick: () -> Unit,
+  onCategoryTabsClick: () -> Unit,
+  onAllCategoryClick: () -> Unit
 ) {
-  ClickableRow(onClick = { onShowAllCategoryClick() }) {
+  Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+    Text(
+      text = "Display mode".toUpperCase(Locale.ROOT),
+      modifier = Modifier.padding(bottom = 12.dp),
+      style = MaterialTheme.typography.subtitle2,
+      color = AmbientContentColor.current.copy(alpha = ContentAlpha.medium)
+    )
+    FlowRow(mainAxisSpacing = 4.dp) {
+      DisplayMode.values.forEach {
+        ChoiceChip(
+          isSelected = it == displayMode,
+          onClick = { onDisplayModeClick(it) },
+          content = { Text(it.name) }
+        )
+      }
+    }
+  }
+  Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+    Text(
+      text = "Badges".toUpperCase(Locale.ROOT),
+      modifier = Modifier.padding(bottom = 12.dp),
+      style = MaterialTheme.typography.subtitle2,
+      color = AmbientContentColor.current.copy(alpha = ContentAlpha.medium)
+    )
+    FlowRow(mainAxisSpacing = 4.dp) {
+      ChoiceChip(
+        isSelected = unreadBadges,
+        onClick = { onUnreadBadgesClick() },
+        content = { Text("Unread") }
+      )
+      ChoiceChip(
+        isSelected = downloadBadges,
+        onClick = { onDownloadBadgesClick() },
+        content = { Text("Downloaded") }
+      )
+    }
+  }
+  Text(
+    text = "Tabs".toUpperCase(Locale.ROOT),
+    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+    style = MaterialTheme.typography.subtitle2,
+    color = AmbientContentColor.current.copy(alpha = ContentAlpha.medium)
+  )
+  ClickableRow(onClick = { onCategoryTabsClick() }) {
     Checkbox(
       modifier = Modifier.padding(horizontal = 16.dp),
-      checked = showAllCategory,
-      onCheckedChange = { onShowAllCategoryClick() }
+      checked = categoryTabs,
+      onCheckedChange = { onCategoryTabsClick() }
+    )
+    Text("Show category tabs")
+  }
+  ClickableRow(onClick = { onAllCategoryClick() }) {
+    Checkbox(
+      modifier = Modifier.padding(horizontal = 16.dp),
+      checked = allCategory,
+      onCheckedChange = { onAllCategoryClick() }
     )
     Text("Show all category")
   }
