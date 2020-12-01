@@ -21,7 +21,7 @@ class GetLibraryCategory @Inject internal constructor(
 
   suspend fun await(
     categoryId: Long,
-    sort: LibrarySort = LibrarySort(LibrarySort.Type.Title, true)
+    sort: LibrarySort = LibrarySort.default
   ): List<LibraryManga> {
     return when (categoryId) {
       Category.ALL_ID -> libraryRepository.findAll(sort)
@@ -32,7 +32,7 @@ class GetLibraryCategory @Inject internal constructor(
 
   fun subscribe(
     categoryId: Long,
-    sort: LibrarySort = LibrarySort(LibrarySort.Type.Title, true)
+    sort: LibrarySort = LibrarySort.default
   ): Flow<List<LibraryManga>> {
     return when (categoryId) {
       Category.ALL_ID -> libraryRepository.subscribeAll(sort)

@@ -48,9 +48,7 @@ fun Chip(
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.Center
     ) {
-      ProvideTextStyle(MaterialTheme.typography.body2) {
-        content()
-      }
+      ProvideTextStyle(MaterialTheme.typography.body2, content)
     }
   }
 }

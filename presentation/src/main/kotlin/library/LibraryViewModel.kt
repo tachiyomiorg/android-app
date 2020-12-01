@@ -51,6 +51,9 @@ class LibraryViewModel @Inject constructor(
   var showUpdatingCategory by mutableStateOf(false)
     private set
   var sheetVisible by mutableStateOf(false)
+  val showCategoryTabs by libraryPreferences.showCategoryTabs().asState()
+
+  val selectedCategory get() = categories.getOrNull(selectedCategoryIndex)
 
   init {
     libraryPreferences.showAllCategory().stateIn(scope)

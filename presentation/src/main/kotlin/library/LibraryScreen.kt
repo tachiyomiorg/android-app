@@ -61,7 +61,14 @@ fun LibraryScreen(navController: NavController) {
   ) {
     Column {
       Toolbar(
-        title = { Text(stringResource(R.string.library_label)) },
+        title = {
+          val text = if (vm.showCategoryTabs) {
+            stringResource(R.string.library_label)
+          } else {
+            vm.selectedCategory?.visibleName.orEmpty()
+          }
+          Text(text)
+        },
         actions = {
           IconButton(onClick = { sheetState.show() }) {
             Icon(Icons.Default.FilterList)
@@ -69,6 +76,7 @@ fun LibraryScreen(navController: NavController) {
         }
       )
       LibraryTabs(
+        visible = vm.showCategoryTabs,
         categories = vm.categories,
         selectedPage = vm.selectedCategoryIndex,
         onPageChanged = { vm.setSelectedPage(it) }
@@ -87,12 +95,15 @@ fun LibraryScreen(navController: NavController) {
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun LibraryTabs(
+  visible: Boolean,
   categories: List<Category>,
   selectedPage: Int,
   onPageChanged: (Int) -> Unit
 ) {
+  if (categories.isEmpty()) return
+
   AnimatedVisibility(
-    visible = categories.isNotEmpty(),
+    visible = visible,
     enter = expandVertically(),
     exit = shrinkVertically()
   ) {
