@@ -8,11 +8,12 @@
 
 package tachiyomi.ui.core.components
 
-import android.view.MotionEvent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.forEachGesture
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayout
@@ -45,10 +46,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.drawWithCache
-import androidx.compose.ui.drawWithContent
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.gesture.ExperimentalPointerInput
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.LinearGradient
@@ -57,14 +59,14 @@ import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.useOrElse
-import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import kotlin.math.round
 
 private val presetColors = listOf(
-  Color(0xFFF44336), // RED 500
+  Color(0xFFD81B60), // RED 500
   Color(0xFFE91E63), // PINK 500
   Color(0xFFFF2C93), // LIGHT PINK 500
   Color(0xFF9C27B0), // PURPLE 500
@@ -229,7 +231,7 @@ private fun shadeColor(f: Long, percent: Double): Color {
   return Color(red = red, green = green, blue = blue, alpha = 255)
 }
 
-@OptIn(ExperimentalLayout::class)
+@OptIn(ExperimentalLayout::class, ExperimentalPointerInput::class)
 @Composable
 fun ColorPalette(
   initialColor: Color = Color.White,
@@ -290,16 +292,24 @@ fun ColorPalette(
           drawCircle(Color.Black, radius = 8f, center = matrixCursor, style = cursorStroke)
           drawCircle(Color.LightGray, radius = 12f, center = matrixCursor, style = cursorStroke)
         }
-        .pointerInteropFilter { ev ->
-          if (ev.action == MotionEvent.ACTION_DOWN || ev.action == MotionEvent.ACTION_MOVE) {
-            val safeX = ev.x.coerceIn(0f, matrixSize.width.toFloat())
-            val safeY = ev.y.coerceIn(0f, matrixSize.height.toFloat())
-            matrixCursor = Offset(safeX, safeY)
-            val newColor = matrixCoordinatesToColor(hue, safeX, safeY, matrixSize)
-            setSelectedColor(newColor)
+        .pointerInput {
+          forEachGesture {
+            handlePointerInput {
+              var change = awaitFirstDown()
+              while (change.current.down) {
+                val position = change.current.position
+                val safeX = position.x.coerceIn(0f, matrixSize.width.toFloat())
+                val safeY = position.y.coerceIn(0f, matrixSize.height.toFloat())
+                matrixCursor = Offset(safeX, safeY)
+                val newColor = matrixCoordinatesToColor(hue, safeX, safeY, matrixSize)
+                setSelectedColor(newColor)
+
+                change = awaitPointerEvent().changes.first()
+              }
+            }
           }
-          true
-        })
+        }
+      )
 
       Box(Modifier
         .fillMaxHeight()
@@ -323,16 +333,25 @@ fun ColorPalette(
             drawRect(cursorColor, topLeft = cursorTopLeft, size = cursorSize, style = cursorStroke)
           }
         }
-        .pointerInteropFilter { ev ->
-          if (ev.action == MotionEvent.ACTION_DOWN || ev.action == MotionEvent.ACTION_MOVE) {
-            val safeY = ev.y.coerceIn(0f, matrixSize.height.toFloat())
-            hueCursor = safeY
-            hue = hueCoordinatesToHue(safeY, matrixSize)
-            val newColor = matrixCoordinatesToColor(hue, matrixCursor.x, matrixCursor.y, matrixSize)
-            setSelectedColor(newColor)
+        .pointerInput {
+          forEachGesture {
+            handlePointerInput {
+              var change = awaitFirstDown()
+              while (change.current.down) {
+                val position = change.current.position
+                val safeY = position.y.coerceIn(0f, matrixSize.height.toFloat())
+                hueCursor = safeY
+                hue = hueCoordinatesToHue(safeY, matrixSize)
+                val newColor =
+                  matrixCoordinatesToColor(hue, matrixCursor.x, matrixCursor.y, matrixSize)
+                setSelectedColor(newColor)
+
+                change = awaitPointerEvent().changes.first()
+              }
+            }
           }
-          true
-        })
+        }
+      )
     }
 
     Row(Modifier.padding(top = 8.dp), verticalAlignment = Alignment.Bottom) {
