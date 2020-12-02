@@ -30,7 +30,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.onCommit
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.AnimationClockAmbient
+import androidx.compose.ui.platform.AmbientAnimationClock
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -134,7 +134,7 @@ private fun LibraryPager(
 ) {
   if (categories.isEmpty()) return
 
-  val clock = AnimationClockAmbient.current
+  val clock = AmbientAnimationClock.current
   val state = remember(categories.size, selectedPage) {
     PagerState(
       clock = clock,
@@ -164,8 +164,8 @@ private fun LibraryGrid(
 ) {
   AutofitGrid(
     data = library,
-    defaultColumnWidth = 160.dp,
-    modifier = Modifier.fillMaxSize()
+    modifier = Modifier.fillMaxSize(),
+    defaultColumnWidth = 160.dp
   ) { manga ->
     MangaGridItem(
       title = manga.title,

@@ -15,9 +15,9 @@ android {
       proguardFile(file("proguard-rules.pro"))
     }
   }
-  packagingOptions {
-    pickFirst("META-INF/common.kotlin_module")
-  }
+//  packagingOptions {
+//    pickFirst("META-INF/common.kotlin_module")
+//  }
 }
 
 dependencies {

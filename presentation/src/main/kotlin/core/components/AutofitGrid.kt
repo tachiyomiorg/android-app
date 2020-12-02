@@ -16,21 +16,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.ConfigurationAmbient
+import androidx.compose.ui.platform.AmbientConfiguration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.ui.tooling.preview.Preview
 
 @Composable
 fun <T> AutofitGrid(
-  columns: Int = 0,
-  defaultColumnWidth: Dp = 100.dp,
   data: List<T>,
   modifier: Modifier = Modifier,
-  child: @Composable (T) -> Unit
+  columns: Int = 0,
+  defaultColumnWidth: Dp = 100.dp,
+  content: @Composable (T) -> Unit
 ) {
   val numColumns = if (columns == 0) {
-    ConfigurationAmbient.current.screenWidthDp / defaultColumnWidth.value.toInt()
+    AmbientConfiguration.current.screenWidthDp / defaultColumnWidth.value.toInt()
   } else {
     columns
   }
@@ -42,7 +42,7 @@ fun <T> AutofitGrid(
           val i = (index * numColumns) + cell
           Box(modifier = Modifier.weight(1f)) {
             if (i < data.size) {
-              child(data[i])
+              content(data[i])
             }
           }
         }
@@ -54,7 +54,7 @@ fun <T> AutofitGrid(
 @Preview
 @Composable
 private fun AutofitGridPreview() {
-  AutofitGrid(columns = 3, data = listOf("a", "b", "c")) {
+  AutofitGrid(data = listOf("a", "b", "c"), columns = 3) {
     Box(modifier = Modifier.fillMaxSize()) {
       Text(it)
     }

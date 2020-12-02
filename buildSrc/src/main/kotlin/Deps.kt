@@ -2,7 +2,7 @@
 object Deps {
 
   object kotlin {
-    const val version = "1.4.10"
+    const val version = "1.4.20"
     const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version"
     const val reflect = "org.jetbrains.kotlin:kotlin-reflect:$version"
 
@@ -14,7 +14,7 @@ object Deps {
   }
 
   object coroutines {
-    private const val version = "1.4.1"
+    private const val version = "1.4.2"
     const val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
     const val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$version"
   }
@@ -28,13 +28,13 @@ object Deps {
   }
 
   object compose {
-    const val version = "1.0.0-alpha07"
-    const val navigationVersion = "1.0.0-alpha02"
+    const val version = "1.0.0-alpha08"
+    const val navigationVersion = "1.0.0-alpha03"
     const val compiler = "androidx.compose.compiler:compiler:$version"
     const val ui = "androidx.compose.ui:ui:$version"
     const val material = "androidx.compose.material:material:$version"
     const val icons = "androidx.compose.material:material-icons-extended:$version"
-    const val tooling = "androidx.ui:ui-tooling:$version"
+    const val tooling = "androidx.compose.ui:ui-tooling:$version"
     const val navigation = "androidx.navigation:navigation-compose:$navigationVersion"
   }
 

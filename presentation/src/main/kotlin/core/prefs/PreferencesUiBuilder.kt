@@ -46,7 +46,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.gesture.longPressGestureFilter
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.useOrElse
-import androidx.compose.ui.graphics.vector.VectorAsset
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -55,13 +55,13 @@ import tachiyomi.ui.core.components.ColorPickerDialog
 @Composable
 fun PreferencesScrollableColumn(
   modifier: Modifier = Modifier,
-  children: @Composable PreferenceScope.() -> Unit
+  content: @Composable PreferenceScope.() -> Unit
 ) {
   val dialog = remember { mutableStateOf<(@Composable () -> Unit)?>(null) }
   Box {
     ScrollableColumn(modifier) {
       val scope = PreferenceScope(dialog)
-      scope.children()
+      scope.content()
     }
     dialog.value?.invoke()
   }
@@ -177,7 +177,7 @@ class PreferenceScope(dialog: MutableState<(@Composable () -> Unit)?>) {
 @Composable
 fun Pref(
   title: String,
-  icon: VectorAsset? = null,
+  icon: ImageVector? = null,
   onClick: () -> Unit = {},
   onLongClick: () -> Unit = {},
   subtitle: String? = null,
@@ -192,7 +192,7 @@ fun Pref(
   ) {
     if (icon != null) {
       Icon(
-        asset = icon,
+        imageVector = icon,
         modifier = Modifier.padding(horizontal = 16.dp).size(24.dp),
         tint = MaterialTheme.colors.primary
       )
@@ -225,7 +225,7 @@ fun Pref(
 @Composable
 fun Pref(
   @StringRes title: Int,
-  icon: VectorAsset? = null,
+  icon: ImageVector? = null,
   onClick: () -> Unit = {},
   onLongClick: () -> Unit = {},
   subtitle: String? = null,
@@ -239,7 +239,7 @@ fun SwitchPref(
   preference: PreferenceMutableState<Boolean>,
   title: String,
   subtitle: String? = null,
-  icon: VectorAsset? = null,
+  icon: ImageVector? = null,
 ) {
   Pref(
     title = title,
@@ -255,7 +255,7 @@ fun SwitchPref(
   preference: PreferenceMutableState<Boolean>,
   @StringRes title: Int,
   subtitle: Int? = null,
-  icon: VectorAsset? = null,
+  icon: ImageVector? = null,
 ) {
   SwitchPref(preference, stringResource(title), subtitle?.let { stringResource(it) }, icon)
 }

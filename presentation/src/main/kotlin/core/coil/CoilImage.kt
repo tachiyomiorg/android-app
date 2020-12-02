@@ -22,7 +22,7 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toAndroidRect
 import androidx.compose.ui.layout.WithConstraints
-import androidx.compose.ui.platform.ContextAmbient
+import androidx.compose.ui.platform.AmbientContext
 import coil.request.ImageRequest
 import coil.size.OriginalSize
 import coil.size.PixelSize
@@ -37,7 +37,7 @@ fun <T> CoilImage(
 ) {
   WithConstraints {
     val drawable: MutableState<Drawable?> = remember { mutableStateOf(null) }
-    val context = ContextAmbient.current
+    val context = AmbientContext.current
     onCommit(model) {
       val width =
         if (constraints.maxWidth > 0 && constraints.maxWidth < Int.MAX_VALUE) {

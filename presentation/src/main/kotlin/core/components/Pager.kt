@@ -129,13 +129,13 @@ private val Measurable.page: Int
 @Composable
 fun Pager(
   state: PagerState,
-  offscreenLimit: Int = 1,
   modifier: Modifier = Modifier,
-  pageContent: @Composable PagerScope.() -> Unit
+  offscreenLimit: Int = 1,
+  content: @Composable PagerScope.() -> Unit
 ) {
   var pageSize by remember { mutableStateOf(0) }
   Layout(
-    children = {
+    content = {
       val minPage = (state.currentPage - offscreenLimit).coerceAtLeast(state.minPage)
       val maxPage = (state.currentPage + offscreenLimit).coerceAtMost(state.maxPage)
 
@@ -143,8 +143,8 @@ fun Pager(
         val pageData = PageData(page)
         val scope = PagerScope(state, page)
         key(pageData) {
-          Box(alignment = Alignment.Center, modifier = pageData) {
-            scope.pageContent()
+          Box(contentAlignment = Alignment.Center, modifier = pageData) {
+            scope.content()
           }
         }
       }

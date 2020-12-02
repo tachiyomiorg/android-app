@@ -114,6 +114,6 @@ private fun ButtonsRow(buttons: @Composable RowScope.() -> Unit) {
   Row(
     modifier = Modifier.fillMaxWidth().padding(8.dp),
     horizontalArrangement = Arrangement.End,
-    children = buttons
+    content = buttons
   )
 }

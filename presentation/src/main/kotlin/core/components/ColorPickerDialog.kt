@@ -61,7 +61,6 @@ import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastForEachIndexed
 import kotlin.math.round
 
 private val presetColors = listOf(
@@ -189,7 +188,7 @@ private fun ColorPresetItem(
   isSelected: Boolean,
   onClick: () -> Unit
 ) {
-  Box(alignment = Alignment.Center, modifier = Modifier
+  Box(contentAlignment = Alignment.Center, modifier = Modifier
     .fillMaxWidth()
     .padding(4.dp)
     .size(48.dp)
@@ -200,7 +199,7 @@ private fun ColorPresetItem(
   ) {
     if (isSelected) {
       Icon(
-        asset = Icons.Default.Check.copy(defaultWidth = 32.dp, defaultHeight = 32.dp),
+        imageVector = Icons.Default.Check.copy(defaultWidth = 32.dp, defaultHeight = 32.dp),
         tint = if (color.luminance() > 0.5) Color.Black else Color.White,
       )
     }
@@ -316,7 +315,7 @@ fun ColorPalette(
           val cursorSize = Size(size.width, 10f)
           val cursorTopLeft = Offset(0f, hueCursor - (cursorSize.height / 2))
           onDrawBehind {
-            colors.fastForEachIndexed { i, color ->
+            colors.forEachIndexed { i, color ->
               val pos = i.toFloat()
               drawLine(color, Offset(0f, pos), Offset(size.width, pos))
             }

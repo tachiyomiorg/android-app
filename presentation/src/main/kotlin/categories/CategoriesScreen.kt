@@ -36,9 +36,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Providers
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.ui.tooling.preview.Preview
 import tachiyomi.domain.library.model.Category
 import tachiyomi.ui.categories.CategoriesViewModel.Dialog
 import tachiyomi.ui.core.components.BackIconButton
@@ -68,7 +68,7 @@ fun CategoriesScreen(navController: NavHostController) {
       }
       ExtendedFloatingActionButton(
         text = { Text(text = "Add") },
-        icon = { Icon(asset = Icons.Default.Add) },
+        icon = { Icon(imageVector = Icons.Default.Add) },
         modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
         onClick = { vm.showCreateDialog() }
       )
@@ -114,7 +114,7 @@ private fun CategoryRow(
     Column {
       Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(
-          asset = Icons.Outlined.Label,
+          imageVector = Icons.Outlined.Label,
           modifier = Modifier.size(56.dp),
           tint = MaterialTheme.colors.primary
         )
@@ -132,7 +132,7 @@ private fun CategoryRow(
             enabled = moveUpEnabled
           ) {
             Icon(
-              asset = Icons.Default.ArrowDropUp,
+              imageVector = Icons.Default.ArrowDropUp,
               tint = if (moveUpEnabled) enabledColor else disabledColor
             )
           }
@@ -141,16 +141,16 @@ private fun CategoryRow(
             enabled = moveDownEnabled
           ) {
             Icon(
-              asset = Icons.Default.ArrowDropDown,
+              imageVector = Icons.Default.ArrowDropDown,
               tint = if (moveDownEnabled) enabledColor else disabledColor
             )
           }
           Spacer(modifier = Modifier.weight(1f))
           IconButton(onClick = onRename) {
-            Icon(asset = Icons.Default.Edit)
+            Icon(imageVector = Icons.Default.Edit)
           }
           IconButton(onClick = onDelete) {
-            Icon(asset = Icons.Default.Delete)
+            Icon(imageVector = Icons.Default.Delete)
           }
         }
       }

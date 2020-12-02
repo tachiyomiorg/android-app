@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.selection.ToggleableState
 import androidx.compose.material.AmbientContentColor
 import androidx.compose.material.Checkbox
 import androidx.compose.material.ContentAlpha
@@ -38,7 +37,8 @@ import androidx.compose.runtime.onCommit
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.AnimationClockAmbient
+import androidx.compose.ui.platform.AmbientAnimationClock
+import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.unit.dp
 import tachiyomi.domain.library.model.DisplayMode
 import tachiyomi.domain.library.model.LibraryFilter
@@ -57,7 +57,7 @@ import java.util.Locale
 fun LibrarySheet() {
   val vm = viewModel<LibrarySheetViewModel>()
 
-  val clock = AnimationClockAmbient.current
+  val clock = AmbientAnimationClock.current
   val selectedPage = vm.selectedPage
   val state = remember(selectedPage) {
     PagerState(clock, selectedPage, 0, 2)
@@ -222,7 +222,7 @@ private fun ClickableRow(onClick: () -> Unit, content: @Composable () -> Unit) {
   Row(
     modifier = Modifier.fillMaxWidth().height(48.dp).clickable(onClick = { onClick() }),
     verticalAlignment = Alignment.CenterVertically,
-    children = { content() }
+    content = { content() }
   )
 }
 

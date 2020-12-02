@@ -27,7 +27,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Providers
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.ContextAmbient
+import androidx.compose.ui.platform.AmbientContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
@@ -59,7 +59,7 @@ class MoreViewModel @Inject constructor(
 @Composable
 fun MoreScreen(navController: NavController) {
   val vm = viewModel<MoreViewModel>()
-  val context = ContextAmbient.current
+  val context = AmbientContext.current
 
   Column {
     Toolbar(

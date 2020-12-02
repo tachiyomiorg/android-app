@@ -13,6 +13,7 @@ android {
     compose = true
   }
   composeOptions {
+    kotlinCompilerVersion = "1.4.20"
     kotlinCompilerExtensionVersion = Deps.compose.version
   }
 }

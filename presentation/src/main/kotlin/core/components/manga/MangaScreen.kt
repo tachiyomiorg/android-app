@@ -79,7 +79,11 @@ private fun MangaInfoHeader(manga: Manga, onFavorite: () -> Unit) {
     Row {
       // TODO: favorite should be stateful so that the UI actually updates
       Button(onClick = onFavorite) {
-        Icon(asset = if (manga.favorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder)
+        Icon(imageVector = if (manga.favorite) {
+          Icons.Default.Favorite
+        } else {
+          Icons.Default.FavoriteBorder
+        })
         Text(if (manga.favorite) "In library" else "Add to library")
       }
     }

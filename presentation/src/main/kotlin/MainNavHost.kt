@@ -28,7 +28,7 @@ import androidx.compose.material.icons.filled.NewReleases
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.VectorAsset
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavType
@@ -162,7 +162,7 @@ fun MainNavHost(startRoute: Route) {
   )
 }
 
-private enum class TopLevelRoutes(val route: Route, val text: Int, val icon: VectorAsset) {
+private enum class TopLevelRoutes(val route: Route, val text: Int, val icon: ImageVector) {
   Library(Route.Library, R.string.library_label, Icons.Default.Book),
   Updates(Route.Updates, R.string.updates_label, Icons.Default.NewReleases),
   History(Route.History, R.string.history_label, Icons.Default.History),
