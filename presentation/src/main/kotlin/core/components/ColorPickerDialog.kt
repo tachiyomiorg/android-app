@@ -59,33 +59,12 @@ import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.useOrElse
+import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import kotlin.math.round
-
-private val presetColors = listOf(
-  Color(0xFFD81B60), // RED 500
-  Color(0xFFE91E63), // PINK 500
-  Color(0xFFFF2C93), // LIGHT PINK 500
-  Color(0xFF9C27B0), // PURPLE 500
-  Color(0xFF673AB7), // DEEP PURPLE 500
-  Color(0xFF3F51B5), // INDIGO 500
-  Color(0xFF2196F3), // BLUE 500
-  Color(0xFF03A9F4), // LIGHT BLUE 500
-  Color(0xFF00BCD4), // CYAN 500
-  Color(0xFF009688), // TEAL 500
-  Color(0xFF4CAF50), // GREEN 500
-  Color(0xFF8BC34A), // LIGHT GREEN 500
-  Color(0xFFCDDC39), // LIME 500
-  Color(0xFFFFEB3B), // YELLOW 500
-  Color(0xFFFFC107), // AMBER 500
-  Color(0xFFFF9800), // ORANGE 500
-  Color(0xFF795548), // BROWN 500
-  Color(0xFF607D8B), // BLUE GREY 500
-  Color(0xFF9E9E9E), // GREY 500
-)
 
 @Composable
 fun ColorPickerDialog(
@@ -294,23 +273,18 @@ fun ColorPalette(
         }
         .pointerInput {
           forEachGesture {
-            handlePointerInput {
-              var change = awaitFirstDown()
-              while (change.current.down) {
-                val position = change.current.position
-                val safeX = position.x.coerceIn(0f, matrixSize.width.toFloat())
-                val safeY = position.y.coerceIn(0f, matrixSize.height.toFloat())
-                matrixCursor = Offset(safeX, safeY)
-                val newColor = matrixCoordinatesToColor(hue, safeX, safeY, matrixSize)
-                setSelectedColor(newColor)
-
-                change = awaitPointerEvent().changes.first()
-              }
+            detectMove { offset ->
+              val safeOffset = offset.copy(
+                x = offset.x.coerceIn(0f, matrixSize.width.toFloat()),
+                y = offset.y.coerceIn(0f, matrixSize.height.toFloat())
+              )
+              matrixCursor = safeOffset
+              val newColor = matrixCoordinatesToColor(hue, safeOffset, matrixSize)
+              setSelectedColor(newColor)
             }
           }
         }
       )
-
       Box(Modifier
         .fillMaxHeight()
         .width(48.dp)
@@ -335,25 +309,17 @@ fun ColorPalette(
         }
         .pointerInput {
           forEachGesture {
-            handlePointerInput {
-              var change = awaitFirstDown()
-              while (change.current.down) {
-                val position = change.current.position
-                val safeY = position.y.coerceIn(0f, matrixSize.height.toFloat())
-                hueCursor = safeY
-                hue = hueCoordinatesToHue(safeY, matrixSize)
-                val newColor =
-                  matrixCoordinatesToColor(hue, matrixCursor.x, matrixCursor.y, matrixSize)
-                setSelectedColor(newColor)
-
-                change = awaitPointerEvent().changes.first()
-              }
+            detectMove { offset ->
+              val safeY = offset.y.coerceIn(0f, matrixSize.height.toFloat())
+              hueCursor = safeY
+              hue = hueCoordinatesToHue(safeY, matrixSize)
+              val newColor = matrixCoordinatesToColor(hue, matrixCursor, matrixSize)
+              setSelectedColor(newColor)
             }
           }
         }
       )
     }
-
     Row(Modifier.padding(top = 8.dp), verticalAlignment = Alignment.Bottom) {
       Box(Modifier.size(72.dp, 48.dp).background(selectedColor)
         .border(1.dp, MaterialTheme.colors.onBackground.copy(alpha = 0.54f)))
@@ -373,11 +339,22 @@ fun ColorPalette(
   }
 }
 
+@OptIn(ExperimentalPointerInput::class)
+private suspend fun PointerInputScope.detectMove(onMove: (Offset) -> Unit) {
+  handlePointerInput {
+    var change = awaitFirstDown()
+    while (change.current.down) {
+      onMove(change.current.position)
+      change = awaitPointerEvent().changes.first()
+    }
+  }
+}
+
 // Coordinates <-> Color
 
-private fun matrixCoordinatesToColor(hue: Float, x: Float, y: Float, size: IntSize): Color {
-  val saturation = 1f / size.width * x
-  val value = 1f - (1f / size.height * y)
+private fun matrixCoordinatesToColor(hue: Float, position: Offset, size: IntSize): Color {
+  val saturation = 1f / size.width * position.x
+  val value = 1f - (1f / size.height * position.y)
   return hsvToColor(hue, saturation, value)
 }
 
@@ -422,3 +399,25 @@ private fun hexStringToColor(hex: String): Color? {
     null
   }
 }
+
+private val presetColors = listOf(
+  Color(0xFFF44336), // RED 500
+  Color(0xFFE91E63), // PINK 500
+  Color(0xFFFF2C93), // LIGHT PINK 500
+  Color(0xFF9C27B0), // PURPLE 500
+  Color(0xFF673AB7), // DEEP PURPLE 500
+  Color(0xFF3F51B5), // INDIGO 500
+  Color(0xFF2196F3), // BLUE 500
+  Color(0xFF03A9F4), // LIGHT BLUE 500
+  Color(0xFF00BCD4), // CYAN 500
+  Color(0xFF009688), // TEAL 500
+  Color(0xFF4CAF50), // GREEN 500
+  Color(0xFF8BC34A), // LIGHT GREEN 500
+  Color(0xFFCDDC39), // LIME 500
+  Color(0xFFFFEB3B), // YELLOW 500
+  Color(0xFFFFC107), // AMBER 500
+  Color(0xFFFF9800), // ORANGE 500
+  Color(0xFF795548), // BROWN 500
+  Color(0xFF607D8B), // BLUE GREY 500
+  Color(0xFF9E9E9E), // GREY 500
+)
