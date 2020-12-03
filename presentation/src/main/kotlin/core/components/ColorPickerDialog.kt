@@ -272,16 +272,14 @@ fun ColorPalette(
           drawCircle(Color.LightGray, radius = 12f, center = matrixCursor, style = cursorStroke)
         }
         .pointerInput {
-          forEachGesture {
-            detectMove { offset ->
-              val safeOffset = offset.copy(
-                x = offset.x.coerceIn(0f, matrixSize.width.toFloat()),
-                y = offset.y.coerceIn(0f, matrixSize.height.toFloat())
-              )
-              matrixCursor = safeOffset
-              val newColor = matrixCoordinatesToColor(hue, safeOffset, matrixSize)
-              setSelectedColor(newColor)
-            }
+          detectMove { offset ->
+            val safeOffset = offset.copy(
+              x = offset.x.coerceIn(0f, matrixSize.width.toFloat()),
+              y = offset.y.coerceIn(0f, matrixSize.height.toFloat())
+            )
+            matrixCursor = safeOffset
+            val newColor = matrixCoordinatesToColor(hue, safeOffset, matrixSize)
+            setSelectedColor(newColor)
           }
         }
       )
@@ -308,14 +306,12 @@ fun ColorPalette(
           }
         }
         .pointerInput {
-          forEachGesture {
-            detectMove { offset ->
-              val safeY = offset.y.coerceIn(0f, matrixSize.height.toFloat())
-              hueCursor = safeY
-              hue = hueCoordinatesToHue(safeY, matrixSize)
-              val newColor = matrixCoordinatesToColor(hue, matrixCursor, matrixSize)
-              setSelectedColor(newColor)
-            }
+          detectMove { offset ->
+            val safeY = offset.y.coerceIn(0f, matrixSize.height.toFloat())
+            hueCursor = safeY
+            hue = hueCoordinatesToHue(safeY, matrixSize)
+            val newColor = matrixCoordinatesToColor(hue, matrixCursor, matrixSize)
+            setSelectedColor(newColor)
           }
         }
       )
@@ -341,11 +337,13 @@ fun ColorPalette(
 
 @OptIn(ExperimentalPointerInput::class)
 private suspend fun PointerInputScope.detectMove(onMove: (Offset) -> Unit) {
-  handlePointerInput {
-    var change = awaitFirstDown()
-    while (change.current.down) {
-      onMove(change.current.position)
-      change = awaitPointerEvent().changes.first()
+  forEachGesture {
+    handlePointerInput {
+      var change = awaitFirstDown()
+      while (change.current.down) {
+        onMove(change.current.position)
+        change = awaitPointerEvent().changes.first()
+      }
     }
   }
 }
