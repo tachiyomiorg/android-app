@@ -13,7 +13,6 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -27,25 +26,23 @@ import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.onCommit
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.AmbientAnimationClock
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import tachiyomi.domain.library.model.Category
+import tachiyomi.domain.library.model.DisplayMode
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.ui.R
 import tachiyomi.ui.Route
 import tachiyomi.ui.categories.visibleName
-import tachiyomi.ui.core.coil.MangaCover
-import tachiyomi.ui.core.components.AutofitGrid
 import tachiyomi.ui.core.components.Pager
 import tachiyomi.ui.core.components.PagerState
 import tachiyomi.ui.core.components.Toolbar
-import tachiyomi.ui.core.components.manga.MangaGridItem
 import tachiyomi.ui.core.theme.CustomColors
 import tachiyomi.ui.core.viewmodel.viewModel
 
@@ -83,6 +80,7 @@ fun LibraryScreen(navController: NavController) {
       )
       LibraryPager(
         categories = vm.categories,
+        displayMode = vm.displayMode,
         selectedPage = vm.selectedCategoryIndex,
         getLibraryForPage = { vm.getLibraryForCategoryIndex(it) },
         onPageChanged = { vm.setSelectedPage(it) },
@@ -103,7 +101,7 @@ private fun LibraryTabs(
   if (categories.isEmpty()) return
 
   AnimatedVisibility(
-    visible = visible,
+    visible = true /*visible*/, // TODO this breaks on alpha08
     enter = expandVertically(),
     exit = shrinkVertically()
   ) {
@@ -127,6 +125,7 @@ private fun LibraryTabs(
 @Composable
 private fun LibraryPager(
   categories: List<Category>,
+  displayMode: DisplayMode,
   selectedPage: Int,
   getLibraryForPage: @Composable (Int) -> State<List<LibraryManga>>,
   onPageChanged: (Int) -> Unit,
@@ -149,28 +148,20 @@ private fun LibraryPager(
     }
   }
   Pager(state = state, offscreenLimit = 1) {
-    val library = getLibraryForPage(page)
-    LibraryGrid(
-      library = library.value,
-      onClickManga = onClickManga
-    )
-  }
-}
-
-@Composable
-private fun LibraryGrid(
-  library: List<LibraryManga>,
-  onClickManga: (LibraryManga) -> Unit = {}
-) {
-  AutofitGrid(
-    data = library,
-    modifier = Modifier.fillMaxSize(),
-    defaultColumnWidth = 160.dp
-  ) { manga ->
-    MangaGridItem(
-      title = manga.title,
-      cover = MangaCover.from(manga),
-      onClick = { onClickManga(manga) }
-    )
+    val library by getLibraryForPage(page)
+    when (displayMode) {
+      DisplayMode.CompactGrid -> LibraryMangaCompactGrid(
+        library = library,
+        onClickManga = onClickManga
+      )
+      DisplayMode.ComfortableGrid -> LibraryMangaComfortableGrid(
+        library = library,
+        onClickManga = onClickManga
+      )
+      DisplayMode.List -> LibraryMangaList(
+        library = library,
+        onClickManga = onClickManga
+      )
+    }
   }
 }

@@ -27,13 +27,14 @@ import coil.request.ImageRequest
 import coil.size.OriginalSize
 import coil.size.PixelSize
 import coil.size.Scale
+import coil.size.Scale.FILL
 import tachiyomi.core.log.Log
 
 @Composable
 fun <T> CoilImage(
   model: T,
-  scale: Scale = Scale.FILL,
-  modifier: Modifier = Modifier.fillMaxSize()
+  modifier: Modifier = Modifier.fillMaxSize(),
+  scale: Scale = FILL
 ) {
   WithConstraints {
     val drawable: MutableState<Drawable?> = remember { mutableStateOf(null) }
@@ -70,11 +71,12 @@ fun <T> CoilImage(
       }
     }
 
-    drawable.value?.let { theDrawable ->
-      Canvas(modifier = modifier) {
-        theDrawable.bounds = size.toRect().toAndroidRect()
+    Canvas(modifier = modifier) {
+      val value = drawable.value
+      if (value != null) {
+        value.bounds = size.toRect().toAndroidRect()
         drawIntoCanvas {
-          theDrawable.draw(it.nativeCanvas)
+          value.draw(it.nativeCanvas)
         }
       }
     }

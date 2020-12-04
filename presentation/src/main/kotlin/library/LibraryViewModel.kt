@@ -44,13 +44,15 @@ class LibraryViewModel @Inject constructor(
     private set
   var library by mutableStateOf(emptyList<LibraryManga>())
     private set
-  val filters by libraryPreferences.filters().asState()
-  val sorting by libraryPreferences.sorting().asState()
   var selectedManga by mutableStateOf(emptySet<Long>())
     private set
   var showUpdatingCategory by mutableStateOf(false)
     private set
   var sheetVisible by mutableStateOf(false)
+
+  val filters by libraryPreferences.filters().asState()
+  val sorting by libraryPreferences.sorting().asState()
+  val displayMode by libraryPreferences.displayMode().asState()
   val showCategoryTabs by libraryPreferences.showCategoryTabs().asState()
 
   val selectedCategory get() = categories.getOrNull(selectedCategoryIndex)
