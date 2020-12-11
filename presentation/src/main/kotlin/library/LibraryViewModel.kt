@@ -82,8 +82,9 @@ class LibraryViewModel @Inject constructor(
   @Composable
   fun getLibraryForCategoryIndex(categoryIndex: Int): State<List<LibraryManga>> {
     val categoryId = categories[categoryIndex].id
-    return remember(categoryId, sorting) { getLibraryCategory.subscribe(categoryId, sorting) }
-      .collectAsState(emptyList())
+    return remember(categoryId, sorting, filters) {
+      getLibraryCategory.subscribe(categoryId, sorting, filters)
+    }.collectAsState(emptyList())
   }
 
 //  private fun getSideEffects(): List<SideEffect<LibraryState, Action>> {

@@ -15,9 +15,9 @@ import tachiyomi.domain.library.model.LibraryFilter.Value.Missing
 data class LibraryFilter(val type: Type, val value: Value) {
 
   enum class Type {
-    Downloaded,
     Unread,
-    Completed;
+    Completed,
+    Downloaded;
   }
 
   enum class Value {
