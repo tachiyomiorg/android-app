@@ -148,9 +148,8 @@ fun MainNavHost(startRoute: Route) {
               },
               selected = currentRoute == it.route.id,
               onClick = {
-                navController.popBackStack(navController.graph.startDestination, false)
-
                 if (currentRoute != it.route.id) {
+                  navController.popBackStack(navController.graph.startDestination, false)
                   navController.navigate(it.route.id)
                 }
               },
