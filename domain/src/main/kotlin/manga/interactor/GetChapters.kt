@@ -8,11 +8,12 @@
 
 package tachiyomi.domain.manga.interactor
 
+import kotlinx.coroutines.flow.Flow
 import tachiyomi.domain.manga.model.Chapter
 import tachiyomi.domain.manga.service.ChapterRepository
 import javax.inject.Inject
 
-class GetChapter @Inject internal constructor(
+class GetChapters @Inject internal constructor(
   private val repository: ChapterRepository
 ) {
 
@@ -22,6 +23,14 @@ class GetChapter @Inject internal constructor(
 
   suspend fun await(key: String, mangaId: Long): Chapter? {
     return repository.find(key, mangaId)
+  }
+
+  suspend fun awaitForManga(mangaId: Long): List<Chapter> {
+    return repository.findForManga(mangaId)
+  }
+
+  fun subscribeForManga(mangaId: Long): Flow<List<Chapter>> {
+    return repository.subscribeForManga(mangaId)
   }
 
 }

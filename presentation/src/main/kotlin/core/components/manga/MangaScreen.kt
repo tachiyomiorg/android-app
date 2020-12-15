@@ -27,8 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import tachiyomi.domain.manga.model.Chapter
 import tachiyomi.domain.manga.model.Manga
-import tachiyomi.source.model.ChapterInfo
 import tachiyomi.ui.core.coil.CoilImage
 import tachiyomi.ui.core.coil.MangaCover
 import tachiyomi.ui.core.components.LoadingScreen
@@ -37,7 +37,7 @@ import tachiyomi.ui.core.components.LoadingScreen
 fun MangaScreen(
   navController: NavController,
   manga: Manga?,
-  chapters: List<ChapterInfo> = emptyList(),
+  chapters: List<Chapter> = emptyList(),
   onFavorite: () -> Unit = {},
 ) {
   if (manga == null) {
@@ -77,7 +77,6 @@ private fun MangaInfoHeader(manga: Manga, onFavorite: () -> Unit) {
       }
     }
     Row {
-      // TODO: favorite should be stateful so that the UI actually updates
       Button(onClick = onFavorite) {
         Icon(imageVector = if (manga.favorite) {
           Icons.Default.Favorite
@@ -91,7 +90,7 @@ private fun MangaInfoHeader(manga: Manga, onFavorite: () -> Unit) {
 }
 
 @Composable
-private fun MangaChapters(chapters: List<ChapterInfo>) {
+private fun MangaChapters(chapters: List<Chapter>) {
   chapters.forEach {
     Text("${it.number}: ${it.name}")
   }

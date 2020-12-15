@@ -18,15 +18,15 @@ import tachiyomi.ui.core.components.manga.MangaScreen
 import tachiyomi.ui.core.viewmodel.viewModel
 
 @Composable
-fun CatalogMangaScreen(navController: NavHostController, sourceId: Long, mangaId: Long) {
+fun CatalogMangaScreen(navController: NavHostController, mangaId: Long) {
   val vm = viewModel<CatalogMangaViewModel> {
-    CatalogMangaViewModel.Params(sourceId, mangaId)
+    CatalogMangaViewModel.Params(mangaId)
   }
 
   Scaffold(
     topBar = {
       Toolbar(
-        title = { Text(vm.manga?.title ?: "$sourceId/$mangaId") },
+        title = { Text(vm.manga?.title ?: "$mangaId") },
         navigationIcon = { BackIconButton(navController) },
       )
     },

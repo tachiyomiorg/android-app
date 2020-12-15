@@ -101,9 +101,8 @@ fun MainNavHost(startRoute: Route) {
               navArgument("mangaId") { type = NavType.LongType },
             )
           ) { backStackEntry ->
-            val sourceId = backStackEntry.arguments?.getLong("sourceId") as Long
             val mangaId = backStackEntry.arguments?.getLong("mangaId") as Long
-            CatalogMangaScreen(navController, sourceId, mangaId)
+            CatalogMangaScreen(navController, mangaId)
           }
 
           composable(Route.Categories.id) { CategoriesScreen(navController) }

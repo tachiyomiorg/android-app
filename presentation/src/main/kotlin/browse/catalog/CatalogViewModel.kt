@@ -17,6 +17,7 @@ import kotlinx.coroutines.withContext
 import tachiyomi.domain.catalog.interactor.GetLocalCatalog
 import tachiyomi.domain.catalog.model.CatalogLocal
 import tachiyomi.domain.manga.interactor.ListMangaPageFromCatalogSource
+import tachiyomi.domain.manga.interactor.MangaInitializer
 import tachiyomi.domain.manga.model.Manga
 import tachiyomi.source.CatalogSource
 import tachiyomi.ui.core.viewmodel.BaseViewModel
@@ -26,6 +27,7 @@ class CatalogViewModel @Inject constructor(
   private val params: Params,
   private val getLocalCatalog: GetLocalCatalog,
   private val listMangaPageFromCatalogSource: ListMangaPageFromCatalogSource,
+  private val mangaInitializer: MangaInitializer
 ) : BaseViewModel() {
 
   private var page: Int = 1
@@ -55,8 +57,15 @@ class CatalogViewModel @Inject constructor(
         if (catalog?.source is CatalogSource) {
           val mangaPage = listMangaPageFromCatalogSource.await((catalog!!.source as CatalogSource),
             null, page)
-          mangas += mangaPage.mangas
+          mangas = mangas + mangaPage.mangas
           hasNextPage = mangaPage.hasNextPage
+
+          // TODO maybe there should be a global task to not launch once per page
+          scope.launch(Dispatchers.IO) {
+            for (manga in mangaPage.mangas) {
+              mangaInitializer.await(manga)
+            }
+          }
 
           page++
         }

@@ -13,17 +13,17 @@ import tachiyomi.domain.manga.model.Manga
 import javax.inject.Inject
 
 class FindOrInitChapterFromSource @Inject internal constructor(
-  private val getChapter: GetChapter,
+  private val getChapters: GetChapters,
   private val syncChaptersFromSource: SyncChaptersFromSource
 ) {
 
   suspend fun await(chapterKey: String, manga: Manga): Chapter? {
-    val chapter = getChapter.await(chapterKey, manga.id)
+    val chapter = getChapters.await(chapterKey, manga.id)
     return if (chapter != null) {
       chapter
     } else {
       syncChaptersFromSource.await(manga)
-      getChapter.await(chapterKey, manga.id)
+      getChapters.await(chapterKey, manga.id)
     }
   }
 
