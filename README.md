@@ -1,4 +1,4 @@
-![CI](https://github.com/tachiyomiorg/android-app/workflows/CI/badge.svg?event=push)
+![CI](https://github.com/tachiyomiorg/tachiyomi-1.x/workflows/CI/badge.svg?event=push)
 
 ## What is this?
 

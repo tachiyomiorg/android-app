@@ -34,7 +34,7 @@ publishing {
       pom {
         name.set("Tachiyomi Common")
         description.set("Common classes for Tachiyomi.")
-        url.set("https://github.com/tachiyomiorg/android-app")
+        url.set("https://github.com/tachiyomiorg/tachiyomi-1.x")
         licenses {
           license {
             name.set("Mozilla Public License 2.0")
@@ -49,9 +49,9 @@ publishing {
           }
         }
         scm {
-          connection.set("scm:git:git:github.com:tachiyomiorg/android-app.git")
-          developerConnection.set("scm:git:github.com:tachiyomiorg/android-app.git")
-          url.set("https://github.com/tachiyomiorg/android-app")
+          connection.set("scm:git:git:github.com:tachiyomiorg/tachiyomi-1.x.git")
+          developerConnection.set("scm:git:github.com:tachiyomiorg/tachiyomi-1.x.git")
+          url.set("https://github.com/tachiyomiorg/tachiyomi-1.x")
         }
       }
     }
@@ -65,7 +65,7 @@ bintray {
     userOrg = "tachiyomiorg"
     repo = "maven"
     name = "common"
-    vcsUrl = "https://github.com/tachiyomiorg/android-app"
+    vcsUrl = "https://github.com/tachiyomiorg/tachiyomi-1.x"
     setLicenses("MPL-2.0")
     version = VersionConfig().apply {
       name = packageVersion
