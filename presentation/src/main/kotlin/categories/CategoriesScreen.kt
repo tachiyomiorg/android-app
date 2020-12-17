@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumnForIndexed
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.AmbientContentAlpha
 import androidx.compose.material.AmbientContentColor
 import androidx.compose.material.Card
@@ -55,16 +55,18 @@ fun CategoriesScreen(navController: NavHostController) {
       navigationIcon = { BackIconButton(navController) }
     )
     Box {
-      LazyColumnForIndexed(items = vm.categories, Modifier.fillMaxSize()) { i, category ->
-        CategoryRow(
-          category = category,
-          moveUpEnabled = i != 0,
-          moveDownEnabled = i != vm.categories.lastIndex,
-          onMoveUp = { vm.moveUp(category) },
-          onMoveDown = { vm.moveDown(category) },
-          onRename = { vm.showRenameDialog(category) },
-          onDelete = { vm.showDeleteDialog(category) },
-        )
+      LazyColumn(modifier = Modifier.fillMaxSize()) {
+        itemsIndexed(vm.categories) { i, category ->
+          CategoryRow(
+            category = category,
+            moveUpEnabled = i != 0,
+            moveDownEnabled = i != vm.categories.lastIndex,
+            onMoveUp = { vm.moveUp(category) },
+            onMoveDown = { vm.moveDown(category) },
+            onRename = { vm.showRenameDialog(category) },
+            onDelete = { vm.showDeleteDialog(category) },
+          )
+        }
       }
       ExtendedFloatingActionButton(
         text = { Text(text = "Add") },

@@ -101,7 +101,7 @@ private fun LibraryTabs(
   if (categories.isEmpty()) return
 
   AnimatedVisibility(
-    visible = true /*visible*/, // TODO this breaks on alpha08
+    visible = visible,
     enter = expandVertically(),
     exit = shrinkVertically()
   ) {

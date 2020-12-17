@@ -23,8 +23,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.LinearGradient
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -89,13 +90,11 @@ private fun LibraryMangaCompactGridItem(
 }
 
 private val shadowGradient = Modifier.drawWithCache {
-  val gradient = LinearGradient(
+  val gradient = Brush.linearGradient(
     0.75f to Color.Transparent,
     1.0f to Color(0xAA000000),
-    startX = 0f,
-    startY = 0f,
-    endX = 0f,
-    endY = size.height
+    start = Offset(0f, 0f),
+    end = Offset(0f, size.height)
   )
   onDrawBehind {
     drawRect(gradient)

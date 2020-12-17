@@ -17,11 +17,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRowFor
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.BottomAppBar
 import androidx.compose.material.Button
-import androidx.compose.material.ButtonConstants
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -94,15 +94,16 @@ fun SettingsAppearance(navController: NavHostController) {
         title = R.string.theme
       )
       Text("Preset themes", modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 4.dp))
-      LazyRowFor(themesForCurrentMode, Modifier.padding(horizontal = 8.dp)) { theme ->
-        ThemeItem(theme, onClick = {
-          (if (isLight) vm.lightTheme else vm.darkTheme).value = it.id
-          activeColors.primaryState.value = it.colors.primary
-          activeColors.secondaryState.value = it.colors.secondary
-          activeColors.barsState.value = it.customColors.bars
-        })
+      LazyRow(modifier = Modifier.padding(horizontal = 8.dp)) {
+        items(themesForCurrentMode) { theme ->
+          ThemeItem(theme, onClick = {
+            (if (isLight) vm.lightTheme else vm.darkTheme).value = it.id
+            activeColors.primaryState.value = it.colors.primary
+            activeColors.secondaryState.value = it.colors.secondary
+            activeColors.barsState.value = it.customColors.bars
+          })
+        }
       }
-
       ColorPref(preference = activeColors.primaryState, title = "Color primary",
         subtitle = "Displayed most frequently across your app",
         unsetColor = MaterialTheme.colors.primary)
@@ -144,7 +145,7 @@ private fun ThemeItem(
           contentPadding = PaddingValues(),
           modifier = Modifier.align(Alignment.BottomStart).size(40.dp, 20.dp),
           content = {},
-          colors = ButtonConstants.defaultButtonColors(
+          colors = ButtonDefaults.buttonColors(
             disabledBackgroundColor = theme.colors.primary
           )
         )

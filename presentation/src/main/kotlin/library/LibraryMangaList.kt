@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumnFor
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -32,16 +32,15 @@ fun LibraryMangaList(
   library: List<LibraryManga>,
   onClickManga: (LibraryManga) -> Unit = {}
 ) {
-  LazyColumnFor(
-    items = library,
-    modifier = Modifier.fillMaxSize()
-  ) { manga ->
-    LibraryMangaListItem(
-      manga = manga,
-      unread = null, // TODO
-      downloaded = null, // TODO
-      onClick = { onClickManga(manga) }
-    )
+  LazyColumn(modifier = Modifier.fillMaxSize()) {
+    items(library) { manga ->
+      LibraryMangaListItem(
+        manga = manga,
+        unread = null, // TODO
+        downloaded = null, // TODO
+        onClick = { onClickManga(manga) }
+      )
+    }
   }
 }
 

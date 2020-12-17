@@ -47,7 +47,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.annotatedString
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -234,7 +234,7 @@ fun CatalogItem(
       .padding(12.dp, 12.dp, 8.dp, 12.dp)
   ) {
     val mediumColor = AmbientContentColor.current.copy(alpha = ContentAlpha.medium)
-    val title = annotatedString {
+    val title = buildAnnotatedString {
       append("${catalog.name} ")
       val versionSpan = SpanStyle(fontSize = 12.sp, color = mediumColor)
       if (catalog is CatalogInstalled) {

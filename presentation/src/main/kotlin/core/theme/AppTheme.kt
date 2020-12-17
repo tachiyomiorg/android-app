@@ -22,7 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.useOrElse
-import androidx.compose.ui.platform.ContextAmbient
+import androidx.compose.ui.platform.AmbientContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
@@ -127,7 +127,7 @@ private class AppThemeViewModel @Inject constructor(
 
   @Composable
   fun tintSystemBars(color: Color) {
-    val activity = ContextAmbient.current as Activity
+    val activity = AmbientContext.current as Activity
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       activity.window.statusBarColor = color.toArgb()
       with(activity.window.decorView) {

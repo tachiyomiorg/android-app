@@ -28,7 +28,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRowFor
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Icon
@@ -50,10 +50,9 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.gesture.ExperimentalPointerInput
 import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.LinearGradient
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.graphics.luminance
@@ -148,16 +147,18 @@ private fun ColorPresets(
     Spacer(modifier = Modifier.padding(vertical = 16.dp).fillMaxWidth().height(1.dp)
       .background(MaterialTheme.colors.onBackground.copy(alpha = 0.2f)))
 
-    LazyRowFor(shades) { color ->
-      ColorPresetItem(
-        color = color,
-        borderColor = borderColor,
-        isSelected = selectedShade == color,
-        onClick = {
-          selectedShade = color
-          onColorChanged(color)
-        }
-      )
+    LazyRow {
+      items(shades) { color ->
+        ColorPresetItem(
+          color = color,
+          borderColor = borderColor,
+          isSelected = selectedShade == color,
+          onClick = {
+            selectedShade = color
+            onColorChanged(color)
+          }
+        )
+      }
     }
   }
 }
@@ -210,7 +211,7 @@ private fun shadeColor(f: Long, percent: Double): Color {
   return Color(red = red, green = green, blue = blue, alpha = 255)
 }
 
-@OptIn(ExperimentalLayout::class, ExperimentalPointerInput::class)
+@OptIn(ExperimentalLayout::class)
 @Composable
 fun ColorPalette(
   initialColor: Color = Color.White,
@@ -226,15 +227,16 @@ fun ColorPalette(
   var matrixCursor by remember { mutableStateOf(Offset(0f, 0f)) }
 
   val saturationGradient = remember(hue, matrixSize) {
-    LinearGradient(
+    Brush.linearGradient(
       colors = listOf(Color.White, hueToColor(hue)),
-      startX = 0f, startY = 0f, endX = matrixSize.width.toFloat(), endY = 0f
+      start = Offset(0f, 0f), end = Offset(matrixSize.width.toFloat(), 0f)
     )
   }
   val valueGradient = remember(matrixSize) {
-    LinearGradient(
+    Brush.linearGradient(
       colors = listOf(Color.White, Color.Black),
-      startX = 0f, startY = 0f, endX = 0f, endY = matrixSize.height.toFloat())
+      start = Offset(0f, 0f), end = Offset(0f, matrixSize.height.toFloat())
+    )
   }
 
   val cursorColor = MaterialTheme.colors.onBackground
@@ -335,10 +337,9 @@ fun ColorPalette(
   }
 }
 
-@OptIn(ExperimentalPointerInput::class)
 private suspend fun PointerInputScope.detectMove(onMove: (Offset) -> Unit) {
   forEachGesture {
-    handlePointerInput {
+    awaitPointerEventScope {
       var change = awaitFirstDown()
       while (change.current.down) {
         onMove(change.current.position)

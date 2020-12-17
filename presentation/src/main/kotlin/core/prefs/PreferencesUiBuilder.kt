@@ -22,7 +22,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredWidthIn
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumnFor
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.AmbientContentColor
@@ -31,7 +31,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.RadioButton
 import androidx.compose.material.Switch
-import androidx.compose.material.SwitchConstants
+import androidx.compose.material.SwitchDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -157,16 +157,19 @@ class PreferenceScope(dialog: MutableState<(@Composable () -> Unit)?>) {
     buttons: @Composable () -> Unit = emptyContent()
   ) {
     AlertDialog(onDismissRequest = onDismissRequest, buttons = buttons, title = title, text = {
-      LazyColumnFor(items = items) { (value, text) ->
-        Row(
-          modifier = Modifier.height(48.dp).fillMaxWidth().clickable(onClick = { onSelected(value) }),
-          verticalAlignment = Alignment.CenterVertically
-        ) {
-          RadioButton(
-            selected = value == selected,
-            onClick = { onSelected(value) },
-          )
-          Text(text = text, modifier = Modifier.padding(start = 24.dp))
+      LazyColumn {
+        items(items) { (value, text) ->
+          Row(
+            modifier = Modifier.height(48.dp).fillMaxWidth().clickable(
+              onClick = { onSelected(value) }),
+            verticalAlignment = Alignment.CenterVertically
+          ) {
+            RadioButton(
+              selected = value == selected,
+              onClick = { onSelected(value) },
+            )
+            Text(text = text, modifier = Modifier.padding(start = 24.dp))
+          }
         }
       }
     })
@@ -262,7 +265,7 @@ fun SwitchPref(
 
 @Composable
 fun ReadOnlySwitch(checked: Boolean) {
-  val colors = SwitchConstants.defaultColors(
+  val colors = SwitchDefaults.colors(
     disabledCheckedThumbColor = MaterialTheme.colors.secondaryVariant,
     disabledCheckedTrackColor = MaterialTheme.colors.secondaryVariant,
     disabledUncheckedThumbColor = MaterialTheme.colors.surface,
