@@ -9,13 +9,11 @@
 package tachiyomi.ui.browse.catalog
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import tachiyomi.domain.catalog.interactor.GetLocalCatalog
-import tachiyomi.domain.catalog.model.CatalogLocal
 import tachiyomi.domain.manga.interactor.ListMangaPageFromCatalogSource
 import tachiyomi.domain.manga.interactor.MangaInitializer
 import tachiyomi.domain.manga.model.Manga
@@ -32,18 +30,13 @@ class CatalogViewModel @Inject constructor(
 
   private var page: Int = 1
 
-  var catalog by mutableStateOf<CatalogLocal?>(null)
+  var catalog by mutableStateOf(getLocalCatalog.get(params.sourceId))
     private set
   var isRefreshing by mutableStateOf(false)
     private set
-  var mangas by mutableStateOf<List<Manga>>(mutableListOf())
-    private set
+  val mangas = mutableStateListOf<Manga>()
   var hasNextPage by mutableStateOf(true)
     private set
-
-  init {
-    catalog = getLocalCatalog.get(params.sourceId)
-  }
 
   fun toggle() {
     isRefreshing = !isRefreshing
@@ -53,22 +46,25 @@ class CatalogViewModel @Inject constructor(
     isRefreshing = true
 
     scope.launch {
-      withContext(Dispatchers.IO) {
-        if (catalog?.source is CatalogSource) {
-          val mangaPage = listMangaPageFromCatalogSource.await((catalog!!.source as CatalogSource),
-            null, page)
-          mangas = mangas + mangaPage.mangas
-          hasNextPage = mangaPage.hasNextPage
+      if (catalog?.source is CatalogSource) {
+        val mangaPage = listMangaPageFromCatalogSource.await((catalog!!.source as CatalogSource),
+          null, page)
 
-          // TODO maybe there should be a global task to not launch once per page
-          scope.launch(Dispatchers.IO) {
-            for (manga in mangaPage.mangas) {
-              mangaInitializer.await(manga)
+        mangas.addAll(mangaPage.mangas)
+        hasNextPage = mangaPage.hasNextPage
+
+        // TODO maybe there should be a global task to not launch once per page
+        scope.launch {
+          for (manga in mangaPage.mangas) {
+            val initialized = mangaInitializer.await(manga) ?: continue
+            val position = mangas.indexOfFirst { it.id == initialized.id }
+            if (position != -1) {
+              mangas[position] = initialized
             }
           }
-
-          page++
         }
+
+        page++
       }
     }
 
