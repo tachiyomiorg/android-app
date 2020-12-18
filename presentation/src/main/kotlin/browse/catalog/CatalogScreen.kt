@@ -8,7 +8,10 @@
 
 package tachiyomi.ui.browse.catalog
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.lazy.GridCells
+import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -19,7 +22,6 @@ import androidx.navigation.compose.navigate
 import tachiyomi.domain.manga.model.Manga
 import tachiyomi.ui.Route
 import tachiyomi.ui.core.coil.MangaCover
-import tachiyomi.ui.core.components.AutofitGrid
 import tachiyomi.ui.core.components.BackIconButton
 import tachiyomi.ui.core.components.LoadingScreen
 import tachiyomi.ui.core.components.Toolbar
@@ -64,6 +66,7 @@ fun CatalogScreen(navController: NavHostController, sourceId: Long) {
   }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun MangaTable(
   sourceId: Long,
@@ -82,12 +85,14 @@ private fun MangaTable(
         Text(text = if (isLoading) "Loading..." else "Load next page")
       }
 
-      AutofitGrid(data = mangas, defaultColumnWidth = 160.dp) { manga ->
-        MangaGridItem(
-          title = manga.title,
-          cover = MangaCover.from(manga),
-          onClick = { onClickManga(manga) }
-        )
+      LazyVerticalGrid(GridCells.Adaptive(160.dp)) {
+        items(mangas) { manga ->
+          MangaGridItem(
+            title = manga.title,
+            cover = MangaCover.from(manga),
+            onClick = { onClickManga(manga) }
+          )
+        }
       }
     }
   }

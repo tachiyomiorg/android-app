@@ -8,6 +8,7 @@
 
 package tachiyomi.ui.library
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,8 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.GridCells
+import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.material.AmbientTextStyle
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -28,25 +31,26 @@ import androidx.compose.ui.unit.sp
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.ui.core.coil.CoilImage
 import tachiyomi.ui.core.coil.MangaCover
-import tachiyomi.ui.core.components.AutofitGrid
 import tachiyomi.ui.core.util.Typefaces
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LibraryMangaComfortableGrid(
   library: List<LibraryManga>,
   onClickManga: (LibraryManga) -> Unit = {}
 ) {
-  AutofitGrid(
-    data = library,
-    modifier = Modifier.fillMaxSize().padding(4.dp),
-    defaultColumnWidth = 160.dp
-  ) { manga ->
-    LibraryMangaComfortableGridItem(
-      manga = manga,
-      unread = null, // TODO
-      downloaded = null, // TODO
-      onClick = { onClickManga(manga) }
-    )
+  LazyVerticalGrid(
+    cells = GridCells.Adaptive(160.dp),
+    modifier = Modifier.fillMaxSize().padding(4.dp)
+  ) {
+    items(library) { manga ->
+      LibraryMangaComfortableGridItem(
+        manga = manga,
+        unread = null, // TODO
+        downloaded = null, // TODO
+        onClick = { onClickManga(manga) }
+      )
+    }
   }
 }
 

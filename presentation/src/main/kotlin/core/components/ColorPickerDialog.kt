@@ -9,6 +9,7 @@
 package tachiyomi.ui.core.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -28,7 +29,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Icon
@@ -111,6 +114,7 @@ fun ColorPickerDialog(
   )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ColorPresets(
   initialColor: Color,
@@ -132,17 +136,19 @@ private fun ColorPresets(
   val borderColor = MaterialTheme.colors.onBackground.copy(alpha = 0.54f)
 
   Column {
-    AutofitGrid(data = presets, columns = 5) { color ->
-      ColorPresetItem(
-        color = color,
-        borderColor = borderColor,
-        isSelected = selectedShade == null && initialColor == color,
-        onClick = {
-          selectedShade = null
-          selectedColor = color
-          onColorChanged(color)
-        }
-      )
+    LazyVerticalGrid(cells = GridCells.Fixed(5)) {
+      items(presets) { color ->
+        ColorPresetItem(
+          color = color,
+          borderColor = borderColor,
+          isSelected = selectedShade == null && initialColor == color,
+          onClick = {
+            selectedShade = null
+            selectedColor = color
+            onColorChanged(color)
+          }
+        )
+      }
     }
     Spacer(modifier = Modifier.padding(vertical = 16.dp).fillMaxWidth().height(1.dp)
       .background(MaterialTheme.colors.onBackground.copy(alpha = 0.2f)))
