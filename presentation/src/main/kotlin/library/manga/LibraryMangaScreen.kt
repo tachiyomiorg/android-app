@@ -8,12 +8,8 @@
 
 package tachiyomi.ui.library.manga
 
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
-import tachiyomi.ui.core.components.BackIconButton
-import tachiyomi.ui.core.components.Toolbar
 import tachiyomi.ui.core.components.manga.MangaScreen
 import tachiyomi.ui.core.viewmodel.viewModel
 
@@ -23,13 +19,7 @@ fun LibraryMangaScreen(navController: NavHostController, mangaId: Long) {
     LibraryMangaViewModel.Params(mangaId)
   }
 
-  Scaffold(
-    topBar = {
-      Toolbar(
-        title = { Text(vm.manga?.title ?: "$mangaId") },
-        navigationIcon = { BackIconButton(navController) },
-      )
-    },
-    bodyContent = { MangaScreen(navController, vm.manga) }
-  )
+  MangaScreen(navController, vm.manga)
 }
+
+
