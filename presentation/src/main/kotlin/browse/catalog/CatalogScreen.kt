@@ -53,7 +53,6 @@ fun CatalogScreen(navController: NavHostController, sourceId: Long) {
       )
 
       MangaTable(
-        sourceId = sourceId,
         mangas = vm.mangas,
         isLoading = vm.isRefreshing,
         hasNextPage = vm.hasNextPage,
@@ -69,7 +68,6 @@ fun CatalogScreen(navController: NavHostController, sourceId: Long) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun MangaTable(
-  sourceId: Long,
   mangas: List<Manga>,
   isLoading: Boolean = false,
   hasNextPage: Boolean = false,
