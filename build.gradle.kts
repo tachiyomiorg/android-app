@@ -4,7 +4,7 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath("com.android.tools.build:gradle:7.0.0-alpha04")
+    classpath("com.android.tools.build:gradle:7.0.0-alpha05")
     classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${Deps.kotlin.version}")
     classpath("org.jetbrains.kotlin:kotlin-serialization:${Deps.kotlin.version}")
     classpath("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5")
