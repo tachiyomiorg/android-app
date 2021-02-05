@@ -1,7 +1,7 @@
 plugins {
   kotlin("jvm")
-  id("com.jfrog.bintray")
-  id("maven-publish")
+  `maven-publish`
+  signing
 }
 
 dependencies {
@@ -19,7 +19,7 @@ publishing {
   publications {
     create<MavenPublication>("publication") {
       from(components["java"])
-      groupId = "tachiyomi.sourceapi"
+      groupId = "org.tachiyomi"
       artifactId = "source-api"
       version = packageVersion
       pom {
@@ -47,20 +47,20 @@ publishing {
       }
     }
   }
-}
+  repositories {
+    maven {
+      val releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+      val snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
+      url = uri(if (packageVersion.endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
 
-bintray {
-  user = System.getenv("BINTRAY_USER")
-  key = System.getenv("BINTRAY_KEY")
-  pkg = PackageConfig().apply {
-    userOrg = "tachiyomiorg"
-    repo = "maven"
-    name = "source-api"
-    vcsUrl = "https://github.com/tachiyomiorg/tachiyomi-1.x"
-    setLicenses("MPL-2.0")
-    version = VersionConfig().apply {
-      name = packageVersion
+      credentials {
+        username = System.getenv("SONATYPE_USER")
+        password = System.getenv("SONATYPE_PASS")
+      }
     }
   }
-  setPublications("publication")
+}
+
+signing {
+  sign(publishing.publications["publication"])
 }
