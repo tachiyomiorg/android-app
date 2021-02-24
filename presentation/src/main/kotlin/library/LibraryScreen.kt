@@ -25,15 +25,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.onCommit
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.AmbientAnimationClock
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
+import kotlinx.coroutines.launch
 import tachiyomi.domain.library.model.Category
 import tachiyomi.domain.library.model.DisplayMode
 import tachiyomi.domain.library.model.LibraryManga
@@ -50,6 +52,7 @@ import tachiyomi.ui.core.viewmodel.viewModel
 @Composable
 fun LibraryScreen(navController: NavController) {
   val vm = viewModel<LibraryViewModel>()
+  val scope = rememberCoroutineScope()
   val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
 
   ModalBottomSheetLayout(
@@ -67,8 +70,8 @@ fun LibraryScreen(navController: NavController) {
           Text(text)
         },
         actions = {
-          IconButton(onClick = { sheetState.show() }) {
-            Icon(Icons.Default.FilterList)
+          IconButton(onClick = { scope.launch { sheetState.show() }}) {
+            Icon(Icons.Default.FilterList, contentDescription = null)
           }
         }
       )
@@ -142,10 +145,11 @@ private fun LibraryPager(
       maxPage = categories.lastIndex
     )
   }
-  onCommit(state.currentPage) {
+  DisposableEffect(state.currentPage) {
     if (state.currentPage != selectedPage) {
       onPageChanged(state.currentPage)
     }
+    onDispose { }
   }
   Pager(state = state, offscreenLimit = 1) {
     val library by getLibraryForPage(page)

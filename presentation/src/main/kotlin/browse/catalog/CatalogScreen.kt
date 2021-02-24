@@ -12,10 +12,11 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.onActive
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
@@ -34,8 +35,10 @@ fun CatalogScreen(navController: NavHostController, sourceId: Long) {
     CatalogViewModel.Params(sourceId)
   }
 
-  onActive {
+  DisposableEffect(Unit) {
     vm.getNextPage()
+
+    onDispose { }
   }
 
   Column {

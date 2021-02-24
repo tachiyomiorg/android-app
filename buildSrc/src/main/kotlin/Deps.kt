@@ -2,12 +2,12 @@
 object Deps {
 
   object kotlin {
-    const val version = "1.4.21"
+    const val version = "1.4.30"
     const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version"
     const val reflect = "org.jetbrains.kotlin:kotlin-reflect:$version"
 
     object serialization {
-      private const val version = "1.0.1"
+      private const val version = "1.1.0"
       const val json = "org.jetbrains.kotlinx:kotlinx-serialization-json:$version"
       const val protobuf = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf:$version"
     }
@@ -20,22 +20,23 @@ object Deps {
   }
 
   object androidX {
-    const val core = "androidx.core:core-ktx:1.5.0-alpha05"
-    const val appCompat = "androidx.appcompat:appcompat:1.3.0-alpha02"
+    const val core = "androidx.core:core-ktx:1.5.0-beta02"
+    const val appCompat = "androidx.appcompat:appcompat:1.3.0-beta01"
     const val browser = "androidx.browser:browser:1.3.0"
     const val preference = "androidx.preference:preference-ktx:1.1.1"
     const val sqlite = "androidx.sqlite:sqlite-ktx:2.1.0"
   }
 
   object compose {
-    const val version = "1.0.0-alpha10"
-    const val navigationVersion = "1.0.0-alpha05"
+    const val version = "1.0.0-beta01"
+    const val navigationVersion = "1.0.0-alpha08"
     const val compiler = "androidx.compose.compiler:compiler:$version"
     const val ui = "androidx.compose.ui:ui:$version"
     const val material = "androidx.compose.material:material:$version"
     const val icons = "androidx.compose.material:material-icons-extended:$version"
     const val tooling = "androidx.compose.ui:ui-tooling:$version"
     const val navigation = "androidx.navigation:navigation-compose:$navigationVersion"
+    const val constraintLayout = "androidx.constraintlayout:constraintlayout-compose:1.0.0-alpha03"
   }
 
   object lifecycle {

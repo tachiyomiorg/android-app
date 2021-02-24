@@ -9,28 +9,24 @@
 package tachiyomi.ui.browse
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.ScrollableColumn
-import androidx.compose.foundation.ScrollableRow
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ConstraintLayout
-import androidx.compose.foundation.layout.ConstraintSet
-import androidx.compose.foundation.layout.Dimension
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AmbientContentColor
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.IconButton
+import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -41,9 +37,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.gesture.longPressGestureFilter
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -51,6 +47,9 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.ConstraintSet
+import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import tachiyomi.domain.catalog.model.Catalog
@@ -62,6 +61,8 @@ import tachiyomi.domain.catalog.model.InstallStep
 import tachiyomi.ui.R
 import tachiyomi.ui.Route
 import tachiyomi.ui.core.coil.CoilImage
+import tachiyomi.ui.core.components.ScrollableColumn
+import tachiyomi.ui.core.components.ScrollableRow
 import tachiyomi.ui.core.components.Toolbar
 import tachiyomi.ui.core.viewmodel.viewModel
 import kotlin.math.abs
@@ -91,7 +92,7 @@ fun CatalogsScreen(navController: NavController) {
         Text(
           "Update available (${vm.updatableCatalogs.size})",
           style = MaterialTheme.typography.subtitle1,
-          color = AmbientContentColor.current.copy(alpha = ContentAlpha.medium),
+          color = LocalContentColor.current.copy(alpha = ContentAlpha.medium),
           modifier = Modifier.padding(16.dp, 8.dp, 16.dp, 4.dp)
         )
 
@@ -111,7 +112,7 @@ fun CatalogsScreen(navController: NavController) {
           Text(
             "Up to date",
             style = MaterialTheme.typography.subtitle1,
-            color = AmbientContentColor.current.copy(alpha = ContentAlpha.medium),
+            color = LocalContentColor.current.copy(alpha = ContentAlpha.medium),
             modifier = Modifier.padding(16.dp, 8.dp, 16.dp, 4.dp)
           )
         }
@@ -166,7 +167,7 @@ fun LanguageChip(choice: LanguageChoice, isSelected: Boolean, onClick: () -> Uni
     } else {
       MaterialTheme.colors.onSurface.copy(alpha = 0.25f)
     },
-    modifier = Modifier.widthIn(min = 56.dp).height(40.dp).padding(4.dp)
+    modifier = Modifier.widthIn(min = 56.dp).requiredHeight(40.dp).padding(4.dp)
       .clip(RoundedCornerShape(16.dp)).clickable(onClick = onClick)
   ) {
     val text = when (choice) {
@@ -233,7 +234,7 @@ fun CatalogItem(
       .fillMaxWidth()
       .padding(12.dp, 12.dp, 8.dp, 12.dp)
   ) {
-    val mediumColor = AmbientContentColor.current.copy(alpha = ContentAlpha.medium)
+    val mediumColor = LocalContentColor.current.copy(alpha = ContentAlpha.medium)
     val title = buildAnnotatedString {
       append("${catalog.name} ")
       val versionSpan = SpanStyle(fontSize = 12.sp, color = mediumColor)
@@ -265,16 +266,19 @@ fun CatalogItem(
         CircularProgressIndicator(modifier = rowModifier.then(Modifier.padding(4.dp)))
       } else if (showInstallButton) {
         IconButton(onClick = { onInstall(catalog) }) {
-          Image(Icons.Filled.GetApp, colorFilter = ColorFilter.tint(mediumColor))
+          Image(Icons.Filled.GetApp, colorFilter = ColorFilter.tint(mediumColor),
+            contentDescription = null)
         }
       }
       if (catalog !is CatalogBundled) {
-        val longPressMod = Modifier.longPressGestureFilter {
-          (catalog as? CatalogInstalled)?.let(onUninstall)
+        val longPressMod = Modifier.pointerInput(Unit) {
+          detectTapGestures(onLongPress = {
+            (catalog as? CatalogInstalled)?.let(onUninstall)
+          })
         }
         IconButton(onClick = { }, modifier = rowModifier) {
           Image(Icons.Filled.Settings, colorFilter = ColorFilter.tint(mediumColor),
-            modifier = longPressMod)
+            modifier = longPressMod, contentDescription = null)
         }
       }
     }

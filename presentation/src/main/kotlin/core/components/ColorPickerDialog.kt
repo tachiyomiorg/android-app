@@ -17,7 +17,6 @@ import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.forEachGesture
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayout
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,12 +25,13 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.preferredHeight
+import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Icon
@@ -59,8 +59,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.graphics.useOrElse
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
@@ -128,7 +128,7 @@ private fun ColorPresets(
     }
   }
 
-  var selectedColor by remember { mutableStateOf(initialColor.useOrElse { presets.first() }) }
+  var selectedColor by remember { mutableStateOf(initialColor.takeOrElse { presets.first() }) }
   var selectedShade by remember { mutableStateOf<Color?>(null) }
 
   val shades = remember(selectedColor) { getColorShades(selectedColor) }
@@ -150,7 +150,7 @@ private fun ColorPresets(
         )
       }
     }
-    Spacer(modifier = Modifier.padding(vertical = 16.dp).fillMaxWidth().height(1.dp)
+    Spacer(modifier = Modifier.padding(vertical = 16.dp).fillMaxWidth().requiredHeight(1.dp)
       .background(MaterialTheme.colors.onBackground.copy(alpha = 0.2f)))
 
     LazyRow {
@@ -187,8 +187,10 @@ private fun ColorPresetItem(
   ) {
     if (isSelected) {
       Icon(
-        imageVector = Icons.Default.Check.copy(defaultWidth = 32.dp, defaultHeight = 32.dp),
+        imageVector = Icons.Default.Check,
         tint = if (color.luminance() > 0.5) Color.Black else Color.White,
+        contentDescription = null,
+        modifier = Modifier.requiredWidth(32.dp).requiredHeight(32.dp)
       )
     }
   }
@@ -217,7 +219,6 @@ private fun shadeColor(f: Long, percent: Double): Color {
   return Color(red = red, green = green, blue = blue, alpha = 255)
 }
 
-@OptIn(ExperimentalLayout::class)
 @Composable
 fun ColorPalette(
   initialColor: Color = Color.White,
@@ -262,7 +263,7 @@ fun ColorPalette(
   }
 
   Column {
-    Row(Modifier.preferredHeight(IntrinsicSize.Max)) {
+    Row(Modifier.height(IntrinsicSize.Max)) {
       Box(Modifier
         .aspectRatio(1f)
         .weight(1f)
@@ -279,7 +280,7 @@ fun ColorPalette(
           drawCircle(Color.Black, radius = 8f, center = matrixCursor, style = cursorStroke)
           drawCircle(Color.LightGray, radius = 12f, center = matrixCursor, style = cursorStroke)
         }
-        .pointerInput {
+        .pointerInput(Unit) {
           detectMove { offset ->
             val safeOffset = offset.copy(
               x = offset.x.coerceIn(0f, matrixSize.width.toFloat()),
@@ -293,7 +294,7 @@ fun ColorPalette(
       )
       Box(Modifier
         .fillMaxHeight()
-        .width(48.dp)
+        .requiredWidth(48.dp)
         .padding(start = 8.dp)
         .drawWithCache {
           var h = 360f
@@ -313,7 +314,7 @@ fun ColorPalette(
             drawRect(cursorColor, topLeft = cursorTopLeft, size = cursorSize, style = cursorStroke)
           }
         }
-        .pointerInput {
+        .pointerInput(Unit) {
           detectMove { offset ->
             val safeY = offset.y.coerceIn(0f, matrixSize.height.toFloat())
             hueCursor = safeY
@@ -327,7 +328,7 @@ fun ColorPalette(
     Row(Modifier.padding(top = 8.dp), verticalAlignment = Alignment.Bottom) {
       Box(Modifier.size(72.dp, 48.dp).background(selectedColor)
         .border(1.dp, MaterialTheme.colors.onBackground.copy(alpha = 0.54f)))
-      Spacer(Modifier.width(32.dp))
+      Spacer(Modifier.requiredWidth(32.dp))
       OutlinedTextField(
         value = textFieldHex,
         onValueChange = {
@@ -347,8 +348,8 @@ private suspend fun PointerInputScope.detectMove(onMove: (Offset) -> Unit) {
   forEachGesture {
     awaitPointerEventScope {
       var change = awaitFirstDown()
-      while (change.current.down) {
-        onMove(change.current.position)
+      while (change.pressed) {
+        onMove(change.position)
         change = awaitPointerEvent().changes.first()
       }
     }

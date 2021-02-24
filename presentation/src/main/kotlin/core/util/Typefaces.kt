@@ -8,10 +8,10 @@
 
 package tachiyomi.ui.core.util
 
-import androidx.compose.ui.text.font.font
-import androidx.compose.ui.text.font.fontFamily
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import tachiyomi.ui.R
 
 object Typefaces {
-  val ptSansFont = fontFamily(font(R.font.ptsans_bold))
+  val ptSansFont = FontFamily(Font(R.font.ptsans_bold))
 }

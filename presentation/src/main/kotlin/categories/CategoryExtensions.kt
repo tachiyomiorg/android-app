@@ -13,8 +13,8 @@ import androidx.compose.ui.res.stringResource
 import tachiyomi.domain.library.model.Category
 import tachiyomi.ui.R
 
-@Composable
 val Category.visibleName
+  @Composable
   get() = when (id) {
     Category.ALL_ID -> stringResource(R.string.all_category)
     Category.UNCATEGORIZED_ID -> stringResource(R.string.uncategorized_category)

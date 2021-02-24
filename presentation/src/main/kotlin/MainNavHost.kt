@@ -68,7 +68,7 @@ fun MainNavHost(startRoute: Route) {
   val navController = rememberNavController()
 
   Scaffold(
-    bodyContent = { paddingValues ->
+    content = { paddingValues ->
       Box(Modifier.padding(paddingValues)) {
         NavHost(navController, startDestination = startRoute.id) {
           // TODO: Have a NavHost per individual top-level route?
@@ -141,7 +141,7 @@ fun MainNavHost(startRoute: Route) {
         ) {
           TopLevelRoutes.values.forEach {
             BottomNavigationItem(
-              icon = { Icon(it.icon) },
+              icon = { Icon(it.icon, contentDescription = null) },
               label = {
                 Text(stringResource(it.text), maxLines = 1, overflow = TextOverflow.Ellipsis)
               },

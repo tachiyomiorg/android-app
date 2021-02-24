@@ -16,13 +16,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.AmbientContentAlpha
-import androidx.compose.material.AmbientContentColor
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Card
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.ExtendedFloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.LocalContentAlpha
+import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -33,7 +34,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.Label
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Providers
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -70,7 +71,7 @@ fun CategoriesScreen(navController: NavHostController) {
       }
       ExtendedFloatingActionButton(
         text = { Text(text = "Add") },
-        icon = { Icon(imageVector = Icons.Default.Add) },
+        icon = { Icon(imageVector = Icons.Default.Add, contentDescription = null) },
         modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
         onClick = { vm.showCreateDialog() }
       )
@@ -118,7 +119,8 @@ private fun CategoryRow(
         Icon(
           imageVector = Icons.Outlined.Label,
           modifier = Modifier.size(56.dp),
-          tint = MaterialTheme.colors.primary
+          tint = MaterialTheme.colors.primary,
+          contentDescription = null,
         )
         Text(
           text = category.name,
@@ -126,8 +128,8 @@ private fun CategoryRow(
         )
       }
       Row(verticalAlignment = Alignment.CenterVertically) {
-        Providers(AmbientContentAlpha provides ContentAlpha.medium) {
-          val enabledColor = AmbientContentColor.current
+        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+          val enabledColor = LocalContentColor.current
           val disabledColor = enabledColor.copy(ContentAlpha.disabled)
           IconButton(
             onClick = onMoveUp,
@@ -135,7 +137,8 @@ private fun CategoryRow(
           ) {
             Icon(
               imageVector = Icons.Default.ArrowDropUp,
-              tint = if (moveUpEnabled) enabledColor else disabledColor
+              tint = if (moveUpEnabled) enabledColor else disabledColor,
+              contentDescription = null
             )
           }
           IconButton(
@@ -144,15 +147,18 @@ private fun CategoryRow(
           ) {
             Icon(
               imageVector = Icons.Default.ArrowDropDown,
-              tint = if (moveDownEnabled) enabledColor else disabledColor
+              tint = if (moveDownEnabled) enabledColor else disabledColor,
+              contentDescription = null
             )
           }
           Spacer(modifier = Modifier.weight(1f))
           IconButton(onClick = onRename) {
-            Icon(imageVector = Icons.Default.Edit)
+            Icon(imageVector = Icons.Default.Edit,
+              contentDescription = null)
           }
           IconButton(onClick = onDelete) {
-            Icon(imageVector = Icons.Default.Delete)
+            Icon(imageVector = Icons.Default.Delete,
+              contentDescription = null)
           }
         }
       }

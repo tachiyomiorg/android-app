@@ -9,10 +9,12 @@
 package tachiyomi.ui.core.theme
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.currentComposer
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.staticAmbientOf
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.runtime.structuralEqualityPolicy
 import androidx.compose.ui.graphics.Color
 
@@ -31,11 +33,12 @@ class CustomColors(
   }
 
   companion object {
-    @Composable
-    val current
-      get() = AmbientCustomColors.current
+    inline val current
+      @ReadOnlyComposable
+      @Composable
+      get() = LocalCustomColors.current
   }
 
 }
 
-val AmbientCustomColors = staticAmbientOf<CustomColors>()
+val LocalCustomColors = staticCompositionLocalOf { CustomColors() }

@@ -8,21 +8,22 @@
 
 package tachiyomi.ui.core.coil
 
+import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.onCommit
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.toRect
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toAndroidRect
-import androidx.compose.ui.layout.WithConstraints
-import androidx.compose.ui.platform.AmbientContext
+import androidx.compose.ui.platform.LocalContext
 import coil.request.ImageRequest
 import coil.size.OriginalSize
 import coil.size.PixelSize
@@ -33,13 +34,13 @@ import tachiyomi.core.log.Log
 @Composable
 fun <T> CoilImage(
   model: T,
-  modifier: Modifier = Modifier.fillMaxSize(),
+  @SuppressLint("ModifierParameter") modifier: Modifier = Modifier.fillMaxSize(),
   scale: Scale = FILL
 ) {
-  WithConstraints {
+  BoxWithConstraints {
     val drawable: MutableState<Drawable?> = remember { mutableStateOf(null) }
-    val context = AmbientContext.current
-    onCommit(model) {
+    val context = LocalContext.current
+    DisposableEffect(model) {
       val width =
         if (constraints.maxWidth > 0 && constraints.maxWidth < Int.MAX_VALUE) {
           constraints.maxWidth

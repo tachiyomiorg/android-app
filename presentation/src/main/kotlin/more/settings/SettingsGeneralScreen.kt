@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.AmbientContext
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import tachiyomi.domain.ui.UiPreferences
@@ -75,7 +75,7 @@ class SettingsGeneralViewModel @Inject constructor(
 @Composable
 fun SettingsGeneralScreen(navController: NavHostController) {
   val vm = viewModel<SettingsGeneralViewModel>()
-  val context = AmbientContext.current
+  val context = LocalContext.current
   Column {
     Toolbar(
       title = { Text(stringResource(R.string.general_label)) },

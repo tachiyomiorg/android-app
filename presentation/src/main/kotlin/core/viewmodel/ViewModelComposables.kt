@@ -9,7 +9,8 @@
 package tachiyomi.ui.core.viewmodel
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.onDispose
+import androidx.compose.runtime.DisallowComposableCalls
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import tachiyomi.core.di.AppScope
 import toothpick.Toothpick
@@ -21,15 +22,17 @@ inline fun <reified VM : BaseViewModel> viewModel(): VM {
   val viewModel = remember {
     AppScope.getInstance<VM>()
   }
-  onDispose {
-    viewModel.destroy()
+  DisposableEffect(Unit) {
+    onDispose {
+      viewModel.destroy()
+    }
   }
   return viewModel
 }
 
 @Composable
 inline fun <reified VM : BaseViewModel> viewModel(
-  crossinline binding: () -> Any,
+   crossinline binding: @DisallowComposableCalls () -> Any,
 ): VM {
   val (viewModel, submodule) = remember {
     val submodule = module {
@@ -41,9 +44,11 @@ inline fun <reified VM : BaseViewModel> viewModel(
     val viewModel = subscope.getInstance<VM>()
     Pair(viewModel, submodule)
   }
-  onDispose {
-    viewModel.destroy()
-    Toothpick.closeScope(submodule)
+  DisposableEffect(Unit) {
+    onDispose {
+      viewModel.destroy()
+      Toothpick.closeScope(submodule)
+    }
   }
   return viewModel
 }

@@ -15,14 +15,14 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Providers
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.graphics.useOrElse
-import androidx.compose.ui.platform.AmbientContext
+import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
@@ -46,7 +46,7 @@ fun AppTheme(content: @Composable () -> Unit) {
   }
   vm.tintSystemBars(rememberedCustomColors.bars)
 
-  Providers(AmbientCustomColors provides rememberedCustomColors) {
+  CompositionLocalProvider(LocalCustomColors provides rememberedCustomColors) {
     MaterialTheme(colors = colors, content = content)
   }
 }
@@ -105,8 +105,8 @@ private class AppThemeViewModel @Inject constructor(
     colorPrimary: Color,
     colorSecondary: Color
   ): Colors {
-    val primary = colorPrimary.useOrElse { baseColors.primary }
-    val secondary = colorSecondary.useOrElse { baseColors.secondary }
+    val primary = colorPrimary.takeOrElse { baseColors.primary }
+    val secondary = colorSecondary.takeOrElse { baseColors.secondary }
     return baseColors.copy(
       primary = primary,
       primaryVariant = primary,
@@ -118,7 +118,7 @@ private class AppThemeViewModel @Inject constructor(
   }
 
   private fun getCustomColors(colors: CustomColors, colorBars: Color): CustomColors {
-    val appbar = colorBars.useOrElse { colors.bars }
+    val appbar = colorBars.takeOrElse { colors.bars }
     return CustomColors(
       bars = appbar,
       onBars = if (appbar.luminance() > 0.5) Color.Black else Color.White
@@ -127,7 +127,7 @@ private class AppThemeViewModel @Inject constructor(
 
   @Composable
   fun tintSystemBars(color: Color) {
-    val activity = AmbientContext.current as Activity
+    val activity = LocalContext.current as Activity
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       activity.window.statusBarColor = color.toArgb()
       with(activity.window.decorView) {

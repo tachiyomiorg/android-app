@@ -14,10 +14,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.BottomAppBar
 import androidx.compose.material.Button
@@ -26,7 +27,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.emptyContent
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -135,28 +135,35 @@ private fun ThemeItem(
       .clickable(onClick = { onClick(theme) })
   ) {
     Column {
-      Toolbar(modifier = Modifier.height(24.dp), title = emptyContent(),
+      Toolbar(modifier = Modifier.requiredHeight(24.dp), title = {},
         backgroundColor = theme.customColors.bars)
-      Box(Modifier.fillMaxWidth().weight(1f).padding(6.dp)) {
+      Box(Modifier
+        .fillMaxWidth()
+        .weight(1f)
+        .padding(6.dp)) {
         Text("Text", fontSize = 11.sp)
         Button(
           onClick = {},
           enabled = false,
           contentPadding = PaddingValues(),
-          modifier = Modifier.align(Alignment.BottomStart).size(40.dp, 20.dp),
+          modifier = Modifier
+            .align(Alignment.BottomStart)
+            .size(40.dp, 20.dp),
           content = {},
           colors = ButtonDefaults.buttonColors(
             disabledBackgroundColor = theme.colors.primary
           )
         )
-        Surface(Modifier.size(24.dp).align(Alignment.BottomEnd),
+        Surface(Modifier
+          .size(24.dp)
+          .align(Alignment.BottomEnd),
           shape = MaterialTheme.shapes.small.copy(CornerSize(percent = 50)),
           color = theme.colors.secondary,
           elevation = 6.dp,
-          content = emptyContent()
+          content = { }
         )
       }
-      BottomAppBar(Modifier.height(24.dp), backgroundColor = theme.customColors.bars) {
+      BottomAppBar(Modifier.requiredHeight(24.dp), backgroundColor = theme.customColors.bars) {
       }
     }
   }

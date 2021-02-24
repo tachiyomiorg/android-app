@@ -11,8 +11,8 @@ package tachiyomi.ui.core.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.MaterialTheme
@@ -43,7 +43,7 @@ fun Chip(
     Row(
       modifier = modifier.clickable(onClick = onClick)
         .widthIn(min = 56.dp)
-        .height(32.dp)
+        .requiredHeight(32.dp)
         .padding(horizontal = 12.dp),
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.Center

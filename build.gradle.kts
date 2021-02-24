@@ -1,7 +1,7 @@
 buildscript {
   repositories {
+    mavenCentral()
     google()
-    jcenter()
   }
   dependencies {
     classpath("com.android.tools.build:gradle:7.0.0-alpha08")
@@ -16,10 +16,10 @@ plugins {
 
 allprojects {
   repositories {
+    mavenCentral()
     google()
     maven { setUrl("https://kotlin.bintray.com/kotlinx") }
     maven { setUrl("https://jitpack.io") }
-    maven { setUrl("https://google.bintray.com/flexbox-layout") }
     jcenter()
     maven { setUrl("https://oss.sonatype.org/content/repositories/snapshots/") }
   }
@@ -33,11 +33,7 @@ subprojects {
         "-Xuse-experimental=kotlin.ExperimentalStdlibApi",
         "-Xuse-experimental=kotlinx.coroutines.FlowPreview",
         "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi",
-        "-Xuse-experimental=kotlinx.serialization.ExperimentalSerializationApi",
-
-        // For Jetpack Compose
-        "-Xallow-jvm-ir-dependencies",
-        "-Xskip-prerelease-check"
+        "-Xuse-experimental=kotlinx.serialization.ExperimentalSerializationApi"
       )
       jvmTarget = JavaVersion.VERSION_1_8.toString()
     }

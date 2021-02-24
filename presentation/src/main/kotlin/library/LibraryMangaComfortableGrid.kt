@@ -18,7 +18,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.material.AmbientTextStyle
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -62,7 +63,7 @@ private fun LibraryMangaComfortableGridItem(
   onClick: () -> Unit = {},
 ) {
   val cover = remember { MangaCover.from(manga) }
-  val fontStyle = AmbientTextStyle.current.merge(
+  val fontStyle = LocalTextStyle.current.merge(
     TextStyle(letterSpacing = 0.sp, fontFamily = Typefaces.ptSansFont, fontSize = 14.sp)
   )
 

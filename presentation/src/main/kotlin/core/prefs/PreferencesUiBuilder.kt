@@ -10,24 +10,25 @@ package tachiyomi.ui.core.prefs
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.preferredWidthIn
+import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.AlertDialog
-import androidx.compose.material.AmbientContentColor
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
+import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.RadioButton
 import androidx.compose.material.Switch
@@ -35,7 +36,6 @@ import androidx.compose.material.SwitchDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.emptyContent
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,14 +43,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.gesture.longPressGestureFilter
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.useOrElse
+import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import tachiyomi.ui.core.components.ColorPickerDialog
+import tachiyomi.ui.core.components.ScrollableColumn
 
 @Composable
 fun PreferencesScrollableColumn(
@@ -115,7 +116,7 @@ class PreferenceScope(dialog: MutableState<(@Composable () -> Unit)?>) {
     subtitle: String? = null,
     unsetColor: Color = Color.Unspecified
   ) {
-    val initialColor = preference.value.useOrElse { unsetColor }
+    val initialColor = preference.value.takeOrElse { unsetColor }
     Pref(
       title = title,
       subtitle = subtitle,
@@ -140,7 +141,7 @@ class PreferenceScope(dialog: MutableState<(@Composable () -> Unit)?>) {
             .padding(4.dp)
             .size(32.dp)
             .clip(CircleShape)
-            .background(initialColor)
+            .background(color = initialColor)
             .border(BorderStroke(1.dp, borderColor), CircleShape))
         }
       }
@@ -154,13 +155,13 @@ class PreferenceScope(dialog: MutableState<(@Composable () -> Unit)?>) {
     onDismissRequest: () -> Unit,
     onSelected: (T) -> Unit,
     title: (@Composable () -> Unit)? = null,
-    buttons: @Composable () -> Unit = emptyContent()
+    buttons: @Composable () -> Unit = {}
   ) {
     AlertDialog(onDismissRequest = onDismissRequest, buttons = buttons, title = title, text = {
       LazyColumn {
         items(items) { (value, text) ->
           Row(
-            modifier = Modifier.height(48.dp).fillMaxWidth().clickable(
+            modifier = Modifier.requiredHeight(48.dp).fillMaxWidth().clickable(
               onClick = { onSelected(value) }),
             verticalAlignment = Alignment.CenterVertically
           ) {
@@ -189,15 +190,16 @@ fun Pref(
   val height = if (subtitle != null) 72.dp else 56.dp
 
   Row(
-    modifier = Modifier.fillMaxWidth().height(height).clickable(onClick = onClick)
-      .longPressGestureFilter { onLongClick() },
+    modifier = Modifier.fillMaxWidth().requiredHeight(height).clickable(onClick = onClick)
+      .pointerInput(Unit) { detectTapGestures(onLongPress = { onLongClick() }) },
     verticalAlignment = Alignment.CenterVertically
   ) {
     if (icon != null) {
       Icon(
         imageVector = icon,
         modifier = Modifier.padding(horizontal = 16.dp).size(24.dp),
-        tint = MaterialTheme.colors.primary
+        tint = MaterialTheme.colors.primary,
+        contentDescription = null
       )
     }
     Column(Modifier.padding(horizontal = 16.dp).weight(1f)) {
@@ -212,13 +214,13 @@ fun Pref(
           text = subtitle,
           overflow = TextOverflow.Ellipsis,
           maxLines = 1,
-          color = AmbientContentColor.current.copy(alpha = ContentAlpha.medium),
+          color = LocalContentColor.current.copy(alpha = ContentAlpha.medium),
           style = MaterialTheme.typography.subtitle1
         )
       }
     }
     if (action != null) {
-      Box(Modifier.preferredWidthIn(min = 56.dp)) {
+      Box(Modifier.widthIn(min = 56.dp)) {
         action()
       }
     }

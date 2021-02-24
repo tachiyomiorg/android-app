@@ -36,6 +36,7 @@ dependencies {
   implementation(Deps.compose.material)
   implementation(Deps.compose.icons)
   implementation(Deps.compose.navigation)
+  implementation(Deps.compose.constraintLayout)
 
   implementation(Deps.coil)
 }

@@ -9,10 +9,10 @@
 package tachiyomi.ui.core.components
 
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.material.AmbientElevationOverlay
+import androidx.compose.material.LocalElevationOverlay
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Providers
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
@@ -29,7 +29,7 @@ fun Toolbar(
   contentColor: Color = CustomColors.current.onBars,
   elevation: Dp = 4.dp
 ) {
-  Providers(AmbientElevationOverlay provides NoElevationOverlay) {
+  CompositionLocalProvider(LocalElevationOverlay provides NoElevationOverlay) {
     TopAppBar(
       title = title,
       modifier = modifier,

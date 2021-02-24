@@ -10,7 +10,7 @@ package tachiyomi.ui
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.compose.ui.platform.setContent
+import androidx.activity.compose.setContent
 import tachiyomi.core.di.AppScope
 import tachiyomi.domain.ui.UiPreferences
 import tachiyomi.domain.ui.model.StartScreen

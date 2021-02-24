@@ -11,10 +11,11 @@ package tachiyomi.ui.library
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -54,7 +55,7 @@ private fun LibraryMangaListItem(
   val cover = remember { MangaCover.from(manga) }
   Row(
     modifier = Modifier.clickable(onClick = onClick)
-      .height(56.dp)
+      .requiredHeight(56.dp)
       .padding(horizontal = 16.dp),
     verticalAlignment = Alignment.CenterVertically
   ) {

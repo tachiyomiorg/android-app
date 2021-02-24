@@ -12,9 +12,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.AmbientElevationOverlay
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
+import androidx.compose.material.LocalElevationOverlay
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -25,9 +25,10 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Label
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Providers
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.AmbientContext
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
@@ -59,7 +60,7 @@ class MoreViewModel @Inject constructor(
 @Composable
 fun MoreScreen(navController: NavController) {
   val vm = viewModel<MoreViewModel>()
-  val context = AmbientContext.current
+  val context = LocalContext.current
 
   Column {
     Toolbar(
@@ -67,7 +68,7 @@ fun MoreScreen(navController: NavController) {
       elevation = 0.dp,
       modifier = Modifier.zIndex(1f)
     )
-    Providers(AmbientElevationOverlay provides NoElevationOverlay) {
+    CompositionLocalProvider(LocalElevationOverlay provides NoElevationOverlay) {
       Surface(
         color = CustomColors.current.bars,
         contentColor = CustomColors.current.onBars,
@@ -77,7 +78,9 @@ fun MoreScreen(navController: NavController) {
           .zIndex(0f),
         elevation = 4.dp
       ) {
-        Icon(vectorResource(R.drawable.ic_tachi), modifier = Modifier.padding(32.dp).size(56.dp))
+        Icon(ImageVector.vectorResource(R.drawable.ic_tachi), modifier = Modifier.padding(32.dp)
+          .size(56.dp),
+          contentDescription = null)
       }
     }
     PreferencesScrollableColumn {
@@ -91,7 +94,7 @@ fun MoreScreen(navController: NavController) {
         preference = vm.incognitoMode,
         title = R.string.incognito_mode,
         subtitle = R.string.incognito_mode_subtitle,
-        icon = vectorResource(R.drawable.ic_glasses)
+        icon = ImageVector.vectorResource(R.drawable.ic_glasses)
       )
       Divider()
       Pref(

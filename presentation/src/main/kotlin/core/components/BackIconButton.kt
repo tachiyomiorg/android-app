@@ -18,6 +18,7 @@ import androidx.navigation.NavHostController
 @Composable
 fun BackIconButton(navController: NavHostController) {
   IconButton(onClick = { navController.popBackStack() }) {
-    Icon(Icons.Default.ArrowBack)
+    Icon(Icons.Default.ArrowBack,
+      contentDescription = null)
   }
 }

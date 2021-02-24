@@ -16,7 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AmbientTextStyle
+import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -41,7 +41,7 @@ fun MangaGridItem(
   cover: MangaCover,
   onClick: () -> Unit = {},
 ) {
-  val fontStyle = AmbientTextStyle.current.merge(
+  val fontStyle = LocalTextStyle.current.merge(
     TextStyle(letterSpacing = 0.sp, fontFamily = Typefaces.ptSansFont, fontSize = 14.sp)
   )
 
