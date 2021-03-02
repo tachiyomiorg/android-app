@@ -22,7 +22,7 @@ inline fun <reified VM : BaseViewModel> viewModel(): VM {
   val viewModel = remember {
     AppScope.getInstance<VM>()
   }
-  DisposableEffect(Unit) {
+  DisposableEffect(viewModel) {
     onDispose {
       viewModel.destroy()
     }
@@ -32,7 +32,7 @@ inline fun <reified VM : BaseViewModel> viewModel(): VM {
 
 @Composable
 inline fun <reified VM : BaseViewModel> viewModel(
-   crossinline binding: @DisallowComposableCalls () -> Any,
+  crossinline binding: @DisallowComposableCalls () -> Any,
 ): VM {
   val (viewModel, submodule) = remember {
     val submodule = module {
@@ -44,7 +44,7 @@ inline fun <reified VM : BaseViewModel> viewModel(
     val viewModel = subscope.getInstance<VM>()
     Pair(viewModel, submodule)
   }
-  DisposableEffect(Unit) {
+  DisposableEffect(viewModel) {
     onDispose {
       viewModel.destroy()
       Toothpick.closeScope(submodule)

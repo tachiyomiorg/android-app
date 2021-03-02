@@ -34,7 +34,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.AmbientAnimationClock
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.unit.dp
 import tachiyomi.domain.library.model.DisplayMode
@@ -56,10 +55,9 @@ import java.util.Locale
 fun LibrarySheet() {
   val vm = viewModel<LibrarySheetViewModel>()
 
-  val clock = AmbientAnimationClock.current
   val selectedPage = vm.selectedPage
   val state = remember(selectedPage) {
-    PagerState(clock, selectedPage, 0, 2)
+    PagerState(selectedPage, 0, 2)
   }
   DisposableEffect(state.currentPage) {
     if (selectedPage != state.currentPage) {

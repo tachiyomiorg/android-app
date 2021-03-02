@@ -30,7 +30,6 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.platform.AmbientAnimationClock
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -136,10 +135,8 @@ private fun LibraryPager(
 ) {
   if (categories.isEmpty()) return
 
-  val clock = AmbientAnimationClock.current
   val state = remember(categories.size, selectedPage) {
     PagerState(
-      clock = clock,
       currentPage = selectedPage,
       minPage = 0,
       maxPage = categories.lastIndex
