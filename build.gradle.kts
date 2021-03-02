@@ -33,7 +33,8 @@ subprojects {
         "-Xuse-experimental=kotlin.ExperimentalStdlibApi",
         "-Xuse-experimental=kotlinx.coroutines.FlowPreview",
         "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi",
-        "-Xuse-experimental=kotlinx.serialization.ExperimentalSerializationApi"
+        "-Xuse-experimental=kotlinx.serialization.ExperimentalSerializationApi",
+        "-Xuse-experimental=androidx.compose.foundation.ExperimentalFoundationApi"
       )
       jvmTarget = JavaVersion.VERSION_1_8.toString()
     }

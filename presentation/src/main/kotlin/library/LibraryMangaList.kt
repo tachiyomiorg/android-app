@@ -52,7 +52,7 @@ private fun LibraryMangaListItem(
   downloaded: Int?,
   onClick: () -> Unit = {}
 ) {
-  val cover = remember { MangaCover.from(manga) }
+  val cover = remember(manga.id) { MangaCover.from(manga) }
   Row(
     modifier = Modifier.clickable(onClick = onClick)
       .requiredHeight(56.dp)

@@ -183,7 +183,7 @@ private fun ColorPresetItem(
     .clip(CircleShape)
     .background(color)
     .border(BorderStroke(1.dp, borderColor), CircleShape)
-    .clickable(onClick = { onClick() })
+    .clickable(onClick = onClick)
   ) {
     if (isSelected) {
       Icon(
@@ -263,6 +263,7 @@ fun ColorPalette(
   }
 
   Column {
+    Text("") // TODO workaround: without this text, the color picker doesn't render correctly
     Row(Modifier.height(IntrinsicSize.Max)) {
       Box(Modifier
         .aspectRatio(1f)

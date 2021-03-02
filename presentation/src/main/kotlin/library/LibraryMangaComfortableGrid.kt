@@ -62,7 +62,7 @@ private fun LibraryMangaComfortableGridItem(
   downloaded: Int?,
   onClick: () -> Unit = {},
 ) {
-  val cover = remember { MangaCover.from(manga) }
+  val cover = remember(manga.id) { MangaCover.from(manga) }
   val fontStyle = LocalTextStyle.current.merge(
     TextStyle(letterSpacing = 0.sp, fontFamily = Typefaces.ptSansFont, fontSize = 14.sp)
   )

@@ -13,7 +13,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,7 +32,6 @@ import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.RadioButton
 import androidx.compose.material.Switch
-import androidx.compose.material.SwitchDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -46,7 +45,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -190,8 +188,11 @@ fun Pref(
   val height = if (subtitle != null) 72.dp else 56.dp
 
   Row(
-    modifier = Modifier.fillMaxWidth().requiredHeight(height).clickable(onClick = onClick)
-      .pointerInput(Unit) { detectTapGestures(onLongPress = { onLongClick() }) },
+    modifier = Modifier.fillMaxWidth().requiredHeight(height)
+      .combinedClickable(
+        onLongClick = onLongClick,
+        onClick = onClick
+      ),
     verticalAlignment = Alignment.CenterVertically
   ) {
     if (icon != null) {
@@ -250,7 +251,7 @@ fun SwitchPref(
     title = title,
     subtitle = subtitle,
     icon = icon,
-    action = { ReadOnlySwitch(checked = preference.value) },
+    action = { Switch(checked = preference.value, onCheckedChange = null) },
     onClick = { preference.value = !preference.value }
   )
 }
@@ -265,13 +266,3 @@ fun SwitchPref(
   SwitchPref(preference, stringResource(title), subtitle?.let { stringResource(it) }, icon)
 }
 
-@Composable
-fun ReadOnlySwitch(checked: Boolean) {
-  val colors = SwitchDefaults.colors(
-    disabledCheckedThumbColor = MaterialTheme.colors.secondaryVariant,
-    disabledCheckedTrackColor = MaterialTheme.colors.secondaryVariant,
-    disabledUncheckedThumbColor = MaterialTheme.colors.surface,
-    disabledUncheckedTrackColor = MaterialTheme.colors.onSurface
-  )
-  Switch(checked, onCheckedChange = {}, enabled = false, colors = colors)
-}

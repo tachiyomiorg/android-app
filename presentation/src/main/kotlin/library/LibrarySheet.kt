@@ -217,7 +217,7 @@ private fun DisplayPage(
 @Composable
 private fun ClickableRow(onClick: () -> Unit, content: @Composable () -> Unit) {
   Row(
-    modifier = Modifier.fillMaxWidth().requiredHeight(48.dp).clickable(onClick = { onClick() }),
+    modifier = Modifier.fillMaxWidth().requiredHeight(48.dp).clickable(onClick = onClick),
     verticalAlignment = Alignment.CenterVertically,
     content = { content() }
   )
