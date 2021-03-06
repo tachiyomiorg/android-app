@@ -34,7 +34,6 @@ dependencies {
   implementation(Deps.sqlite)
   implementation(Deps.coroutines.core)
   implementation(Deps.coroutines.android)
-  implementation(Deps.kotson)
   implementation(Deps.workManager.runtime)
 
   implementation(Deps.toothpick.runtime)
