@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import tachiyomi.domain.catalog.interactor.GetLocalCatalog
 import tachiyomi.domain.manga.interactor.ListMangaPageFromCatalogSource
@@ -45,7 +46,7 @@ class CatalogViewModel @Inject constructor(
   fun getNextPage() {
     isRefreshing = true
 
-    scope.launch {
+    scope.launch(Dispatchers.IO) {
       if (catalog?.source is CatalogSource) {
         val mangaPage = listMangaPageFromCatalogSource.await((catalog!!.source as CatalogSource),
           null, page)
@@ -54,7 +55,7 @@ class CatalogViewModel @Inject constructor(
         hasNextPage = mangaPage.hasNextPage
 
         // TODO maybe there should be a global task to not launch once per page
-        scope.launch {
+        scope.launch(Dispatchers.IO) {
           for (manga in mangaPage.mangas) {
             val initialized = mangaInitializer.await(manga) ?: continue
             val position = mangas.indexOfFirst { it.id == initialized.id }
