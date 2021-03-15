@@ -21,6 +21,8 @@ import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
@@ -86,23 +88,27 @@ fun CatalogsScreen(navController: NavController) {
       )
     }
   ) {
-    ScrollableColumn {
+    LazyColumn {
       if (vm.updatableCatalogs.isNotEmpty() || vm.localCatalogs.isNotEmpty()) {
-        Text(
-          "Installed",
-          style = MaterialTheme.typography.h6,
-          modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 4.dp)
-        )
+        item {
+          Text(
+            "Installed",
+            style = MaterialTheme.typography.h6,
+            modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 4.dp)
+          )
+        }
       }
       if (vm.updatableCatalogs.isNotEmpty()) {
-        Text(
-          "Update available (${vm.updatableCatalogs.size})",
-          style = MaterialTheme.typography.subtitle1,
-          color = LocalContentColor.current.copy(alpha = ContentAlpha.medium),
-          modifier = Modifier.padding(16.dp, 8.dp, 16.dp, 4.dp)
-        )
+        item {
+          Text(
+            "Update available (${vm.updatableCatalogs.size})",
+            style = MaterialTheme.typography.subtitle1,
+            color = LocalContentColor.current.copy(alpha = ContentAlpha.medium),
+            modifier = Modifier.padding(16.dp, 8.dp, 16.dp, 4.dp)
+          )
+        }
 
-        for (catalog in vm.updatableCatalogs) {
+        items(vm.updatableCatalogs) { catalog ->
           CatalogItem(
             catalog = catalog,
             showInstallButton = true,
@@ -115,14 +121,16 @@ fun CatalogsScreen(navController: NavController) {
       }
       if (vm.localCatalogs.isNotEmpty()) {
         if (vm.updatableCatalogs.isNotEmpty()) {
-          Text(
-            "Up to date",
-            style = MaterialTheme.typography.subtitle1,
-            color = LocalContentColor.current.copy(alpha = ContentAlpha.medium),
-            modifier = Modifier.padding(16.dp, 8.dp, 16.dp, 4.dp)
-          )
+          item {
+            Text(
+              "Up to date",
+              style = MaterialTheme.typography.subtitle1,
+              color = LocalContentColor.current.copy(alpha = ContentAlpha.medium),
+              modifier = Modifier.padding(16.dp, 8.dp, 16.dp, 4.dp)
+            )
+          }
         }
-        for (catalog in vm.localCatalogs) {
+        items(vm.localCatalogs) { catalog ->
           CatalogItem(
             catalog = catalog,
             showInstallButton = false,
@@ -134,23 +142,27 @@ fun CatalogsScreen(navController: NavController) {
         }
       }
       if (vm.remoteCatalogs.isNotEmpty()) {
-        Text(
-          "Available",
-          style = MaterialTheme.typography.h6,
-          modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 4.dp)
-        )
+        item {
+          Text(
+            "Available",
+            style = MaterialTheme.typography.h6,
+            modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 4.dp)
+          )
+        }
 
-        ScrollableRow(modifier = Modifier.padding(8.dp)) {
-          for (choice in vm.languageChoices) {
-            LanguageChip(
-              choice = choice,
-              isSelected = choice == vm.selectedLanguage,
-              onClick = { vm.setLanguageChoice(choice) }
-            )
+        item {
+          ScrollableRow(modifier = Modifier.padding(8.dp)) {
+            for (choice in vm.languageChoices) {
+              LanguageChip(
+                choice = choice,
+                isSelected = choice == vm.selectedLanguage,
+                onClick = { vm.setLanguageChoice(choice) }
+              )
+            }
           }
         }
 
-        for (catalog in vm.remoteCatalogs) {
+        items(vm.remoteCatalogs) { catalog ->
           CatalogItem(
             catalog = catalog,
             showInstallButton = true,
@@ -173,8 +185,12 @@ fun LanguageChip(choice: LanguageChoice, isSelected: Boolean, onClick: () -> Uni
     } else {
       MaterialTheme.colors.onSurface.copy(alpha = 0.25f)
     },
-    modifier = Modifier.widthIn(min = 56.dp).requiredHeight(40.dp).padding(4.dp)
-      .clip(RoundedCornerShape(16.dp)).clickable(onClick = onClick)
+    modifier = Modifier
+      .widthIn(min = 56.dp)
+      .requiredHeight(40.dp)
+      .padding(4.dp)
+      .clip(RoundedCornerShape(16.dp))
+      .clickable(onClick = onClick)
   ) {
     val text = when (choice) {
       LanguageChoice.All -> stringResource(R.string.lang_all)

@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
@@ -50,9 +52,14 @@ fun MangaScreen(
     return
   }
 
-  ScrollableColumn {
-    MangaInfoHeader(navController, manga, onFavorite)
-    MangaChapters(navController, chapters)
+  LazyColumn {
+    item {
+      MangaInfoHeader(navController, manga, onFavorite)
+    }
+
+    items(chapters) { chapter ->
+      ChapterItem(chapter)
+    }
   }
 }
 
@@ -122,8 +129,6 @@ private fun MangaInfoHeader(
 }
 
 @Composable
-private fun MangaChapters(navController: NavHostController, chapters: List<Chapter>) {
-  chapters.forEach {
-    Text("${it.number}: ${it.name}")
-  }
+private fun ChapterItem(chapter: Chapter) {
+  Text("${chapter.number}: ${chapter.name}")
 }
