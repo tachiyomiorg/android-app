@@ -70,6 +70,7 @@ object Deps {
 
   const val okhttp = "com.squareup.okhttp3:okhttp:5.0.0-alpha.2"
   const val duktape = "com.squareup.duktape:duktape-android:1.3.0"
+  const val kotson = "com.github.salomonbrys.kotson:kotson:2.5.0"
   const val jsoup = "org.jsoup:jsoup:1.13.1"
 
   const val flomo = "io.github.erikhuizinga:flomo:0.1.0-beta"
