@@ -24,6 +24,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -36,10 +37,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import tachiyomi.domain.library.model.Category
+import tachiyomi.ui.R
 import tachiyomi.ui.categories.CategoriesViewModel.Dialog
 import tachiyomi.ui.core.components.BackIconButton
 import tachiyomi.ui.core.components.Toolbar
@@ -49,11 +52,14 @@ import tachiyomi.ui.core.viewmodel.viewModel
 fun CategoriesScreen(navController: NavHostController) {
   val vm = viewModel<CategoriesViewModel>()
 
-  Column {
-    Toolbar(
-      title = { Text("Categories") },
-      navigationIcon = { BackIconButton(navController) }
-    )
+  Scaffold(
+    topBar = {
+      Toolbar(
+        title = { Text("Categories") },
+        navigationIcon = { BackIconButton(navController) }
+      )
+    }
+  ) {
     Box {
       LazyColumn(modifier = Modifier.fillMaxSize()) {
         itemsIndexed(vm.categories) { i, category ->
@@ -76,6 +82,7 @@ fun CategoriesScreen(navController: NavHostController) {
       )
     }
   }
+
   when (val dialog = vm.dialog) {
     Dialog.Create -> {
       CreateCategoryDialog(

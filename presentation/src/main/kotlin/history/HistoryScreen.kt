@@ -8,7 +8,7 @@
 
 package tachiyomi.ui.history
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
@@ -18,7 +18,10 @@ import tachiyomi.ui.core.components.Toolbar
 
 @Composable
 fun HistoryScreen(navController: NavController) {
-  Column {
-    Toolbar(title = { Text(stringResource(R.string.history_label)) })
+  Scaffold(
+    topBar = {
+      Toolbar(title = { Text(stringResource(R.string.history_label)) })
+    }
+  ) {
   }
 }

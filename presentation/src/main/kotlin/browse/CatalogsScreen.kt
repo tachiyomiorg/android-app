@@ -28,6 +28,7 @@ import androidx.compose.material.ContentAlpha
 import androidx.compose.material.IconButton
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -45,6 +46,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -64,6 +66,7 @@ import tachiyomi.ui.core.coil.CoilImage
 import tachiyomi.ui.core.components.ScrollableColumn
 import tachiyomi.ui.core.components.ScrollableRow
 import tachiyomi.ui.core.components.Toolbar
+import tachiyomi.ui.core.theme.RandomColors
 import tachiyomi.ui.core.viewmodel.viewModel
 import kotlin.math.abs
 import kotlin.random.Random
@@ -76,10 +79,13 @@ fun CatalogsScreen(navController: NavController) {
     navController.navigate("${Route.BrowseCatalog.id}/${it.sourceId}")
   }
 
-  Column {
-    Toolbar(
-      title = { Text(stringResource(R.string.browse_label)) }
-    )
+  Scaffold(
+    topBar = {
+      Toolbar(
+        title = { Text(stringResource(R.string.browse_label)) }
+      )
+    }
+  ) {
     ScrollableColumn {
       if (vm.updatableCatalogs.isNotEmpty() || vm.localCatalogs.isNotEmpty()) {
         Text(
@@ -292,7 +298,7 @@ fun CatalogPic(catalog: Catalog) {
       val letter = catalog.name.take(1)
       Surface(
         modifier = Modifier.fillMaxSize(),
-        shape = CircleShape, color = Colors.get(letter)
+        shape = CircleShape, color = RandomColors.get(letter)
       ) {
         Text(
           text = letter,
@@ -308,32 +314,23 @@ fun CatalogPic(catalog: Catalog) {
   }
 }
 
-object Colors {
-  private val colors = arrayOf(
-    Color(0xffe57373),
-    Color(0xfff06292),
-    Color(0xffba68c8),
-    Color(0xff9575cd),
-    Color(0xff7986cb),
-    Color(0xff64b5f6),
-    Color(0xff4fc3f7),
-    Color(0xff4dd0e1),
-    Color(0xff4db6ac),
-    Color(0xff81c784),
-    Color(0xffaed581),
-    Color(0xffff8a65),
-    Color(0xffd4e157),
-    Color(0xffffd54f),
-    Color(0xffffb74d),
-    Color(0xffa1887f),
-    Color(0xff90a4ae)
+@Preview
+@Composable
+private fun CatalogItemPreview() {
+  CatalogItem(
+    catalog = CatalogRemote(
+      name = "My Catalog",
+      sourceId = 0L,
+      pkgName = "my.catalog",
+      versionName = "1.0.0",
+      versionCode = 1,
+      lang = "en",
+      pkgUrl = "",
+      iconUrl = "",
+      nsfw = false,
+    ),
+    onClick = {},
+    onInstall = {},
+    onUninstall = {},
   )
-
-  fun get(key: Any): Color {
-    return colors[abs(key.hashCode()) % colors.size]
-  }
-
-  fun random(): Color {
-    return colors[Random.nextInt(colors.size)]
-  }
 }

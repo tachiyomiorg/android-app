@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -41,20 +42,19 @@ fun CatalogScreen(navController: NavHostController, sourceId: Long) {
     onDispose { }
   }
 
-  Column {
-    val catalog = vm.catalog
+  val catalog = vm.catalog
+  Scaffold(
+    topBar = {
+      val title = catalog?.name ?: "Catalog not found"
+      Toolbar(
+        title = { Text(title) },
+        navigationIcon = { BackIconButton(navController) },
+      )
+    }
+  ) {
     if (catalog == null) {
-      // TODO empty screen
-      Toolbar(
-        title = { Text("Catalog not found") },
-        navigationIcon = { BackIconButton(navController) },
-      )
+      LoadingScreen()
     } else {
-      Toolbar(
-        title = { Text(catalog.name) },
-        navigationIcon = { BackIconButton(navController) },
-      )
-
       MangaTable(
         mangas = vm.mangas,
         isLoading = vm.isRefreshing,
