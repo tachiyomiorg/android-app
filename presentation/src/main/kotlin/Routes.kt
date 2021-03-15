@@ -20,9 +20,10 @@ sealed class Route(val id: String) {
   object BrowseCatalog : Route("browse/catalog")
   object BrowseCatalogManga : Route("browse/catalog/manga")
 
-  object Categories : Route("categories")
-
   object More : Route("more")
+  object Categories : Route("categories")
+  object DownloadQueue : Route("download_queue")
+  object About : Route("about")
 
   object Settings : Route("settings")
   object SettingsGeneral : Route("settings/general")
@@ -34,6 +35,6 @@ sealed class Route(val id: String) {
   object SettingsBrowse : Route("settings/browse")
   object SettingsBackup : Route("settings/backup")
   object SettingsSecurity : Route("settings/security")
-  object SettingsParentalControls : Route("settings/parentalControls")
+  object SettingsParentalControls : Route("settings/parental_controls")
   object SettingsAdvanced : Route("settings/advanced")
 }

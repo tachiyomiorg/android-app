@@ -100,7 +100,7 @@ fun MoreScreen(navController: NavController) {
       Pref(
         title = R.string.download_queue,
         icon = Icons.Default.GetApp,
-        onClick = { /* TODO navigate to downloads */ }
+        onClick = { navController.navigate(Route.DownloadQueue.id) }
       )
       Pref(
         title = R.string.categories,
@@ -116,7 +116,7 @@ fun MoreScreen(navController: NavController) {
       Pref(
         title = R.string.about_label,
         icon = Icons.Default.Info,
-        onClick = { /* TODO navigate to about */ }
+        onClick = { navController.navigate(Route.About.id) }
       )
       Pref(
         title = R.string.help_label,
