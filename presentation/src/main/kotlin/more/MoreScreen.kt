@@ -29,6 +29,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
@@ -44,7 +45,6 @@ import tachiyomi.ui.core.prefs.Pref
 import tachiyomi.ui.core.prefs.PreferencesScrollableColumn
 import tachiyomi.ui.core.prefs.SwitchPref
 import tachiyomi.ui.core.theme.CustomColors
-import tachiyomi.ui.core.util.openInBrowser
 import tachiyomi.ui.core.viewmodel.BaseViewModel
 import tachiyomi.ui.core.viewmodel.viewModel
 import javax.inject.Inject
@@ -60,7 +60,7 @@ class MoreViewModel @Inject constructor(
 @Composable
 fun MoreScreen(navController: NavController) {
   val vm = viewModel<MoreViewModel>()
-  val context = LocalContext.current
+  val uriHandler = LocalUriHandler.current
 
   Column {
     Toolbar(
@@ -121,7 +121,7 @@ fun MoreScreen(navController: NavController) {
       Pref(
         title = R.string.help_label,
         icon = Icons.Default.Help,
-        onClick = { context.openInBrowser("https://tachiyomi.org/help/") }
+        onClick = { uriHandler.openUri("https://tachiyomi.org/help/") }
       )
     }
   }
