@@ -57,6 +57,12 @@ object Deps {
     const val compiler = "androidx.room:room-compiler:$version"
   }
 
+  object accompanist {
+    private const val version = "0.6.3-SNAPSHOT"
+    const val pager = "com.google.accompanist:accompanist-pager:$version"
+    const val flowlayout = "com.google.accompanist:accompanist-flowlayout:$version"
+  }
+
   const val sqlite = "io.requery:sqlite-android:3.33.0"
 
   object toothpick {

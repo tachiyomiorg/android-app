@@ -25,7 +25,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -34,6 +34,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.PagerState
 import kotlinx.coroutines.launch
 import tachiyomi.domain.library.model.Category
 import tachiyomi.domain.library.model.DisplayMode
@@ -41,8 +44,6 @@ import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.ui.R
 import tachiyomi.ui.Route
 import tachiyomi.ui.categories.visibleName
-import tachiyomi.ui.core.components.Pager
-import tachiyomi.ui.core.components.PagerState
 import tachiyomi.ui.core.components.Toolbar
 import tachiyomi.ui.core.theme.CustomColors
 import tachiyomi.ui.core.viewmodel.viewModel
@@ -124,6 +125,7 @@ private fun LibraryTabs(
   }
 }
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 private fun LibraryPager(
   categories: List<Category>,
@@ -137,19 +139,15 @@ private fun LibraryPager(
 
   val state = remember(categories.size, selectedPage) {
     PagerState(
-      currentPage = selectedPage,
-      minPage = 0,
-      maxPage = categories.lastIndex
+      pageCount = categories.size,
+      currentPage = selectedPage
     )
   }
-  DisposableEffect(state.currentPage) {
-    if (state.currentPage != selectedPage) {
-      onPageChanged(state.currentPage)
-    }
-    onDispose { }
+  LaunchedEffect(state.currentPage) {
+    onPageChanged(state.currentPage)
   }
-  Pager(state = state, offscreenLimit = 1) {
-    val library by getLibraryForPage(page)
+  HorizontalPager(state = state, offscreenLimit = 1) {
+    val library by getLibraryForPage(currentPage)
     when (displayMode) {
       DisplayMode.CompactGrid -> LibraryMangaCompactGrid(
         library = library,

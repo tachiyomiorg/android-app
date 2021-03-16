@@ -30,12 +30,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.flowlayout.FlowRow
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.PagerState
 import tachiyomi.domain.library.model.DisplayMode
 import tachiyomi.domain.library.model.LibraryFilter
 import tachiyomi.domain.library.model.LibraryFilter.Value.Excluded
@@ -43,27 +47,22 @@ import tachiyomi.domain.library.model.LibraryFilter.Value.Included
 import tachiyomi.domain.library.model.LibraryFilter.Value.Missing
 import tachiyomi.domain.library.model.LibrarySort
 import tachiyomi.ui.core.components.ChoiceChip
-import tachiyomi.ui.core.components.Pager
-import tachiyomi.ui.core.components.PagerState
 import tachiyomi.ui.core.components.ScrollableColumn
-import tachiyomi.ui.core.components.flow.FlowRow
 import tachiyomi.ui.core.theme.CustomColors
 import tachiyomi.ui.core.viewmodel.viewModel
 import java.util.Locale
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun LibrarySheet() {
   val vm = viewModel<LibrarySheetViewModel>()
 
   val selectedPage = vm.selectedPage
   val state = remember(selectedPage) {
-    PagerState(selectedPage, 0, 2)
+    PagerState(3, selectedPage)
   }
-  DisposableEffect(state.currentPage) {
-    if (selectedPage != state.currentPage) {
-      vm.selectedPage = state.currentPage
-    }
-    onDispose { }
+  LaunchedEffect(state.currentPage) {
+    vm.selectedPage = state.currentPage
   }
 
   TabRow(
@@ -78,9 +77,9 @@ fun LibrarySheet() {
       }
     }
   }
-  Pager(state = state) {
+  HorizontalPager(state = state) {
     ScrollableColumn(modifier = Modifier.fillMaxSize()) {
-      when (page) {
+      when (currentPage) {
         0 -> FiltersPage(filters = vm.filters, onClick = { vm.toggleFilter(it) })
         1 -> SortPage(sorting = vm.sorting, onClick = { vm.toggleSort(it) })
         2 -> DisplayPage(

@@ -37,5 +37,8 @@ dependencies {
   implementation(Deps.compose.navigation)
   implementation(Deps.compose.constraintLayout)
 
+  implementation(Deps.accompanist.pager)
+  implementation(Deps.accompanist.flowlayout)
+
   implementation(Deps.coil)
 }
