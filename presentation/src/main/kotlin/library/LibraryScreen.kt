@@ -20,16 +20,17 @@ import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.ScrollableTabRow
 import androidx.compose.material.Tab
+import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -45,15 +46,28 @@ import tachiyomi.ui.R
 import tachiyomi.ui.Route
 import tachiyomi.ui.categories.visibleName
 import tachiyomi.ui.core.components.Toolbar
+import tachiyomi.ui.core.components.pagerTabIndicatorOffset
 import tachiyomi.ui.core.theme.CustomColors
 import tachiyomi.ui.core.viewmodel.viewModel
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalPagerApi::class)
 @Composable
 fun LibraryScreen(navController: NavController) {
   val vm = viewModel<LibraryViewModel>()
   val scope = rememberCoroutineScope()
   val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+  val pagerState = remember(vm.categories.size, vm.selectedCategoryIndex) {
+    PagerState(
+      pageCount = vm.categories.size,
+      currentPage = vm.selectedCategoryIndex
+    )
+  }
+  // TODO notify VM when this method is available
+//  LaunchedEffect(pagerState) {
+//    pagerState.pageChanges.collect { page ->
+//      vm.setSelectedPage(page)
+//    }
+//  }
 
   ModalBottomSheetLayout(
     sheetState = sheetState,
@@ -76,30 +90,29 @@ fun LibraryScreen(navController: NavController) {
         }
       )
       LibraryTabs(
+        state = pagerState,
         visible = vm.showCategoryTabs,
         categories = vm.categories,
-        selectedPage = vm.selectedCategoryIndex,
-        onPageChanged = { vm.setSelectedPage(it) }
+        onTabClicked = { vm.setSelectedPage(it) }
       )
       LibraryPager(
+        state = pagerState,
         categories = vm.categories,
         displayMode = vm.displayMode,
-        selectedPage = vm.selectedCategoryIndex,
         getLibraryForPage = { vm.getLibraryForCategoryIndex(it) },
-        onPageChanged = { vm.setSelectedPage(it) },
-        onClickManga = { navController.navigate("${Route.LibraryManga.id}/${it.id}") }
+        onMangaClicked = { navController.navigate("${Route.LibraryManga.id}/${it.id}") }
       )
     }
   }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class, ExperimentalPagerApi::class)
 @Composable
 private fun LibraryTabs(
+  state: PagerState,
   visible: Boolean,
   categories: List<Category>,
-  selectedPage: Int,
-  onPageChanged: (Int) -> Unit
+  onTabClicked: (Int) -> Unit
 ) {
   if (categories.isEmpty()) return
 
@@ -109,15 +122,16 @@ private fun LibraryTabs(
     exit = shrinkVertically()
   ) {
     ScrollableTabRow(
-      selectedTabIndex = selectedPage,
+      selectedTabIndex = state.currentPage,
       backgroundColor = CustomColors.current.bars,
       contentColor = CustomColors.current.onBars,
-      edgePadding = 0.dp
+      edgePadding = 0.dp,
+      indicator = { TabRowDefaults.Indicator(Modifier.pagerTabIndicatorOffset(state, it)) }
     ) {
       categories.forEachIndexed { i, category ->
         Tab(
-          selected = selectedPage == i,
-          onClick = { onPageChanged(i) },
+          selected = state.currentPage == i,
+          onClick = { onTabClicked(i) },
           text = { Text(category.visibleName) }
         )
       }
@@ -128,38 +142,28 @@ private fun LibraryTabs(
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 private fun LibraryPager(
+  state: PagerState,
   categories: List<Category>,
   displayMode: DisplayMode,
-  selectedPage: Int,
   getLibraryForPage: @Composable (Int) -> State<List<LibraryManga>>,
-  onPageChanged: (Int) -> Unit,
-  onClickManga: (LibraryManga) -> Unit
+  onMangaClicked: (LibraryManga) -> Unit
 ) {
   if (categories.isEmpty()) return
 
-  val state = remember(categories.size, selectedPage) {
-    PagerState(
-      pageCount = categories.size,
-      currentPage = selectedPage
-    )
-  }
-  LaunchedEffect(state.currentPage) {
-    onPageChanged(state.currentPage)
-  }
-  HorizontalPager(state = state, offscreenLimit = 1) {
-    val library by getLibraryForPage(currentPage)
+  HorizontalPager(state = state, offscreenLimit = 1) { page ->
+    val library by getLibraryForPage(page)
     when (displayMode) {
       DisplayMode.CompactGrid -> LibraryMangaCompactGrid(
         library = library,
-        onClickManga = onClickManga
+        onClickManga = onMangaClicked
       )
       DisplayMode.ComfortableGrid -> LibraryMangaComfortableGrid(
         library = library,
-        onClickManga = onClickManga
+        onClickManga = onMangaClicked
       )
       DisplayMode.List -> LibraryMangaList(
         library = library,
-        onClickManga = onClickManga
+        onClickManga = onMangaClicked
       )
     }
   }
