@@ -73,6 +73,7 @@ class LibraryViewModel @Inject constructor(
   }
 
   fun setSelectedPage(index: Int) {
+    if (index == selectedCategoryIndex) return
     val categories = categories
     val category = categories.getOrNull(index) ?: return
     selectedCategoryIndex = index

@@ -31,6 +31,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +41,8 @@ import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
+import com.google.accompanist.pager.pageChanges
+import kotlinx.coroutines.flow.collect
 import tachiyomi.domain.library.model.DisplayMode
 import tachiyomi.domain.library.model.LibraryFilter
 import tachiyomi.domain.library.model.LibraryFilter.Value.Excluded
@@ -59,22 +62,21 @@ fun LibrarySheet() {
   val vm = viewModel<LibrarySheetViewModel>()
 
   val selectedPage = vm.selectedPage
-  val state = remember(selectedPage) {
+  val pagerState = remember(selectedPage) {
     PagerState(3, selectedPage)
   }
-  // TODO notify VM when this method is available
-//  LaunchedEffect(pagerState) {
-//    pagerState.pageChanges.collect { page ->
-//      vm.setSelectedPage(page)
-//    }
-//  }
+  LaunchedEffect(pagerState) {
+    pagerState.pageChanges.collect { page ->
+      vm.selectedPage = page
+    }
+  }
 
   TabRow(
     modifier = Modifier.requiredHeight(48.dp),
     selectedTabIndex = selectedPage,
     backgroundColor = CustomColors.current.bars,
     contentColor = CustomColors.current.onBars,
-    indicator = { TabRowDefaults.Indicator(Modifier.pagerTabIndicatorOffset(state, it)) }
+    indicator = { TabRowDefaults.Indicator(Modifier.pagerTabIndicatorOffset(pagerState, it)) }
   ) {
     listOf("Filter", "Sort", "Display").forEachIndexed { i, title ->
       Tab(selected = selectedPage == i, onClick = { vm.selectedPage = i }) {
@@ -82,7 +84,7 @@ fun LibrarySheet() {
       }
     }
   }
-  HorizontalPager(state = state) { page ->
+  HorizontalPager(state = pagerState) { page ->
     ScrollableColumn(modifier = Modifier.fillMaxSize()) {
       when (page) {
         0 -> FiltersPage(filters = vm.filters, onClick = { vm.toggleFilter(it) })

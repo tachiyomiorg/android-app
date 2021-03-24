@@ -11,13 +11,11 @@ package tachiyomi.ui.manga
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import tachiyomi.domain.library.interactor.ChangeMangaFavorite
 import tachiyomi.domain.manga.interactor.GetChapters
 import tachiyomi.domain.manga.interactor.GetManga
-import tachiyomi.domain.manga.model.Manga
+import tachiyomi.domain.manga.interactor.SyncChaptersFromSource
 import tachiyomi.ui.core.viewmodel.BaseViewModel
 import javax.inject.Inject
 
@@ -26,28 +24,22 @@ class MangaViewModel @Inject constructor(
   private val getManga: GetManga,
   private val getChapters: GetChapters,
   private val changeMangaFavorite: ChangeMangaFavorite,
+  private val syncChaptersFromSource: SyncChaptersFromSource
 ) : BaseViewModel() {
 
-  var manga by mutableStateOf<Manga?>(null)
-    private set
   var isRefreshing by mutableStateOf(false)
     private set
+
+  val manga by getManga.subscribe(params.mangaId).asState(null)
 
   val chapters by getChapters.subscribeForManga(params.mangaId).asState(emptyList())
 
   init {
-    getManga.subscribe(params.mangaId)
-      .onEach { manga = it }
-      .launchIn(scope)
-
 //    scope.launch {
 //      withContext(Dispatchers.IO) {
-//        manga = getManga.await(params.mangaId)
-//
-//        manga?.let { manga ->
-//          getLocalCatalog.get(manga.sourceId)?.source?.let { source ->
-//            chapters = getChaptersFromSource.await(source, manga)
-//          }
+//        val manga = getManga.await(params.mangaId)
+//        if (manga != null) {
+//          syncChaptersFromSource.await(manga)
 //        }
 //      }
 //    }

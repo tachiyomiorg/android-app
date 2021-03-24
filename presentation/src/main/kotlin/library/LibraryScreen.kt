@@ -26,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -38,6 +39,8 @@ import androidx.navigation.compose.navigate
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
+import com.google.accompanist.pager.pageChanges
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import tachiyomi.domain.library.model.Category
 import tachiyomi.domain.library.model.DisplayMode
@@ -62,12 +65,11 @@ fun LibraryScreen(navController: NavController) {
       currentPage = vm.selectedCategoryIndex
     )
   }
-  // TODO notify VM when this method is available
-//  LaunchedEffect(pagerState) {
-//    pagerState.pageChanges.collect { page ->
-//      vm.setSelectedPage(page)
-//    }
-//  }
+  LaunchedEffect(pagerState) {
+    pagerState.pageChanges.collect { page ->
+      vm.setSelectedPage(page)
+    }
+  }
 
   ModalBottomSheetLayout(
     sheetState = sheetState,

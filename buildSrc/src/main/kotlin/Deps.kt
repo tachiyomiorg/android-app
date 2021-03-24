@@ -28,14 +28,14 @@ object Deps {
   }
 
   object compose {
-    const val version = "1.0.0-beta02"
+    const val version = "1.0.0-beta03"
     const val compiler = "androidx.compose.compiler:compiler:$version"
     const val ui = "androidx.compose.ui:ui:$version"
     const val material = "androidx.compose.material:material:$version"
     const val icons = "androidx.compose.material:material-icons-extended:$version"
     const val tooling = "androidx.compose.ui:ui-tooling:$version"
     const val navigation = "androidx.navigation:navigation-compose:1.0.0-alpha09"
-    const val constraintLayout = "androidx.constraintlayout:constraintlayout-compose:1.0.0-alpha04"
+    const val constraintLayout = "androidx.constraintlayout:constraintlayout-compose:1.0.0-alpha05"
   }
 
   object lifecycle {
@@ -58,7 +58,7 @@ object Deps {
   }
 
   object accompanist {
-    private const val version = "0.6.3-SNAPSHOT"
+    private const val version = "0.7.0"
     const val pager = "com.google.accompanist:accompanist-pager:$version"
     const val flowlayout = "com.google.accompanist:accompanist-flowlayout:$version"
   }
