@@ -19,14 +19,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.ui.core.coil.CoilImage
-import tachiyomi.ui.core.coil.MangaCover
+import tachiyomi.ui.core.coil.rememberMangaCover
 
 @Composable
 fun LibraryMangaList(
@@ -52,7 +51,6 @@ private fun LibraryMangaListItem(
   downloaded: Int?,
   onClick: () -> Unit = {}
 ) {
-  val cover = remember(manga.id) { MangaCover.from(manga) }
   Row(
     modifier = Modifier.clickable(onClick = onClick)
       .requiredHeight(56.dp)
@@ -60,7 +58,7 @@ private fun LibraryMangaListItem(
     verticalAlignment = Alignment.CenterVertically
   ) {
     CoilImage(
-      model = cover,
+      model = rememberMangaCover(manga),
       modifier = Modifier.size(40.dp).clip(MaterialTheme.shapes.medium)
     )
     Text(

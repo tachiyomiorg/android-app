@@ -22,7 +22,6 @@ import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.ui.core.coil.CoilImage
-import tachiyomi.ui.core.coil.MangaCover
+import tachiyomi.ui.core.coil.rememberMangaCover
 import tachiyomi.ui.core.util.Typefaces
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -46,7 +45,9 @@ fun LibraryMangaCompactGrid(
 ) {
   LazyVerticalGrid(
     cells = GridCells.Adaptive(160.dp),
-    modifier = Modifier.fillMaxSize().padding(4.dp)
+    modifier = Modifier
+      .fillMaxSize()
+      .padding(4.dp)
   ) {
     items(library) { manga ->
       LibraryMangaCompactGridItem(
@@ -66,25 +67,32 @@ private fun LibraryMangaCompactGridItem(
   downloaded: Int?,
   onClick: () -> Unit = {}
 ) {
-  val cover = remember(manga.id) { MangaCover.from(manga) }
   val fontStyle = LocalTextStyle.current.merge(
     TextStyle(letterSpacing = 0.sp, fontFamily = Typefaces.ptSansFont, fontSize = 14.sp)
   )
 
-  Box(modifier = Modifier.padding(4.dp)
-    .fillMaxWidth()
-    .aspectRatio(3f / 4f)
-    .clip(MaterialTheme.shapes.medium)
-    .clickable(onClick = onClick)
+  Box(
+    modifier = Modifier
+      .padding(4.dp)
+      .fillMaxWidth()
+      .aspectRatio(3f / 4f)
+      .clip(MaterialTheme.shapes.medium)
+      .clickable(onClick = onClick)
   ) {
-    CoilImage(model = cover)
-    Box(modifier = Modifier.fillMaxSize().then(shadowGradient))
+    CoilImage(model = rememberMangaCover(manga))
+    Box(
+      modifier = Modifier
+        .fillMaxSize()
+        .then(shadowGradient)
+    )
     Text(
       text = manga.title,
       color = Color.White,
       style = fontStyle,
       maxLines = 2,
-      modifier = Modifier.align(Alignment.BottomStart).padding(8.dp)
+      modifier = Modifier
+        .align(Alignment.BottomStart)
+        .padding(8.dp)
     )
     LibraryMangaBadges(
       unread = unread,

@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package tachiyomi.ui.core.components.manga
+package tachiyomi.ui.manga
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
@@ -37,28 +38,37 @@ import androidx.compose.material.icons.filled.Sync
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import tachiyomi.domain.manga.model.Chapter
 import tachiyomi.domain.manga.model.Manga
 import tachiyomi.ui.core.coil.CoilImage
-import tachiyomi.ui.core.coil.MangaCover
+import tachiyomi.ui.core.coil.rememberMangaCover
 import tachiyomi.ui.core.components.BackIconButton
 import tachiyomi.ui.core.components.LoadingScreen
 import tachiyomi.ui.core.components.SwipeToRefreshLayout
 import tachiyomi.ui.core.components.Toolbar
+import tachiyomi.ui.core.viewmodel.viewModel
 
 @Composable
 fun MangaScreen(
   navController: NavHostController,
-  manga: Manga?,
-  chapters: List<Chapter> = emptyList(),
-  onFavorite: () -> Unit = {},
+  mangaId: Long
 ) {
+  val vm = viewModel<MangaViewModel> {
+    MangaViewModel.Params(mangaId)
+  }
+
+  val manga = vm.manga
   if (manga == null) {
     // TODO: loading UX
-    LoadingScreen()
+    Column {
+      Toolbar(
+        title = {},
+        navigationIcon = { BackIconButton(navController) }
+      )
+      LoadingScreen()
+    }
     return
   }
 
@@ -67,6 +77,7 @@ fun MangaScreen(
   val onRefresh = {}
   val onTracking = {}
   val onWebView = {}
+  val onFavorite = { vm.favorite() }
 
   SwipeToRefreshLayout(
     refreshingState = isRefreshing,
@@ -87,7 +98,7 @@ fun MangaScreen(
         MangaInfoHeader(navController, manga, onFavorite, onTracking, onWebView)
       }
 
-      items(chapters) { chapter ->
+      items(vm.chapters) { chapter ->
         ChapterItem(chapter)
       }
     }
@@ -102,7 +113,6 @@ private fun MangaInfoHeader(
   onTracking: () -> Unit,
   onWebView: () -> Unit
 ) {
-  val cover = MangaCover.from(manga)
   Column {
     Box {
       // TODO: Backdrop
@@ -111,9 +121,7 @@ private fun MangaInfoHeader(
       Column {
         Toolbar(
           title = { Text(manga.title) },
-          navigationIcon = { BackIconButton(navController) },
-          backgroundColor = Color.Transparent,
-          elevation = 0.dp
+          navigationIcon = { BackIconButton(navController) }
         )
 
         // Cover + main info
@@ -124,7 +132,7 @@ private fun MangaInfoHeader(
               .aspectRatio(3f / 4f),
             shape = RoundedCornerShape(4.dp)
           ) {
-            CoilImage(model = cover)
+            CoilImage(model = rememberMangaCover(manga))
           }
 
           Column(
@@ -156,7 +164,16 @@ private fun MangaInfoHeader(
 
     // Action bar
     Row(modifier = Modifier.padding(horizontal = 16.dp)) {
-      TextButton(onClick = onFavorite, modifier = Modifier.weight(1f)) {
+      val activeButtonColors = ButtonDefaults.textButtonColors()
+      val inactiveButtonColors = ButtonDefaults.textButtonColors(
+        contentColor = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.disabled)
+      )
+
+      TextButton(
+        onClick = onFavorite,
+        modifier = Modifier.weight(1f),
+        colors = if (manga.favorite) activeButtonColors else inactiveButtonColors
+      ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
           Icon(
             imageVector = if (manga.favorite) {
@@ -168,13 +185,21 @@ private fun MangaInfoHeader(
           Text(if (manga.favorite) "In library" else "Add to library")
         }
       }
-      TextButton(onClick = onTracking, modifier = Modifier.weight(1f)) {
+      TextButton(
+        onClick = onTracking,
+        modifier = Modifier.weight(1f),
+        colors = inactiveButtonColors
+      ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
           Icon(imageVector = Icons.Default.Sync, contentDescription = null)
           Text("Tracking")
         }
       }
-      TextButton(onClick = onWebView, modifier = Modifier.weight(1f)) {
+      TextButton(
+        onClick = onWebView,
+        modifier = Modifier.weight(1f),
+        colors = inactiveButtonColors
+      ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
           Icon(imageVector = Icons.Default.Public, contentDescription = null)
           Text("WebView")

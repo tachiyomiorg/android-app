@@ -23,7 +23,6 @@ import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextStyle
@@ -31,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.ui.core.coil.CoilImage
-import tachiyomi.ui.core.coil.MangaCover
+import tachiyomi.ui.core.coil.rememberMangaCover
 import tachiyomi.ui.core.util.Typefaces
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -42,7 +41,9 @@ fun LibraryMangaComfortableGrid(
 ) {
   LazyVerticalGrid(
     cells = GridCells.Adaptive(160.dp),
-    modifier = Modifier.fillMaxSize().padding(4.dp)
+    modifier = Modifier
+      .fillMaxSize()
+      .padding(4.dp)
   ) {
     items(library) { manga ->
       LibraryMangaComfortableGridItem(
@@ -62,19 +63,22 @@ private fun LibraryMangaComfortableGridItem(
   downloaded: Int?,
   onClick: () -> Unit = {},
 ) {
-  val cover = remember(manga.id) { MangaCover.from(manga) }
   val fontStyle = LocalTextStyle.current.merge(
     TextStyle(letterSpacing = 0.sp, fontFamily = Typefaces.ptSansFont, fontSize = 14.sp)
   )
 
-  Box(modifier = Modifier.padding(4.dp)
-    .fillMaxWidth()
-    .clickable(onClick = onClick)
+  Box(
+    modifier = Modifier
+      .padding(4.dp)
+      .fillMaxWidth()
+      .clickable(onClick = onClick)
   ) {
     Column {
       CoilImage(
-        model = cover,
-        modifier = Modifier.aspectRatio(3f / 4f).clip(MaterialTheme.shapes.medium)
+        model = rememberMangaCover(manga),
+        modifier = Modifier
+          .aspectRatio(3f / 4f)
+          .clip(MaterialTheme.shapes.medium)
       )
       Text(
         text = manga.title,

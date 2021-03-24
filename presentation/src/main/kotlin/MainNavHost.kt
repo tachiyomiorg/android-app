@@ -41,13 +41,12 @@ import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
 import tachiyomi.ui.browse.CatalogsScreen
 import tachiyomi.ui.browse.catalog.CatalogScreen
-import tachiyomi.ui.browse.catalog.manga.CatalogMangaScreen
 import tachiyomi.ui.categories.CategoriesScreen
 import tachiyomi.ui.core.theme.CustomColors
 import tachiyomi.ui.downloads.DownloadQueueScreen
 import tachiyomi.ui.history.HistoryScreen
 import tachiyomi.ui.library.LibraryScreen
-import tachiyomi.ui.library.manga.LibraryMangaScreen
+import tachiyomi.ui.manga.MangaScreen
 import tachiyomi.ui.more.AboutScreen
 import tachiyomi.ui.more.MoreScreen
 import tachiyomi.ui.more.settings.SettingsAdvancedScreen
@@ -80,8 +79,8 @@ fun MainNavHost(startRoute: Route) {
             "${Route.LibraryManga.id}/{id}",
             arguments = listOf(navArgument("id") { type = NavType.LongType })
           ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getLong("id") as Long
-            LibraryMangaScreen(navController, id)
+            val mangaId = backStackEntry.arguments?.getLong("id") as Long
+            MangaScreen(navController, mangaId)
           }
 
           composable(Route.Updates.id) { UpdatesScreen(navController) }
@@ -104,7 +103,7 @@ fun MainNavHost(startRoute: Route) {
             )
           ) { backStackEntry ->
             val mangaId = backStackEntry.arguments?.getLong("mangaId") as Long
-            CatalogMangaScreen(navController, mangaId)
+            MangaScreen(navController, mangaId)
           }
 
           composable(Route.More.id) { MoreScreen(navController) }

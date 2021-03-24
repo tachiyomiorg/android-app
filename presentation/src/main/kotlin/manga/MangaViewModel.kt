@@ -6,35 +6,40 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-package tachiyomi.ui.browse.catalog.manga
+package tachiyomi.ui.manga
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import tachiyomi.domain.catalog.interactor.GetLocalCatalog
 import tachiyomi.domain.library.interactor.ChangeMangaFavorite
 import tachiyomi.domain.manga.interactor.GetChapters
 import tachiyomi.domain.manga.interactor.GetManga
+import tachiyomi.domain.manga.model.Manga
 import tachiyomi.ui.core.viewmodel.BaseViewModel
 import javax.inject.Inject
 
-class CatalogMangaViewModel @Inject constructor(
+class MangaViewModel @Inject constructor(
   private val params: Params,
   private val getManga: GetManga,
-  private val getLocalCatalog: GetLocalCatalog,
   private val getChapters: GetChapters,
   private val changeMangaFavorite: ChangeMangaFavorite,
 ) : BaseViewModel() {
 
+  var manga by mutableStateOf<Manga?>(null)
+    private set
   var isRefreshing by mutableStateOf(false)
     private set
 
-  val manga by getManga.subscribe(params.mangaId).asState(null)
-
   val chapters by getChapters.subscribeForManga(params.mangaId).asState(emptyList())
 
-//  init {
+  init {
+    getManga.subscribe(params.mangaId)
+      .onEach { manga = it }
+      .launchIn(scope)
+
 //    scope.launch {
 //      withContext(Dispatchers.IO) {
 //        manga = getManga.await(params.mangaId)
@@ -46,7 +51,7 @@ class CatalogMangaViewModel @Inject constructor(
 //        }
 //      }
 //    }
-//  }
+  }
 
   fun favorite() {
     scope.launch {
