@@ -29,7 +29,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -40,6 +39,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.pageChanges
+import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import tachiyomi.domain.library.model.Category
@@ -59,12 +59,7 @@ fun LibraryScreen(navController: NavController) {
   val vm = viewModel<LibraryViewModel>()
   val scope = rememberCoroutineScope()
   val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
-  val pagerState = remember(vm.categories.size, vm.selectedCategoryIndex) {
-    PagerState(
-      pageCount = vm.categories.size,
-      currentPage = vm.selectedCategoryIndex
-    )
-  }
+  val pagerState = rememberPagerState(vm.categories.size, vm.selectedCategoryIndex)
   LaunchedEffect(pagerState) {
     pagerState.pageChanges.collect { page ->
       vm.setSelectedPage(page)
@@ -95,7 +90,7 @@ fun LibraryScreen(navController: NavController) {
         state = pagerState,
         visible = vm.showCategoryTabs,
         categories = vm.categories,
-        onTabClicked = { vm.setSelectedPage(it) }
+        onTabClicked = { scope.launch { pagerState.animateScrollToPage(it) } }
       )
       LibraryPager(
         state = pagerState,
