@@ -25,11 +25,13 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.accompanist.coil.rememberCoilImageState
+import com.google.accompanist.imageloading.Image
 import tachiyomi.domain.library.model.LibraryManga
-import tachiyomi.ui.core.coil.CoilImage
 import tachiyomi.ui.core.coil.rememberMangaCover
 import tachiyomi.ui.core.util.Typefaces
 
@@ -74,11 +76,13 @@ private fun LibraryMangaComfortableGridItem(
       .clickable(onClick = onClick)
   ) {
     Column {
-      CoilImage(
-        model = rememberMangaCover(manga),
+      Image(
+        state = rememberCoilImageState(data = rememberMangaCover(manga)),
+        contentDescription = null,
         modifier = Modifier
           .aspectRatio(3f / 4f)
-          .clip(MaterialTheme.shapes.medium)
+          .clip(MaterialTheme.shapes.medium),
+        contentScale = ContentScale.Crop
       )
       Text(
         text = manga.title,

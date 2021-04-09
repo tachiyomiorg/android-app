@@ -11,13 +11,10 @@ package tachiyomi.ui.core.coil
 import android.app.Application
 import coil.ImageLoader
 import coil.util.CoilUtils
-import tachiyomi.core.di.AppScope
 import tachiyomi.core.http.Http
 import tachiyomi.domain.catalog.interactor.GetLocalCatalog
 import tachiyomi.domain.library.service.LibraryCovers
 import javax.inject.Inject
-
-val CoilLoader = AppScope.getInstance<CoilLoaderFactory>().create()
 
 class CoilLoaderFactory @Inject constructor(
   private val context: Application,
@@ -29,8 +26,9 @@ class CoilLoaderFactory @Inject constructor(
   fun create(): ImageLoader {
     val coilCache = CoilUtils.createDefaultCache(context)
 
-    val libraryFetcher = LibraryMangaFetcher(http.defaultClient, libraryCovers,
-      getLocalCatalog, coilCache)
+    val libraryFetcher = LibraryMangaFetcher(
+      http.defaultClient, libraryCovers, getLocalCatalog, coilCache
+    )
 
     return ImageLoader.Builder(context)
       .componentRegistry {

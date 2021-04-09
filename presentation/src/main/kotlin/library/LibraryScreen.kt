@@ -39,6 +39,7 @@ import androidx.navigation.compose.navigate
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
+import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
 import tachiyomi.domain.library.model.Category
@@ -48,7 +49,6 @@ import tachiyomi.ui.R
 import tachiyomi.ui.Route
 import tachiyomi.ui.categories.visibleName
 import tachiyomi.ui.core.components.Toolbar
-import tachiyomi.ui.core.components.pagerTabIndicatorOffset
 import tachiyomi.ui.core.theme.CustomColors
 import tachiyomi.ui.core.viewmodel.viewModel
 

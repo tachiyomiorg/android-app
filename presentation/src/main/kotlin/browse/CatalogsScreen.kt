@@ -12,7 +12,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -56,6 +55,7 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
+import com.google.accompanist.coil.rememberCoilImageState
 import tachiyomi.domain.catalog.model.Catalog
 import tachiyomi.domain.catalog.model.CatalogBundled
 import tachiyomi.domain.catalog.model.CatalogInstalled
@@ -64,14 +64,11 @@ import tachiyomi.domain.catalog.model.CatalogRemote
 import tachiyomi.domain.catalog.model.InstallStep
 import tachiyomi.ui.R
 import tachiyomi.ui.Route
-import tachiyomi.ui.core.coil.CoilImage
-import tachiyomi.ui.core.components.ScrollableColumn
 import tachiyomi.ui.core.components.ScrollableRow
 import tachiyomi.ui.core.components.Toolbar
 import tachiyomi.ui.core.theme.RandomColors
 import tachiyomi.ui.core.viewmodel.viewModel
-import kotlin.math.abs
-import kotlin.random.Random
+import com.google.accompanist.imageloading.Image as CoilImage
 
 @Composable
 fun CatalogsScreen(navController: NavController) {
@@ -288,8 +285,10 @@ fun CatalogItem(
         CircularProgressIndicator(modifier = rowModifier.then(Modifier.padding(4.dp)))
       } else if (showInstallButton) {
         IconButton(onClick = { onInstall(catalog) }) {
-          Image(Icons.Filled.GetApp, colorFilter = ColorFilter.tint(mediumColor),
-            contentDescription = null)
+          Image(
+            Icons.Filled.GetApp, colorFilter = ColorFilter.tint(mediumColor),
+            contentDescription = null
+          )
         }
       }
       if (catalog !is CatalogBundled) {
@@ -299,8 +298,10 @@ fun CatalogItem(
           })
         }
         IconButton(onClick = { }, modifier = rowModifier) {
-          Image(Icons.Filled.Settings, colorFilter = ColorFilter.tint(mediumColor),
-            modifier = longPressMod, contentDescription = null)
+          Image(
+            Icons.Filled.Settings, colorFilter = ColorFilter.tint(mediumColor),
+            modifier = longPressMod, contentDescription = null
+          )
         }
       }
     }
@@ -325,7 +326,11 @@ fun CatalogPic(catalog: Catalog) {
       }
     }
     else -> {
-      CoilImage(catalog)
+      CoilImage(
+        state = rememberCoilImageState(data = catalog),
+        contentDescription = null,
+        modifier = Modifier.fillMaxSize()
+      )
     }
   }
 }

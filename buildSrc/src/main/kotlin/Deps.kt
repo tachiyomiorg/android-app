@@ -58,9 +58,11 @@ object Deps {
   }
 
   object accompanist {
-    private const val version = "0.7.1"
+    private const val version = "0.7.2-SNAPSHOT"
     const val pager = "com.google.accompanist:accompanist-pager:$version"
+    const val pagerIndicator = "com.google.accompanist:accompanist-pager-indicators:$version"
     const val flowlayout = "com.google.accompanist:accompanist-flowlayout:$version"
+    const val coil = "com.google.accompanist:accompanist-coil:$version"
   }
 
   const val sqlite = "io.requery:sqlite-android:3.33.0"

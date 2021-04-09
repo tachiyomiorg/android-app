@@ -34,15 +34,18 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
+import com.google.accompanist.coil.rememberCoilImageState
+import com.google.accompanist.imageloading.Image
 import tachiyomi.domain.manga.model.Manga
 import tachiyomi.ui.Route
-import tachiyomi.ui.core.coil.CoilImage
 import tachiyomi.ui.core.coil.MangaCover
+import tachiyomi.ui.core.coil.rememberMangaCover
 import tachiyomi.ui.core.components.BackIconButton
 import tachiyomi.ui.core.components.LoadingScreen
 import tachiyomi.ui.core.components.Toolbar
@@ -109,7 +112,7 @@ private fun MangaTable(
         items(mangas) { manga ->
           MangaGridItem(
             title = manga.title,
-            cover = MangaCover.from(manga),
+            cover = rememberMangaCover(manga),
             onClick = { onClickManga(manga) }
           )
         }
@@ -138,13 +141,23 @@ fun MangaGridItem(
     shape = RoundedCornerShape(4.dp)
   ) {
     Box(modifier = Modifier.fillMaxSize()) {
-      CoilImage(model = cover)
-      Box(modifier = Modifier.fillMaxSize().then(shadowGradient))
+      Image(
+        state = rememberCoilImageState(data = cover),
+        contentDescription = null,
+        modifier = Modifier.fillMaxSize(),
+        contentScale = ContentScale.Crop
+      )
+      Box(
+        modifier = Modifier
+          .fillMaxSize()
+          .then(shadowGradient)
+      )
       Text(
         text = title,
         color = Color.White,
         style = fontStyle,
-        modifier = Modifier.wrapContentHeight(Alignment.CenterVertically)
+        modifier = Modifier
+          .wrapContentHeight(Alignment.CenterVertically)
           .align(Alignment.BottomStart)
           .padding(8.dp)
       )

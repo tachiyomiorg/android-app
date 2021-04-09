@@ -22,9 +22,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.coil.rememberCoilImageState
+import com.google.accompanist.imageloading.Image
 import tachiyomi.domain.library.model.LibraryManga
-import tachiyomi.ui.core.coil.CoilImage
 import tachiyomi.ui.core.coil.rememberMangaCover
 
 @Composable
@@ -52,18 +54,25 @@ private fun LibraryMangaListItem(
   onClick: () -> Unit = {}
 ) {
   Row(
-    modifier = Modifier.clickable(onClick = onClick)
+    modifier = Modifier
+      .clickable(onClick = onClick)
       .requiredHeight(56.dp)
       .padding(horizontal = 16.dp),
     verticalAlignment = Alignment.CenterVertically
   ) {
-    CoilImage(
-      model = rememberMangaCover(manga),
-      modifier = Modifier.size(40.dp).clip(MaterialTheme.shapes.medium)
+    Image(
+      state = rememberCoilImageState(data = rememberMangaCover(manga)),
+      contentDescription = null,
+      modifier = Modifier
+        .size(40.dp)
+        .clip(MaterialTheme.shapes.medium),
+      contentScale = ContentScale.Crop
     )
     Text(
       text = manga.title,
-      modifier = Modifier.weight(1f).padding(horizontal = 16.dp),
+      modifier = Modifier
+        .weight(1f)
+        .padding(horizontal = 16.dp),
       style = MaterialTheme.typography.body2
     )
     LibraryMangaBadges(unread, downloaded)

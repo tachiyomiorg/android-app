@@ -23,12 +23,14 @@ import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import com.google.accompanist.coil.LocalImageLoader
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelChildren
 import tachiyomi.domain.ui.UiPreferences
 import tachiyomi.domain.ui.model.ThemeMode
+import tachiyomi.ui.core.coil.CoilLoaderFactory
 import tachiyomi.ui.core.viewmodel.BaseViewModel
 import tachiyomi.ui.core.viewmodel.viewModel
 import javax.inject.Inject
@@ -46,13 +48,17 @@ fun AppTheme(content: @Composable () -> Unit) {
   }
   vm.tintSystemBars(rememberedCustomColors.bars)
 
-  CompositionLocalProvider(LocalCustomColors provides rememberedCustomColors) {
+  CompositionLocalProvider(
+    LocalCustomColors provides rememberedCustomColors,
+    LocalImageLoader provides vm.coilLoader
+  ) {
     MaterialTheme(colors = colors, content = content)
   }
 }
 
 private class AppThemeViewModel @Inject constructor(
-  private val uiPreferences: UiPreferences
+  private val uiPreferences: UiPreferences,
+  coilLoaderFactory: CoilLoaderFactory
 ) : BaseViewModel() {
   private val themeMode by uiPreferences.themeMode().asState()
   private val lightTheme by uiPreferences.lightTheme().asState()
@@ -60,6 +66,8 @@ private class AppThemeViewModel @Inject constructor(
 
   private val baseThemeJob = SupervisorJob()
   private val baseThemeScope = CoroutineScope(baseThemeJob)
+
+  val coilLoader = coilLoaderFactory.create()
 
   @Composable
   fun getColors(): Pair<Colors, CustomColors> {
