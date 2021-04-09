@@ -13,15 +13,16 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
@@ -39,6 +40,9 @@ import androidx.compose.material.icons.filled.Sync
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.google.accompanist.coil.rememberCoilImageState
@@ -47,8 +51,6 @@ import com.google.accompanist.imageloading.Image
 import tachiyomi.domain.manga.model.Manga
 import tachiyomi.source.Source
 import tachiyomi.ui.core.coil.rememberMangaCover
-import tachiyomi.ui.core.components.BackIconButton
-import tachiyomi.ui.core.components.Toolbar
 
 @Composable
 fun MangaInfoHeader(
@@ -61,113 +63,110 @@ fun MangaInfoHeader(
   onWebView: () -> Unit,
   onToggle: () -> Unit
 ) {
-  Column {
-    Box {
-      // TODO: Backdrop
-      // CoilImage(model = cover)
+  Box(modifier = Modifier.height(IntrinsicSize.Min)) {
+    val cover = rememberMangaCover(manga)
+    Image(
+      state = rememberCoilImageState(cover),
+      contentDescription = null,
+      modifier = Modifier
+        .fillMaxSize()
+        .alpha(0.2f),
+      contentScale = ContentScale.Crop,
+    )
 
-      Column {
-        Toolbar(
-          title = { Text(manga.title) },
-          navigationIcon = { BackIconButton(navController) }
-        )
-
-        // Cover + main info
-        Row(modifier = Modifier.padding(16.dp)) {
-          Surface(
-            modifier = Modifier
-              .fillMaxWidth(0.3f)
-              .aspectRatio(3f / 4f),
-            shape = RoundedCornerShape(4.dp)
-          ) {
-            Image(
-              state = rememberCoilImageState(data = rememberMangaCover(manga)),
-              contentDescription = null
-            )
-          }
-
-          Column(
-            modifier = Modifier
-              .padding(start = 16.dp, bottom = 16.dp)
-              .align(Alignment.Bottom)
-          ) {
-            Text(manga.title, style = MaterialTheme.typography.h6, maxLines = 3)
-
-            ProvideTextStyle(
-              MaterialTheme.typography.body2.copy(
-                color = LocalContentColor.current.copy(alpha = ContentAlpha.medium)
-              )
-            ) {
-              Text(manga.author, modifier = Modifier.padding(top = 4.dp))
-              if (manga.artist.isNotBlank() && manga.artist != manga.author) {
-                Text(manga.artist)
-              }
-              Row(
-                modifier = Modifier.padding(top = 4.dp),
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-              ) {
-                Text(manga.status.toString())
-                Text("•")
-                Text(source?.name.orEmpty())
-              }
-            }
-          }
-        }
-      }
-    }
-
-    // Action bar
-    Row(modifier = Modifier.padding(horizontal = 16.dp)) {
-      val activeButtonColors = ButtonDefaults.textButtonColors()
-      val inactiveButtonColors = ButtonDefaults.textButtonColors(
-        contentColor = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.disabled)
+    // Cover + main info
+    Row(modifier = Modifier.padding(top = 16.dp)) {
+      Image(
+        state = rememberCoilImageState(data = cover),
+        contentDescription = null,
+        modifier = Modifier
+          .padding(16.dp)
+          .weight(0.33f)
+          .aspectRatio(3f / 4f)
+          .clip(MaterialTheme.shapes.medium)
       )
 
-      TextButton(
-        onClick = onFavorite,
-        modifier = Modifier.weight(1f),
-        colors = if (manga.favorite) activeButtonColors else inactiveButtonColors
+      Column(
+        modifier = Modifier
+          .padding(bottom = 16.dp)
+          .weight(0.67f)
+          .align(Alignment.Bottom)
       ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-          Icon(
-            imageVector = if (manga.favorite) {
-              Icons.Default.Favorite
-            } else {
-              Icons.Default.FavoriteBorder
-            }, contentDescription = null
+        Text(manga.title, style = MaterialTheme.typography.h6, maxLines = 3)
+
+        ProvideTextStyle(
+          MaterialTheme.typography.body2.copy(
+            color = LocalContentColor.current.copy(alpha = ContentAlpha.medium)
           )
-          Text(if (manga.favorite) "In library" else "Add to library")
-        }
-      }
-      TextButton(
-        onClick = onTracking,
-        modifier = Modifier.weight(1f),
-        colors = inactiveButtonColors
-      ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-          Icon(imageVector = Icons.Default.Sync, contentDescription = null)
-          Text("Tracking")
-        }
-      }
-      TextButton(
-        onClick = onWebView,
-        modifier = Modifier.weight(1f),
-        colors = inactiveButtonColors
-      ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-          Icon(imageVector = Icons.Default.Public, contentDescription = null)
-          Text("WebView")
+        ) {
+          Text(manga.author, modifier = Modifier.padding(top = 4.dp))
+          if (manga.artist.isNotBlank() && manga.artist != manga.author) {
+            Text(manga.artist)
+          }
+          Row(
+            modifier = Modifier.padding(top = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+          ) {
+            Text(manga.status.toString())
+            Text("•")
+            Text(source?.name.orEmpty())
+          }
         }
       }
     }
+  }
 
-    // Description
-    Box(modifier = Modifier.animateContentSize()) {
-      if (expandedSummary) {
-        ExpandedSummary(manga.description, manga.genres, onToggle)
-      } else {
-        CollapsedSummary(manga.description, manga.genres, onToggle)
+  // Action bar
+  Row(modifier = Modifier.padding(horizontal = 16.dp)) {
+    val activeButtonColors = ButtonDefaults.textButtonColors()
+    val inactiveButtonColors = ButtonDefaults.textButtonColors(
+      contentColor = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.disabled)
+    )
+
+    TextButton(
+      onClick = onFavorite,
+      modifier = Modifier.weight(1f),
+      colors = if (manga.favorite) activeButtonColors else inactiveButtonColors
+    ) {
+      Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Icon(
+          imageVector = if (manga.favorite) {
+            Icons.Default.Favorite
+          } else {
+            Icons.Default.FavoriteBorder
+          }, contentDescription = null
+        )
+        Text(if (manga.favorite) "In library" else "Add to library")
       }
+    }
+    TextButton(
+      onClick = onTracking,
+      modifier = Modifier.weight(1f),
+      colors = inactiveButtonColors
+    ) {
+      Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Icon(imageVector = Icons.Default.Sync, contentDescription = null)
+        Text("Tracking")
+      }
+    }
+    TextButton(
+      onClick = onWebView,
+      modifier = Modifier.weight(1f),
+      colors = inactiveButtonColors
+    ) {
+      Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Icon(imageVector = Icons.Default.Public, contentDescription = null)
+        Text("WebView")
+      }
+    }
+  }
+
+  // Description
+  Box(modifier = Modifier.animateContentSize()) {
+    if (expandedSummary) {
+      ExpandedSummary(manga.description, manga.genres, onToggle)
+    } else {
+      CollapsedSummary(manga.description, manga.genres, onToggle)
     }
   }
 }
