@@ -33,6 +33,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.state.ToggleableState
@@ -40,9 +41,7 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.pageChanges
 import com.google.accompanist.pager.rememberPagerState
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import tachiyomi.domain.library.model.DisplayMode
 import tachiyomi.domain.library.model.LibraryFilter
@@ -65,8 +64,8 @@ fun LibrarySheet() {
   val selectedPage = vm.selectedPage
   val pagerState = rememberPagerState(3, selectedPage)
   LaunchedEffect(pagerState) {
-    pagerState.pageChanges.collect { page ->
-      vm.selectedPage = page
+    snapshotFlow {
+      vm.selectedPage = pagerState.currentPage
     }
   }
 

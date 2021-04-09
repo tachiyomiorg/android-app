@@ -30,6 +30,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -38,9 +39,7 @@ import androidx.navigation.compose.navigate
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
-import com.google.accompanist.pager.pageChanges
 import com.google.accompanist.pager.rememberPagerState
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import tachiyomi.domain.library.model.Category
 import tachiyomi.domain.library.model.DisplayMode
@@ -61,8 +60,8 @@ fun LibraryScreen(navController: NavController) {
   val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
   val pagerState = rememberPagerState(vm.categories.size, vm.selectedCategoryIndex)
   LaunchedEffect(pagerState) {
-    pagerState.pageChanges.collect { page ->
-      vm.setSelectedPage(page)
+    snapshotFlow {
+      vm.setSelectedPage(pagerState.currentPage)
     }
   }
 
