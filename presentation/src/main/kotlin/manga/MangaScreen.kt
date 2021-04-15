@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -73,12 +72,6 @@ fun MangaScreen(
     }
   ) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
-      item {
-        Toolbar(
-          title = { Text(manga.title) },
-          navigationIcon = { BackIconButton(navController) }
-        )
-      }
       item {
         MangaInfoHeader(
           navController,

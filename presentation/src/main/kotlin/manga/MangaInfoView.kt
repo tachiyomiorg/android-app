@@ -42,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -51,6 +52,8 @@ import com.google.accompanist.imageloading.Image
 import tachiyomi.domain.manga.model.Manga
 import tachiyomi.source.Source
 import tachiyomi.ui.core.coil.rememberMangaCover
+import tachiyomi.ui.core.components.BackIconButton
+import tachiyomi.ui.core.components.Toolbar
 
 @Composable
 fun MangaInfoHeader(
@@ -74,42 +77,51 @@ fun MangaInfoHeader(
       contentScale = ContentScale.Crop,
     )
 
-    // Cover + main info
-    Row(modifier = Modifier.padding(top = 16.dp)) {
-      Image(
-        state = rememberCoilImageState(data = cover),
-        contentDescription = null,
-        modifier = Modifier
-          .padding(16.dp)
-          .weight(0.33f)
-          .aspectRatio(3f / 4f)
-          .clip(MaterialTheme.shapes.medium)
+    Column {
+      Toolbar(
+        title = { Text(manga.title) },
+        navigationIcon = { BackIconButton(navController) },
+        backgroundColor = Color.Transparent,
+        elevation = 0.dp
       )
 
-      Column(
-        modifier = Modifier
-          .padding(bottom = 16.dp)
-          .weight(0.67f)
-          .align(Alignment.Bottom)
-      ) {
-        Text(manga.title, style = MaterialTheme.typography.h6, maxLines = 3)
+      // Cover + main info
+      Row(modifier = Modifier.padding(top = 16.dp)) {
+        Image(
+          state = rememberCoilImageState(data = cover),
+          contentDescription = null,
+          modifier = Modifier
+            .padding(16.dp)
+            .weight(0.33f)
+            .aspectRatio(3f / 4f)
+            .clip(MaterialTheme.shapes.medium)
+        )
 
-        ProvideTextStyle(
-          MaterialTheme.typography.body2.copy(
-            color = LocalContentColor.current.copy(alpha = ContentAlpha.medium)
-          )
+        Column(
+          modifier = Modifier
+            .padding(bottom = 16.dp)
+            .weight(0.67f)
+            .align(Alignment.Bottom)
         ) {
-          Text(manga.author, modifier = Modifier.padding(top = 4.dp))
-          if (manga.artist.isNotBlank() && manga.artist != manga.author) {
-            Text(manga.artist)
-          }
-          Row(
-            modifier = Modifier.padding(top = 4.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
+          Text(manga.title, style = MaterialTheme.typography.h6, maxLines = 3)
+
+          ProvideTextStyle(
+            MaterialTheme.typography.body2.copy(
+              color = LocalContentColor.current.copy(alpha = ContentAlpha.medium)
+            )
           ) {
-            Text(manga.status.toString())
-            Text("•")
-            Text(source?.name.orEmpty())
+            Text(manga.author, modifier = Modifier.padding(top = 4.dp))
+            if (manga.artist.isNotBlank() && manga.artist != manga.author) {
+              Text(manga.artist)
+            }
+            Row(
+              modifier = Modifier.padding(top = 4.dp),
+              horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+              Text(manga.status.toString())
+              Text("•")
+              Text(source?.name.orEmpty())
+            }
           }
         }
       }

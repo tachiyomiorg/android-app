@@ -41,6 +41,8 @@ dependencies {
   implementation(Deps.accompanist.pagerIndicator)
   implementation(Deps.accompanist.flowlayout)
   implementation(Deps.accompanist.coil)
+  implementation(Deps.accompanist.insets)
+  implementation(Deps.accompanist.systemUiController)
 
   implementation(Deps.coil)
 }
