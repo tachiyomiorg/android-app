@@ -13,7 +13,7 @@ import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
@@ -42,8 +42,14 @@ fun AppTheme(content: @Composable () -> Unit) {
   val vm = viewModel<AppThemeViewModel>()
   val (colors, customColors) = vm.getColors()
   val systemUiController = rememberSystemUiController()
-  SideEffect {
-    systemUiController.setSystemBarsColor(customColors.bars, darkIcons = customColors.isBarLight)
+
+  val transparentStatusBar = LocalTransparentStatusBar.current
+  LaunchedEffect(transparentStatusBar.enabled, customColors.bars) {
+    if (transparentStatusBar.enabled) {
+      systemUiController.setSystemBarsColor(Color.Transparent, colors.isLight)
+    } else {
+      systemUiController.setSystemBarsColor(customColors.bars, customColors.isBarLight)
+    }
   }
 
   CompositionLocalProvider(

@@ -11,6 +11,7 @@ package tachiyomi.ui
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.core.view.WindowCompat
 import tachiyomi.core.di.AppScope
 import tachiyomi.domain.ui.UiPreferences
 import tachiyomi.domain.ui.model.StartScreen
@@ -24,6 +25,8 @@ class MainActivity : BaseActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     val startRoute = uiPrefs.startScreen().get().toRoute()
+
+    WindowCompat.setDecorFitsSystemWindows(window, false)
 
     setContent {
       AppTheme {

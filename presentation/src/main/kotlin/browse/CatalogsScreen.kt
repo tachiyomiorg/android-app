@@ -55,7 +55,7 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
-import com.google.accompanist.coil.rememberCoilImageState
+import com.google.accompanist.coil.rememberCoilPainter
 import tachiyomi.domain.catalog.model.Catalog
 import tachiyomi.domain.catalog.model.CatalogBundled
 import tachiyomi.domain.catalog.model.CatalogInstalled
@@ -68,7 +68,6 @@ import tachiyomi.ui.core.components.ScrollableRow
 import tachiyomi.ui.core.components.Toolbar
 import tachiyomi.ui.core.theme.RandomColors
 import tachiyomi.ui.core.viewmodel.viewModel
-import com.google.accompanist.imageloading.Image as CoilImage
 
 @Composable
 fun CatalogsScreen(navController: NavController) {
@@ -326,8 +325,8 @@ fun CatalogPic(catalog: Catalog) {
       }
     }
     else -> {
-      CoilImage(
-        state = rememberCoilImageState(data = catalog),
+      Image(
+        painter = rememberCoilPainter(catalog),
         contentDescription = null,
         modifier = Modifier.fillMaxSize()
       )

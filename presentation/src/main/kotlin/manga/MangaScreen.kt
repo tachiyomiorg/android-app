@@ -25,6 +25,7 @@ import tachiyomi.ui.core.components.BackIconButton
 import tachiyomi.ui.core.components.LoadingScreen
 import tachiyomi.ui.core.components.SwipeToRefreshLayout
 import tachiyomi.ui.core.components.Toolbar
+import tachiyomi.ui.core.theme.TransparentStatusBar
 import tachiyomi.ui.core.viewmodel.viewModel
 
 @Composable
@@ -57,40 +58,42 @@ fun MangaScreen(
   val onFavorite = { vm.favorite() }
   val onToggle = { vm.toggleExpandedSummary() }
 
-  SwipeToRefreshLayout(
-    refreshingState = isRefreshing,
-    onRefresh = onRefresh,
-    refreshIndicator = {
-      Surface(elevation = 10.dp, shape = CircleShape) {
-        CircularProgressIndicator(
-          modifier = Modifier
-            .size(36.dp)
-            .padding(8.dp),
-          strokeWidth = 3.dp
-        )
+  TransparentStatusBar {
+    SwipeToRefreshLayout(
+      refreshingState = isRefreshing,
+      onRefresh = onRefresh,
+      refreshIndicator = {
+        Surface(elevation = 10.dp, shape = CircleShape) {
+          CircularProgressIndicator(
+            modifier = Modifier
+              .size(36.dp)
+              .padding(8.dp),
+            strokeWidth = 3.dp
+          )
+        }
       }
-    }
-  ) {
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
-      item {
-        MangaInfoHeader(
-          navController,
-          manga,
-          vm.source,
-          vm.expandedSummary,
-          onFavorite,
-          onTracking,
-          onWebView,
-          onToggle
-        )
-      }
+    ) {
+      LazyColumn(modifier = Modifier.fillMaxSize()) {
+        item {
+          MangaInfoHeader(
+            navController,
+            manga,
+            vm.source,
+            vm.expandedSummary,
+            onFavorite,
+            onTracking,
+            onWebView,
+            onToggle
+          )
+        }
 
-      item {
-        ChapterHeader(vm.chapters, {})
-      }
+        item {
+          ChapterHeader(vm.chapters, {})
+        }
 
-      items(vm.chapters) { chapter ->
-        ChapterRow(chapter, false, {})
+        items(vm.chapters) { chapter ->
+          ChapterRow(chapter, false, {})
+        }
       }
     }
   }

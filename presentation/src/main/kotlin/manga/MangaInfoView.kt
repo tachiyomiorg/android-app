@@ -10,6 +10,7 @@ package tachiyomi.ui.manga
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,9 +47,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.google.accompanist.coil.rememberCoilImageState
+import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.flowlayout.FlowRow
-import com.google.accompanist.imageloading.Image
 import tachiyomi.domain.manga.model.Manga
 import tachiyomi.source.Source
 import tachiyomi.ui.core.coil.rememberMangaCover
@@ -69,7 +69,7 @@ fun MangaInfoHeader(
   Box(modifier = Modifier.height(IntrinsicSize.Min)) {
     val cover = rememberMangaCover(manga)
     Image(
-      state = rememberCoilImageState(cover),
+      painter = rememberCoilPainter(cover),
       contentDescription = null,
       modifier = Modifier
         .fillMaxSize()
@@ -79,8 +79,9 @@ fun MangaInfoHeader(
 
     Column {
       Toolbar(
-        title = { Text(manga.title) },
+        title = {},
         navigationIcon = { BackIconButton(navController) },
+        contentColor = MaterialTheme.colors.onBackground,
         backgroundColor = Color.Transparent,
         elevation = 0.dp
       )
@@ -88,7 +89,7 @@ fun MangaInfoHeader(
       // Cover + main info
       Row(modifier = Modifier.padding(top = 16.dp)) {
         Image(
-          state = rememberCoilImageState(data = cover),
+          painter = rememberCoilPainter(cover),
           contentDescription = null,
           modifier = Modifier
             .padding(16.dp)

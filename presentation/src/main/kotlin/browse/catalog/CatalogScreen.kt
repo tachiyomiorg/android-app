@@ -9,6 +9,7 @@
 package tachiyomi.ui.browse.catalog
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,8 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
-import com.google.accompanist.coil.rememberCoilImageState
-import com.google.accompanist.imageloading.Image
+import com.google.accompanist.coil.rememberCoilPainter
 import tachiyomi.domain.manga.model.Manga
 import tachiyomi.ui.Route
 import tachiyomi.ui.core.coil.MangaCover
@@ -142,7 +142,7 @@ fun MangaGridItem(
   ) {
     Box(modifier = Modifier.fillMaxSize()) {
       Image(
-        state = rememberCoilImageState(data = cover),
+        painter = rememberCoilPainter(cover),
         contentDescription = null,
         modifier = Modifier.fillMaxSize(),
         contentScale = ContentScale.Crop

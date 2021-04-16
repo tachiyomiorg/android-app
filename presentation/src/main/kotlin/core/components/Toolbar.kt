@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.insets.statusBarsPadding
 import tachiyomi.ui.core.theme.CustomColors
 
 @Composable
@@ -27,12 +28,13 @@ fun Toolbar(
   actions: @Composable RowScope.() -> Unit = {},
   backgroundColor: Color = CustomColors.current.bars,
   contentColor: Color = CustomColors.current.onBars,
-  elevation: Dp = 4.dp
+  elevation: Dp = 4.dp,
+  applyInsets: Boolean = true
 ) {
   CompositionLocalProvider(LocalElevationOverlay provides NoElevationOverlay) {
     TopAppBar(
       title = title,
-      modifier = modifier,
+      modifier = if (applyInsets) modifier.statusBarsPadding() else modifier,
       navigationIcon = navigationIcon,
       actions = actions,
       backgroundColor = backgroundColor,

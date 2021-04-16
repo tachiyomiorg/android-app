@@ -8,6 +8,7 @@
 
 package tachiyomi.ui.library
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,8 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.coil.rememberCoilImageState
-import com.google.accompanist.imageloading.Image
+import com.google.accompanist.coil.rememberCoilPainter
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.ui.core.coil.rememberMangaCover
 
@@ -61,7 +61,7 @@ private fun LibraryMangaListItem(
     verticalAlignment = Alignment.CenterVertically
   ) {
     Image(
-      state = rememberCoilImageState(data = rememberMangaCover(manga)),
+      painter = rememberCoilPainter(rememberMangaCover(manga)),
       contentDescription = null,
       modifier = Modifier
         .size(40.dp)

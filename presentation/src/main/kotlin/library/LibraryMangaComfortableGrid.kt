@@ -9,6 +9,7 @@
 package tachiyomi.ui.library
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,8 +30,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.accompanist.coil.rememberCoilImageState
-import com.google.accompanist.imageloading.Image
+import com.google.accompanist.coil.rememberCoilPainter
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.ui.core.coil.rememberMangaCover
 import tachiyomi.ui.core.util.Typefaces
@@ -77,7 +77,7 @@ private fun LibraryMangaComfortableGridItem(
   ) {
     Column {
       Image(
-        state = rememberCoilImageState(data = rememberMangaCover(manga)),
+        painter = rememberCoilPainter(rememberMangaCover(manga)),
         contentDescription = null,
         modifier = Modifier
           .aspectRatio(3f / 4f)

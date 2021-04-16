@@ -21,34 +21,42 @@ data class Theme(
 
 val themes = listOf(
   // Pure white
-  Theme(1, lightColors(), CustomColors(
-    bars = Color.White,
-    onBars = Color.Black
-  )),
+  Theme(
+    1, lightColors(), CustomColors(
+      bars = Color.White,
+      onBars = Color.Black
+    )
+  ),
   // Tachiyomi 0.x default colors
-  Theme(2, lightColors(
-    primary = Color(0xFF2979FF),
-    primaryVariant = Color(0xFF2979FF),
-    onPrimary = Color.White,
-    secondary = Color(0xFF2979FF),
-    secondaryVariant = Color(0xFF2979FF),
-    onSecondary = Color.White
-  ), CustomColors(
-    bars = Color(0xFF54759E),
-    onBars = Color.White
-  )),
+  Theme(
+    2, lightColors(
+      primary = Color(0xFF2979FF),
+      primaryVariant = Color(0xFF2979FF),
+      onPrimary = Color.White,
+      secondary = Color(0xFF2979FF),
+      secondaryVariant = Color(0xFF2979FF),
+      onSecondary = Color.White
+    ), CustomColors(
+      bars = Color(0xFF54759E),
+      onBars = Color.White
+    )
+  ),
   // Tachiyomi 0.x dark theme
-  Theme(3, darkColors(), CustomColors(
-    bars = Color(0xFF212121),
-    onBars = Color.White
-  )),
+  Theme(
+    3, darkColors(), CustomColors(
+      bars = Color(0xFF212121),
+      onBars = Color.White
+    )
+  ),
   // AMOLED theme
-  Theme(4, darkColors(
-    primary = Color.Black,
-    onPrimary = Color.White,
-    background = Color.Black
-  ), CustomColors(
-    bars = Color.Black,
-    onBars = Color.White
-  )),
+  Theme(
+    4, darkColors(
+      primary = Color.Black,
+      onPrimary = Color.White,
+      background = Color.Black
+    ), CustomColors(
+      bars = Color.Black,
+      onBars = Color.White
+    )
+  ),
 )
