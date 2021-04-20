@@ -42,14 +42,11 @@ fun AppTheme(content: @Composable () -> Unit) {
   val vm = viewModel<AppThemeViewModel>()
   val (colors, customColors) = vm.getColors()
   val systemUiController = rememberSystemUiController()
+  val transparentStatusBar = LocalTransparentStatusBar.current.enabled
 
-  val transparentStatusBar = LocalTransparentStatusBar.current
-  LaunchedEffect(transparentStatusBar.enabled, customColors.bars) {
-    if (transparentStatusBar.enabled) {
-      systemUiController.setSystemBarsColor(Color.Transparent, colors.isLight)
-    } else {
-      systemUiController.setSystemBarsColor(customColors.bars, customColors.isBarLight)
-    }
+  LaunchedEffect(customColors.isBarLight, transparentStatusBar) {
+    val darkIcons = if (transparentStatusBar) colors.isLight else customColors.isBarLight
+    systemUiController.setStatusBarColor(Color.Transparent, darkIcons)
   }
 
   CompositionLocalProvider(

@@ -9,7 +9,9 @@
 package tachiyomi.ui.core.components
 
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.material.AppBarDefaults
 import androidx.compose.material.LocalElevationOverlay
+import androidx.compose.material.Surface
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -28,18 +30,26 @@ fun Toolbar(
   actions: @Composable RowScope.() -> Unit = {},
   backgroundColor: Color = CustomColors.current.bars,
   contentColor: Color = CustomColors.current.onBars,
-  elevation: Dp = 4.dp,
+  elevation: Dp = AppBarDefaults.TopAppBarElevation,
   applyInsets: Boolean = true
 ) {
   CompositionLocalProvider(LocalElevationOverlay provides NoElevationOverlay) {
-    TopAppBar(
-      title = title,
-      modifier = if (applyInsets) modifier.statusBarsPadding() else modifier,
-      navigationIcon = navigationIcon,
-      actions = actions,
-      backgroundColor = backgroundColor,
+    // Wrap in another Surface to avoid drawing elevation between status bar and toolbar
+    Surface(
+      modifier = modifier,
+      color = backgroundColor,
       contentColor = contentColor,
       elevation = elevation
-    )
+    ) {
+      TopAppBar(
+        modifier = if (applyInsets) Modifier.statusBarsPadding() else Modifier,
+        title = title,
+        navigationIcon = navigationIcon,
+        actions = actions,
+        backgroundColor = backgroundColor,
+        contentColor = contentColor,
+        elevation = 0.dp
+      )
+    }
   }
 }
