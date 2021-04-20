@@ -65,6 +65,7 @@ object Deps {
     const val coil = "com.google.accompanist:accompanist-coil:$version"
     const val insets = "com.google.accompanist:accompanist-insets:$version"
     const val systemUiController = "com.google.accompanist:accompanist-systemuicontroller:$version"
+    const val swipeRefresh = "com.google.accompanist:accompanist-swiperefresh:$version"
   }
 
   const val sqlite = "io.requery:sqlite-android:3.33.0"

@@ -10,20 +10,18 @@ package tachiyomi.ui.manga
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Surface
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import tachiyomi.ui.core.components.BackIconButton
 import tachiyomi.ui.core.components.LoadingScreen
-import tachiyomi.ui.core.components.SwipeToRefreshLayout
 import tachiyomi.ui.core.components.Toolbar
 import tachiyomi.ui.core.theme.TransparentStatusBar
 import tachiyomi.ui.core.viewmodel.viewModel
@@ -40,38 +38,35 @@ fun MangaScreen(
   val manga = vm.manga
   if (manga == null) {
     // TODO: loading UX
-    Column {
-      Toolbar(
-        title = {},
-        navigationIcon = { BackIconButton(navController) }
-      )
-      LoadingScreen()
+    TransparentStatusBar {
+      Column {
+        Toolbar(
+          title = {},
+          navigationIcon = { BackIconButton(navController) },
+          contentColor = MaterialTheme.colors.onBackground,
+          backgroundColor = Color.Transparent,
+          elevation = 0.dp
+        )
+        LoadingScreen()
+      }
     }
     return
   }
 
   // TODO
-  val isRefreshing = false
   val onRefresh = {}
   val onTracking = {}
   val onWebView = {}
   val onFavorite = { vm.favorite() }
   val onToggle = { vm.toggleExpandedSummary() }
 
+  val swipeState = rememberSwipeRefreshState(vm.isRefreshing)
+
   TransparentStatusBar {
-    SwipeToRefreshLayout(
-      refreshingState = isRefreshing,
+    SwipeRefresh(
+      state = swipeState,
       onRefresh = onRefresh,
-      refreshIndicator = {
-        Surface(elevation = 10.dp, shape = CircleShape) {
-          CircularProgressIndicator(
-            modifier = Modifier
-              .size(36.dp)
-              .padding(8.dp),
-            strokeWidth = 3.dp
-          )
-        }
-      }
+      swipeEnabled = false // enabling it crashes the app at the moment
     ) {
       LazyColumn(modifier = Modifier.fillMaxSize()) {
         item {

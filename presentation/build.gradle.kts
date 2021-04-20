@@ -43,6 +43,7 @@ dependencies {
   implementation(Deps.accompanist.coil)
   implementation(Deps.accompanist.insets)
   implementation(Deps.accompanist.systemUiController)
+  implementation(Deps.accompanist.swipeRefresh)
 
   implementation(Deps.coil)
 }
