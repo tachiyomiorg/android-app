@@ -10,6 +10,7 @@ package tachiyomi.ui.manga
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
@@ -78,7 +79,12 @@ fun MangaInfoHeader(
     val cover = rememberMangaCover(manga)
 
     var imageLoaded by remember { mutableStateOf(false) }
-    val fadeInImage by animateFloatAsState(if (imageLoaded) 1f else 0f, tween())
+    val fadeInImage by animateFloatAsState(
+      if (imageLoaded) 0.2f else 0f, tween(
+        easing =
+        LinearOutSlowInEasing
+      )
+    )
 
     Image(
       painter = rememberCoilPainter(
@@ -92,7 +98,7 @@ fun MangaInfoHeader(
       contentDescription = null,
       modifier = Modifier
         .fillMaxSize()
-        .alpha(fadeInImage / 5),
+        .alpha(fadeInImage),
       contentScale = ContentScale.Crop,
     )
 
@@ -115,7 +121,6 @@ fun MangaInfoHeader(
             .weight(0.33f)
             .aspectRatio(3f / 4f)
             .clip(MaterialTheme.shapes.medium)
-            .alpha(fadeInImage)
         )
 
         Column(
