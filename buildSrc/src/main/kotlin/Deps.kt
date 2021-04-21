@@ -28,7 +28,7 @@ object Deps {
   }
 
   object compose {
-    const val version = "1.0.0-beta04"
+    const val version = "1.0.0-beta05"
     const val compiler = "androidx.compose.compiler:compiler:$version"
     const val ui = "androidx.compose.ui:ui:$version"
     const val material = "androidx.compose.material:material:$version"
@@ -46,19 +46,19 @@ object Deps {
   }
 
   object workManager {
-    private const val version = "2.7.0-alpha02"
+    private const val version = "2.7.0-alpha03"
     const val runtime = "androidx.work:work-runtime-ktx:$version"
   }
 
   object room {
-    private const val version = "2.3.0-beta03"
+    private const val version = "2.4.0-alpha01"
     const val runtime = "androidx.room:room-runtime:$version"
     const val ktx = "androidx.room:room-ktx:$version"
     const val compiler = "androidx.room:room-compiler:$version"
   }
 
   object accompanist {
-    private const val version = "0.7.2-SNAPSHOT"
+    private const val version = "0.8.0"
     const val pager = "com.google.accompanist:accompanist-pager:$version"
     const val pagerIndicator = "com.google.accompanist:accompanist-pager-indicators:$version"
     const val flowlayout = "com.google.accompanist:accompanist-flowlayout:$version"
@@ -92,7 +92,7 @@ object Deps {
     const val api = "org.tinylog:tinylog-api:$version"
   }
 
-  const val coil = "io.coil-kt:coil:1.0.0"
+  const val coil = "io.coil-kt:coil:1.2.0"
 
   const val mockk = "io.mockk:mockk:1.10.0"
 
