@@ -12,11 +12,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Checkbox
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
@@ -51,7 +53,6 @@ import tachiyomi.domain.library.model.LibraryFilter.Value.Included
 import tachiyomi.domain.library.model.LibraryFilter.Value.Missing
 import tachiyomi.domain.library.model.LibrarySort
 import tachiyomi.ui.core.components.ChoiceChip
-import tachiyomi.ui.core.components.ScrollableColumn
 import tachiyomi.ui.core.theme.CustomColors
 import tachiyomi.ui.core.viewmodel.viewModel
 import java.util.Locale
@@ -85,8 +86,11 @@ fun LibrarySheet() {
       }
     }
   }
-  HorizontalPager(state = pagerState) { page ->
-    ScrollableColumn(modifier = Modifier.fillMaxSize()) {
+  HorizontalPager(
+    state = pagerState,
+    verticalAlignment = Alignment.Top
+  ) { page ->
+    LazyColumn {
       when (page) {
         0 -> FiltersPage(filters = vm.filters, onClick = { vm.toggleFilter(it) })
         1 -> SortPage(sorting = vm.sorting, onClick = { vm.toggleSort(it) })
@@ -107,12 +111,11 @@ fun LibrarySheet() {
   }
 }
 
-@Composable
-private fun FiltersPage(
+private fun LazyListScope.FiltersPage(
   filters: List<LibraryFilter>,
   onClick: (LibraryFilter.Type) -> Unit
 ) {
-  filters.forEach { (filter, state) ->
+  items(filters) { (filter, state) ->
     ClickableRow(onClick = { onClick(filter) }) {
       TriStateCheckbox(
         modifier = Modifier.padding(horizontal = 16.dp),
@@ -124,12 +127,11 @@ private fun FiltersPage(
   }
 }
 
-@Composable
-private fun SortPage(
+private fun LazyListScope.SortPage(
   sorting: LibrarySort,
   onClick: (LibrarySort.Type) -> Unit
 ) {
-  LibrarySort.types.forEach { type ->
+  items(LibrarySort.types) { type ->
     ClickableRow(onClick = { onClick(type) }) {
       val iconModifier = Modifier.requiredWidth(56.dp)
       if (sorting.type == type) {
@@ -147,8 +149,7 @@ private fun SortPage(
   }
 }
 
-@Composable
-private fun DisplayPage(
+private fun LazyListScope.DisplayPage(
   displayMode: DisplayMode,
   downloadBadges: Boolean,
   unreadBadges: Boolean,
@@ -160,64 +161,74 @@ private fun DisplayPage(
   onCategoryTabsClick: () -> Unit,
   onAllCategoryClick: () -> Unit
 ) {
-  Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
-    Text(
-      text = "Display mode".toUpperCase(Locale.ROOT),
-      modifier = Modifier.padding(bottom = 12.dp),
-      style = MaterialTheme.typography.subtitle2,
-      color = LocalContentColor.current.copy(alpha = ContentAlpha.medium)
-    )
-    FlowRow(mainAxisSpacing = 4.dp) {
-      DisplayMode.values.forEach {
+  item {
+    Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+      Text(
+        text = "Display mode".toUpperCase(Locale.ROOT),
+        modifier = Modifier.padding(bottom = 12.dp),
+        style = MaterialTheme.typography.subtitle2,
+        color = LocalContentColor.current.copy(alpha = ContentAlpha.medium)
+      )
+      FlowRow(mainAxisSpacing = 4.dp) {
+        DisplayMode.values.forEach {
+          ChoiceChip(
+            isSelected = it == displayMode,
+            onClick = { onDisplayModeClick(it) },
+            content = { Text(it.name) }
+          )
+        }
+      }
+    }
+  }
+  item {
+    Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+      Text(
+        text = "Badges".toUpperCase(Locale.ROOT),
+        modifier = Modifier.padding(bottom = 12.dp),
+        style = MaterialTheme.typography.subtitle2,
+        color = LocalContentColor.current.copy(alpha = ContentAlpha.medium)
+      )
+      FlowRow(mainAxisSpacing = 4.dp) {
         ChoiceChip(
-          isSelected = it == displayMode,
-          onClick = { onDisplayModeClick(it) },
-          content = { Text(it.name) }
+          isSelected = unreadBadges,
+          onClick = { onUnreadBadgesClick() },
+          content = { Text("Unread") }
+        )
+        ChoiceChip(
+          isSelected = downloadBadges,
+          onClick = { onDownloadBadgesClick() },
+          content = { Text("Downloaded") }
         )
       }
     }
   }
-  Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+  item {
     Text(
-      text = "Badges".toUpperCase(Locale.ROOT),
-      modifier = Modifier.padding(bottom = 12.dp),
+      text = "Tabs".toUpperCase(Locale.ROOT),
+      modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
       style = MaterialTheme.typography.subtitle2,
       color = LocalContentColor.current.copy(alpha = ContentAlpha.medium)
     )
-    FlowRow(mainAxisSpacing = 4.dp) {
-      ChoiceChip(
-        isSelected = unreadBadges,
-        onClick = { onUnreadBadgesClick() },
-        content = { Text("Unread") }
+  }
+  item {
+    ClickableRow(onClick = { onCategoryTabsClick() }) {
+      Checkbox(
+        modifier = Modifier.padding(horizontal = 16.dp),
+        checked = categoryTabs,
+        onCheckedChange = { onCategoryTabsClick() }
       )
-      ChoiceChip(
-        isSelected = downloadBadges,
-        onClick = { onDownloadBadgesClick() },
-        content = { Text("Downloaded") }
-      )
+      Text("Show category tabs")
     }
   }
-  Text(
-    text = "Tabs".toUpperCase(Locale.ROOT),
-    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-    style = MaterialTheme.typography.subtitle2,
-    color = LocalContentColor.current.copy(alpha = ContentAlpha.medium)
-  )
-  ClickableRow(onClick = { onCategoryTabsClick() }) {
-    Checkbox(
-      modifier = Modifier.padding(horizontal = 16.dp),
-      checked = categoryTabs,
-      onCheckedChange = { onCategoryTabsClick() }
-    )
-    Text("Show category tabs")
-  }
-  ClickableRow(onClick = { onAllCategoryClick() }) {
-    Checkbox(
-      modifier = Modifier.padding(horizontal = 16.dp),
-      checked = allCategory,
-      onCheckedChange = { onAllCategoryClick() }
-    )
-    Text("Show all category")
+  item {
+    ClickableRow(onClick = { onAllCategoryClick() }) {
+      Checkbox(
+        modifier = Modifier.padding(horizontal = 16.dp),
+        checked = allCategory,
+        onCheckedChange = { onAllCategoryClick() }
+      )
+      Text("Show all category")
+    }
   }
 }
 

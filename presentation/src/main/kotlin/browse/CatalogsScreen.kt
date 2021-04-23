@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -63,7 +64,6 @@ import tachiyomi.domain.catalog.model.CatalogLocal
 import tachiyomi.domain.catalog.model.CatalogRemote
 import tachiyomi.domain.catalog.model.InstallStep
 import tachiyomi.ui.R
-import tachiyomi.ui.core.components.ScrollableRow
 import tachiyomi.ui.core.components.Toolbar
 import tachiyomi.ui.core.theme.RandomColors
 import tachiyomi.ui.core.viewmodel.viewModel
@@ -147,8 +147,8 @@ fun CatalogsScreen(navController: NavController) {
         }
 
         item {
-          ScrollableRow(modifier = Modifier.padding(8.dp)) {
-            for (choice in vm.languageChoices) {
+          LazyRow(modifier = Modifier.padding(8.dp)) {
+            items(vm.languageChoices) { choice ->
               LanguageChip(
                 choice = choice,
                 isSelected = choice == vm.selectedLanguage,

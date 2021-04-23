@@ -11,7 +11,6 @@ package tachiyomi.ui.core.components
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -24,19 +23,6 @@ fun ScrollableColumn(
   Column(
     modifier = modifier.scrollable(state = rememberScrollState(),
       orientation = Orientation.Vertical)
-  ) {
-    content()
-  }
-}
-
-@Composable
-fun ScrollableRow(
-  modifier: Modifier = Modifier,
-  content: @Composable () -> Unit
-) {
-  Row(
-    modifier = modifier.scrollable(state = rememberScrollState(),
-      orientation = Orientation.Horizontal)
   ) {
     content()
   }
