@@ -11,12 +11,15 @@ package tachiyomi.ui.manga
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import tachiyomi.domain.catalog.service.CatalogStore
 import tachiyomi.domain.library.interactor.ChangeMangaFavorite
 import tachiyomi.domain.manga.interactor.GetChapters
 import tachiyomi.domain.manga.interactor.GetManga
+import tachiyomi.domain.manga.interactor.MangaInitializer
 import tachiyomi.domain.manga.interactor.SyncChaptersFromSource
 import tachiyomi.domain.manga.model.Manga
 import tachiyomi.source.Source
@@ -29,7 +32,8 @@ class MangaViewModel @Inject constructor(
   private val getChapters: GetChapters,
   private val store: CatalogStore,
   private val changeMangaFavorite: ChangeMangaFavorite,
-  private val syncChaptersFromSource: SyncChaptersFromSource
+  private val syncChaptersFromSource: SyncChaptersFromSource,
+  private val mangaInitializer: MangaInitializer
 ) : BaseViewModel() {
 
   var isRefreshing by mutableStateOf(false)
@@ -42,27 +46,23 @@ class MangaViewModel @Inject constructor(
     private set
 
   val manga by getManga.subscribe(params.mangaId)
-    .onEach(::onMangaChange)
+    .onEach(::onMangaUpdate)
     .asState(null)
 
   val chapters by getChapters.subscribeForManga(params.mangaId).asState(emptyList())
 
-  init {
-//    scope.launch {
-//      withContext(Dispatchers.IO) {
-//        val manga = getManga.await(params.mangaId)
-//        if (manga != null) {
-//          syncChaptersFromSource.await(manga)
-//        }
-//      }
-//    }
+  private fun onMangaUpdate(manga: Manga?) {
+    if (manga != null && source == null) {
+      source = store.get(manga.sourceId)?.source
+
+      // Update in a new coroutine to read manga from the view model property
+      scope.launch { updateManga(metadata = true) }
+    }
   }
 
-  fun favorite() {
+  fun toggleFavorite() {
     scope.launch {
-      manga?.let {
-        changeMangaFavorite.await(it)
-      }
+      manga?.let { changeMangaFavorite.await(it) }
     }
   }
 
@@ -70,9 +70,26 @@ class MangaViewModel @Inject constructor(
     expandedSummary = !expandedSummary
   }
 
-  private fun onMangaChange(manga: Manga?) {
-    if (manga != null) {
-      source = store.get(manga.sourceId)?.source
+  private fun updateManga(
+    metadata: Boolean = false,
+    chapters: Boolean = false,
+    tracking: Boolean = false
+  ) {
+    val manga = manga ?: return
+    scope.launch {
+      withContext(Dispatchers.IO) {
+        isRefreshing = true
+        if (chapters) {
+          syncChaptersFromSource.await(manga)
+        }
+        if (metadata) {
+          mangaInitializer.await(manga, force = false)
+        }
+        if (tracking) {
+          // TODO
+        }
+        isRefreshing = false
+      }
     }
   }
 

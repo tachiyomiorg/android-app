@@ -57,7 +57,7 @@ fun MangaScreen(
   val onRefresh = {}
   val onTracking = {}
   val onWebView = {}
-  val onFavorite = { vm.favorite() }
+  val onFavorite = { vm.toggleFavorite() }
   val onToggle = { vm.toggleExpandedSummary() }
 
   val swipeState = rememberSwipeRefreshState(vm.isRefreshing)

@@ -80,10 +80,7 @@ fun MangaInfoHeader(
 
     var imageLoaded by remember { mutableStateOf(false) }
     val fadeInImage by animateFloatAsState(
-      if (imageLoaded) 0.2f else 0f, tween(
-        easing =
-        LinearOutSlowInEasing
-      )
+      if (imageLoaded) 0.2f else 0f, tween(easing = LinearOutSlowInEasing)
     )
 
     Image(
