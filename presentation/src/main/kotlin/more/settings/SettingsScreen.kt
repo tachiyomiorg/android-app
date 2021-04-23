@@ -27,11 +27,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
 import tachiyomi.ui.R
-import tachiyomi.ui.Route
 import tachiyomi.ui.core.components.BackIconButton
 import tachiyomi.ui.core.components.Toolbar
 import tachiyomi.ui.core.prefs.Pref
 import tachiyomi.ui.core.prefs.PreferencesScrollableColumn
+import tachiyomi.ui.main.Route
 
 @Composable
 fun SettingsScreen(navController: NavHostController) {

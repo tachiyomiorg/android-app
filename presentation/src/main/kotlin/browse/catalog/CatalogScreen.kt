@@ -43,7 +43,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
 import com.google.accompanist.coil.rememberCoilPainter
 import tachiyomi.domain.manga.model.Manga
-import tachiyomi.ui.Route
 import tachiyomi.ui.core.coil.MangaCover
 import tachiyomi.ui.core.coil.rememberMangaCover
 import tachiyomi.ui.core.components.BackIconButton
@@ -51,6 +50,7 @@ import tachiyomi.ui.core.components.LoadingScreen
 import tachiyomi.ui.core.components.Toolbar
 import tachiyomi.ui.core.util.Typefaces
 import tachiyomi.ui.core.viewmodel.viewModel
+import tachiyomi.ui.main.Route
 
 @Composable
 fun CatalogScreen(navController: NavHostController, sourceId: Long) {

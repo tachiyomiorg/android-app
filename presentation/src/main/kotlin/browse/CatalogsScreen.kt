@@ -63,11 +63,11 @@ import tachiyomi.domain.catalog.model.CatalogLocal
 import tachiyomi.domain.catalog.model.CatalogRemote
 import tachiyomi.domain.catalog.model.InstallStep
 import tachiyomi.ui.R
-import tachiyomi.ui.Route
 import tachiyomi.ui.core.components.ScrollableRow
 import tachiyomi.ui.core.components.Toolbar
 import tachiyomi.ui.core.theme.RandomColors
 import tachiyomi.ui.core.viewmodel.viewModel
+import tachiyomi.ui.main.Route
 
 @Composable
 fun CatalogsScreen(navController: NavController) {

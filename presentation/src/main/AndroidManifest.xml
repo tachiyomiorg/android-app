@@ -4,7 +4,7 @@
   <application
     android:theme="@style/Theme.App">
     <activity
-      android:name=".MainActivity"
+      android:name=".main.MainActivity"
       android:launchMode="singleTask"
       android:windowSoftInputMode="adjustPan"
       android:configChanges="orientation|screenLayout|screenSize"

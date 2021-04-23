@@ -28,7 +28,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -38,7 +37,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import tachiyomi.domain.ui.UiPreferences
 import tachiyomi.ui.R
-import tachiyomi.ui.Route
 import tachiyomi.ui.core.components.NoElevationOverlay
 import tachiyomi.ui.core.components.Toolbar
 import tachiyomi.ui.core.prefs.Pref
@@ -47,6 +45,7 @@ import tachiyomi.ui.core.prefs.SwitchPref
 import tachiyomi.ui.core.theme.CustomColors
 import tachiyomi.ui.core.viewmodel.BaseViewModel
 import tachiyomi.ui.core.viewmodel.viewModel
+import tachiyomi.ui.main.Route
 import javax.inject.Inject
 
 class MoreViewModel @Inject constructor(

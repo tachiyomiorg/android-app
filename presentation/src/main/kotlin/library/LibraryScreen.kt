@@ -46,11 +46,11 @@ import tachiyomi.domain.library.model.Category
 import tachiyomi.domain.library.model.DisplayMode
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.ui.R
-import tachiyomi.ui.Route
 import tachiyomi.ui.categories.visibleName
 import tachiyomi.ui.core.components.Toolbar
 import tachiyomi.ui.core.theme.CustomColors
 import tachiyomi.ui.core.viewmodel.viewModel
+import tachiyomi.ui.main.Route
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalPagerApi::class)
 @Composable
