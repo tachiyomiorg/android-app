@@ -22,17 +22,19 @@ import kotlinx.coroutines.launch
 import tachiyomi.domain.ui.UiPreferences
 import tachiyomi.ui.R
 import tachiyomi.ui.core.prefs.asStateIn
+import tachiyomi.ui.core.util.toast
 
 @Composable
 fun ConfirmExitBackHandler(uiPreferences: UiPreferences) {
   val scope = rememberCoroutineScope()
+  val context = LocalContext.current
+
   val confirmExit by uiPreferences.confirmExit().asStateIn(scope)
   var isConfirmingExit by remember { mutableStateOf(false) }
-  val context = LocalContext.current
 
   BackHandler(enabled = confirmExit && !isConfirmingExit) {
     isConfirmingExit = true
-    Toast.makeText(context, R.string.confirm_exit_message, Toast.LENGTH_LONG).show()
+    context.toast(R.string.confirm_exit_message, Toast.LENGTH_LONG)
     scope.launch {
       delay(2000)
       isConfirmingExit = false

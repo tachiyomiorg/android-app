@@ -10,6 +10,7 @@ package tachiyomi.ui.core.util
 
 import android.content.Context
 import android.widget.Toast
+import androidx.annotation.StringRes
 
 /**
  * Display a toast in this context.
@@ -19,4 +20,14 @@ import android.widget.Toast
  */
 fun Context.toast(text: String?, duration: Int = Toast.LENGTH_SHORT) {
   Toast.makeText(this, text.orEmpty(), duration).show()
+}
+
+/**
+ * Display a toast in this context.
+ *
+ * @param textRes the text resource to display.
+ * @param duration the duration of the toast. Defaults to short.
+ */
+fun Context.toast(@StringRes textRes: Int, duration: Int = Toast.LENGTH_SHORT) {
+  Toast.makeText(this, textRes, duration).show()
 }

@@ -68,4 +68,3 @@ private fun StartScreen.toRoute(): Route {
     StartScreen.More -> Route.More
   }
 }
-
