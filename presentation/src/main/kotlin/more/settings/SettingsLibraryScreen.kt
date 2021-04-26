@@ -9,6 +9,7 @@
 package tachiyomi.ui.more.settings
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
@@ -17,8 +18,7 @@ import tachiyomi.domain.library.service.LibraryPreferences
 import tachiyomi.ui.R
 import tachiyomi.ui.core.components.BackIconButton
 import tachiyomi.ui.core.components.Toolbar
-import tachiyomi.ui.core.prefs.PreferencesScrollableColumn
-import tachiyomi.ui.core.prefs.SwitchPref
+import tachiyomi.ui.core.prefs.SwitchPreference
 import tachiyomi.ui.core.viewmodel.BaseViewModel
 import tachiyomi.ui.core.viewmodel.viewModel
 import javax.inject.Inject
@@ -39,8 +39,10 @@ fun SettingsLibraryScreen(navController: NavHostController) {
       title = { Text(stringResource(R.string.library_label)) },
       navigationIcon = { BackIconButton(navController) }
     )
-    PreferencesScrollableColumn {
-      SwitchPref(preference = vm.showAllCategory, title = "Show all category")
+    LazyColumn {
+      item {
+        SwitchPreference(preference = vm.showAllCategory, title = "Show all category")
+      }
     }
   }
 }

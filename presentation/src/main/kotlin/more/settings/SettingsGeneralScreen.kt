@@ -12,6 +12,7 @@ import android.content.Intent
 import android.os.Build
 import android.provider.Settings
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -23,9 +24,9 @@ import tachiyomi.domain.ui.model.StartScreen
 import tachiyomi.ui.R
 import tachiyomi.ui.core.components.BackIconButton
 import tachiyomi.ui.core.components.Toolbar
-import tachiyomi.ui.core.prefs.Pref
-import tachiyomi.ui.core.prefs.PreferencesScrollableColumn
-import tachiyomi.ui.core.prefs.SwitchPref
+import tachiyomi.ui.core.prefs.ChoicePreference
+import tachiyomi.ui.core.prefs.PreferenceRow
+import tachiyomi.ui.core.prefs.SwitchPreference
 import tachiyomi.ui.core.viewmodel.BaseViewModel
 import tachiyomi.ui.core.viewmodel.viewModel
 import java.text.DateFormat
@@ -81,39 +82,56 @@ fun SettingsGeneralScreen(navController: NavHostController) {
       title = { Text(stringResource(R.string.general_label)) },
       navigationIcon = { BackIconButton(navController) }
     )
-    PreferencesScrollableColumn {
-      ChoicePref(
-        preference = vm.startScreen,
-        title = R.string.start_screen,
-        choices = mapOf(
-          StartScreen.Library to R.string.library_label,
-          StartScreen.Updates to R.string.updates_label,
-          StartScreen.History to R.string.history_label,
-          StartScreen.Browse to R.string.browse_label,
-          StartScreen.More to R.string.more_label,
+    LazyColumn {
+      item {
+        ChoicePreference(
+          preference = vm.startScreen,
+          title = R.string.start_screen,
+          choices = mapOf(
+            StartScreen.Library to R.string.library_label,
+            StartScreen.Updates to R.string.updates_label,
+            StartScreen.History to R.string.history_label,
+            StartScreen.Browse to R.string.browse_label,
+            StartScreen.More to R.string.more_label,
+          )
         )
-      )
-      SwitchPref(preference = vm.confirmExit, title = R.string.confirm_exit)
-      SwitchPref(preference = vm.hideBottomBarOnScroll, title = R.string.hide_bottom_bar_on_scroll)
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        Pref(title = R.string.manage_notifications, onClick = {
-          val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
-          }
-          context.startActivity(intent)
-        })
       }
-      Divider()
-      ChoicePref(
-        preference = vm.language,
-        title = stringResource(R.string.language),
-        choices = vm.getLanguageChoices(),
-      )
-      ChoicePref(
-        preference = vm.dateFormat,
-        title = stringResource(R.string.date_format),
-        choices = vm.getDateChoices()
-      )
+      item {
+        SwitchPreference(preference = vm.confirmExit, title = R.string.confirm_exit)
+      }
+      item {
+        SwitchPreference(
+          preference = vm.hideBottomBarOnScroll,
+          title = R.string.hide_bottom_bar_on_scroll
+        )
+      }
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        item {
+          PreferenceRow(title = R.string.manage_notifications, onClick = {
+            val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+              putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+            }
+            context.startActivity(intent)
+          })
+        }
+      }
+      item {
+        Divider()
+      }
+      item {
+        ChoicePreference(
+          preference = vm.language,
+          title = stringResource(R.string.language),
+          choices = vm.getLanguageChoices(),
+        )
+      }
+      item {
+        ChoicePreference(
+          preference = vm.dateFormat,
+          title = stringResource(R.string.date_format),
+          choices = vm.getDateChoices()
+        )
+      }
     }
   }
 }

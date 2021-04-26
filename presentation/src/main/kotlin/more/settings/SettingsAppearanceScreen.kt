@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CornerSize
@@ -40,7 +41,8 @@ import tachiyomi.domain.ui.model.ThemeMode
 import tachiyomi.ui.R
 import tachiyomi.ui.core.components.BackIconButton
 import tachiyomi.ui.core.components.Toolbar
-import tachiyomi.ui.core.prefs.PreferencesScrollableColumn
+import tachiyomi.ui.core.prefs.ChoicePreference
+import tachiyomi.ui.core.prefs.ColorPreference
 import tachiyomi.ui.core.theme.AppColorsPreferenceState
 import tachiyomi.ui.core.theme.CustomColors
 import tachiyomi.ui.core.theme.Theme
@@ -83,35 +85,56 @@ fun SettingsAppearance(navController: NavHostController) {
       title = { Text(stringResource(R.string.appearance_label)) },
       navigationIcon = { BackIconButton(navController) },
     )
-    PreferencesScrollableColumn {
-      ChoicePref(
-        preference = vm.themeMode,
-        choices = mapOf(
-          ThemeMode.System to R.string.follow_system_settings,
-          ThemeMode.Light to R.string.light,
-          ThemeMode.Dark to R.string.dark
-        ),
-        title = R.string.theme
-      )
-      Text("Preset themes", modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 4.dp))
-      LazyRow(modifier = Modifier.padding(horizontal = 8.dp)) {
-        items(themesForCurrentMode) { theme ->
-          ThemeItem(theme, onClick = {
-            (if (isLight) vm.lightTheme else vm.darkTheme).value = it.id
-            activeColors.primaryState.value = it.colors.primary
-            activeColors.secondaryState.value = it.colors.secondary
-            activeColors.barsState.value = it.customColors.bars
-          })
+    LazyColumn {
+      item {
+        ChoicePreference(
+          preference = vm.themeMode,
+          choices = mapOf(
+            ThemeMode.System to R.string.follow_system_settings,
+            ThemeMode.Light to R.string.light,
+            ThemeMode.Dark to R.string.dark
+          ),
+          title = R.string.theme
+        )
+      }
+      item {
+        Text(
+          "Preset themes",
+          modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 4.dp)
+        )
+      }
+      item {
+        LazyRow(modifier = Modifier.padding(horizontal = 8.dp)) {
+          items(themesForCurrentMode) { theme ->
+            ThemeItem(theme, onClick = {
+              (if (isLight) vm.lightTheme else vm.darkTheme).value = it.id
+              activeColors.primaryState.value = it.colors.primary
+              activeColors.secondaryState.value = it.colors.secondary
+              activeColors.barsState.value = it.customColors.bars
+            })
+          }
         }
       }
-      ColorPref(preference = activeColors.primaryState, title = "Color primary",
-        subtitle = "Displayed most frequently across your app",
-        unsetColor = MaterialTheme.colors.primary)
-      ColorPref(preference = activeColors.secondaryState, title = "Color secondary",
-        subtitle = "Accents select parts of the UI",
-        unsetColor = MaterialTheme.colors.secondary)
-      ColorPref(preference = activeColors.barsState, title = "Toolbar color",
-        unsetColor = CustomColors.current.bars)
+      item {
+        ColorPreference(
+          preference = activeColors.primaryState, title = "Color primary",
+          subtitle = "Displayed most frequently across your app",
+          unsetColor = MaterialTheme.colors.primary
+        )
+      }
+      item {
+        ColorPreference(
+          preference = activeColors.secondaryState, title = "Color secondary",
+          subtitle = "Accents select parts of the UI",
+          unsetColor = MaterialTheme.colors.secondary
+        )
+      }
+      item {
+        ColorPreference(
+          preference = activeColors.barsState, title = "Toolbar color",
+          unsetColor = CustomColors.current.bars
+        )
+      }
     }
   }
 }
@@ -127,7 +150,8 @@ private fun ThemeItem(
   } else {
     Color.White.copy(alpha = 0.15f)
   }
-  Surface(elevation = 4.dp, color = theme.colors.background, shape = borders,
+  Surface(
+    elevation = 4.dp, color = theme.colors.background, shape = borders,
     modifier = Modifier
       .size(100.dp, 160.dp)
       .padding(8.dp)
@@ -135,12 +159,16 @@ private fun ThemeItem(
       .clickable(onClick = { onClick(theme) })
   ) {
     Column {
-      Toolbar(modifier = Modifier.requiredHeight(24.dp), title = {},
-        backgroundColor = theme.customColors.bars)
-      Box(Modifier
-        .fillMaxWidth()
-        .weight(1f)
-        .padding(6.dp)) {
+      Toolbar(
+        modifier = Modifier.requiredHeight(24.dp), title = {},
+        backgroundColor = theme.customColors.bars
+      )
+      Box(
+        Modifier
+          .fillMaxWidth()
+          .weight(1f)
+          .padding(6.dp)
+      ) {
         Text("Text", fontSize = 11.sp)
         Button(
           onClick = {},
@@ -154,9 +182,10 @@ private fun ThemeItem(
             disabledBackgroundColor = theme.colors.primary
           )
         )
-        Surface(Modifier
-          .size(24.dp)
-          .align(Alignment.BottomEnd),
+        Surface(
+          Modifier
+            .size(24.dp)
+            .align(Alignment.BottomEnd),
           shape = MaterialTheme.shapes.small.copy(CornerSize(percent = 50)),
           color = theme.colors.secondary,
           elevation = 6.dp,

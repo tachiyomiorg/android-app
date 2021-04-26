@@ -9,6 +9,7 @@
 package tachiyomi.ui.more.settings
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
@@ -16,7 +17,6 @@ import androidx.navigation.NavHostController
 import tachiyomi.ui.R
 import tachiyomi.ui.core.components.BackIconButton
 import tachiyomi.ui.core.components.Toolbar
-import tachiyomi.ui.core.prefs.PreferencesScrollableColumn
 
 @Composable
 fun SettingsBrowseScreen(navController: NavHostController) {
@@ -25,7 +25,7 @@ fun SettingsBrowseScreen(navController: NavHostController) {
       title = { Text(stringResource(R.string.browse_label)) },
       navigationIcon = { BackIconButton(navController) }
     )
-    PreferencesScrollableColumn {
+    LazyColumn {
     }
   }
 }
