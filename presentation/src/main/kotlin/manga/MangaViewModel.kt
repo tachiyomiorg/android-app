@@ -15,6 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import tachiyomi.core.log.Log
 import tachiyomi.domain.catalog.service.CatalogStore
 import tachiyomi.domain.library.interactor.ChangeMangaFavorite
 import tachiyomi.domain.manga.interactor.GetChapters
@@ -79,14 +80,18 @@ class MangaViewModel @Inject constructor(
     scope.launch {
       withContext(Dispatchers.IO) {
         isRefreshing = true
-        if (chapters) {
-          syncChaptersFromSource.await(manga)
-        }
-        if (metadata) {
-          mangaInitializer.await(manga, force = false)
-        }
-        if (tracking) {
-          // TODO
+        try {
+          if (chapters) {
+            syncChaptersFromSource.await(manga)
+          }
+          if (metadata) {
+            mangaInitializer.await(manga, force = false)
+          }
+          if (tracking) {
+            // TODO
+          }
+        } catch (e: Throwable) {
+          Log.error(e, "Error while refreshing manga")
         }
         isRefreshing = false
       }

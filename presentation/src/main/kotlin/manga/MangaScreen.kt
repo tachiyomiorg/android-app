@@ -66,7 +66,7 @@ fun MangaScreen(
     SwipeRefresh(
       state = swipeState,
       onRefresh = onRefresh,
-      swipeEnabled = false // enabling it crashes the app at the moment
+      swipeEnabled = true
     ) {
       LazyColumn(modifier = Modifier.fillMaxSize()) {
         item {
