@@ -39,6 +39,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.insets.navigationBarsPadding
 import tachiyomi.ui.R
 import tachiyomi.ui.browse.CatalogsScreen
 import tachiyomi.ui.browse.catalog.CatalogScreen
@@ -70,6 +71,7 @@ fun MainNavHost(startRoute: Route) {
   val navController = rememberNavController()
 
   Scaffold(
+    modifier = Modifier.navigationBarsPadding(),
     content = { paddingValues ->
       Box(Modifier.padding(paddingValues)) {
         NavHost(navController, startDestination = startRoute.id) {
