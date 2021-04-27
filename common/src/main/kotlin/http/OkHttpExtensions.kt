@@ -17,17 +17,16 @@ import okhttp3.CacheControl
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Headers
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.Response
 import okhttp3.ResponseBody
+import okhttp3.internal.closeQuietly
 import okio.buffer
 import okio.sink
 import java.io.File
 import java.io.IOException
-import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 fun OkHttpClient.get(url: String, headers: Headers? = null, cache: CacheControl? = null): Call {
@@ -51,13 +50,12 @@ fun OkHttpClient.post(url: String, body: RequestBody, headers: Headers? = null):
 
 suspend fun Call.awaitSuccess(): Response {
   return suspendCancellableCoroutine { continuation ->
-    continuation.invokeOnCancellation {
-      cancel()
-    }
     enqueue(object : Callback {
       override fun onResponse(call: Call, response: Response) {
         if (response.isSuccessful) {
-          continuation.resume(response)
+          continuation.resume(response) {
+            response.body?.closeQuietly()
+          }
         } else {
           continuation.resumeWithException(Exception("HTTP error ${response.code}"))
         }
@@ -67,31 +65,33 @@ suspend fun Call.awaitSuccess(): Response {
         continuation.resumeWithException(e)
       }
     })
+    continuation.invokeOnCancellation {
+      cancel()
+    }
   }
 }
 
 suspend fun Call.awaitResponse(): Response {
   return suspendCancellableCoroutine { continuation ->
-    continuation.invokeOnCancellation {
-      cancel()
-    }
     enqueue(object : Callback {
       override fun onResponse(call: Call, response: Response) {
-        continuation.resume(response)
+        continuation.resume(response) {
+          response.body?.closeQuietly()
+        }
       }
 
       override fun onFailure(call: Call, e: IOException) {
         continuation.resumeWithException(e)
       }
     })
+    continuation.invokeOnCancellation {
+      cancel()
+    }
   }
 }
 
 suspend fun Call.awaitBody(): String {
   return suspendCancellableCoroutine { continuation ->
-    continuation.invokeOnCancellation {
-      cancel()
-    }
     enqueue(object : Callback {
       override fun onResponse(call: Call, response: Response) {
         if (response.isSuccessful) {
@@ -102,7 +102,9 @@ suspend fun Call.awaitBody(): String {
             // TODO check if OkHttp's [cancel] propagates properly to this job
             GlobalScope.launch(Dispatchers.IO) {
               try {
-                continuation.resume(body.string())
+                continuation.resume(body.string()) {
+                  body.closeQuietly()
+                }
               } catch (e: Exception) {
                 continuation.resumeWithException(e)
               }
@@ -117,9 +119,13 @@ suspend fun Call.awaitBody(): String {
         continuation.resumeWithException(e)
       }
     })
+    continuation.invokeOnCancellation {
+      cancel()
+    }
   }
 }
 
+@Suppress("BlockingMethodInNonBlockingContext")
 suspend fun Response.awaitBody(): String {
   return withContext(Dispatchers.IO) {
     use {
@@ -134,6 +140,7 @@ suspend fun Response.saveTo(file: File) {
   return body.saveTo(file)
 }
 
+@Suppress("BlockingMethodInNonBlockingContext")
 suspend fun ResponseBody.saveTo(file: File) {
   withContext(Dispatchers.IO) {
     use {
@@ -150,14 +157,12 @@ suspend fun ResponseBody.saveTo(file: File) {
 fun OkHttpClient.newCallWithProgress(request: Request, listener: ProgressListener): Call {
   val progressClient = newBuilder()
     .cache(null)
-    .addNetworkInterceptor(object : Interceptor {
-      override fun intercept(chain: Interceptor.Chain): Response {
-        val originalResponse = chain.proceed(chain.request())
-        return originalResponse.newBuilder()
-          .body(ProgressResponseBody(originalResponse.body!!, listener))
-          .build()
-      }
-    })
+    .addNetworkInterceptor { chain ->
+      val originalResponse = chain.proceed(chain.request())
+      originalResponse.newBuilder()
+        .body(ProgressResponseBody(originalResponse.body!!, listener))
+        .build()
+    }
     .build()
 
   return progressClient.newCall(request)
