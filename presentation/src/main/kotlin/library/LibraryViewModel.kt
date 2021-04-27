@@ -22,7 +22,7 @@ import tachiyomi.domain.library.interactor.GetLibraryCategory
 import tachiyomi.domain.library.interactor.GetUserCategories
 import tachiyomi.domain.library.interactor.SetCategoriesForMangas
 import tachiyomi.domain.library.interactor.UpdateLibraryCategory
-import tachiyomi.domain.library.model.Category
+import tachiyomi.domain.library.model.CategoryWithCount
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.domain.library.service.LibraryPreferences
 import tachiyomi.ui.core.viewmodel.BaseViewModel
@@ -38,7 +38,7 @@ class LibraryViewModel @Inject constructor(
 
   private val lastUsedCategoryPreference = libraryPreferences.lastUsedCategory()
 
-  var categories by mutableStateOf(emptyList<Category>())
+  var categories by mutableStateOf(emptyList<CategoryWithCount>())
     private set
   var selectedCategoryIndex by mutableStateOf(0)
     private set
@@ -54,6 +54,7 @@ class LibraryViewModel @Inject constructor(
   val sorting by libraryPreferences.sorting().asState()
   val displayMode by libraryPreferences.displayMode().asState()
   val showCategoryTabs by libraryPreferences.showCategoryTabs().asState()
+  val showCountInCategory by libraryPreferences.showCountInCategory().asState()
 
   val selectedCategory get() = categories.getOrNull(selectedCategoryIndex)
 
@@ -63,7 +64,8 @@ class LibraryViewModel @Inject constructor(
         getUserCategories.subscribe(showAll)
           .onEach { categories ->
             val lastCategoryId = lastUsedCategoryPreference.get()
-            val index = categories.indexOfFirst { it.id == lastCategoryId }.takeIf { it != -1 } ?: 0
+            val index = categories.indexOfFirst { it.category.id == lastCategoryId }
+              .takeIf { it != -1 } ?: 0
 
             this.categories = categories
             this.selectedCategoryIndex = index
@@ -77,12 +79,12 @@ class LibraryViewModel @Inject constructor(
     val categories = categories
     val category = categories.getOrNull(index) ?: return
     selectedCategoryIndex = index
-    lastUsedCategoryPreference.set(category.id)
+    lastUsedCategoryPreference.set(category.category.id)
   }
 
   @Composable
   fun getLibraryForCategoryIndex(categoryIndex: Int): State<List<LibraryManga>> {
-    val categoryId = categories[categoryIndex].id
+    val categoryId = categories[categoryIndex].category.id
     return remember(categoryId, sorting, filters) {
       getLibraryCategory.subscribe(categoryId, sorting, filters)
     }.collectAsState(emptyList())

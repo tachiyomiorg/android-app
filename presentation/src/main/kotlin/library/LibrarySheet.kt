@@ -101,11 +101,13 @@ fun LibrarySheet() {
           unreadBadges = vm.unreadBadges,
           categoryTabs = vm.showCategoryTabs,
           allCategory = vm.showAllCategory,
+          countInCategory = vm.showCountInCategory,
           onDisplayModeClick = { vm.changeDisplayMode(it) },
           onDownloadBadgesClick = { vm.toggleDownloadBadges() },
           onUnreadBadgesClick = { vm.toggleUnreadBadges() },
           onCategoryTabsClick = { vm.toggleShowCategoryTabs() },
-          onAllCategoryClick = { vm.toggleShowAllCategory() }
+          onAllCategoryClick = { vm.toggleShowAllCategory() },
+          onCountInCategoryClick = { vm.toggleShowCountInCategory() }
         )
       }
     }
@@ -156,11 +158,13 @@ private fun LazyListScope.DisplayPage(
   unreadBadges: Boolean,
   categoryTabs: Boolean,
   allCategory: Boolean,
+  countInCategory: Boolean,
   onDisplayModeClick: (DisplayMode) -> Unit,
   onDownloadBadgesClick: () -> Unit,
   onUnreadBadgesClick: () -> Unit,
   onCategoryTabsClick: () -> Unit,
-  onAllCategoryClick: () -> Unit
+  onAllCategoryClick: () -> Unit,
+  onCountInCategoryClick: () -> Unit
 ) {
   item {
     Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
@@ -216,7 +220,7 @@ private fun LazyListScope.DisplayPage(
       Checkbox(
         modifier = Modifier.padding(horizontal = 16.dp),
         checked = categoryTabs,
-        onCheckedChange = { onCategoryTabsClick() }
+        onCheckedChange = null
       )
       Text("Show category tabs")
     }
@@ -226,9 +230,19 @@ private fun LazyListScope.DisplayPage(
       Checkbox(
         modifier = Modifier.padding(horizontal = 16.dp),
         checked = allCategory,
-        onCheckedChange = { onAllCategoryClick() }
+        onCheckedChange = null
       )
       Text("Show all category")
+    }
+  }
+  item {
+    ClickableRow(onClick = { onCountInCategoryClick() }) {
+      Checkbox(
+        modifier = Modifier.padding(horizontal = 16.dp),
+        checked = countInCategory,
+        onCheckedChange = null
+      )
+      Text("Show number of items")
     }
   }
 }

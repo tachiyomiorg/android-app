@@ -47,15 +47,20 @@ class LibrarySheetViewModel @Inject constructor(
   var showAllCategory by libraryPreferences.showAllCategory().asState()
     private set
 
+  var showCountInCategory by libraryPreferences.showCountInCategory().asState()
+    private set
+
   fun toggleFilter(type: LibraryFilter.Type) {
     val newFilters = filters
       .map { filterState ->
         if (type == filterState.type) {
-          LibraryFilter(type, when (filterState.value) {
-            Included -> Excluded
-            Excluded -> Missing
-            Missing -> Included
-          })
+          LibraryFilter(
+            type, when (filterState.value) {
+              Included -> Excluded
+              Excluded -> Missing
+              Missing -> Included
+            }
+          )
         } else {
           filterState
         }
@@ -91,5 +96,9 @@ class LibrarySheetViewModel @Inject constructor(
 
   fun toggleShowAllCategory() {
     showAllCategory = !showAllCategory
+  }
+
+  fun toggleShowCountInCategory() {
+    showCountInCategory = !showCountInCategory
   }
 }

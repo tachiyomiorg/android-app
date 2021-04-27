@@ -44,6 +44,7 @@ import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import tachiyomi.domain.library.model.Category
+import tachiyomi.domain.library.model.CategoryWithCount
 import tachiyomi.domain.library.model.DisplayMode
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.ui.R
@@ -73,15 +74,20 @@ fun LibraryScreen(navController: NavController) {
     Column {
       Toolbar(
         title = {
+          val selectedCategory = vm.selectedCategory
           val text = if (vm.showCategoryTabs) {
             stringResource(R.string.library_label)
-          } else {
-            vm.selectedCategory?.visibleName.orEmpty()
-          }
+          } else if (selectedCategory != null) {
+            selectedCategory.category.visibleName.orEmpty() + if (!vm.showCountInCategory) {
+              ""
+            } else {
+              " (${selectedCategory.mangaCount})"
+            }
+          } else ""
           Text(text)
         },
         actions = {
-          IconButton(onClick = { scope.launch { sheetState.show() }}) {
+          IconButton(onClick = { scope.launch { sheetState.show() } }) {
             Icon(Icons.Default.FilterList, contentDescription = null)
           }
         }
@@ -90,11 +96,12 @@ fun LibraryScreen(navController: NavController) {
         state = pagerState,
         visible = vm.showCategoryTabs,
         categories = vm.categories,
+        showCount = vm.showCountInCategory,
         onTabClicked = { scope.launch { pagerState.animateScrollToPage(it) } }
       )
       LibraryPager(
         state = pagerState,
-        categories = vm.categories,
+        categories = vm.categories.map { it.category },
         displayMode = vm.displayMode,
         getLibraryForPage = { vm.getLibraryForCategoryIndex(it) },
         onMangaClicked = { navController.navigate("${Route.LibraryManga.id}/${it.id}") }
@@ -108,7 +115,8 @@ fun LibraryScreen(navController: NavController) {
 private fun LibraryTabs(
   state: PagerState,
   visible: Boolean,
-  categories: List<Category>,
+  categories: List<CategoryWithCount>,
+  showCount: Boolean,
   onTabClicked: (Int) -> Unit
 ) {
   if (categories.isEmpty()) return
@@ -129,7 +137,15 @@ private fun LibraryTabs(
         Tab(
           selected = state.currentPage == i,
           onClick = { onTabClicked(i) },
-          text = { Text(category.visibleName) }
+          text = {
+            Text(
+              category.category.visibleName + if (!showCount) {
+                ""
+              } else {
+                " (${category.mangaCount})"
+              }
+            )
+          }
         )
       }
     }
