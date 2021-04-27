@@ -45,6 +45,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import tachiyomi.domain.library.model.DisplayMode
 import tachiyomi.domain.library.model.LibraryFilter
@@ -65,8 +66,8 @@ fun LibrarySheet() {
   val selectedPage = vm.selectedPage
   val pagerState = rememberPagerState(3, selectedPage)
   LaunchedEffect(pagerState) {
-    snapshotFlow {
-      vm.selectedPage = pagerState.currentPage
+    snapshotFlow { pagerState.currentPage }.collect {
+      vm.selectedPage = it
     }
   }
 

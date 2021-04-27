@@ -41,6 +41,7 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import tachiyomi.domain.library.model.Category
 import tachiyomi.domain.library.model.DisplayMode
@@ -60,8 +61,8 @@ fun LibraryScreen(navController: NavController) {
   val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
   val pagerState = rememberPagerState(vm.categories.size, vm.selectedCategoryIndex)
   LaunchedEffect(pagerState) {
-    snapshotFlow {
-      vm.setSelectedPage(pagerState.currentPage)
+    snapshotFlow { pagerState.currentPage }.collect {
+      vm.setSelectedPage(it)
     }
   }
 
