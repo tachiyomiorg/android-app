@@ -71,7 +71,7 @@ class MangaViewModel @Inject constructor(
     expandedSummary = !expandedSummary
   }
 
-  private fun updateManga(
+  fun updateManga(
     metadata: Boolean = false,
     chapters: Boolean = false,
     tracking: Boolean = false
