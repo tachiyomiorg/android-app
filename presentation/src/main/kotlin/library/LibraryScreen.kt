@@ -43,7 +43,6 @@ import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import tachiyomi.domain.library.model.Category
 import tachiyomi.domain.library.model.CategoryWithCount
 import tachiyomi.domain.library.model.DisplayMode
 import tachiyomi.domain.library.model.LibraryManga
@@ -78,7 +77,7 @@ fun LibraryScreen(navController: NavController) {
           val text = if (vm.showCategoryTabs) {
             stringResource(R.string.library_label)
           } else if (selectedCategory != null) {
-            selectedCategory.category.visibleName.orEmpty() + if (!vm.showCountInCategory) {
+            selectedCategory.visibleName + if (!vm.showCountInCategory) {
               ""
             } else {
               " (${selectedCategory.mangaCount})"
@@ -101,7 +100,7 @@ fun LibraryScreen(navController: NavController) {
       )
       LibraryPager(
         state = pagerState,
-        categories = vm.categories.map { it.category },
+        categories = vm.categories,
         displayMode = vm.displayMode,
         getLibraryForPage = { vm.getLibraryForCategoryIndex(it) },
         onMangaClicked = { navController.navigate("${Route.LibraryManga.id}/${it.id}") }
@@ -139,7 +138,7 @@ private fun LibraryTabs(
           onClick = { onTabClicked(i) },
           text = {
             Text(
-              category.category.visibleName + if (!showCount) {
+              category.visibleName + if (!showCount) {
                 ""
               } else {
                 " (${category.mangaCount})"
@@ -156,7 +155,7 @@ private fun LibraryTabs(
 @Composable
 private fun LibraryPager(
   state: PagerState,
-  categories: List<Category>,
+  categories: List<CategoryWithCount>,
   displayMode: DisplayMode,
   getLibraryForPage: @Composable (Int) -> State<List<LibraryManga>>,
   onMangaClicked: (LibraryManga) -> Unit

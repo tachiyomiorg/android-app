@@ -11,6 +11,7 @@ package tachiyomi.ui.categories
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import tachiyomi.domain.library.model.Category
+import tachiyomi.domain.library.model.CategoryWithCount
 import tachiyomi.ui.R
 
 val Category.visibleName
@@ -20,3 +21,7 @@ val Category.visibleName
     Category.UNCATEGORIZED_ID -> stringResource(R.string.uncategorized_category)
     else -> name
   }
+
+val CategoryWithCount.visibleName
+  @Composable
+  get() = category.visibleName

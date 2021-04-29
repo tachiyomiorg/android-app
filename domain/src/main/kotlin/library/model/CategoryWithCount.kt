@@ -8,4 +8,10 @@
 
 package tachiyomi.domain.library.model
 
-data class CategoryWithCount(val category: Category, val mangaCount: Int)
+data class CategoryWithCount(val category: Category, val mangaCount: Int) {
+
+  val id get() = category.id
+
+  val name get() = category.name
+
+}

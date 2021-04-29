@@ -64,8 +64,7 @@ class LibraryViewModel @Inject constructor(
         getUserCategories.subscribe(showAll)
           .onEach { categories ->
             val lastCategoryId = lastUsedCategoryPreference.get()
-            val index = categories.indexOfFirst { it.category.id == lastCategoryId }
-              .takeIf { it != -1 } ?: 0
+            val index = categories.indexOfFirst { it.id == lastCategoryId }.takeIf { it != -1 } ?: 0
 
             this.categories = categories
             this.selectedCategoryIndex = index
@@ -79,12 +78,12 @@ class LibraryViewModel @Inject constructor(
     val categories = categories
     val category = categories.getOrNull(index) ?: return
     selectedCategoryIndex = index
-    lastUsedCategoryPreference.set(category.category.id)
+    lastUsedCategoryPreference.set(category.id)
   }
 
   @Composable
   fun getLibraryForCategoryIndex(categoryIndex: Int): State<List<LibraryManga>> {
-    val categoryId = categories[categoryIndex].category.id
+    val categoryId = categories[categoryIndex].id
     return remember(categoryId, sorting, filters) {
       getLibraryCategory.subscribe(categoryId, sorting, filters)
     }.collectAsState(emptyList())
