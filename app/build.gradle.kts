@@ -6,7 +6,7 @@ plugins {
 
 android {
   defaultConfig {
-    applicationId(Config.applicationId)
+    applicationId = Config.applicationId
   }
   buildTypes {
     getByName("release") {
