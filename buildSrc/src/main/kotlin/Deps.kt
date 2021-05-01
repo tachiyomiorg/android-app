@@ -20,8 +20,8 @@ object Deps {
   }
 
   object androidX {
-    const val core = "androidx.core:core-ktx:1.5.0-beta03"
-    const val appCompat = "androidx.appcompat:appcompat:1.3.0-beta01"
+    const val core = "androidx.core:core-ktx:1.6.0-alpha02"
+    const val appCompat = "androidx.appcompat:appcompat:1.3.0-rc01"
     const val browser = "androidx.browser:browser:1.3.0"
     const val preference = "androidx.preference:preference-ktx:1.1.1"
     const val sqlite = "androidx.sqlite:sqlite-ktx:2.1.0"
@@ -68,7 +68,7 @@ object Deps {
     const val swipeRefresh = "com.google.accompanist:accompanist-swiperefresh:$version"
   }
 
-  const val sqlite = "io.requery:sqlite-android:3.33.0"
+  const val sqlite = "com.github.requery:sqlite-android:3.35.5"
 
   object toothpick {
     private const val version = "3.1.0"
@@ -92,7 +92,7 @@ object Deps {
     const val api = "org.tinylog:tinylog-api:$version"
   }
 
-  const val coil = "io.coil-kt:coil:1.2.0"
+  const val coil = "io.coil-kt:coil:1.2.1"
 
   const val mockk = "io.mockk:mockk:1.10.0"
 

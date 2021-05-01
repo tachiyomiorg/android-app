@@ -19,8 +19,6 @@ allprojects {
     mavenCentral()
     google()
     maven { setUrl("https://jitpack.io") }
-    // TODO: remove after io.requery:sqlite-android is published to something else
-    jcenter()
     maven { setUrl("https://oss.sonatype.org/content/repositories/snapshots/") }
   }
 }
