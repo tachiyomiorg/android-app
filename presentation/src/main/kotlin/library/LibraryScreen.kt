@@ -23,6 +23,7 @@ import androidx.compose.material.Tab
 import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -71,41 +72,80 @@ fun LibraryScreen(navController: NavController) {
     sheetContent = { LibrarySheet() }
   ) {
     Column {
-      Toolbar(
-        title = {
-          val selectedCategory = vm.selectedCategory
-          val text = if (vm.showCategoryTabs) {
-            stringResource(R.string.library_label)
-          } else if (selectedCategory != null) {
-            selectedCategory.visibleName + if (!vm.showCountInCategory) {
-              ""
-            } else {
-              " (${selectedCategory.mangaCount})"
-            }
-          } else ""
-          Text(text)
-        },
-        actions = {
-          IconButton(onClick = { scope.launch { sheetState.show() } }) {
-            Icon(Icons.Default.FilterList, contentDescription = null)
-          }
-        }
+      LibraryToolbar(
+        selectedCategory = vm.selectedCategory,
+        selectedManga = vm.selectedManga,
+        showCategoryTabs = vm.showCategoryTabs,
+        showCountInCategory = vm.showCountInCategory,
+        onClickFilter = { scope.launch { sheetState.show() } },
+        onClickCloseSelection = { vm.unselectAll() }
       )
       LibraryTabs(
         state = pagerState,
         visible = vm.showCategoryTabs,
         categories = vm.categories,
         showCount = vm.showCountInCategory,
-        onTabClicked = { scope.launch { pagerState.animateScrollToPage(it) } }
+        onClickTab = { scope.launch { pagerState.animateScrollToPage(it) } }
       )
       LibraryPager(
         state = pagerState,
         categories = vm.categories,
         displayMode = vm.displayMode,
+        selectedManga = vm.selectedManga,
         getLibraryForPage = { vm.getLibraryForCategoryIndex(it) },
-        onMangaClicked = { navController.navigate("${Route.LibraryManga.id}/${it.id}") }
+        onClickManga = { manga ->
+          if (vm.selectedManga.isEmpty()) {
+            navController.navigate("${Route.LibraryManga.id}/${manga.id}")
+          } else {
+            vm.toggleManga(manga)
+          }
+        },
+        onLongClickManga = { vm.toggleManga(it) }
       )
     }
+  }
+}
+
+@Composable
+private fun LibraryToolbar(
+  selectedCategory: CategoryWithCount?,
+  selectedManga: List<Long>,
+  showCategoryTabs: Boolean,
+  showCountInCategory: Boolean,
+  onClickFilter: () -> Unit,
+  onClickCloseSelection: () -> Unit
+) {
+  if (selectedManga.isEmpty()) {
+    // Regular toolbar
+    Toolbar(
+      title = {
+        val text = when {
+          showCategoryTabs -> stringResource(R.string.library_label)
+          selectedCategory != null -> selectedCategory.visibleName + if (!showCountInCategory) {
+            ""
+          } else {
+            " (${selectedCategory.mangaCount})"
+          }
+          else -> ""
+        }
+        Text(text)
+      },
+      actions = {
+        IconButton(onClick = onClickFilter) {
+          Icon(Icons.Default.FilterList, contentDescription = null)
+        }
+      }
+    )
+  } else {
+    // Selection toolbar
+    Toolbar(
+      title = { Text("${selectedManga.size}") },
+      navigationIcon = {
+        IconButton(onClick = onClickCloseSelection) {
+          Icon(imageVector = Icons.Default.Close, contentDescription = null)
+        }
+      }
+    )
   }
 }
 
@@ -116,7 +156,7 @@ private fun LibraryTabs(
   visible: Boolean,
   categories: List<CategoryWithCount>,
   showCount: Boolean,
-  onTabClicked: (Int) -> Unit
+  onClickTab: (Int) -> Unit
 ) {
   if (categories.isEmpty()) return
 
@@ -135,7 +175,7 @@ private fun LibraryTabs(
       categories.forEachIndexed { i, category ->
         Tab(
           selected = state.currentPage == i,
-          onClick = { onTabClicked(i) },
+          onClick = { onClickTab(i) },
           text = {
             Text(
               category.visibleName + if (!showCount) {
@@ -157,8 +197,10 @@ private fun LibraryPager(
   state: PagerState,
   categories: List<CategoryWithCount>,
   displayMode: DisplayMode,
+  selectedManga: List<Long>,
   getLibraryForPage: @Composable (Int) -> State<List<LibraryManga>>,
-  onMangaClicked: (LibraryManga) -> Unit
+  onClickManga: (LibraryManga) -> Unit,
+  onLongClickManga: (LibraryManga) -> Unit
 ) {
   if (categories.isEmpty()) return
 
@@ -167,15 +209,21 @@ private fun LibraryPager(
     when (displayMode) {
       DisplayMode.CompactGrid -> LibraryMangaCompactGrid(
         library = library,
-        onClickManga = onMangaClicked
+        selectedManga = selectedManga,
+        onClickManga = onClickManga,
+        onLongClickManga = onLongClickManga
       )
       DisplayMode.ComfortableGrid -> LibraryMangaComfortableGrid(
         library = library,
-        onClickManga = onMangaClicked
+        selectedManga = selectedManga,
+        onClickManga = onClickManga,
+        onLongClickManga = onLongClickManga
       )
       DisplayMode.List -> LibraryMangaList(
         library = library,
-        onClickManga = onMangaClicked
+        selectedManga = selectedManga,
+        onClickManga = onClickManga,
+        onLongClickManga = onLongClickManga
       )
     }
   }

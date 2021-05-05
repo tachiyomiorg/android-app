@@ -10,7 +10,8 @@ package tachiyomi.ui.library
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
@@ -25,6 +26,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
@@ -39,7 +41,9 @@ import tachiyomi.ui.core.util.Typefaces
 @Composable
 fun LibraryMangaComfortableGrid(
   library: List<LibraryManga>,
-  onClickManga: (LibraryManga) -> Unit = {}
+  selectedManga: List<Long>,
+  onClickManga: (LibraryManga) -> Unit = {},
+  onLongClickManga: (LibraryManga) -> Unit = {}
 ) {
   LazyVerticalGrid(
     cells = GridCells.Adaptive(160.dp),
@@ -50,9 +54,11 @@ fun LibraryMangaComfortableGrid(
     items(library) { manga ->
       LibraryMangaComfortableGridItem(
         manga = manga,
+        isSelected = manga.id in selectedManga,
         unread = null, // TODO
         downloaded = null, // TODO
-        onClick = { onClickManga(manga) }
+        onClick = { onClickManga(manga) },
+        onLongClick = { onLongClickManga(manga) }
       )
     }
   }
@@ -61,9 +67,11 @@ fun LibraryMangaComfortableGrid(
 @Composable
 private fun LibraryMangaComfortableGridItem(
   manga: LibraryManga,
+  isSelected: Boolean,
   unread: Int?,
   downloaded: Int?,
-  onClick: () -> Unit = {},
+  onClick: () -> Unit,
+  onLongClick: () -> Unit
 ) {
   val fontStyle = LocalTextStyle.current.merge(
     TextStyle(letterSpacing = 0.sp, fontFamily = Typefaces.ptSansFont, fontSize = 14.sp)
@@ -71,9 +79,10 @@ private fun LibraryMangaComfortableGridItem(
 
   Box(
     modifier = Modifier
+      .selectedBackground(isSelected)
+      .combinedClickable(onClick = onClick, onLongClick = onLongClick)
       .padding(4.dp)
       .fillMaxWidth()
-      .clickable(onClick = onClick)
   ) {
     Column {
       Image(
@@ -98,3 +107,12 @@ private fun LibraryMangaComfortableGridItem(
     )
   }
 }
+
+private fun Modifier.selectedBackground(isSelected: Boolean) = composed {
+  if (isSelected) {
+    background(MaterialTheme.colors.onBackground.copy(alpha = 0.2f))
+  } else {
+    this
+  }
+}
+
