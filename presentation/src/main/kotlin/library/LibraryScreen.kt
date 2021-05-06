@@ -27,6 +27,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.FlipToBack
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SelectAll
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -80,7 +82,9 @@ fun LibraryScreen(navController: NavController) {
         selectedManga = vm.selectedManga,
         showCategoryTabs = vm.showCategoryTabs,
         showCountInCategory = vm.showCountInCategory,
+        onClickSearch = { /* TODO */ },
         onClickFilter = { scope.launch { sheetState.show() } },
+        onClickRefresh = { vm.updateLibrary() },
         onClickCloseSelection = { vm.unselectAll() },
         onClickSelectAll = { vm.selectAllInCurrentCategory() },
         onClickUnselectAll = { vm.flipAllInCurrentCategory() }
@@ -117,7 +121,9 @@ private fun LibraryToolbar(
   selectedManga: List<Long>,
   showCategoryTabs: Boolean,
   showCountInCategory: Boolean,
+  onClickSearch: () -> Unit,
   onClickFilter: () -> Unit,
+  onClickRefresh: () -> Unit,
   onClickCloseSelection: () -> Unit,
   onClickSelectAll: () -> Unit,
   onClickUnselectAll: () -> Unit
@@ -138,8 +144,14 @@ private fun LibraryToolbar(
         Text(text)
       },
       actions = {
+        IconButton(onClick = onClickSearch) {
+          Icon(Icons.Default.Search, contentDescription = null)
+        }
         IconButton(onClick = onClickFilter) {
           Icon(Icons.Default.FilterList, contentDescription = null)
+        }
+        IconButton(onClick = onClickRefresh) {
+          Icon(Icons.Default.Refresh, contentDescription = null)
         }
       }
     )
