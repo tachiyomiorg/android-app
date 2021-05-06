@@ -8,6 +8,7 @@
 
 package tachiyomi.ui.library
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.expandVertically
@@ -142,10 +143,11 @@ private fun LibraryToolbar(
       title = { Text("${selectedManga.size}") },
       navigationIcon = {
         IconButton(onClick = onClickCloseSelection) {
-          Icon(imageVector = Icons.Default.Close, contentDescription = null)
+          Icon(Icons.Default.Close, contentDescription = null)
         }
       }
     )
+    BackHandler(onBack = onClickCloseSelection)
   }
 }
 
