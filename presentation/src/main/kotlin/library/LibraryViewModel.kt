@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import tachiyomi.domain.library.interactor.GetLibraryCategory
 import tachiyomi.domain.library.interactor.GetUserCategories
@@ -58,6 +59,8 @@ class LibraryViewModel @Inject constructor(
 
   val selectedCategory get() = categories.getOrNull(selectedCategoryIndex)
 
+  private val loadedManga = mutableMapOf<Long, List<LibraryManga>>()
+
   init {
     libraryPreferences.showAllCategory().stateIn(scope)
       .flatMapLatest { showAll ->
@@ -86,6 +89,8 @@ class LibraryViewModel @Inject constructor(
     val categoryId = categories[categoryIndex].id
     return remember(categoryId, sorting, filters) {
       getLibraryCategory.subscribe(categoryId, sorting, filters)
+        .onEach { loadedManga[categoryId] = it }
+        .onCompletion { loadedManga.remove(categoryId) }
     }.collectAsState(emptyList())
   }
 
@@ -99,6 +104,21 @@ class LibraryViewModel @Inject constructor(
 
   fun unselectAll() {
     selectedManga.clear()
+  }
+
+  fun selectAllInCurrentCategory() {
+    val mangaInCurrentCategory = loadedManga[selectedCategory?.id] ?: return
+    val currentSelected = selectedManga.toList()
+    val mangaIds = mangaInCurrentCategory.map { it.id }.filter { it !in currentSelected }
+    selectedManga.addAll(mangaIds)
+  }
+
+  fun flipAllInCurrentCategory() {
+    val mangaInCurrentCategory = loadedManga[selectedCategory?.id] ?: return
+    val currentSelected = selectedManga.toList()
+    val (toRemove, toAdd) = mangaInCurrentCategory.map { it.id }.partition { it in currentSelected }
+    selectedManga.removeAll(toRemove)
+    selectedManga.addAll(toAdd)
   }
 
 }
