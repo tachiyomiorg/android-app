@@ -61,7 +61,10 @@ import tachiyomi.ui.main.Route
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalPagerApi::class)
 @Composable
-fun LibraryScreen(navController: NavController) {
+fun LibraryScreen(
+  navController: NavController,
+  requestHideBottomNav: (Boolean) -> Unit
+) {
   val vm = viewModel<LibraryViewModel>()
   val scope = rememberCoroutineScope()
   val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
@@ -71,7 +74,12 @@ fun LibraryScreen(navController: NavController) {
       vm.setSelectedPage(it)
     }
   }
+  LaunchedEffect(vm.selectedManga.size, sheetState.isVisible) {
+    requestHideBottomNav(vm.selectedManga.isNotEmpty() || sheetState.isVisible)
+  }
 
+  // TODO(inorichi): a modal bottom sheet does not work very well with bottom navigation. We'll
+  //  probably need a custom implementation that draws over the whole screen
   ModalBottomSheetLayout(
     sheetState = sheetState,
     sheetContent = { LibrarySheet() }

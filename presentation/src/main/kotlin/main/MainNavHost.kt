@@ -26,7 +26,10 @@ import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.NewReleases
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -69,6 +72,16 @@ import tachiyomi.ui.updates.UpdatesScreen
 @Composable
 fun MainNavHost(startRoute: Route) {
   val navController = rememberNavController()
+  val currentScreen by navController.currentBackStackEntryAsState()
+  val currentRoute = currentScreen?.arguments?.getString(KEY_ROUTE)
+
+  val (requestedHideBottomNav, requestHideBottomNav) = remember { mutableStateOf(false) }
+
+  DisposableEffect(currentScreen) {
+    onDispose {
+      requestHideBottomNav(false)
+    }
+  }
 
   Scaffold(
     modifier = Modifier.navigationBarsPadding(),
@@ -77,7 +90,7 @@ fun MainNavHost(startRoute: Route) {
         NavHost(navController, startDestination = startRoute.id) {
           // TODO: Have a NavHost per individual top-level route?
 
-          composable(Route.Library.id) { LibraryScreen(navController) }
+          composable(Route.Library.id) { LibraryScreen(navController, requestHideBottomNav) }
           composable(
             "${Route.LibraryManga.id}/{id}",
             arguments = listOf(navArgument("id") { type = NavType.LongType })
@@ -132,13 +145,12 @@ fun MainNavHost(startRoute: Route) {
       }
     },
     bottomBar = {
-      val currentScreen by navController.currentBackStackEntryAsState()
-      val currentRoute = currentScreen?.arguments?.getString(KEY_ROUTE)
+      val isVisible = TopLevelRoutes.isTopLevelRoute(currentRoute) && !requestedHideBottomNav
 
       AnimatedVisibility(
-        visible = TopLevelRoutes.isTopLevelRoute(currentRoute),
+        visible = isVisible,
         enter = slideInVertically(initialOffsetY = { it }),
-        exit = slideOutVertically(targetOffsetY = { it }),
+        exit = slideOutVertically(targetOffsetY = { it })
       ) {
         BottomNavigation(
           backgroundColor = CustomColors.current.bars,
