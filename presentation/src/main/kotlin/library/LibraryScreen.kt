@@ -74,8 +74,11 @@ fun LibraryScreen(
       vm.setSelectedPage(it)
     }
   }
-  LaunchedEffect(vm.selectedManga.size, sheetState.isVisible) {
-    requestHideBottomNav(vm.selectedManga.isNotEmpty() || sheetState.isVisible)
+  LaunchedEffect(vm.selectedManga.size, sheetState.targetValue) {
+    requestHideBottomNav(
+      vm.selectedManga.isNotEmpty() ||
+        sheetState.targetValue != ModalBottomSheetValue.Hidden
+    )
   }
 
   // TODO(inorichi): a modal bottom sheet does not work very well with bottom navigation. We'll

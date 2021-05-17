@@ -89,7 +89,8 @@ fun LibrarySheet() {
   }
   HorizontalPager(
     state = pagerState,
-    verticalAlignment = Alignment.Top
+    verticalAlignment = Alignment.Top,
+    offscreenLimit = 2
   ) { page ->
     LazyColumn {
       when (page) {

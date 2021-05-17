@@ -13,7 +13,6 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
@@ -86,7 +85,7 @@ fun MainNavHost(startRoute: Route) {
   Scaffold(
     modifier = Modifier.navigationBarsPadding(),
     content = { paddingValues ->
-      Box(Modifier.padding(paddingValues)) {
+      Box {
         NavHost(navController, startDestination = startRoute.id) {
           // TODO: Have a NavHost per individual top-level route?
 
