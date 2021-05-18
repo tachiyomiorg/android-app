@@ -53,7 +53,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.navigate
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
@@ -302,7 +301,7 @@ private fun LibraryPager(
 ) {
   if (categories.isEmpty()) return
 
-  HorizontalPager(state = state, offscreenLimit = 1) { page ->
+  HorizontalPager(state = state) { page ->
     val library by getLibraryForPage(page)
     when (displayMode) {
       DisplayMode.CompactGrid -> LibraryMangaCompactGrid(

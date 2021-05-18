@@ -34,12 +34,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavType
-import androidx.navigation.compose.KEY_ROUTE
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navArgument
-import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.navigationBarsPadding
 import tachiyomi.ui.R
@@ -72,7 +70,7 @@ import tachiyomi.ui.updates.UpdatesScreen
 fun MainNavHost(startRoute: Route) {
   val navController = rememberNavController()
   val currentScreen by navController.currentBackStackEntryAsState()
-  val currentRoute = currentScreen?.arguments?.getString(KEY_ROUTE)
+  val currentRoute = currentScreen?.destination?.route
 
   val (requestedHideBottomNav, requestHideBottomNav) = remember { mutableStateOf(false) }
 
@@ -84,7 +82,7 @@ fun MainNavHost(startRoute: Route) {
 
   Scaffold(
     modifier = Modifier.navigationBarsPadding(),
-    content = { paddingValues ->
+    content = {
       Box {
         NavHost(navController, startDestination = startRoute.id) {
           // TODO: Have a NavHost per individual top-level route?
@@ -164,7 +162,7 @@ fun MainNavHost(startRoute: Route) {
               selected = currentRoute == it.route.id,
               onClick = {
                 if (currentRoute != it.route.id) {
-                  navController.popBackStack(navController.graph.startDestination, false)
+                  navController.popBackStack(navController.graph.startDestinationId, false)
                   navController.navigate(it.route.id)
                 }
               },

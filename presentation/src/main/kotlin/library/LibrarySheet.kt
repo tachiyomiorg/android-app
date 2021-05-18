@@ -64,7 +64,7 @@ fun LibrarySheet() {
   val vm = viewModel<LibrarySheetViewModel>()
   val scope = rememberCoroutineScope()
   val selectedPage = vm.selectedPage
-  val pagerState = rememberPagerState(3, selectedPage)
+  val pagerState = rememberPagerState(3, selectedPage, initialOffscreenLimit = 2)
   LaunchedEffect(pagerState) {
     snapshotFlow { pagerState.currentPage }.collect {
       vm.selectedPage = it
@@ -90,7 +90,6 @@ fun LibrarySheet() {
   HorizontalPager(
     state = pagerState,
     verticalAlignment = Alignment.Top,
-    offscreenLimit = 2
   ) { page ->
     LazyColumn {
       when (page) {

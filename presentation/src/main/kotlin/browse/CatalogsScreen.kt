@@ -55,7 +55,6 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
-import androidx.navigation.compose.navigate
 import com.google.accompanist.coil.rememberCoilPainter
 import tachiyomi.domain.catalog.model.Catalog
 import tachiyomi.domain.catalog.model.CatalogBundled

@@ -26,7 +26,6 @@ import androidx.compose.material.icons.filled.Tune
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.navigate
 import tachiyomi.ui.R
 import tachiyomi.ui.core.components.BackIconButton
 import tachiyomi.ui.core.components.Toolbar

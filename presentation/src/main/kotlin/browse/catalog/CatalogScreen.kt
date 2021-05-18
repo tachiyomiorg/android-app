@@ -40,7 +40,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.navigate
 import com.google.accompanist.coil.rememberCoilPainter
 import tachiyomi.domain.manga.model.Manga
 import tachiyomi.ui.core.coil.MangaCover

@@ -35,7 +35,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
-import androidx.navigation.compose.navigate
 import tachiyomi.domain.ui.UiPreferences
 import tachiyomi.ui.R
 import tachiyomi.ui.core.components.NoElevationOverlay
