@@ -54,6 +54,8 @@ class LibraryViewModel @Inject constructor(
   var showUpdatingCategory by mutableStateOf(false)
     private set
   var sheetVisible by mutableStateOf(false)
+  var searchMode by mutableStateOf(false)
+    private set
   var searchQuery by mutableStateOf("")
     private set
 
@@ -103,11 +105,12 @@ class LibraryViewModel @Inject constructor(
     }
 
     return remember(sorting, filters, searchQuery) {
-      if (searchQuery.isBlank()) {
+      val query = searchQuery
+      if (query.isBlank()) {
         unfiltered
       } else {
         unfiltered.map { mangas ->
-          mangas.filter { searchQuery in it.title }
+          mangas.filter { it.title.contains(query, true) }
         }
       }
         .onEach { loadedManga[categoryId] = it }
@@ -142,15 +145,25 @@ class LibraryViewModel @Inject constructor(
     selectedManga.addAll(toAdd)
   }
 
+  fun openSearch() {
+    searchMode = true
+    searchQuery = ""
+  }
+
+  fun closeSearch() {
+    searchMode = false
+    searchQuery = ""
+  }
+
+  fun updateQuery(query: String) {
+    searchQuery = query
+  }
+
   fun updateLibrary() {
     // TODO(inorichi): For now it only updates the selected category, not the ones selected for
     //  global updates
     val categoryId = selectedCategory?.id ?: return
     updateLibraryCategory.enqueue(categoryId)
-  }
-
-  fun updateQuery(query: String) {
-    searchQuery = query
   }
 
 }

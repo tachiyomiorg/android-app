@@ -14,9 +14,14 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.LocalContentColor
+import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.ScrollableTabRow
@@ -24,6 +29,7 @@ import androidx.compose.material.Tab
 import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.FlipToBack
@@ -35,10 +41,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
@@ -69,6 +81,7 @@ fun LibraryScreen(
   val scope = rememberCoroutineScope()
   val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
   val pagerState = rememberPagerState(vm.categories.size, vm.selectedCategoryIndex)
+
   LaunchedEffect(pagerState) {
     snapshotFlow { pagerState.currentPage }.collect {
       vm.setSelectedPage(it)
@@ -76,8 +89,7 @@ fun LibraryScreen(
   }
   LaunchedEffect(vm.selectedManga.size, sheetState.targetValue) {
     requestHideBottomNav(
-      vm.selectedManga.isNotEmpty() ||
-        sheetState.targetValue != ModalBottomSheetValue.Hidden
+      vm.selectedManga.isNotEmpty() || sheetState.targetValue != ModalBottomSheetValue.Hidden
     )
   }
 
@@ -93,12 +105,16 @@ fun LibraryScreen(
         selectedManga = vm.selectedManga,
         showCategoryTabs = vm.showCategoryTabs,
         showCountInCategory = vm.showCountInCategory,
-        onClickSearch = { /* TODO */ },
+        searchMode = vm.searchMode,
+        searchQuery = vm.searchQuery,
+        onClickSearch = { vm.openSearch() },
         onClickFilter = { scope.launch { sheetState.show() } },
         onClickRefresh = { vm.updateLibrary() },
         onClickCloseSelection = { vm.unselectAll() },
+        onClickCloseSearch = { vm.closeSearch() },
         onClickSelectAll = { vm.selectAllInCurrentCategory() },
-        onClickUnselectAll = { vm.flipAllInCurrentCategory() }
+        onClickUnselectAll = { vm.flipAllInCurrentCategory() },
+        onChangeSearchQuery = { vm.updateQuery(it) }
       )
       LibraryTabs(
         state = pagerState,
@@ -132,14 +148,57 @@ private fun LibraryToolbar(
   selectedManga: List<Long>,
   showCategoryTabs: Boolean,
   showCountInCategory: Boolean,
+  searchMode: Boolean,
+  searchQuery: String,
   onClickSearch: () -> Unit,
   onClickFilter: () -> Unit,
   onClickRefresh: () -> Unit,
   onClickCloseSelection: () -> Unit,
+  onClickCloseSearch: () -> Unit,
   onClickSelectAll: () -> Unit,
-  onClickUnselectAll: () -> Unit
+  onClickUnselectAll: () -> Unit,
+  onChangeSearchQuery: (String) -> Unit
 ) {
-  if (selectedManga.isEmpty()) {
+  if (searchMode) {
+    // Search toolbar
+    val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+
+    Toolbar(
+      title = {
+        BasicTextField(
+          searchQuery,
+          onChangeSearchQuery,
+          modifier = Modifier.focusRequester(focusRequester),
+          textStyle = LocalTextStyle.current.copy(color = LocalContentColor.current),
+          cursorBrush = SolidColor(LocalContentColor.current),
+          singleLine = true,
+          keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
+          keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
+        )
+      },
+      navigationIcon = {
+        IconButton(onClick = onClickCloseSearch) {
+          Icon(Icons.Default.ArrowBack, contentDescription = null)
+        }
+      },
+      actions = {
+        IconButton(onClick = { onChangeSearchQuery("") }) {
+          Icon(Icons.Default.Close, contentDescription = null)
+        }
+        IconButton(onClick = {
+          onClickFilter()
+          focusManager.clearFocus()
+        }) {
+          Icon(Icons.Default.FilterList, contentDescription = null)
+        }
+      }
+    )
+    LaunchedEffect(focusRequester) {
+      focusRequester.requestFocus()
+    }
+    BackHandler(onBack = onClickCloseSearch)
+  } else if (selectedManga.isEmpty()) {
     // Regular toolbar
     Toolbar(
       title = {
