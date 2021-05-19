@@ -13,7 +13,12 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -22,20 +27,27 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.LocalTextStyle
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.ScrollableTabRow
+import androidx.compose.material.Surface
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.FlipToBack
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SelectAll
+import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Label
+import androidx.compose.material.icons.twotone.FileDownload
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -44,6 +56,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -87,13 +100,9 @@ fun LibraryScreen(
     }
   }
   LaunchedEffect(vm.selectedManga.size, sheetState.targetValue) {
-    requestHideBottomNav(
-      vm.selectedManga.isNotEmpty() || sheetState.targetValue != ModalBottomSheetValue.Hidden
-    )
+    requestHideBottomNav(vm.selectionMode || sheetState.targetValue != ModalBottomSheetValue.Hidden)
   }
 
-  // TODO(inorichi): a modal bottom sheet does not work very well with bottom navigation. We'll
-  //  probably need a custom implementation that draws over the whole screen
   ModalBottomSheetLayout(
     sheetState = sheetState,
     sheetContent = { LibrarySheet() }
@@ -104,6 +113,7 @@ fun LibraryScreen(
         selectedManga = vm.selectedManga,
         showCategoryTabs = vm.showCategoryTabs,
         showCountInCategory = vm.showCountInCategory,
+        selectionMode = vm.selectionMode,
         searchMode = vm.searchMode,
         searchQuery = vm.searchQuery,
         onClickSearch = { vm.openSearch() },
@@ -122,21 +132,33 @@ fun LibraryScreen(
         showCount = vm.showCountInCategory,
         onClickTab = { scope.launch { pagerState.animateScrollToPage(it) } }
       )
-      LibraryPager(
-        state = pagerState,
-        categories = vm.categories,
-        displayMode = vm.displayMode,
-        selectedManga = vm.selectedManga,
-        getLibraryForPage = { vm.getLibraryForCategoryIndex(it) },
-        onClickManga = { manga ->
-          if (vm.selectedManga.isEmpty()) {
-            navController.navigate("${Route.LibraryManga.id}/${manga.id}")
-          } else {
-            vm.toggleManga(manga)
-          }
-        },
-        onLongClickManga = { vm.toggleManga(it) }
-      )
+      Box {
+        LibraryPager(
+          state = pagerState,
+          categories = vm.categories,
+          displayMode = vm.displayMode,
+          selectedManga = vm.selectedManga,
+          getLibraryForPage = { vm.getLibraryForCategoryIndex(it) },
+          onClickManga = { manga ->
+            if (!vm.selectionMode) {
+              navController.navigate("${Route.LibraryManga.id}/${manga.id}")
+            } else {
+              vm.toggleManga(manga)
+            }
+          },
+          onLongClickManga = { vm.toggleManga(it) }
+        )
+
+        LibrarySelectionBar(
+          visible = vm.selectionMode,
+          modifier = Modifier.align(Alignment.BottomCenter),
+          onClickChangeCategory = { vm.changeCategoriesForSelectedManga() },
+          onClickDownload = { vm.downloadSelectedManga() },
+          onClickMarkAsRead = { vm.toggleReadSelectedManga(read = true) },
+          onClickMarkAsUnread = { vm.toggleReadSelectedManga(read = false) },
+          onClickDeleteDownloads = { vm.deleteDownloadsSelectedManga() }
+        )
+      }
     }
   }
 }
@@ -147,6 +169,7 @@ private fun LibraryToolbar(
   selectedManga: List<Long>,
   showCategoryTabs: Boolean,
   showCountInCategory: Boolean,
+  selectionMode: Boolean,
   searchMode: Boolean,
   searchQuery: String,
   onClickSearch: () -> Unit,
@@ -157,8 +180,8 @@ private fun LibraryToolbar(
   onClickSelectAll: () -> Unit,
   onClickUnselectAll: () -> Unit,
   onChangeSearchQuery: (String) -> Unit
-) {
-  if (searchMode) {
+) = when {
+  searchMode -> {
     // Search toolbar
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
@@ -197,7 +220,28 @@ private fun LibraryToolbar(
       focusRequester.requestFocus()
     }
     BackHandler(onBack = onClickCloseSearch)
-  } else if (selectedManga.isEmpty()) {
+  }
+  selectionMode -> {
+    // Selection toolbar
+    Toolbar(
+      title = { Text("${selectedManga.size}") },
+      navigationIcon = {
+        IconButton(onClick = onClickCloseSelection) {
+          Icon(Icons.Default.Close, contentDescription = null)
+        }
+      },
+      actions = {
+        IconButton(onClick = onClickSelectAll) {
+          Icon(Icons.Default.SelectAll, contentDescription = null)
+        }
+        IconButton(onClick = onClickUnselectAll) {
+          Icon(Icons.Default.FlipToBack, contentDescription = null)
+        }
+      }
+    )
+    BackHandler(onBack = onClickCloseSelection)
+  }
+  else -> {
     // Regular toolbar
     Toolbar(
       title = {
@@ -224,25 +268,6 @@ private fun LibraryToolbar(
         }
       }
     )
-  } else {
-    // Selection toolbar
-    Toolbar(
-      title = { Text("${selectedManga.size}") },
-      navigationIcon = {
-        IconButton(onClick = onClickCloseSelection) {
-          Icon(Icons.Default.Close, contentDescription = null)
-        }
-      },
-      actions = {
-        IconButton(onClick = onClickSelectAll) {
-          Icon(Icons.Default.SelectAll, contentDescription = null)
-        }
-        IconButton(onClick = onClickUnselectAll) {
-          Icon(Icons.Default.FlipToBack, contentDescription = null)
-        }
-      }
-    )
-    BackHandler(onBack = onClickCloseSelection)
   }
 }
 
@@ -322,6 +347,58 @@ private fun LibraryPager(
         onClickManga = onClickManga,
         onLongClickManga = onLongClickManga
       )
+    }
+  }
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+private fun LibrarySelectionBar(
+  visible: Boolean,
+  onClickChangeCategory: () -> Unit,
+  onClickDownload: () -> Unit,
+  onClickMarkAsRead: () -> Unit,
+  onClickMarkAsUnread: () -> Unit,
+  onClickDeleteDownloads: () -> Unit,
+  modifier: Modifier = Modifier
+) {
+  AnimatedVisibility(
+    visible = visible,
+    modifier = modifier,
+    enter = expandVertically(),
+    exit = shrinkVertically()
+  ) {
+    Surface(
+      modifier = Modifier
+        .padding(horizontal = 16.dp)
+        .padding(bottom = 32.dp)
+        .fillMaxWidth(),
+      shape = MaterialTheme.shapes.medium,
+      color = CustomColors.current.bars,
+      contentColor = CustomColors.current.onBars,
+      elevation = 4.dp
+    ) {
+      Row(
+        modifier = Modifier.padding(4.dp),
+        horizontalArrangement = Arrangement.SpaceAround
+      ) {
+        IconButton(onClick = onClickChangeCategory) {
+          Icon(Icons.Outlined.Label, contentDescription = null)
+        }
+        IconButton(onClick = onClickDownload) {
+          Icon(Icons.TwoTone.FileDownload, contentDescription = null)
+        }
+        IconButton(onClick = onClickMarkAsRead) {
+          Icon(Icons.Default.Check, contentDescription = null)
+        }
+        // TODO(inorichi): outlined check is not really outlined, we'll need to add a custom icon
+        IconButton(onClick = onClickMarkAsUnread) {
+          Icon(Icons.Outlined.Check, contentDescription = null)
+        }
+        IconButton(onClick = onClickDeleteDownloads) {
+          Icon(Icons.Outlined.Delete, contentDescription = null)
+        }
+      }
     }
   }
 }

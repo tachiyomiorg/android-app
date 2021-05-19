@@ -11,6 +11,7 @@ package tachiyomi.ui.library
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -58,6 +59,7 @@ class LibraryViewModel @Inject constructor(
     private set
   var searchQuery by mutableStateOf("")
     private set
+  val selectionMode by derivedStateOf { selectedManga.isNotEmpty() }
 
   val filters by libraryPreferences.filters().asState()
   val sorting by libraryPreferences.sorting().asState()
@@ -164,6 +166,22 @@ class LibraryViewModel @Inject constructor(
     //  global updates
     val categoryId = selectedCategory?.id ?: return
     updateLibraryCategory.enqueue(categoryId)
+  }
+
+  fun changeCategoriesForSelectedManga() {
+    // TODO
+  }
+
+  fun toggleReadSelectedManga(read: Boolean) {
+    // TODO
+  }
+
+  fun downloadSelectedManga() {
+    // TODO
+  }
+
+  fun deleteDownloadsSelectedManga() {
+    // TODO
   }
 
 }
