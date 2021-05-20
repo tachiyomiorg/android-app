@@ -51,7 +51,8 @@ fun UpdatesScreen(navController: NavController) {
 @Composable
 fun UpdatesItem(
   manga: Manga,
-  onClickItem: (Manga) -> Unit = { /* TODO */ },
+  onClickItem: (Manga) -> Unit = { /* TODO Open chapter in reader */ },
+  onClickCover: (Manga) -> Unit = { /* TODO Open manga details */ },
   onClickDownload: (Manga) -> Unit = { /* TODO */}
 ) {
   MangaListItem(
@@ -63,6 +64,7 @@ fun UpdatesItem(
   ) {
     MangaListItemImage(
       modifier = Modifier
+        .clickable { onClickCover(manga) }
         .fillMaxHeight()
         .aspectRatio(1f)
         .padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
@@ -82,7 +84,7 @@ fun UpdatesItem(
         text = "Chapter 69" // TODO
       )
     }
-    // TODO Add state for when downloading
+    // TODO Replace with Download Composable when that is implemented
     IconButton(onClick = { onClickDownload(manga) }) {
       Icon(imageVector = Icons.Outlined.Download, contentDescription = "")
     }

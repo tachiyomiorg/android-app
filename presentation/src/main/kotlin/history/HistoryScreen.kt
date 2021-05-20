@@ -52,7 +52,7 @@ fun HistoryScreen(navController: NavController) {
 @Composable
 fun HistoryItem(
   manga: Manga,
-  onClickItem: (Manga) -> Unit = { /* TODO */ },
+  onClickItem: (Manga) -> Unit = { /* TODO Open manga details */ },
   onClickDelete: (Manga) -> Unit = { /* TODO */ },
   onClickPlay: (Manga) -> Unit = { /* TODO */ }
 ) {
