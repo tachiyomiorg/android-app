@@ -70,6 +70,8 @@ fun LibraryScreen(
   val vm = viewModel<LibraryViewModel>()
   val scope = rememberCoroutineScope()
   val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+
+  // TODO last category isn't restored if categories are not yet loaded
   val pagerState = rememberPagerState(vm.categories.size, vm.selectedCategoryIndex)
 
   LaunchedEffect(pagerState) {

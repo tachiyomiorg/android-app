@@ -23,8 +23,8 @@ object Deps {
     const val core = "androidx.core:core-ktx:1.6.0-beta01"
     const val appCompat = "androidx.appcompat:appcompat:1.4.0-alpha01"
     const val browser = "androidx.browser:browser:1.3.0"
-    const val preference = "androidx.preference:preference-ktx:1.1.1"
     const val sqlite = "androidx.sqlite:sqlite-ktx:2.1.0"
+    const val dataStore = "androidx.datastore:datastore-preferences:1.0.0-beta01"
   }
 
   object compose {

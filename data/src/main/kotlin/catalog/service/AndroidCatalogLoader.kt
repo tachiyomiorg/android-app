@@ -9,7 +9,6 @@
 package tachiyomi.data.catalog.service
 
 import android.app.Application
-import android.content.Context
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import dalvik.system.DexClassLoader
@@ -21,7 +20,7 @@ import kotlinx.coroutines.runBlocking
 import tachiyomi.core.http.Http
 import tachiyomi.core.log.Log
 import tachiyomi.core.prefs.AndroidPreferenceStore
-import tachiyomi.core.prefs.LazyPreferenceStore
+import tachiyomi.core.prefs.PrefixedPreferenceStore
 import tachiyomi.data.BuildConfig
 import tachiyomi.domain.catalog.model.CatalogBundled
 import tachiyomi.domain.catalog.model.CatalogInstalled
@@ -42,6 +41,8 @@ internal class AndroidCatalogLoader @Inject constructor(
 ) : CatalogLoader {
 
   private val pkgManager = context.packageManager
+
+  private val catalogPreferences = AndroidPreferenceStore(context, "catalogs_data")
 
   /**
    * Return a list of all the installed catalogs initialized concurrently.
@@ -201,12 +202,7 @@ internal class AndroidCatalogLoader @Inject constructor(
       sourceClassName
     }
 
-    val dependencies = Dependencies(
-      http,
-      LazyPreferenceStore(lazy {
-        AndroidPreferenceStore(context.getSharedPreferences(pkgName, Context.MODE_PRIVATE))
-      })
-    )
+    val dependencies = Dependencies(http, PrefixedPreferenceStore(catalogPreferences, pkgName))
 
     return ValidatedData(versionCode, versionName, description, classToLoad, dependencies)
   }

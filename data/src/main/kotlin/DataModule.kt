@@ -12,7 +12,7 @@ import android.app.Application
 import androidx.room.withTransaction
 import tachiyomi.core.db.Transactions
 import tachiyomi.core.di.GenericsProvider
-import tachiyomi.core.prefs.PreferenceStoreFactory
+import tachiyomi.core.prefs.AndroidPreferenceStore
 import tachiyomi.data.catalog.api.CatalogGithubApi
 import tachiyomi.data.catalog.service.AndroidCatalogInstallationChanges
 import tachiyomi.data.catalog.service.AndroidCatalogInstaller
@@ -54,8 +54,6 @@ import javax.inject.Inject
 @Suppress("FunctionName")
 fun DataModule(context: Application) = module {
 
-  val preferenceFactory = PreferenceStoreFactory(context)
-
   bind<AppDatabase>().toProviderInstance { AppDatabase.build(context) }.providesSingleton()
   bind<Transactions>().toClass<RoomTransactions>()
 
@@ -68,7 +66,7 @@ fun DataModule(context: Application) = module {
 
   bind<LibraryRepository>().toClass<LibraryRepositoryImpl>().singleton()
   bind<LibraryPreferences>()
-    .toProviderInstance { LibraryPreferences(preferenceFactory.create("library")) }
+    .toProviderInstance { LibraryPreferences(AndroidPreferenceStore(context, "library")) }
     .providesSingleton()
 
   bind<LibraryCovers>()
@@ -77,7 +75,7 @@ fun DataModule(context: Application) = module {
   bind<LibraryUpdateScheduler>().toClass<LibraryUpdateSchedulerImpl>().singleton()
 
   bind<SyncPreferences>()
-    .toProviderInstance { SyncPreferences(preferenceFactory.create("sync")) }
+    .toProviderInstance { SyncPreferences(AndroidPreferenceStore(context, "sync")) }
     .providesSingleton()
 
   bind<SyncDevice>().toClass<SyncDeviceAndroid>().singleton()
@@ -85,7 +83,7 @@ fun DataModule(context: Application) = module {
   bind<CatalogRemoteRepository>().toClass<CatalogRemoteRepositoryImpl>().singleton()
   bind<CatalogRemoteApi>().toClass<CatalogGithubApi>().singleton()
   bind<CatalogPreferences>()
-    .toProviderInstance { CatalogPreferences(preferenceFactory.create("catalog")) }
+    .toProviderInstance { CatalogPreferences(AndroidPreferenceStore(context, "catalog")) }
     .providesSingleton()
 
   bind<CatalogInstaller>().toClass<AndroidCatalogInstaller>().singleton()
@@ -100,12 +98,12 @@ fun DataModule(context: Application) = module {
   bind<DownloadPreferences>()
     .toProviderInstance {
       val defaultDownloads = context.getExternalFilesDir("downloads")!!
-      DownloadPreferences(preferenceFactory.create("download"), defaultDownloads)
+      DownloadPreferences(AndroidPreferenceStore(context, "download"), defaultDownloads)
     }
     .providesSingleton()
 
   bind<UiPreferences>()
-    .toProviderInstance { UiPreferences(preferenceFactory.create("ui")) }
+    .toProviderInstance { UiPreferences(AndroidPreferenceStore(context, "ui")) }
     .providesSingleton()
 
 }

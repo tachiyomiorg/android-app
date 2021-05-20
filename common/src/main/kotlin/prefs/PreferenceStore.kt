@@ -15,7 +15,7 @@ package tachiyomi.core.prefs
 interface PreferenceStore {
 
   /**
-   * Returns an [String] preference for this [key].
+   * Returns a [String] preference for this [key].
    */
   fun getString(key: String, defaultValue: String = ""): Preference<String>
 
@@ -45,7 +45,7 @@ interface PreferenceStore {
   fun getStringSet(key: String, defaultValue: Set<String> = emptySet()): Preference<Set<String>>
 
   /**
-   * Returns preference of type [T] for this [key]. The [serializer] and [deserializer] function
+   * Returns a preference of type [T] for this [key]. The [serializer] and [deserializer] function
    * must be provided.
    */
   fun <T> getObject(

@@ -9,57 +9,58 @@
 package tachiyomi.core.prefs
 
 /**
- * An implementation of a [PreferenceStore] which is initialized on first access. Useful when
- * providing preference instances to classes that may not use them at all.
+ * An implementation of a [PreferenceStore] that writes to a [prefix]ed key, allowing to share a
+ * single [commonStore] with many consumers.
  */
-class LazyPreferenceStore(
-  private val lazyStore: Lazy<PreferenceStore>
+class PrefixedPreferenceStore(
+  private val commonStore: PreferenceStore,
+  private val prefix: String
 ) : PreferenceStore {
 
   /**
-   * Returns an [String] preference for this [key].
+   * Returns a [String] preference for this [key].
    */
   override fun getString(key: String, defaultValue: String): Preference<String> {
-    return lazyStore.value.getString(key, defaultValue)
+    return commonStore.getString(prefix + key, defaultValue)
   }
 
   /**
    * Returns a [Long] preference for this [key].
    */
   override fun getLong(key: String, defaultValue: Long): Preference<Long> {
-    return lazyStore.value.getLong(key, defaultValue)
+    return commonStore.getLong(prefix + key, defaultValue)
   }
 
   /**
    * Returns an [Int] preference for this [key].
    */
   override fun getInt(key: String, defaultValue: Int): Preference<Int> {
-    return lazyStore.value.getInt(key, defaultValue)
+    return commonStore.getInt(prefix + key, defaultValue)
   }
 
   /**
    * Returns a [Float] preference for this [key].
    */
   override fun getFloat(key: String, defaultValue: Float): Preference<Float> {
-    return lazyStore.value.getFloat(key, defaultValue)
+    return commonStore.getFloat(prefix + key, defaultValue)
   }
 
   /**
    * Returns a [Boolean] preference for this [key].
    */
   override fun getBoolean(key: String, defaultValue: Boolean): Preference<Boolean> {
-    return lazyStore.value.getBoolean(key, defaultValue)
+    return commonStore.getBoolean(prefix + key, defaultValue)
   }
 
   /**
    * Returns a [Set<String>] preference for this [key].
    */
   override fun getStringSet(key: String, defaultValue: Set<String>): Preference<Set<String>> {
-    return lazyStore.value.getStringSet(key, defaultValue)
+    return commonStore.getStringSet(prefix + key, defaultValue)
   }
 
   /**
-   * Returns preference of type [T] for this [key]. The [serializer] and [deserializer] function
+   * Returns a preference of type [T] for this [key]. The [serializer] and [deserializer] function
    * must be provided.
    */
   override fun <T> getObject(
@@ -68,7 +69,7 @@ class LazyPreferenceStore(
     serializer: (T) -> String,
     deserializer: (String) -> T
   ): Preference<T> {
-    return lazyStore.value.getObject(key, defaultValue, serializer, deserializer)
+    return commonStore.getObject(prefix + key, defaultValue, serializer, deserializer)
   }
 
 }

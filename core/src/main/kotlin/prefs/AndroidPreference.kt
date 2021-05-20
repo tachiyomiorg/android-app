@@ -8,48 +8,49 @@
 
 package tachiyomi.core.prefs
 
-import android.content.SharedPreferences
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.Preferences.Key
+import androidx.datastore.preferences.core.edit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
+// TODO(inorichi): consider using the async API if possible
 /**
- * An implementation of [Preference] backed by Android's [SharedPreferences].
+ * An implementation of [Preference] backed by Androidx's [DataStore].
+ *
+ * Read operations are blocking, but writes are performed in the given [scope], which should be
+ * an IO thread.
  */
 internal class AndroidPreference<T>(
-  private val preferences: SharedPreferences,
-  private val key: String,
-  private val defaultValue: T,
-  private val adapter: Adapter<T>,
-  private val keyChanges: SharedFlow<String>
+  private val store: DataStore<Preferences>,
+  private val scope: CoroutineScope,
+  private val key: Key<T>,
+  private val defaultValue: T
 ) : Preference<T> {
-
-  interface Adapter<T> {
-    fun get(key: String, preferences: SharedPreferences): T
-
-    fun set(key: String, value: T, editor: SharedPreferences.Editor)
-  }
 
   /**
    * Returns the key of this preference.
    */
   override fun key(): String {
-    return key
+    return key.name
   }
 
   /**
    * Returns the current value of this preference.
    */
   override fun get(): T {
-    return if (!preferences.contains(key)) {
-      defaultValue
-    } else {
-      adapter.get(key, preferences)
+    return runBlocking {
+      store.data.first()[key] ?: defaultValue
     }
   }
 
@@ -57,27 +58,31 @@ internal class AndroidPreference<T>(
    * Sets a new [value] for this preference.
    */
   override fun set(value: T) {
-    val editor = preferences.edit()
-    adapter.set(key, value, editor)
-    editor.apply()
+    scope.launch {
+      store.edit { it[key] = value }
+    }
   }
 
   /**
    * Returns whether there's an existing entry for this preference.
    */
   override fun isSet(): Boolean {
-    return preferences.contains(key)
+    return runBlocking {
+      store.data.first().contains(key)
+    }
   }
 
   /**
    * Deletes the entry of this preference.
    */
   override fun delete() {
-    preferences.edit().remove(key).apply()
+    scope.launch {
+      store.edit { it.remove(key) }
+    }
   }
 
   /**
-   * Returns the default value of this preference
+   * Returns the default value of this preference.
    */
   override fun defaultValue(): T {
     return defaultValue
@@ -87,9 +92,10 @@ internal class AndroidPreference<T>(
    * Returns a cold [Flow] of this preference to receive updates when its value changes.
    */
   override fun changes(): Flow<T> {
-    return keyChanges
-      .filter { it == key }
-      .map { get() }
+    return store.data
+      .drop(1)
+      .map { it[key] ?: defaultValue }
+      .distinctUntilChanged()
   }
 
   /**
@@ -100,4 +106,57 @@ internal class AndroidPreference<T>(
     return changes().stateIn(scope, SharingStarted.Eagerly, get())
   }
 
+}
+
+// TODO(inorichi): create a common wrapper for these two classes if possible.
+class AndroidPreferenceObject<T>(
+  private val store: DataStore<Preferences>,
+  private val scope: CoroutineScope,
+  private val key: Key<String>,
+  private val defaultValue: T,
+  private val serializer: (T) -> String,
+  private val deserializer: (String) -> T
+) : Preference<T> {
+  override fun key(): String {
+    return key.name
+  }
+
+  override fun get(): T {
+    return runBlocking {
+      store.data.first()[key]?.let { deserializer(it) } ?: defaultValue
+    }
+  }
+
+  override fun set(value: T) {
+    scope.launch {
+      store.edit { it[key] = serializer(value) }
+    }
+  }
+
+  override fun isSet(): Boolean {
+    return runBlocking {
+      store.data.first().contains(key)
+    }
+  }
+
+  override fun delete() {
+    scope.launch {
+      store.edit { it.remove(key) }
+    }
+  }
+
+  override fun defaultValue(): T {
+    return defaultValue
+  }
+
+  override fun changes(): Flow<T> {
+    return store.data
+      .drop(1)
+      .map { preferences -> preferences[key]?.let { deserializer(it) } ?: defaultValue }
+      .distinctUntilChanged()
+  }
+
+  override fun stateIn(scope: CoroutineScope): StateFlow<T> {
+    return changes().stateIn(scope, SharingStarted.Eagerly, get())
+  }
 }
