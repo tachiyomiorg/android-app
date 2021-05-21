@@ -21,6 +21,8 @@ import androidx.datastore.preferences.preferencesDataStoreFile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 /**
  * An implementation of a [PreferenceStore] backed by Androidx [DataStore].
@@ -29,7 +31,8 @@ import kotlinx.coroutines.SupervisorJob
  */
 class AndroidPreferenceStore(
   private val context: Context,
-  private val name: String
+  private val name: String,
+  autoInit: Boolean = true
 ) : PreferenceStore {
 
   /**
@@ -46,6 +49,15 @@ class AndroidPreferenceStore(
     scope = scope,
     produceFile = { context.preferencesDataStoreFile(name) }
   )
+
+  init {
+    // Initialize preferences on an IO thread
+    if (autoInit) {
+      scope.launch {
+        store.data.first()
+      }
+    }
+  }
 
   /**
    * Returns a [String] preference for this [key].

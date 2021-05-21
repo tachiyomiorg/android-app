@@ -42,7 +42,7 @@ internal class AndroidCatalogLoader @Inject constructor(
 
   private val pkgManager = context.packageManager
 
-  private val catalogPreferences = AndroidPreferenceStore(context, "catalogs_data")
+  private val catalogPreferences = AndroidPreferenceStore(context, "catalogs_data", false)
 
   /**
    * Return a list of all the installed catalogs initialized concurrently.
