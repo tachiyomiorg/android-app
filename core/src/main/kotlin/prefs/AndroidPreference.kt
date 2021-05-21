@@ -39,14 +39,14 @@ internal sealed class AndroidPreference<K, T>(
 ) : Preference<T> {
 
   /**
-   * Reads the current value in the given [preferences].
+   * Reads the current value of this [key] in the given [preferences].
    */
-  abstract suspend fun read(preferences: Preferences, key: Key<K>): T?
+  abstract fun read(preferences: Preferences, key: Key<K>): T?
 
   /**
-   * Writes a new [value] to the given [preferences].
+   * Writes a new [value] to the [key] of the given [preferences].
    */
-  abstract suspend fun write(preferences: MutablePreferences, key: Key<K>, value: T)
+  abstract fun write(preferences: MutablePreferences, key: Key<K>, value: T)
 
   /**
    * Returns the key of this preference.
@@ -126,11 +126,11 @@ internal sealed class AndroidPreference<K, T>(
     defaultValue: T
   ) : AndroidPreference<T, T>(store, scope, key, defaultValue) {
 
-    override suspend fun read(preferences: Preferences, key: Key<T>): T? {
+    override fun read(preferences: Preferences, key: Key<T>): T? {
       return preferences[key]
     }
 
-    override suspend fun write(preferences: MutablePreferences, key: Key<T>, value: T) {
+    override fun write(preferences: MutablePreferences, key: Key<T>, value: T) {
       preferences[key] = value
     }
 
@@ -148,11 +148,11 @@ internal sealed class AndroidPreference<K, T>(
     private val deserializer: (String) -> T
   ) : AndroidPreference<String, T>(store, scope, key, defaultValue) {
 
-    override suspend fun read(preferences: Preferences, key: Key<String>): T? {
+    override fun read(preferences: Preferences, key: Key<String>): T? {
       return preferences[key]?.let(deserializer)
     }
 
-    override suspend fun write(preferences: MutablePreferences, key: Key<String>, value: T) {
+    override fun write(preferences: MutablePreferences, key: Key<String>, value: T) {
       preferences[key] = serializer(value)
     }
 
