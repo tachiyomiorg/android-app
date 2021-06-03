@@ -11,7 +11,7 @@ buildscript {
 }
 
 plugins {
-  id("com.github.ben-manes.versions") version "0.36.0"
+  id("com.github.ben-manes.versions") version "0.39.0"
 }
 
 allprojects {
@@ -64,7 +64,7 @@ subprojects {
 
   plugins.withType<JacocoPlugin> {
     configure<JacocoPluginExtension> {
-      toolVersion = "0.8.6"
+      toolVersion = "0.8.7"
     }
   }
 

@@ -35,7 +35,6 @@ dependencies {
   implementation(Deps.coroutines.core)
   implementation(Deps.coroutines.android)
   implementation(Deps.workManager.runtime)
-  implementation(Deps.kotson)
 
   implementation(Deps.toothpick.runtime)
   implementation(Deps.toothpick.smoothie)
