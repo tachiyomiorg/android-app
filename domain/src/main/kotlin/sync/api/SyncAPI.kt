@@ -22,6 +22,9 @@ import tachiyomi.core.http.awaitResponse
 import tachiyomi.domain.sync.service.SyncPreferences
 import javax.inject.Inject
 
+@Serializable
+private data class Response(val secret: String)
+
 class SyncAPI @Inject constructor(
   http: Http,
   private val store: SyncPreferences,
@@ -38,9 +41,6 @@ class SyncAPI @Inject constructor(
   val token get() = tokenPref.get()
 
   suspend fun login(address: String, username: String, password: String): LoginResult {
-    @Serializable
-    data class Response(val secret: String)
-
     val credentials = Credentials.basic(username, password)
 
     val reqBody = buildJsonObject {

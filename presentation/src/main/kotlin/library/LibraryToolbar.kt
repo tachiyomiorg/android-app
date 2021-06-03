@@ -34,7 +34,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction.Search
+import androidx.compose.ui.text.input.ImeAction
 import tachiyomi.domain.library.model.CategoryWithCount
 import tachiyomi.ui.R.string
 import tachiyomi.ui.categories.visibleName
@@ -161,7 +161,7 @@ private fun LibrarySearchToolbar(
         textStyle = LocalTextStyle.current.copy(color = LocalContentColor.current),
         cursorBrush = SolidColor(LocalContentColor.current),
         singleLine = true,
-        keyboardOptions = KeyboardOptions.Default.copy(imeAction = Search),
+        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
         keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
       )
     },

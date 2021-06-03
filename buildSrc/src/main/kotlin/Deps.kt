@@ -2,19 +2,19 @@
 object Deps {
 
   object kotlin {
-    const val version = "1.4.32"
+    const val version = "1.5.10"
     const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version"
     const val reflect = "org.jetbrains.kotlin:kotlin-reflect:$version"
 
     object serialization {
-      private const val version = "1.1.0"
+      private const val version = "1.2.1"
       const val json = "org.jetbrains.kotlinx:kotlinx-serialization-json:$version"
       const val protobuf = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf:$version"
     }
   }
 
   object coroutines {
-    private const val version = "1.4.3"
+    private const val version = "1.5.0"
     const val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
     const val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$version"
   }
@@ -28,13 +28,13 @@ object Deps {
   }
 
   object compose {
-    const val version = "1.0.0-beta07"
+    const val version = "1.0.0-beta08"
     const val compiler = "androidx.compose.compiler:compiler:$version"
     const val ui = "androidx.compose.ui:ui:$version"
     const val material = "androidx.compose.material:material:$version"
     const val icons = "androidx.compose.material:material-icons-extended:$version"
     const val tooling = "androidx.compose.ui:ui-tooling:$version"
-    const val navigation = "androidx.navigation:navigation-compose:2.4.0-alpha01"
+    const val navigation = "androidx.navigation:navigation-compose:2.4.0-alpha02"
     const val constraintLayout = "androidx.constraintlayout:constraintlayout-compose:1.0.0-alpha07"
   }
 
@@ -58,7 +58,7 @@ object Deps {
   }
 
   object accompanist {
-    private const val version = "0.10.0"
+    private const val version = "0.11.1"
     const val pager = "com.google.accompanist:accompanist-pager:$version"
     const val pagerIndicator = "com.google.accompanist:accompanist-pager-indicators:$version"
     const val flowlayout = "com.google.accompanist:accompanist-flowlayout:$version"
