@@ -1,14 +1,10 @@
 package tachiyomi.ui.history
 
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.activity.compose.BackHandler
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.LocalContentColor
-import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -16,6 +12,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,11 +20,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
 import tachiyomi.ui.R
+import tachiyomi.ui.core.components.SearchField
 import tachiyomi.ui.core.components.Toolbar
 
 @Composable
@@ -71,15 +67,11 @@ fun HistorySearchToolbar(
 
   Toolbar(
     title = {
-      BasicTextField(
-        searchQuery,
-        onChangeSearchQuery,
+      SearchField(
         modifier = Modifier.focusRequester(focusRequester),
-        textStyle = LocalTextStyle.current.copy(color = LocalContentColor.current),
-        cursorBrush = SolidColor(LocalContentColor.current),
-        singleLine = true,
-        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
-        keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
+        query = searchQuery,
+        onChangeQuery = onChangeSearchQuery,
+        onDone = { focusManager.clearFocus() }
       )
     },
     navigationIcon = {
@@ -107,6 +99,10 @@ fun HistorySearchToolbar(
       }
     }
   )
+  LaunchedEffect(focusRequester) {
+    focusRequester.requestFocus()
+  }
+  BackHandler(onBack = onClickCloseSearch)
 }
 
 @Composable

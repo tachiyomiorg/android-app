@@ -9,13 +9,8 @@
 package tachiyomi.ui.library
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.LocalContentColor
-import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -31,13 +26,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
 import tachiyomi.domain.library.model.CategoryWithCount
 import tachiyomi.ui.R.string
 import tachiyomi.ui.categories.visibleName
+import tachiyomi.ui.core.components.SearchField
 import tachiyomi.ui.core.components.Toolbar
 
 @Composable
@@ -154,15 +148,11 @@ private fun LibrarySearchToolbar(
 
   Toolbar(
     title = {
-      BasicTextField(
-        searchQuery,
-        onChangeSearchQuery,
+      SearchField(
         modifier = Modifier.focusRequester(focusRequester),
-        textStyle = LocalTextStyle.current.copy(color = LocalContentColor.current),
-        cursorBrush = SolidColor(LocalContentColor.current),
-        singleLine = true,
-        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
-        keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
+        query = searchQuery,
+        onChangeQuery = onChangeSearchQuery,
+        onDone = { focusManager.clearFocus() }
       )
     },
     navigationIcon = {
