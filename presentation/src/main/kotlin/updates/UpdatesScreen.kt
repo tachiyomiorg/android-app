@@ -18,29 +18,21 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.FlipToBack
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.SelectAll
 import androidx.compose.material.icons.outlined.Download
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import tachiyomi.domain.manga.model.Manga
-import tachiyomi.ui.R
 import tachiyomi.ui.core.coil.rememberMangaCover
 import tachiyomi.ui.core.components.MangaListItem
 import tachiyomi.ui.core.components.MangaListItemColumn
 import tachiyomi.ui.core.components.MangaListItemImage
 import tachiyomi.ui.core.components.MangaListItemSubtitle
 import tachiyomi.ui.core.components.MangaListItemTitle
-import tachiyomi.ui.core.components.Toolbar
 import tachiyomi.ui.core.viewmodel.viewModel
 
 @Composable
@@ -60,69 +52,6 @@ fun UpdatesScreen(navController: NavController) {
     }
   ) {
   }
-}
-
-@Composable
-fun UpdatesToolbar(
-  selectedManga: List<Long>,
-  selectionMode: Boolean,
-  onClickCancelSelection: () -> Unit,
-  onClickSelectAll: () -> Unit,
-  onClickFlipSelection: () -> Unit,
-  onClickRefresh: () -> Unit
-) {
-  when {
-    selectionMode -> {
-      UpdatesSelectionToolbar(
-        selectedManga = selectedManga,
-        onClickCancelSelection = onClickCancelSelection,
-        onClickSelectAll = onClickSelectAll,
-        onClickInvertSelection = onClickFlipSelection
-      )
-    }
-    else -> {
-      UpdatesRegularToolbar(
-        onClickRefresh = onClickRefresh
-      )
-    }
-  }
-}
-
-@Composable
-private fun UpdatesSelectionToolbar(
-  selectedManga: List<Long>,
-  onClickCancelSelection: () -> Unit,
-  onClickSelectAll: () -> Unit,
-  onClickInvertSelection: () -> Unit
-) {
-  Toolbar(
-    title = { Text("${selectedManga.size}") },
-    navigationIcon = {
-      IconButton(onClick = onClickCancelSelection) {
-        Icon(Icons.Default.Close, contentDescription = null)
-      }
-    },
-    actions = {
-      IconButton(onClick = onClickSelectAll) {
-        Icon(Icons.Default.SelectAll, contentDescription = null)
-      }
-      IconButton(onClick = onClickInvertSelection) {
-        Icon(Icons.Default.FlipToBack, contentDescription = null)
-      }
-    }
-  )
-}
-
-@Composable
-fun UpdatesRegularToolbar(onClickRefresh: () -> Unit) {
-  Toolbar(
-    title = { Text(stringResource(R.string.updates_label)) },
-    actions = {
-      IconButton(onClick = onClickRefresh) {
-        Icon(Icons.Default.Refresh, contentDescription = null)
-      }
-    }
-  )
 }
 
 @Composable
