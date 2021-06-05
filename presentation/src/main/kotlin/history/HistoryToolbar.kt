@@ -94,7 +94,7 @@ fun HistorySearchToolbar(
           onClickDeleteAll()
           expanded = false
         }) {
-          Text(text = "Delete All")
+          Text(text = stringResource(id = R.string.clear_history))
         }
       }
     }
@@ -128,7 +128,7 @@ fun HistoryRegularToolbar(
           onClickDeleteAll()
           expanded = false
         }) {
-          Text(text = "Delete All")
+          Text(text = stringResource(id = R.string.clear_history))
         }
       }
     }
