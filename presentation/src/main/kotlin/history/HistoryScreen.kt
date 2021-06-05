@@ -9,7 +9,6 @@
 package tachiyomi.ui.history
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,12 +30,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
@@ -63,7 +65,7 @@ fun HistoryScreen(navController: NavController) {
   Scaffold(
     topBar = {
       HistoryToolbar(
-        searchMode = true,
+        searchMode = false,
         searchQuery = "",
         onChangeSearchQuery = {},
         onClickCloseSearch = {},
@@ -112,6 +114,8 @@ fun HistorySearchToolbar(
   val focusRequester = remember { FocusRequester() }
   val focusManager = LocalFocusManager.current
 
+  var expanded by remember { mutableStateOf(false) }
+
   Toolbar(
     title = {
       BasicTextField(
@@ -135,10 +139,18 @@ fun HistorySearchToolbar(
         Icon(Icons.Default.Close, contentDescription = null)
       }
       IconButton(onClick = {
-        onClickDeleteAll()
+        expanded = !expanded
         focusManager.clearFocus()
       }) {
-        Icon(Icons.Default.Delete, contentDescription = null)
+        Icon(Icons.Default.MoreVert, contentDescription = null)
+      }
+      DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+        DropdownMenuItem(onClick = {
+          onClickDeleteAll()
+          expanded = false
+        }) {
+          Text(text = "Delete All")
+        }
       }
     }
   )
@@ -149,14 +161,26 @@ fun HistoryRegularToolbar(
   onClickSearch: () -> Unit,
   onClickDeleteAll: () -> Unit
 ) {
+  var expanded by remember { mutableStateOf(false) }
+
   Toolbar(
     title = { Text(stringResource(R.string.history_label)) },
     actions = {
       IconButton(onClick = onClickSearch) {
         Icon(Icons.Default.Search, contentDescription = null)
       }
-      IconButton(onClick = onClickDeleteAll) {
-        Icon(Icons.Default.Delete, contentDescription = null)
+      IconButton(onClick = {
+        expanded = !expanded
+      }) {
+        Icon(Icons.Default.MoreVert, contentDescription = null)
+      }
+      DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+        DropdownMenuItem(onClick = {
+          onClickDeleteAll()
+          expanded = false
+        }) {
+          Text(text = "Delete All")
+        }
       }
     }
   )
