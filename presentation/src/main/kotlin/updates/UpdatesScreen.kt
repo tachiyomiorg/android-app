@@ -20,13 +20,10 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FlipToBack
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SelectAll
-import androidx.compose.material.icons.filled.Update
 import androidx.compose.material.icons.outlined.Download
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -44,18 +41,21 @@ import tachiyomi.ui.core.components.MangaListItemImage
 import tachiyomi.ui.core.components.MangaListItemSubtitle
 import tachiyomi.ui.core.components.MangaListItemTitle
 import tachiyomi.ui.core.components.Toolbar
+import tachiyomi.ui.core.viewmodel.viewModel
 
 @Composable
 fun UpdatesScreen(navController: NavController) {
+  val vm = viewModel<UpdatesViewModel>()
+
   Scaffold(
     topBar = {
       UpdatesToolbar(
-        selectedManga = emptyList(),
-        selectionMode = false,
-        onClickCancelSelection = {},
-        onClickSelectAll = {},
-        onClickInvertSelection = {},
-        onClickRefresh = {}
+        selectedManga = vm.selectedManga,
+        selectionMode = vm.selectionMode,
+        onClickCancelSelection = { vm.unselectAll() },
+        onClickSelectAll = { vm.selectAll() },
+        onClickFlipSelection = { vm.flipSelection() },
+        onClickRefresh = { vm.updateLibrary() }
       )
     }
   ) {
@@ -68,7 +68,7 @@ fun UpdatesToolbar(
   selectionMode: Boolean,
   onClickCancelSelection: () -> Unit,
   onClickSelectAll: () -> Unit,
-  onClickInvertSelection: () -> Unit,
+  onClickFlipSelection: () -> Unit,
   onClickRefresh: () -> Unit
 ) {
   when {
@@ -77,7 +77,7 @@ fun UpdatesToolbar(
         selectedManga = selectedManga,
         onClickCancelSelection = onClickCancelSelection,
         onClickSelectAll = onClickSelectAll,
-        onClickInvertSelection = onClickInvertSelection
+        onClickInvertSelection = onClickFlipSelection
       )
     }
     else -> {
