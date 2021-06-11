@@ -18,32 +18,38 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import tachiyomi.domain.manga.model.Manga
-import tachiyomi.ui.R
 import tachiyomi.ui.core.coil.rememberMangaCover
 import tachiyomi.ui.core.components.MangaListItem
 import tachiyomi.ui.core.components.MangaListItemColumn
 import tachiyomi.ui.core.components.MangaListItemImage
 import tachiyomi.ui.core.components.MangaListItemSubtitle
 import tachiyomi.ui.core.components.MangaListItemTitle
-import tachiyomi.ui.core.components.Toolbar
+import tachiyomi.ui.core.viewmodel.viewModel
 
 @Composable
 fun HistoryScreen(navController: NavController) {
+  val vm = viewModel<HistoryViewModel>()
+
   Scaffold(
     topBar = {
-      Toolbar(title = { Text(stringResource(R.string.history_label)) })
+      HistoryToolbar(
+        searchMode = vm.searchMode,
+        searchQuery = vm.searchQuery,
+        onChangeSearchQuery = { vm.updateQuery(it) },
+        onClickCloseSearch = { vm.closeSearch() },
+        onClickSearch = { vm.openSearch() },
+        onClickDeleteAll = { vm.deleteAll() }
+      )
     }
   ) {
   }

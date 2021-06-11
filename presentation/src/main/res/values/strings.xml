@@ -13,6 +13,9 @@
   <string name="all_category">All</string>
   <string name="uncategorized_category">Uncategorized</string>
 
+  <!-- History screen -->
+  <string name="clear_history">Clear history</string>
+
   <!-- More screen -->
   <string name="downloaded_only">Downloaded only</string>
   <string name="downloaded_only_subtitle">Filters all manga in your library</string>
