@@ -40,6 +40,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -70,6 +72,7 @@ fun LibraryScreen(
   val vm = viewModel<LibraryViewModel>()
   val scope = rememberCoroutineScope()
   val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+  val (sheetPage, onSheetPageChanged) = remember { mutableStateOf(0) }
 
   // TODO last category isn't restored if categories are not yet loaded
   val pagerState = rememberPagerState(vm.categories.size, vm.selectedCategoryIndex)
@@ -85,7 +88,7 @@ fun LibraryScreen(
 
   ModalBottomSheetLayout(
     sheetState = sheetState,
-    sheetContent = { LibrarySheet() }
+    sheetContent = { LibrarySheet(sheetPage, onSheetPageChanged) }
   ) {
     Column {
       LibraryToolbar(

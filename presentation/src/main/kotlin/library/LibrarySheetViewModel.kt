@@ -22,9 +22,13 @@ import tachiyomi.ui.core.viewmodel.BaseViewModel
 import javax.inject.Inject
 
 class LibrarySheetViewModel @Inject constructor(
-  libraryPreferences: LibraryPreferences
+  libraryPreferences: LibraryPreferences,
+  props: Props
 ) : BaseViewModel() {
-  var selectedPage by mutableStateOf(0)
+
+  data class Props(val initialPage: Int)
+
+  var selectedPage by mutableStateOf(props.initialPage)
 
   var filters by libraryPreferences.filters(includeAll = true).asState()
     private set

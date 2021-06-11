@@ -60,14 +60,20 @@ import java.util.Locale
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun LibrarySheet() {
-  val vm = viewModel<LibrarySheetViewModel>()
+fun LibrarySheet(
+  initialPage: Int,
+  onPageChanged: (Int) -> Unit
+) {
+  val vm = viewModel<LibrarySheetViewModel> {
+    LibrarySheetViewModel.Props(initialPage = initialPage)
+  }
   val scope = rememberCoroutineScope()
   val selectedPage = vm.selectedPage
-  val pagerState = rememberPagerState(3, selectedPage, initialOffscreenLimit = 2)
+  val pagerState = rememberPagerState(3, selectedPage, initialOffscreenLimit = 3)
   LaunchedEffect(pagerState) {
     snapshotFlow { pagerState.currentPage }.collect {
       vm.selectedPage = it
+      onPageChanged(it)
     }
   }
 
