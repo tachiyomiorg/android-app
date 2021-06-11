@@ -54,7 +54,7 @@ class LibraryViewModel @Inject constructor(
   val selectedManga = mutableStateListOf<Long>()
   var showUpdatingCategory by mutableStateOf(false)
     private set
-  var sheetVisible by mutableStateOf(false)
+  var sheetPage by mutableStateOf(0)
   var searchMode by mutableStateOf(false)
     private set
   var searchQuery by mutableStateOf("")

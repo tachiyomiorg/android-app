@@ -9,7 +9,6 @@
 package tachiyomi.ui.library
 
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import tachiyomi.domain.library.model.DisplayMode
 import tachiyomi.domain.library.model.LibraryFilter
@@ -22,13 +21,8 @@ import tachiyomi.ui.core.viewmodel.BaseViewModel
 import javax.inject.Inject
 
 class LibrarySheetViewModel @Inject constructor(
-  libraryPreferences: LibraryPreferences,
-  props: Props
+  libraryPreferences: LibraryPreferences
 ) : BaseViewModel() {
-
-  data class Props(val initialPage: Int)
-
-  var selectedPage by mutableStateOf(props.initialPage)
 
   var filters by libraryPreferences.filters(includeAll = true).asState()
     private set

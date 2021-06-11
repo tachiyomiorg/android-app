@@ -61,32 +61,28 @@ import java.util.Locale
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun LibrarySheet(
-  initialPage: Int,
+  currentPage: Int,
   onPageChanged: (Int) -> Unit
 ) {
-  val vm = viewModel<LibrarySheetViewModel> {
-    LibrarySheetViewModel.Props(initialPage = initialPage)
-  }
+  val vm = viewModel<LibrarySheetViewModel>()
   val scope = rememberCoroutineScope()
-  val selectedPage = vm.selectedPage
-  val pagerState = rememberPagerState(3, selectedPage, initialOffscreenLimit = 3)
+  val pagerState = rememberPagerState(3, currentPage, initialOffscreenLimit = 3)
   LaunchedEffect(pagerState) {
     snapshotFlow { pagerState.currentPage }.collect {
-      vm.selectedPage = it
       onPageChanged(it)
     }
   }
 
   TabRow(
     modifier = Modifier.requiredHeight(48.dp),
-    selectedTabIndex = selectedPage,
+    selectedTabIndex = currentPage,
     backgroundColor = CustomColors.current.bars,
     contentColor = CustomColors.current.onBars,
     indicator = { TabRowDefaults.Indicator(Modifier.pagerTabIndicatorOffset(pagerState, it)) }
   ) {
     listOf("Filter", "Sort", "Display").forEachIndexed { i, title ->
       Tab(
-        selected = selectedPage == i,
+        selected = currentPage == i,
         onClick = { scope.launch { pagerState.animateScrollToPage(i) } }
       ) {
         Text(title)
