@@ -53,7 +53,6 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -64,6 +63,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import kotlin.math.round
@@ -76,8 +76,8 @@ fun ColorPickerDialog(
   title: (@Composable () -> Unit)? = null,
   initialColor: Color = Color.Unspecified,
 ) {
-  var currentColor by mutableStateOf(initialColor)
-  var showPresets by mutableStateOf(true)
+  var currentColor by remember { mutableStateOf(initialColor) }
+  var showPresets by remember { mutableStateOf(true) }
 
   AlertDialog(
     onDismissRequest = onDismissRequest,
@@ -97,7 +97,11 @@ fun ColorPickerDialog(
       }
     },
     buttons = {
-      Row(Modifier.fillMaxWidth().padding(8.dp)) {
+      Row(
+        Modifier
+          .fillMaxWidth()
+          .padding(8.dp)
+      ) {
         TextButton(onClick = {
           showPresets = !showPresets
         }) {
@@ -150,8 +154,13 @@ private fun ColorPresets(
         )
       }
     }
-    Spacer(modifier = Modifier.padding(vertical = 16.dp).fillMaxWidth().requiredHeight(1.dp)
-      .background(MaterialTheme.colors.onBackground.copy(alpha = 0.2f)))
+    Spacer(
+      modifier = Modifier
+        .padding(vertical = 16.dp)
+        .fillMaxWidth()
+        .requiredHeight(1.dp)
+        .background(MaterialTheme.colors.onBackground.copy(alpha = 0.2f))
+    )
 
     LazyRow {
       items(shades) { color ->
@@ -176,21 +185,24 @@ private fun ColorPresetItem(
   isSelected: Boolean,
   onClick: () -> Unit
 ) {
-  Box(contentAlignment = Alignment.Center, modifier = Modifier
-    .fillMaxWidth()
-    .padding(4.dp)
-    .size(48.dp)
-    .clip(CircleShape)
-    .background(color)
-    .border(BorderStroke(1.dp, borderColor), CircleShape)
-    .clickable(onClick = onClick)
+  Box(
+    contentAlignment = Alignment.Center, modifier = Modifier
+      .fillMaxWidth()
+      .padding(4.dp)
+      .size(48.dp)
+      .clip(CircleShape)
+      .background(color)
+      .border(BorderStroke(1.dp, borderColor), CircleShape)
+      .clickable(onClick = onClick)
   ) {
     if (isSelected) {
       Icon(
         imageVector = Icons.Default.Check,
         tint = if (color.luminance() > 0.5) Color.Black else Color.White,
         contentDescription = null,
-        modifier = Modifier.requiredWidth(32.dp).requiredHeight(32.dp)
+        modifier = Modifier
+          .requiredWidth(32.dp)
+          .requiredHeight(32.dp)
       )
     }
   }
@@ -233,22 +245,11 @@ fun ColorPalette(
   var matrixSize by remember { mutableStateOf(IntSize(0, 0)) }
   var matrixCursor by remember { mutableStateOf(Offset(0f, 0f)) }
 
-  val saturationGradient = remember(hue, matrixSize) {
-    Brush.linearGradient(
-      colors = listOf(Color.White, hueToColor(hue)),
-      start = Offset(0f, 0f), end = Offset(matrixSize.width.toFloat(), 0f)
-    )
-  }
-  val valueGradient = remember(matrixSize) {
-    Brush.linearGradient(
-      colors = listOf(Color.White, Color.Black),
-      start = Offset(0f, 0f), end = Offset(0f, matrixSize.height.toFloat())
-    )
-  }
+  val hueColor = remember(hue) { hueToColor(hue) }
 
   val cursorColor = MaterialTheme.colors.onBackground
   val cursorStroke = Stroke(4f)
-  val borderStroke = Stroke(1f)
+  val borderStroke = BorderStroke(Dp.Hairline, Color.LightGray)
 
   fun setSelectedColor(color: Color, invalidate: Boolean = false) {
     selectedColor = color
@@ -263,7 +264,6 @@ fun ColorPalette(
   }
 
   Column {
-    Text("") // TODO workaround: without this text, the color picker doesn't render correctly
     Row(Modifier.height(IntrinsicSize.Max)) {
       Box(Modifier
         .aspectRatio(1f)
@@ -274,10 +274,11 @@ fun ColorPalette(
           matrixCursor = satValToCoordinates(hsv[1], hsv[2], it)
           hueCursor = hueToCoordinate(hue, it)
         }
+        .background(hueColor)
+        .background(Brush.horizontalGradient(listOf(Color.White, Color.Transparent)))
+        .background(Brush.verticalGradient(listOf(Color.Transparent, Color.Black)))
+        .border(borderStroke)
         .drawWithContent {
-          drawRect(brush = valueGradient)
-          drawRect(brush = saturationGradient, blendMode = BlendMode.Multiply)
-          drawRect(Color.LightGray, size = size, style = borderStroke)
           drawCircle(Color.Black, radius = 8f, center = matrixCursor, style = cursorStroke)
           drawCircle(Color.LightGray, radius = 12f, center = matrixCursor, style = cursorStroke)
         }
@@ -311,10 +312,15 @@ fun ColorPalette(
               val pos = i.toFloat()
               drawLine(color, Offset(0f, pos), Offset(size.width, pos))
             }
-            drawRect(Color.LightGray, size = size, style = borderStroke)
-            drawRect(cursorColor, topLeft = cursorTopLeft, size = cursorSize, style = cursorStroke)
+            drawRect(
+              cursorColor,
+              topLeft = cursorTopLeft,
+              size = cursorSize,
+              style = cursorStroke
+            )
           }
         }
+        .border(borderStroke)
         .pointerInput(Unit) {
           detectMove { offset ->
             val safeY = offset.y.coerceIn(0f, matrixSize.height.toFloat())
@@ -327,8 +333,12 @@ fun ColorPalette(
       )
     }
     Row(Modifier.padding(top = 8.dp), verticalAlignment = Alignment.Bottom) {
-      Box(Modifier.size(72.dp, 48.dp).background(selectedColor)
-        .border(1.dp, MaterialTheme.colors.onBackground.copy(alpha = 0.54f)))
+      Box(
+        Modifier
+          .size(72.dp, 48.dp)
+          .background(selectedColor)
+          .border(1.dp, MaterialTheme.colors.onBackground.copy(alpha = 0.54f))
+      )
       Spacer(Modifier.requiredWidth(32.dp))
       OutlinedTextField(
         value = textFieldHex,
