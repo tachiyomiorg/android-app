@@ -67,7 +67,8 @@ fun LibraryScreen(
   navController: NavController,
   requestHideBottomNav: (Boolean) -> Unit
 ) {
-  val vm = viewModel<LibraryViewModel>()
+  val state = rememberLibrarySavedState()
+  val vm = viewModel<LibraryViewModel> { state }
   val scope = rememberCoroutineScope()
   val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
 
@@ -85,7 +86,7 @@ fun LibraryScreen(
 
   ModalBottomSheetLayout(
     sheetState = sheetState,
-    sheetContent = { LibrarySheet(vm.sheetPage) { vm.sheetPage = it } }
+    sheetContent = { LibrarySheet(vm.sheetPage) { vm.setSheetPage(it) } }
   ) {
     Column {
       LibraryToolbar(

@@ -36,14 +36,13 @@ import tachiyomi.ui.core.viewmodel.BaseViewModel
 import javax.inject.Inject
 
 class LibraryViewModel @Inject constructor(
+  private val savedState: LibrarySavedState,
   private val getUserCategories: GetUserCategories,
   private val getLibraryCategory: GetLibraryCategory,
   private val setCategoriesForMangas: SetCategoriesForMangas,
   private val libraryPreferences: LibraryPreferences,
   private val updateLibraryCategory: UpdateLibraryCategory
 ) : BaseViewModel() {
-
-  private val lastUsedCategoryPreference = libraryPreferences.lastUsedCategory()
 
   var categories by mutableStateOf(emptyList<CategoryWithCount>())
     private set
@@ -52,15 +51,14 @@ class LibraryViewModel @Inject constructor(
   var library by mutableStateOf(emptyList<LibraryManga>())
     private set
   val selectedManga = mutableStateListOf<Long>()
-  var showUpdatingCategory by mutableStateOf(false)
-    private set
-  var sheetPage by mutableStateOf(0)
-  var searchMode by mutableStateOf(false)
-    private set
-  var searchQuery by mutableStateOf("")
-    private set
+
+  val sheetPage get() = savedState.sheetPage
+  val searchMode get() = savedState.searchMode
+  val searchQuery get() = savedState.searchQuery
+
   val selectionMode by derivedStateOf { selectedManga.isNotEmpty() }
 
+  var lastUsedCategory by libraryPreferences.lastUsedCategory().asState()
   val filters by libraryPreferences.filters().asState()
   val sorting by libraryPreferences.sorting().asState()
   val displayMode by libraryPreferences.displayMode().asState()
@@ -76,7 +74,7 @@ class LibraryViewModel @Inject constructor(
       .flatMapLatest { showAll ->
         getUserCategories.subscribe(showAll)
           .onEach { categories ->
-            val lastCategoryId = lastUsedCategoryPreference.get()
+            val lastCategoryId = lastUsedCategory
             val index = categories.indexOfFirst { it.id == lastCategoryId }.takeIf { it != -1 } ?: 0
 
             this.categories = categories
@@ -91,7 +89,7 @@ class LibraryViewModel @Inject constructor(
     val categories = categories
     val category = categories.getOrNull(index) ?: return
     selectedCategoryIndex = index
-    lastUsedCategoryPreference.set(category.id)
+    lastUsedCategory = category.id
   }
 
   @Composable
@@ -148,17 +146,17 @@ class LibraryViewModel @Inject constructor(
   }
 
   fun openSearch() {
-    searchMode = true
-    searchQuery = ""
+    savedState.searchMode = true
+    savedState.searchQuery = ""
   }
 
   fun closeSearch() {
-    searchMode = false
-    searchQuery = ""
+    savedState.searchMode = false
+    savedState.searchQuery = ""
   }
 
   fun updateQuery(query: String) {
-    searchQuery = query
+    savedState.searchQuery = query
   }
 
   fun updateLibrary() {
@@ -182,6 +180,10 @@ class LibraryViewModel @Inject constructor(
 
   fun deleteDownloadsSelectedManga() {
     // TODO
+  }
+
+  fun setSheetPage(page: Int) {
+    savedState.sheetPage = page
   }
 
 }
