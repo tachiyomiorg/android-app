@@ -13,8 +13,6 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -29,14 +27,13 @@ import tachiyomi.domain.library.interactor.GetLibraryCategory
 import tachiyomi.domain.library.interactor.GetUserCategories
 import tachiyomi.domain.library.interactor.SetCategoriesForMangas
 import tachiyomi.domain.library.interactor.UpdateLibraryCategory
-import tachiyomi.domain.library.model.CategoryWithCount
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.domain.library.service.LibraryPreferences
 import tachiyomi.ui.core.viewmodel.BaseViewModel
 import javax.inject.Inject
 
 class LibraryViewModel @Inject constructor(
-  private val savedState: LibrarySavedState,
+  private val state: LibraryState,
   private val getUserCategories: GetUserCategories,
   private val getLibraryCategory: GetLibraryCategory,
   private val setCategoriesForMangas: SetCategoriesForMangas,
@@ -44,19 +41,12 @@ class LibraryViewModel @Inject constructor(
   private val updateLibraryCategory: UpdateLibraryCategory
 ) : BaseViewModel() {
 
-  var categories by mutableStateOf(emptyList<CategoryWithCount>())
-    private set
-  var selectedCategoryIndex by mutableStateOf(0)
-    private set
-  var library by mutableStateOf(emptyList<LibraryManga>())
-    private set
-  val selectedManga = mutableStateListOf<Long>()
-
-  val sheetPage get() = savedState.sheetPage
-  val searchMode get() = savedState.searchMode
-  val searchQuery get() = savedState.searchQuery
-
-  val selectionMode by derivedStateOf { selectedManga.isNotEmpty() }
+  val categories get() = state.categories
+  val selectedCategoryIndex get() = state.selectedCategoryIndex
+  val selectedManga: List<Long> get() = state.selectedManga
+  val sheetPage get() = state.sheetPage
+  val searchMode get() = state.searchMode
+  val searchQuery get() = state.searchQuery
 
   var lastUsedCategory by libraryPreferences.lastUsedCategory().asState()
   val filters by libraryPreferences.filters().asState()
@@ -65,7 +55,8 @@ class LibraryViewModel @Inject constructor(
   val showCategoryTabs by libraryPreferences.showCategoryTabs().asState()
   val showCountInCategory by libraryPreferences.showCountInCategory().asState()
 
-  val selectedCategory get() = categories.getOrNull(selectedCategoryIndex)
+  val selectionMode by derivedStateOf { selectedManga.isNotEmpty() }
+  val selectedCategory by derivedStateOf { categories.getOrNull(selectedCategoryIndex) }
 
   private val loadedManga = mutableMapOf<Long, List<LibraryManga>>()
 
@@ -77,8 +68,8 @@ class LibraryViewModel @Inject constructor(
             val lastCategoryId = lastUsedCategory
             val index = categories.indexOfFirst { it.id == lastCategoryId }.takeIf { it != -1 } ?: 0
 
-            this.categories = categories
-            this.selectedCategoryIndex = index
+            state.categories = categories
+            state.selectedCategoryIndex = index
           }
       }
       .launchIn(scope)
@@ -88,7 +79,7 @@ class LibraryViewModel @Inject constructor(
     if (index == selectedCategoryIndex) return
     val categories = categories
     val category = categories.getOrNull(index) ?: return
-    selectedCategoryIndex = index
+    state.selectedCategoryIndex = index
     lastUsedCategory = category.id
   }
 
@@ -120,43 +111,43 @@ class LibraryViewModel @Inject constructor(
 
   fun toggleManga(manga: LibraryManga) {
     if (manga.id in selectedManga) {
-      selectedManga.remove(manga.id)
+      state.selectedManga.remove(manga.id)
     } else {
-      selectedManga.add(manga.id)
+      state.selectedManga.add(manga.id)
     }
   }
 
   fun unselectAll() {
-    selectedManga.clear()
+    state.selectedManga.clear()
   }
 
   fun selectAllInCurrentCategory() {
     val mangaInCurrentCategory = loadedManga[selectedCategory?.id] ?: return
     val currentSelected = selectedManga.toList()
     val mangaIds = mangaInCurrentCategory.map { it.id }.filter { it !in currentSelected }
-    selectedManga.addAll(mangaIds)
+    state.selectedManga.addAll(mangaIds)
   }
 
   fun flipAllInCurrentCategory() {
     val mangaInCurrentCategory = loadedManga[selectedCategory?.id] ?: return
     val currentSelected = selectedManga.toList()
     val (toRemove, toAdd) = mangaInCurrentCategory.map { it.id }.partition { it in currentSelected }
-    selectedManga.removeAll(toRemove)
-    selectedManga.addAll(toAdd)
+    state.selectedManga.removeAll(toRemove)
+    state.selectedManga.addAll(toAdd)
   }
 
   fun openSearch() {
-    savedState.searchMode = true
-    savedState.searchQuery = ""
+    state.searchMode = true
+    state.searchQuery = ""
   }
 
   fun closeSearch() {
-    savedState.searchMode = false
-    savedState.searchQuery = ""
+    state.searchMode = false
+    state.searchQuery = ""
   }
 
   fun updateQuery(query: String) {
-    savedState.searchQuery = query
+    state.searchQuery = query
   }
 
   fun updateLibrary() {
@@ -183,7 +174,7 @@ class LibraryViewModel @Inject constructor(
   }
 
   fun setSheetPage(page: Int) {
-    savedState.sheetPage = page
+    state.sheetPage = page
   }
 
 }

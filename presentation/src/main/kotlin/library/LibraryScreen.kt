@@ -67,8 +67,11 @@ fun LibraryScreen(
   navController: NavController,
   requestHideBottomNav: (Boolean) -> Unit
 ) {
-  val state = rememberLibrarySavedState()
-  val vm = viewModel<LibraryViewModel> { state }
+  val vm = viewModel<LibraryViewModel, LibraryState>(
+    initialState = { LibraryState() },
+    saver = LibraryState.Saver
+  )
+
   val scope = rememberCoroutineScope()
   val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
 
@@ -80,7 +83,7 @@ fun LibraryScreen(
       vm.setSelectedPage(it)
     }
   }
-  LaunchedEffect(vm.selectedManga.size, sheetState.targetValue) {
+  LaunchedEffect(vm.selectionMode, sheetState.targetValue) {
     requestHideBottomNav(vm.selectionMode || sheetState.targetValue != ModalBottomSheetValue.Hidden)
   }
 

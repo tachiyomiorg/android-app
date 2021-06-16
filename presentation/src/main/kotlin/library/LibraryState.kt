@@ -8,15 +8,16 @@
 
 package tachiyomi.ui.library
 
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.referentialEqualityPolicy
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import tachiyomi.domain.library.model.CategoryWithCount
 
-class LibrarySavedState(
+class LibraryState(
   sheetPage: Int = 0,
   searchMode: Boolean = false,
   searchQuery: String = "",
@@ -25,9 +26,12 @@ class LibrarySavedState(
   var sheetPage by mutableStateOf(sheetPage)
   var searchMode by mutableStateOf(searchMode)
   var searchQuery by mutableStateOf(searchQuery)
+  var categories by mutableStateOf(emptyList<CategoryWithCount>(), referentialEqualityPolicy())
+  var selectedCategoryIndex by mutableStateOf(0)
+  var selectedManga = mutableStateListOf<Long>()
 
   companion object {
-    val Saver: Saver<LibrarySavedState, *> = listSaver(
+    val Saver: Saver<LibraryState, Any> = listSaver(
       save = {
         listOf(
           it.sheetPage,
@@ -37,19 +41,12 @@ class LibrarySavedState(
       },
       restore = {
         @Suppress("CAST_NEVER_SUCCEEDS")
-        LibrarySavedState(
+        LibraryState(
           it[0] as Int,
           it[1] as Boolean,
           it[2] as String
         )
       }
     )
-  }
-}
-
-@Composable
-fun rememberLibrarySavedState(): LibrarySavedState {
-  return rememberSaveable(saver = LibrarySavedState.Saver) {
-    LibrarySavedState()
   }
 }
