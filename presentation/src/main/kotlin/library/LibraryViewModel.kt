@@ -8,6 +8,7 @@
 
 package tachiyomi.ui.library
 
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
@@ -16,6 +17,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import com.google.accompanist.pager.ExperimentalPagerApi
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
@@ -23,6 +26,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.launch
 import tachiyomi.domain.library.interactor.GetLibraryCategory
 import tachiyomi.domain.library.interactor.GetUserCategories
 import tachiyomi.domain.library.interactor.SetCategoriesForMangas
@@ -32,6 +36,7 @@ import tachiyomi.domain.library.service.LibraryPreferences
 import tachiyomi.ui.core.viewmodel.BaseViewModel
 import javax.inject.Inject
 
+@OptIn(ExperimentalMaterialApi::class, ExperimentalPagerApi::class)
 class LibraryViewModel @Inject constructor(
   private val state: LibraryState,
   private val getUserCategories: GetUserCategories,
@@ -47,6 +52,8 @@ class LibraryViewModel @Inject constructor(
   val sheetPage get() = state.sheetPage
   val searchMode get() = state.searchMode
   val searchQuery get() = state.searchQuery
+  val sheetState get() = state.sheetState
+  val pagerState get() = state.pagerState
 
   var lastUsedCategory by libraryPreferences.lastUsedCategory().asState()
   val filters by libraryPreferences.filters().asState()
@@ -61,6 +68,7 @@ class LibraryViewModel @Inject constructor(
   private val loadedManga = mutableMapOf<Long, List<LibraryManga>>()
 
   init {
+    var restoreLastUsedCategory = true
     libraryPreferences.showAllCategory().stateIn(scope)
       .flatMapLatest { showAll ->
         getUserCategories.subscribe(showAll)
@@ -70,6 +78,11 @@ class LibraryViewModel @Inject constructor(
 
             state.categories = categories
             state.selectedCategoryIndex = index
+            pagerState.pageCount = categories.size
+            if (restoreLastUsedCategory) {
+              pagerState.scrollToPage(selectedCategoryIndex)
+              restoreLastUsedCategory = false
+            }
           }
       }
       .launchIn(scope)
@@ -175,6 +188,14 @@ class LibraryViewModel @Inject constructor(
 
   fun setSheetPage(page: Int) {
     state.sheetPage = page
+  }
+
+  fun showSheet(scope: CoroutineScope) {
+    scope.launch { state.sheetState.show() }
+  }
+
+  fun animatePagerScrollToPage(page: Int, scope: CoroutineScope) {
+    scope.launch { pagerState.animateScrollToPage(page) }
   }
 
 }

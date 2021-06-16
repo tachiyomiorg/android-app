@@ -35,7 +35,6 @@ import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Label
 import androidx.compose.material.icons.twotone.FileDownload
-import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -50,9 +49,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.pagerTabIndicatorOffset
-import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import tachiyomi.domain.library.model.CategoryWithCount
 import tachiyomi.domain.library.model.DisplayMode
 import tachiyomi.domain.library.model.LibraryManga
@@ -71,24 +68,21 @@ fun LibraryScreen(
     initialState = { LibraryState() },
     saver = LibraryState.Saver
   )
-
   val scope = rememberCoroutineScope()
-  val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
 
-  // TODO last category isn't restored if categories are not yet loaded
-  val pagerState = rememberPagerState(vm.categories.size, vm.selectedCategoryIndex)
-
-  LaunchedEffect(pagerState) {
-    snapshotFlow { pagerState.currentPage }.collect {
+  LaunchedEffect(vm) {
+    snapshotFlow { vm.pagerState.currentPage }.collect {
       vm.setSelectedPage(it)
     }
   }
-  LaunchedEffect(vm.selectionMode, sheetState.targetValue) {
-    requestHideBottomNav(vm.selectionMode || sheetState.targetValue != ModalBottomSheetValue.Hidden)
+  LaunchedEffect(vm.selectionMode, vm.sheetState.targetValue) {
+    requestHideBottomNav(
+      vm.selectionMode || vm.sheetState.targetValue != ModalBottomSheetValue.Hidden
+    )
   }
 
   ModalBottomSheetLayout(
-    sheetState = sheetState,
+    sheetState = vm.sheetState,
     sheetContent = { LibrarySheet(vm.sheetPage) { vm.setSheetPage(it) } }
   ) {
     Column {
@@ -101,7 +95,7 @@ fun LibraryScreen(
         searchMode = vm.searchMode,
         searchQuery = vm.searchQuery,
         onClickSearch = { vm.openSearch() },
-        onClickFilter = { scope.launch { sheetState.show() } },
+        onClickFilter = { vm.showSheet(scope) },
         onClickRefresh = { vm.updateLibrary() },
         onClickCloseSelection = { vm.unselectAll() },
         onClickCloseSearch = { vm.closeSearch() },
@@ -110,15 +104,15 @@ fun LibraryScreen(
         onChangeSearchQuery = { vm.updateQuery(it) }
       )
       LibraryTabs(
-        state = pagerState,
+        state = vm.pagerState,
         visible = vm.showCategoryTabs,
         categories = vm.categories,
         showCount = vm.showCountInCategory,
-        onClickTab = { scope.launch { pagerState.animateScrollToPage(it) } }
+        onClickTab = { vm.animatePagerScrollToPage(it, scope) }
       )
       Box {
         LibraryPager(
-          state = pagerState,
+          state = vm.pagerState,
           categories = vm.categories,
           displayMode = vm.displayMode,
           selectedManga = vm.selectedManga,
