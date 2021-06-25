@@ -30,7 +30,9 @@ class GetUserCategories @Inject internal constructor(
 
             // Uncategorized category only shown if there are entries and user categories exist
             Category.UNCATEGORIZED_ID -> {
-              if (count > 0 && categories.any { !it.category.isSystemCategory }) {
+              if (count > 0 &&
+                (!withAllCategory || categories.any { !it.category.isSystemCategory })
+              ) {
                 categoryAndCount
               } else {
                 null
