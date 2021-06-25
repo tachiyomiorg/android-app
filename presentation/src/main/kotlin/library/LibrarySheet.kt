@@ -24,6 +24,7 @@ import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Slider
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.TabRowDefaults
@@ -38,6 +39,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.flowlayout.FlowRow
@@ -56,7 +58,6 @@ import tachiyomi.domain.library.model.LibrarySort
 import tachiyomi.ui.core.components.ChoiceChip
 import tachiyomi.ui.core.theme.CustomColors
 import tachiyomi.ui.core.viewmodel.viewModel
-import java.util.Locale
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -72,6 +73,7 @@ fun LibrarySheet(
       onPageChanged(it)
     }
   }
+  val configuration = LocalConfiguration.current
 
   TabRow(
     modifier = Modifier.requiredHeight(48.dp),
@@ -95,22 +97,33 @@ fun LibrarySheet(
   ) { page ->
     LazyColumn {
       when (page) {
-        0 -> FiltersPage(filters = vm.filters, onClick = { vm.toggleFilter(it) })
-        1 -> SortPage(sorting = vm.sorting, onClick = { vm.toggleSort(it) })
-        2 -> DisplayPage(
-          displayMode = vm.displayMode,
-          downloadBadges = vm.downloadBadges,
-          unreadBadges = vm.unreadBadges,
-          categoryTabs = vm.showCategoryTabs,
-          allCategory = vm.showAllCategory,
-          countInCategory = vm.showCountInCategory,
-          onDisplayModeClick = { vm.changeDisplayMode(it) },
-          onDownloadBadgesClick = { vm.toggleDownloadBadges() },
-          onUnreadBadgesClick = { vm.toggleUnreadBadges() },
-          onCategoryTabsClick = { vm.toggleShowCategoryTabs() },
-          onAllCategoryClick = { vm.toggleShowAllCategory() },
-          onCountInCategoryClick = { vm.toggleShowCountInCategory() }
-        )
+        0 -> FiltersPage(filters = vm.filters, onClick = vm::toggleFilter)
+        1 -> SortPage(sorting = vm.sorting, onClick = vm::toggleSort)
+        2 -> {
+          val (columns, setColumns) =
+            if (configuration.screenWidthDp > configuration.screenHeightDp) {
+              vm.columnsInLandscape to vm::changeColumnsInLandscape
+            } else {
+              vm.columnsInPortrait to vm::changeColumnsInPortrait
+            }
+
+          DisplayPage(
+            displayMode = vm.displayMode,
+            columns = columns,
+            downloadBadges = vm.downloadBadges,
+            unreadBadges = vm.unreadBadges,
+            categoryTabs = vm.showCategoryTabs,
+            allCategory = vm.showAllCategory,
+            countInCategory = vm.showCountInCategory,
+            onClickDisplayMode = vm::changeDisplayMode,
+            onChangeColumns = setColumns,
+            onClickDownloadBadges = vm::toggleDownloadBadges,
+            onClickUnreadBadges = vm::toggleUnreadBadges,
+            onClickCategoryTabs = vm::toggleShowCategoryTabs,
+            onClickAllCategory = vm::toggleShowAllCategory,
+            onClickCountInCategory = vm::toggleShowCountInCategory
+          )
+        }
       }
     }
   }
@@ -156,22 +169,24 @@ private fun LazyListScope.SortPage(
 
 private fun LazyListScope.DisplayPage(
   displayMode: DisplayMode,
+  columns: Int,
   downloadBadges: Boolean,
   unreadBadges: Boolean,
   categoryTabs: Boolean,
   allCategory: Boolean,
   countInCategory: Boolean,
-  onDisplayModeClick: (DisplayMode) -> Unit,
-  onDownloadBadgesClick: () -> Unit,
-  onUnreadBadgesClick: () -> Unit,
-  onCategoryTabsClick: () -> Unit,
-  onAllCategoryClick: () -> Unit,
-  onCountInCategoryClick: () -> Unit
+  onClickDisplayMode: (DisplayMode) -> Unit,
+  onChangeColumns: (Int) -> Unit,
+  onClickDownloadBadges: () -> Unit,
+  onClickUnreadBadges: () -> Unit,
+  onClickCategoryTabs: () -> Unit,
+  onClickAllCategory: () -> Unit,
+  onClickCountInCategory: () -> Unit
 ) {
   item {
     Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
       Text(
-        text = "Display mode".toUpperCase(Locale.ROOT),
+        text = "Display mode".uppercase(),
         modifier = Modifier.padding(bottom = 12.dp),
         style = MaterialTheme.typography.subtitle2,
         color = LocalContentColor.current.copy(alpha = ContentAlpha.medium)
@@ -180,17 +195,25 @@ private fun LazyListScope.DisplayPage(
         DisplayMode.values.forEach {
           ChoiceChip(
             isSelected = it == displayMode,
-            onClick = { onDisplayModeClick(it) },
+            onClick = { onClickDisplayMode(it) },
             content = { Text(it.name) }
           )
         }
       }
+      Text("Columns: ${if (columns > 1) columns else "Auto"}", Modifier.padding(top = 8.dp))
+      val maxValue = LocalConfiguration.current.screenWidthDp.dp / 64.dp
+      Slider(
+        value = columns.coerceAtLeast(1).toFloat(),
+        onValueChange = { onChangeColumns(it.toInt()) },
+        enabled = displayMode != DisplayMode.List,
+        valueRange = 1f..maxValue,
+      )
     }
   }
   item {
     Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
       Text(
-        text = "Badges".toUpperCase(Locale.ROOT),
+        text = "Badges".uppercase(),
         modifier = Modifier.padding(bottom = 12.dp),
         style = MaterialTheme.typography.subtitle2,
         color = LocalContentColor.current.copy(alpha = ContentAlpha.medium)
@@ -198,12 +221,12 @@ private fun LazyListScope.DisplayPage(
       FlowRow(mainAxisSpacing = 4.dp) {
         ChoiceChip(
           isSelected = unreadBadges,
-          onClick = { onUnreadBadgesClick() },
+          onClick = { onClickUnreadBadges() },
           content = { Text("Unread") }
         )
         ChoiceChip(
           isSelected = downloadBadges,
-          onClick = { onDownloadBadgesClick() },
+          onClick = { onClickDownloadBadges() },
           content = { Text("Downloaded") }
         )
       }
@@ -211,14 +234,14 @@ private fun LazyListScope.DisplayPage(
   }
   item {
     Text(
-      text = "Tabs".toUpperCase(Locale.ROOT),
+      text = "Tabs".uppercase(),
       modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
       style = MaterialTheme.typography.subtitle2,
       color = LocalContentColor.current.copy(alpha = ContentAlpha.medium)
     )
   }
   item {
-    ClickableRow(onClick = { onCategoryTabsClick() }) {
+    ClickableRow(onClick = { onClickCategoryTabs() }) {
       Checkbox(
         modifier = Modifier.padding(horizontal = 16.dp),
         checked = categoryTabs,
@@ -228,7 +251,7 @@ private fun LazyListScope.DisplayPage(
     }
   }
   item {
-    ClickableRow(onClick = { onAllCategoryClick() }) {
+    ClickableRow(onClick = { onClickAllCategory() }) {
       Checkbox(
         modifier = Modifier.padding(horizontal = 16.dp),
         checked = allCategory,
@@ -238,7 +261,7 @@ private fun LazyListScope.DisplayPage(
     }
   }
   item {
-    ClickableRow(onClick = { onCountInCategoryClick() }) {
+    ClickableRow(onClick = { onClickCountInCategory() }) {
       Checkbox(
         modifier = Modifier.padding(horizontal = 16.dp),
         checked = countInCategory,

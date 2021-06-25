@@ -80,6 +80,7 @@ fun LibraryScreen(
       vm.selectionMode || vm.sheetState.targetValue != ModalBottomSheetValue.Hidden
     )
   }
+  val columns by vm.getLibraryColumns()
 
   ModalBottomSheetLayout(
     sheetState = vm.sheetState,
@@ -116,6 +117,7 @@ fun LibraryScreen(
           categories = vm.categories,
           displayMode = vm.displayMode,
           selectedManga = vm.selectedManga,
+          columns = columns,
           getLibraryForPage = { vm.getLibraryForCategoryIndex(it) },
           onClickManga = { manga ->
             if (!vm.selectionMode) {
@@ -190,6 +192,7 @@ private fun LibraryPager(
   categories: List<CategoryWithCount>,
   displayMode: DisplayMode,
   selectedManga: List<Long>,
+  columns: Int,
   getLibraryForPage: @Composable (Int) -> State<List<LibraryManga>>,
   onClickManga: (LibraryManga) -> Unit,
   onLongClickManga: (LibraryManga) -> Unit
@@ -202,12 +205,14 @@ private fun LibraryPager(
       DisplayMode.CompactGrid -> LibraryMangaCompactGrid(
         library = library,
         selectedManga = selectedManga,
+        columns = columns,
         onClickManga = onClickManga,
         onLongClickManga = onLongClickManga
       )
       DisplayMode.ComfortableGrid -> LibraryMangaComfortableGrid(
         library = library,
         selectedManga = selectedManga,
+        columns = columns,
         onClickManga = onClickManga,
         onLongClickManga = onLongClickManga
       )

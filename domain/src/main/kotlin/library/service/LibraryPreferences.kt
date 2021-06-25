@@ -71,4 +71,12 @@ class LibraryPreferences(private val preferenceStore: PreferenceStore) {
     return preferenceStore.getBoolean("show_count_in_category", false)
   }
 
+  fun columnsInPortrait(): Preference<Int> {
+    return preferenceStore.getInt("columns_portrait", 0)
+  }
+
+  fun columnsInLandscape(): Preference<Int> {
+    return preferenceStore.getInt("columns_landscape", 0)
+  }
+
 }

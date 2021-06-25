@@ -48,6 +48,12 @@ class LibrarySheetViewModel @Inject constructor(
   var showCountInCategory by libraryPreferences.showCountInCategory().asState()
     private set
 
+  var columnsInPortrait by libraryPreferences.columnsInPortrait().asState()
+    private set
+
+  var columnsInLandscape by libraryPreferences.columnsInLandscape().asState()
+    private set
+
   fun toggleFilter(type: LibraryFilter.Type) {
     val newFilters = filters
       .map { filterState ->
@@ -98,5 +104,13 @@ class LibrarySheetViewModel @Inject constructor(
 
   fun toggleShowCountInCategory() {
     showCountInCategory = !showCountInCategory
+  }
+
+  fun changeColumnsInPortrait(columns: Int) {
+    columnsInPortrait = columns.coerceAtLeast(0)
+  }
+
+  fun changeColumnsInLandscape(columns: Int) {
+    columnsInLandscape = columns.coerceAtLeast(0)
   }
 }

@@ -46,11 +46,17 @@ import tachiyomi.ui.core.util.Typefaces
 fun LibraryMangaCompactGrid(
   library: List<LibraryManga>,
   selectedManga: List<Long>,
+  columns: Int,
   onClickManga: (LibraryManga) -> Unit = {},
   onLongClickManga: (LibraryManga) -> Unit = {}
 ) {
+  val cells = if (columns > 1) {
+    GridCells.Fixed(columns)
+  } else {
+    GridCells.Adaptive(160.dp)
+  }
   LazyVerticalGrid(
-    cells = GridCells.Adaptive(160.dp),
+    cells = cells,
     modifier = Modifier
       .fillMaxSize()
       .padding(4.dp)
