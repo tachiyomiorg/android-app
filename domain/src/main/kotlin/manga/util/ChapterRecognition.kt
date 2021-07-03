@@ -71,7 +71,7 @@ object ChapterRecognition {
 //      return
 
     // Get chapter title with lower case
-    var name = chapter.name.toLowerCase()
+    var name = chapter.name.lowercase()
 
     // Remove comma's from chapter.
     name = name.replace(',', '.')
@@ -168,7 +168,7 @@ object ChapterRecognition {
    * x.a -> x.1, x.b -> x.2, etc
    */
   private fun parseAlphaPostFix(alpha: Char): Float {
-    return ("0." + Integer.toString(alpha.toInt() - 96)).toFloat()
+    return ("0." + (alpha.code - 96).toString()).toFloat()
   }
 
 }

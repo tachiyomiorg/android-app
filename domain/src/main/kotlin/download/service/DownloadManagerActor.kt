@@ -161,7 +161,7 @@ internal open class DownloadManagerActor(
 
       val state = State.Downloading(worker.id, nextDownload)
       states[nextDownload.chapterId] = state
-      worker.channel.offer(nextDownload)
+      worker.channel.trySend(nextDownload)
     }
 
     if (states.none { it.value.inProgress }) {

@@ -37,15 +37,15 @@ class DownloadManager @Inject internal constructor(
   }
 
   fun start() {
-    actor.offer(Message.Start)
+    actor.trySend(Message.Start)
   }
 
   fun stop() {
-    actor.offer(Message.Stop)
+    actor.trySend(Message.Stop)
   }
 
   fun add(downloads: Map<Manga, List<Chapter>>) {
-    actor.offer(Message.Add(downloads))
+    actor.trySend(Message.Add(downloads))
   }
 
 }

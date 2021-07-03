@@ -33,7 +33,7 @@ abstract class HttpSource(private val dependencies: Dependencies) : CatalogSourc
    * Note the generated id sets the sign bit to 0.
    */
   override val id by lazy {
-    val key = "${name.toLowerCase()}/$lang/$versionId"
+    val key = "${name.lowercase()}/$lang/$versionId"
     val bytes = MessageDigest.getInstance("MD5").digest(key.toByteArray())
     (0..7).map { bytes[it].toLong() and 0xff shl 8 * (7 - it) }.reduce(Long::or) and Long.MAX_VALUE
   }
@@ -59,7 +59,7 @@ abstract class HttpSource(private val dependencies: Dependencies) : CatalogSourc
   /**
    * Visible name of the source.
    */
-  override fun toString() = "$name (${lang.toUpperCase()})"
+  override fun toString() = "$name (${lang.uppercase()})"
 
   open suspend fun getPage(page: PageUrl): PageComplete {
     throw Exception("Incomplete source implementation. Please override getPage when using PageUrl")

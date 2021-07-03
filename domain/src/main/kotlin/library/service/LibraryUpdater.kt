@@ -71,11 +71,11 @@ class LibraryUpdater @Inject constructor(
   }
 
   fun enqueue(categoryIds: List<Long>) {
-    actor.offer(Message.Enqueue(categoryIds))
+    actor.trySend(Message.Enqueue(categoryIds))
   }
 
   fun cancel() {
-    actor.offer(Message.Cancel)
+    actor.trySend(Message.Cancel)
   }
 
   private suspend fun processEnqueue(categoryIds: List<Long>) {
@@ -106,7 +106,7 @@ class LibraryUpdater @Inject constructor(
 
     if (task == null) {
       val scope = CoroutineScope(SupervisorJob())
-      val onComplete = { actor.offer(Message.Complete) }
+      val onComplete = { actor.trySend(Message.Complete).isSuccess }
       val channel = Channel<List<LibraryManga>>()
       task = LibraryUpdaterTask(syncChaptersFromSource, scope, channel, _events, onComplete)
     }
