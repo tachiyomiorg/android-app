@@ -20,26 +20,26 @@ object Deps {
   }
 
   object androidX {
-    const val core = "androidx.core:core-ktx:1.6.0-beta02"
-    const val appCompat = "androidx.appcompat:appcompat:1.4.0-alpha02"
+    const val core = "androidx.core:core-ktx:1.7.0-alpha01"
+    const val appCompat = "androidx.appcompat:appcompat:1.4.0-alpha03"
     const val browser = "androidx.browser:browser:1.3.0"
-    const val sqlite = "androidx.sqlite:sqlite-ktx:2.1.0"
-    const val dataStore = "androidx.datastore:datastore-preferences:1.0.0-beta01"
+    const val sqlite = "androidx.sqlite:sqlite-ktx:2.2.0-alpha01"
+    const val dataStore = "androidx.datastore:datastore-preferences:1.0.0-rc01"
   }
 
   object compose {
-    const val version = "1.0.0-beta09"
+    const val version = "1.0.0-rc01"
     const val compiler = "androidx.compose.compiler:compiler:$version"
     const val ui = "androidx.compose.ui:ui:$version"
     const val material = "androidx.compose.material:material:$version"
     const val icons = "androidx.compose.material:material-icons-extended:$version"
     const val tooling = "androidx.compose.ui:ui-tooling:$version"
-    const val navigation = "androidx.navigation:navigation-compose:2.4.0-alpha03"
+    const val navigation = "androidx.navigation:navigation-compose:2.4.0-alpha04"
     const val constraintLayout = "androidx.constraintlayout:constraintlayout-compose:1.0.0-alpha07"
   }
 
   object lifecycle {
-    private const val version = "2.4.0-alpha01"
+    private const val version = "2.4.0-alpha02"
     const val common = "androidx.lifecycle:lifecycle-common-java8:$version"
     const val process = "androidx.lifecycle:lifecycle-process:$version"
     const val extensions = "androidx.lifecycle:lifecycle-runtime-ktx:$version"
@@ -51,14 +51,14 @@ object Deps {
   }
 
   object room {
-    private const val version = "2.4.0-alpha02"
+    private const val version = "2.4.0-alpha03"
     const val runtime = "androidx.room:room-runtime:$version"
     const val ktx = "androidx.room:room-ktx:$version"
     const val compiler = "androidx.room:room-compiler:$version"
   }
 
   object accompanist {
-    private const val version = "0.11.1"
+    private const val version = "0.13.0"
     const val pager = "com.google.accompanist:accompanist-pager:$version"
     const val pagerIndicator = "com.google.accompanist:accompanist-pager-indicators:$version"
     const val flowlayout = "com.google.accompanist:accompanist-flowlayout:$version"
@@ -68,7 +68,7 @@ object Deps {
     const val swipeRefresh = "com.google.accompanist:accompanist-swiperefresh:$version"
   }
 
-  const val sqlite = "com.github.requery:sqlite-android:3.35.5"
+  const val sqlite = "com.github.requery:sqlite-android:3.36.0"
 
   object toothpick {
     private const val version = "3.1.0"
@@ -91,7 +91,7 @@ object Deps {
     const val api = "org.tinylog:tinylog-api:$version"
   }
 
-  const val coil = "io.coil-kt:coil:1.2.1"
+  const val coil = "io.coil-kt:coil:1.2.2"
 
   const val mockk = "io.mockk:mockk:1.11.0"
 
