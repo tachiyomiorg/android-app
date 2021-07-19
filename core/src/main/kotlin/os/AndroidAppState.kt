@@ -25,17 +25,15 @@ class AndroidAppState @Inject constructor(
   context: Application
 ) : AppState, LifecycleObserver {
 
-  private val _networkFlow = MutableStateFlow(false)
-  override val networkFlow get() = _networkFlow
+  override val networkFlow = MutableStateFlow(false)
 
-  private val _foregroundFlow = MutableStateFlow(false)
-  override val foregroundFlow get() = _foregroundFlow
+  override val foregroundFlow = MutableStateFlow(false)
 
   init {
     ProcessLifecycleOwner.get().lifecycle.addObserver(this)
 
     GlobalScope.launch {
-      context.isNetworkConnectedFlow.collect { _networkFlow.value = it }
+      context.isNetworkConnectedFlow.collect { networkFlow.value = it }
     }
   }
 
