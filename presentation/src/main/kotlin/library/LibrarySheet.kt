@@ -35,7 +35,11 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,6 +62,7 @@ import tachiyomi.domain.library.model.LibrarySort
 import tachiyomi.ui.core.components.ChoiceChip
 import tachiyomi.ui.core.theme.CustomColors
 import tachiyomi.ui.core.viewmodel.viewModel
+import kotlin.math.round
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -201,12 +206,17 @@ private fun LazyListScope.DisplayPage(
         }
       }
       Text("Columns: ${if (columns > 1) columns else "Auto"}", Modifier.padding(top = 8.dp))
-      val maxValue = LocalConfiguration.current.screenWidthDp.dp / 64.dp
+      val maxValue = round(LocalConfiguration.current.screenWidthDp.dp / 64.dp)
+      var columnsFloat by remember(LocalConfiguration.current) { mutableStateOf(columns.toFloat()) }
       Slider(
-        value = columns.coerceAtLeast(1).toFloat(),
-        onValueChange = { onChangeColumns(it.toInt()) },
+        value = columnsFloat,
+        onValueChange = {
+          columnsFloat = it
+          onChangeColumns(round(it).toInt())
+        },
         enabled = displayMode != DisplayMode.List,
         valueRange = 1f..maxValue,
+        steps = maxValue.toInt() - 2
       )
     }
   }

@@ -107,10 +107,14 @@ class LibrarySheetViewModel @Inject constructor(
   }
 
   fun changeColumnsInPortrait(columns: Int) {
-    columnsInPortrait = columns.coerceAtLeast(0)
+    if (columnsInPortrait != columns) {
+      columnsInPortrait = columns.coerceAtLeast(0)
+    }
   }
 
   fun changeColumnsInLandscape(columns: Int) {
-    columnsInLandscape = columns.coerceAtLeast(0)
+    if (columnsInLandscape != columns) {
+      columnsInLandscape = columns.coerceAtLeast(0)
+    }
   }
 }
