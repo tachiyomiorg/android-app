@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.GridCells
@@ -34,6 +35,7 @@ import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.AlertDialog
+import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
@@ -140,7 +142,7 @@ private fun ColorPresets(
   val borderColor = MaterialTheme.colors.onBackground.copy(alpha = 0.54f)
 
   Column {
-    LazyVerticalGrid(cells = GridCells.Fixed(5)) {
+    LazyVerticalGrid(cells = GridCells.Adaptive(56.dp)) {
       items(presets) { color ->
         ColorPresetItem(
           color = color,
@@ -154,14 +156,7 @@ private fun ColorPresets(
         )
       }
     }
-    Spacer(
-      modifier = Modifier
-        .padding(vertical = 16.dp)
-        .fillMaxWidth()
-        .requiredHeight(1.dp)
-        .background(MaterialTheme.colors.onBackground.copy(alpha = 0.2f))
-    )
-
+    Divider(modifier = Modifier.padding(vertical = 16.dp))
     LazyRow {
       items(shades) { color ->
         ColorPresetItem(
@@ -187,9 +182,8 @@ private fun ColorPresetItem(
 ) {
   Box(
     contentAlignment = Alignment.Center, modifier = Modifier
-      .fillMaxWidth()
       .padding(4.dp)
-      .size(48.dp)
+      .requiredSize(48.dp)
       .clip(CircleShape)
       .background(color)
       .border(BorderStroke(1.dp, borderColor), CircleShape)
