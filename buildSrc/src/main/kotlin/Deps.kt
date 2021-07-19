@@ -28,7 +28,7 @@ object Deps {
   }
 
   object compose {
-    const val version = "1.0.0-rc01"
+    const val version = "1.0.0-rc02"
     const val compiler = "androidx.compose.compiler:compiler:$version"
     const val ui = "androidx.compose.ui:ui:$version"
     const val material = "androidx.compose.material:material:$version"
@@ -58,7 +58,7 @@ object Deps {
   }
 
   object accompanist {
-    private const val version = "0.13.0"
+    private const val version = "0.14.0"
     const val pager = "com.google.accompanist:accompanist-pager:$version"
     const val pagerIndicator = "com.google.accompanist:accompanist-pager-indicators:$version"
     const val flowlayout = "com.google.accompanist:accompanist-flowlayout:$version"
